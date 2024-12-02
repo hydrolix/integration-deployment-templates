@@ -1,6 +1,6 @@
 {
   "name": "v1_cloudfront_edge",
-  "description": null,
+  "description": "Cascade Cloudfront Transform",
   "uuid": "f764bb12-ce75-4dc2-9108-838ce9e90669",
   "created": "2024-11-21T01:07:08.646713Z",
   "modified": "2024-11-27T21:37:49.820941Z",
@@ -1331,7 +1331,5 @@
       "windows_ending": false
     }
   },
-  "url": "https://fox-prod.hydrolix.live/config/v1/orgs/a04859c1-a6a3-4027-a7e6-a360211e6e76/projects/5b85802b-32ae-4fdd-a226-26bb4fb3616b/tables/beabec4a-5272-4e14-99b9-e6155c9f98d8/transforms/f764bb12-ce75-4dc2-9108-838ce9e90669",
-  "type": "csv",
-  "table": "beabec4a-5272-4e14-99b9-e6155c9f98d8"
+  "type": "csv"
 }
