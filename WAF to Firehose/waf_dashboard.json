@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "cdwb8vc7ofs3kb"
+        "uid": "__DATASOURCE__"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +103,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "cdwb8vc7ofs3kb"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 0,
@@ -129,7 +129,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "cdwb8vc7ofs3kb"
+        "uid": "__DATASOURCE__"
       },
       "fieldConfig": {
         "defaults": {
@@ -234,7 +234,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "cdwb8vc7ofs3kb"
+        "uid": "__DATASOURCE__"
       },
       "fieldConfig": {
         "defaults": {
@@ -286,7 +286,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "cdwb8vc7ofs3kb"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -312,7 +312,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "cdwb8vc7ofs3kb"
+        "uid": "__DATASOURCE__"
       },
       "fieldConfig": {
         "defaults": {
@@ -364,7 +364,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "cdwb8vc7ofs3kb"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -390,7 +390,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "cdwb8vc7ofs3kb"
+        "uid": "__DATASOURCE__"
       },
       "gridPos": {
         "h": 16,
@@ -413,7 +413,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "cdwb8vc7ofs3kb"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 2,
@@ -535,7 +535,7 @@
         },
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "cdwb8vc7ofs3kb"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT http_headers['host'] as host FROM ${table} WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
         "hide": 0,
@@ -559,7 +559,7 @@
         },
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "cdwb8vc7ofs3kb"
+          "uid": "__DATASOURCE__"
         },
         "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
         "hide": 2,
@@ -586,7 +586,7 @@
         },
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "cdwb8vc7ofs3kb"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT arrayJoin(topK(10)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
         "hide": 0,
@@ -614,7 +614,7 @@
         },
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "cdwb8vc7ofs3kb"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT arrayJoin(topK(10)(waf_action))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
         "hide": 0,
@@ -642,7 +642,7 @@
         },
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "cdwb8vc7ofs3kb"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
         "hide": 0,
@@ -763,7 +763,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Cascade - WAF",
-  "uid": "fe3wzqj5vuvwgb",
+  "uid": "__UUID__",
   "version": 34,
   "weekStart": ""
 }
