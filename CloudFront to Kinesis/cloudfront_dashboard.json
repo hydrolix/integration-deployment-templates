@@ -1,4 +1,6 @@
 {
+  "folderUid": "__FOLDER_UUID__",
+  "overwrite": false,
   "dashboard": {
     "annotations": {
       "list": [
@@ -19,13 +21,13 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": null,
+    "id": 485,
     "links": [],
     "panels": [
       {
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "__SOURCE_UUID__"
+          "uid": "__DATASOURCE__"
         },
         "gridPos": {
           "h": 3,
@@ -50,7 +52,7 @@
       {
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "__SOURCE_UUID__"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -218,7 +220,10 @@
         "interval": "5s",
         "options": {
           "legend": {
-            "calcs": ["max", "sum"],
+            "calcs": [
+              "max",
+              "sum"
+            ],
             "displayMode": "table",
             "placement": "bottom",
             "showLegend": true
@@ -233,7 +238,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
             "format": 0,
@@ -250,7 +255,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT if(response_status_code > 0, response_status_code::String, null), count(), $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, response_status_code\nORDER BY time",
+            "rawSql": "SELECT if(response_status_code > 0, response_status_code::String, null), count(), $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, response_status_code\nORDER BY time",
             "refId": "status_code"
           }
         ],
@@ -260,7 +265,7 @@
       {
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "__SOURCE_UUID__"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -374,7 +379,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
             "format": 0,
@@ -391,7 +396,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT countIf (cache_edge_result_type = 'Hit') / count() * 100 as cache_hit_pct, $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, cache_edge_result_type\nORDER BY time",
+            "rawSql": "SELECT countIf (cache_edge_result_type = 'Hit') / count() * 100 as cache_hit_pct, $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, cache_edge_result_type\nORDER BY time",
             "refId": "cache_hit"
           }
         ],
@@ -401,7 +406,7 @@
       {
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "__SOURCE_UUID__"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -479,7 +484,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "cdwb8vc7ofs3kb"
             },
             "editorType": "sql",
             "format": 0,
@@ -496,13 +501,13 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT sum(response_content_bytes) as sum_bytes, $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
+            "rawSql": "SELECT sum(response_content_bytes) as sum_bytes, $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
             "refId": "sum_bytes_total"
           },
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
             "format": 0,
@@ -519,7 +524,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT sum(response_content_bytes) as bytes, $__timeInterval(${timefilter}) as time, cache_edge_result_type\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, cache_edge_result_type\nORDER BY time",
+            "rawSql": "SELECT sum(response_content_bytes) as bytes, $__timeInterval(${timefilter}) as time, cache_edge_result_type\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time, cache_edge_result_type\nORDER BY time",
             "refId": "sum_bytes_cache"
           }
         ],
@@ -529,7 +534,7 @@
       {
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "__SOURCE_UUID__"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -605,7 +610,9 @@
                 "id": "byNames",
                 "options": {
                   "mode": "exclude",
-                  "names": ["error_rate"],
+                  "names": [
+                    "error_rate"
+                  ],
                   "prefix": "All except:",
                   "readOnly": true
                 }
@@ -648,7 +655,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
             "format": 0,
@@ -665,7 +672,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT countIf(response_status_code > '400') / count() * 100 as error_rate, $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
+            "rawSql": "SELECT countIf(response_status_code > '400') / count() * 100 as error_rate, $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
             "refId": "cache_hit"
           }
         ],
@@ -685,7 +692,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "fieldConfig": {
               "defaults": {
@@ -842,7 +849,9 @@
               "footer": {
                 "countRows": false,
                 "fields": "",
-                "reducer": ["sum"],
+                "reducer": [
+                  "sum"
+                ],
                 "show": false
               },
               "showHeader": true,
@@ -858,7 +867,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -874,7 +883,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT request_host,request_path,  count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \trequest_path, request_host\nORDER BY count()\nLIMIT 100",
+                "rawSql": "SELECT request_host,request_path,  count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \trequest_path, request_host\nORDER BY count()\nLIMIT 100",
                 "refId": "A"
               }
             ],
@@ -898,7 +907,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "fieldConfig": {
               "defaults": {
@@ -1067,7 +1076,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1083,7 +1092,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT client_country_iso_code, count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_country_iso_code\nORDER BY count()\nLIMIT 100",
+                "rawSql": "SELECT client_country_iso_code, count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_country_iso_code\nORDER BY count()\nLIMIT 100",
                 "refId": "A"
               }
             ],
@@ -1093,7 +1102,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "fieldConfig": {
               "defaults": {
@@ -1246,7 +1255,9 @@
               "footer": {
                 "countRows": false,
                 "fields": "",
-                "reducer": ["sum"],
+                "reducer": [
+                  "sum"
+                ],
                 "show": false
               },
               "showHeader": true
@@ -1256,7 +1267,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1272,7 +1283,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT client_country_iso_code, pop, count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_country_iso_code, pop\nORDER BY count()\nLIMIT 100",
+                "rawSql": "SELECT client_country_iso_code, pop, count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_country_iso_code, pop\nORDER BY count()\nLIMIT 100",
                 "refId": "A"
               }
             ],
@@ -1296,7 +1307,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "fieldConfig": {
               "defaults": {
@@ -1373,7 +1384,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 0,
@@ -1390,7 +1401,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "timeseries",
-                "rawSql": "SELECT uniq(client_ip) as uniq_ip, $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
+                "rawSql": "SELECT uniq(client_ip) as uniq_ip, $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
                 "refId": "uniq_ips"
               }
             ],
@@ -1400,7 +1411,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "description": "A session is a combination of uniq(IP, User-Agent)",
             "fieldConfig": {
@@ -1478,7 +1489,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 0,
@@ -1495,7 +1506,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "timeseries",
-                "rawSql": "SELECT uniq(client_ip, request_user_agent) as uniq_ip, $__timeInterval(${timefilter}) as time\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
+                "rawSql": "SELECT uniq(client_ip, request_user_agent) as uniq_ip, $__timeInterval(${timefilter}) as time\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY time\nORDER BY time",
                 "refId": "uniq_ips"
               }
             ],
@@ -1505,7 +1516,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "fieldConfig": {
               "defaults": {
@@ -1662,7 +1673,9 @@
               "footer": {
                 "countRows": false,
                 "fields": "",
-                "reducer": ["sum"],
+                "reducer": [
+                  "sum"
+                ],
                 "show": false
               },
               "showHeader": true,
@@ -1678,7 +1691,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1694,7 +1707,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT client_ip,request_user_agent,  count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_ip, request_user_agent\nORDER BY count()\nLIMIT 100",
+                "rawSql": "SELECT client_ip,request_user_agent,  count(), sum(response_content_bytes) as sum_bytes, countIf(cache_edge_result_type = 'Hit') / count() * 100 as offload_hits, countIf(response_status_code > '400') / count() * 100 as error_rate\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nGROUP BY \tclient_ip, request_user_agent\nORDER BY count()\nLIMIT 100",
                 "refId": "A"
               }
             ],
@@ -1718,7 +1731,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "__SOURCE_UUID__"
+              "uid": "__DATASOURCE__"
             },
             "gridPos": {
               "h": 20,
@@ -1741,7 +1754,7 @@
               {
                 "datasource": {
                   "type": "grafana-clickhouse-datasource",
-                  "uid": "__SOURCE_UUID__"
+                  "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1757,7 +1770,7 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT *\t\nFROM __TABLE__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nORDER BY timestamp DESC\nLIMIT 1000",
+                "rawSql": "SELECT *\t\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(response_status_code IN (${response_status_code:sqlstring}),$response_status_code)\nAND $__conditionalAll(request_host IN (${request_host:sqlstring}),$request_host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(cache_behavior_path_pattern IN (${cache_behavior_path_pattern:sqlstring}),$cache_behavior_path_pattern)\nAND $__conditionalAll(pop IN (${pop:sqlstring}),$pop)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(cache_edge_result_type IN (${cache_edge_result_type:sqlstring}),$cache_edge_result_type)\nAND $__conditionalAll(edge_request_id IN (${edge_request_id:sqlstring}),$edge_request_id)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(request_user_agent IN (${request_user_agent:sqlstring}),$request_user_agent)\nAND $__conditionalAll(response_content_type IN (${response_content_type:sqlstring}),$response_content_type)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}\nORDER BY timestamp DESC\nLIMIT 1000",
                 "refId": "A"
               }
             ],
@@ -1777,8 +1790,12 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "hide": 0,
           "includeAll": true,
@@ -2005,21 +2022,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(request_host))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(request_host))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Request Host",
           "multi": true,
           "name": "request_host",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(request_host))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(request_host))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2029,21 +2050,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(request_method))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Request Method",
           "multi": true,
           "name": "request_method",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(request_method))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2053,21 +2078,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(response_content_type))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(response_content_type))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Content Type",
           "multi": true,
           "name": "response_content_type",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(response_content_type))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(response_content_type))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2077,21 +2106,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(cache_behavior_path_pattern))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(cache_behavior_path_pattern))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Cache Config Pattern",
           "multi": true,
           "name": "cache_behavior_path_pattern",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(cache_behavior_path_pattern))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(cache_behavior_path_pattern))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2101,21 +2134,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(pop))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(pop))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Pop",
           "multi": true,
           "name": "pop",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(pop))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(pop))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2125,21 +2162,25 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(topK(50)(client_country_iso_code))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT arrayJoin(topK(50)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 0,
           "includeAll": true,
           "label": "Country",
           "multi": true,
           "name": "client_country_iso_code",
           "options": [],
-          "query": "SELECT arrayJoin(topK(50)(client_country_iso_code))\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT arrayJoin(topK(50)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2149,8 +2190,12 @@
         {
           "current": {
             "selected": true,
-            "text": ["All"],
-            "value": ["$__all"]
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
           },
           "hide": 0,
           "includeAll": true,
@@ -2288,15 +2333,15 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT arrayJoin(request_header_names) as headers_names\nFROM __TABLE__\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY headers_names",
+          "definition": "SELECT arrayJoin(request_header_names) as headers_names\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY headers_names\nLIMIT 50",
           "hide": 0,
           "includeAll": true,
           "multi": false,
           "name": "header",
           "options": [],
-          "query": "SELECT arrayJoin(request_header_names) as headers_names\nFROM __TABLE__\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY headers_names",
+          "query": "SELECT arrayJoin(request_header_names) as headers_names\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY headers_names\nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2311,15 +2356,15 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT request_header_values[indexOf(request_header_names, '${header}')] as  header_value\nFROM __TABLE__\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY header_value",
+          "definition": "SELECT request_header_values[indexOf(request_header_names, '${header}')] as  header_value\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY header_value\nLIMIT 50",
           "hide": 0,
           "includeAll": true,
           "multi": false,
           "name": "header_value",
           "options": [],
-          "query": "SELECT request_header_values[indexOf(request_header_names, '${header}')] as  header_value\nFROM __TABLE__\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY header_value",
+          "query": "SELECT request_header_values[indexOf(request_header_names, '${header}')] as  header_value\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND ${filters}\nGROUP BY header_value\nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2342,15 +2387,15 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT name\nFROM system.columns\nWHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]\nAND type NOT IN ('DateTime', 'DateTime64(3)', 'Array')",
+          "definition": "SELECT name\nFROM system.columns\nWHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]\nAND type NOT IN ('DateTime', 'DateTime64(3)', 'Array')",
           "hide": 1,
           "includeAll": false,
           "multi": false,
           "name": "column_name",
           "options": [],
-          "query": "SELECT name\nFROM system.columns\nWHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]\nAND type NOT IN ('DateTime', 'DateTime64(3)', 'Array')",
+          "query": "SELECT name\nFROM system.columns\nWHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]\nAND type NOT IN ('DateTime', 'DateTime64(3)', 'Array')",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2365,15 +2410,15 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT type\nFROM system.columns\nWHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]\nAND name = '${column_name}'",
+          "definition": "SELECT type\nFROM system.columns\nWHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]\nAND name = '${column_name}'",
           "hide": 2,
           "includeAll": false,
           "multi": false,
           "name": "column_type",
           "options": [],
-          "query": "SELECT type\nFROM system.columns\nWHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]\nAND name = '${column_name}'",
+          "query": "SELECT type\nFROM system.columns\nWHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]\nAND name = '${column_name}'",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2388,7 +2433,7 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
           "definition": "SELECT multiIf(\n'${column_type}' ILIKE 'Map%',  'has',\n'${column_type}' ILIKE '%string%',  arrayJoin(['=', '!=','LIKE', 'ILIKE', 'NOT LIKE', 'NOT ILIKE']),\n'${column_type}' ILIKE '%int%',  arrayJoin(['<', '>','=', '!=']),\n'${column_type}' ILIKE '%float%',  arrayJoin(['<', '>','=','!=']),\n'=')",
           "hide": 1,
@@ -2411,7 +2456,7 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
           "definition": "SELECT if('${column_type}' LIKE 'Map%', 'arrayJoin(mapKeys(${column_name}))', 'arrayJoin(topK(50)(${column_name}))')",
           "hide": 2,
@@ -2428,21 +2473,22 @@
         },
         {
           "current": {
+            "isNone": true,
             "selected": false,
-            "text": "206",
-            "value": "206"
+            "text": "None",
+            "value": ""
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT ${values_query:raw}\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "definition": "SELECT ${values_query:raw}\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "hide": 1,
           "includeAll": false,
           "multi": false,
           "name": "values",
           "options": [],
-          "query": "SELECT ${values_query:raw}\nFROM __TABLE__ WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
+          "query": "SELECT ${values_query:raw}\nFROM ${table} WHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(has(request_header_names, '${header}'), $header)\nAND $__conditionalAll(has(request_header_values, '${header_value}'), $header_value)\nAND ${filters}",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2457,15 +2503,15 @@
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
-          "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]",
+          "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
           "hide": 2,
           "includeAll": false,
           "multi": false,
           "name": "timefilter",
           "options": [],
-          "query": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '__TABLE__')[1]\nAND table = splitByChar('.', '__TABLE__')[2]",
+          "query": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
@@ -2494,12 +2540,12 @@
         {
           "current": {
             "selected": false,
-            "text": "response_status_code = '206'",
-            "value": "response_status_code = '206'"
+            "text": "response_status_code = ''",
+            "value": "response_status_code = ''"
           },
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "__SOURCE_UUID__"
+            "uid": "__DATASOURCE__"
           },
           "definition": "SELECT if('${column_type}' LIKE 'Map%', 'mapContains(${column_name}, \\'${values}\\')', '${column_name} ${evaluation} \\'${values}\\'')",
           "hide": 2,
@@ -2522,14 +2568,21 @@
     },
     "timepicker": {
       "nowDelay": "1m",
-      "refresh_intervals": ["30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+      "refresh_intervals": [
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
     },
     "timezone": "utc",
     "title": "Cascade - Cloudfront",
-    "uid": "__UUID__",
-    "version": 62,
+    "uid": "__DASHBOARD_UUID__",
+    "version": 63,
     "weekStart": ""
-  },
-    "folderUid": "__FOLDER_UUID__", 
-    "overwrite": false
+  }
 }
