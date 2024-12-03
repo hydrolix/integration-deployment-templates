@@ -1,0 +1,769 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 718,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "__DATASOURCE__"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "timeseries",
+          "rawSql": "SELECT count(), $__timeInterval(${timefilter}) as time\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY time\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "Request count WAF",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "__DATASOURCE__"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "cdwb8vc7ofs3kb"
+          },
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "timeseries",
+          "rawSql": "SELECT count(), waf_action, $__timeInterval(${timefilter}) as time\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action, time\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "Count By WAF Action",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "__DATASOURCE__"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 1,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT count(), client_country_iso_code\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY client_country_iso_code",
+          "refId": "A"
+        }
+      ],
+      "title": "Request count per country",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "__DATASOURCE__"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT count(), waf_action\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action",
+          "refId": "A"
+        }
+      ],
+      "title": "Count By WAF Action",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "__DATASOURCE__"
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 2,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "editorType": "sql",
+          "format": 2,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "logs",
+          "rawSql": "SELECT *\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nORDER BY ${timefilter} DESC\nLIMIT 100",
+          "refId": "A"
+        }
+      ],
+      "title": "Raw Logs",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "auto",
+            "jsonPaths": [],
+            "keepTime": false,
+            "replace": false,
+            "source": "http_headers"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "names": [
+                "client_country_iso_code",
+                "client_ip",
+                "hdx_cdn",
+                "hdx_layer",
+                "hdx_source",
+                "hdx_transform",
+                "http_request_protocol_version",
+                "request_id",
+                "request_method",
+                "request_path",
+                "request_query_string",
+                "timestamp",
+                "version",
+                "waf_action",
+                "waf_captchaResponse",
+                "waf_challengeResponse",
+                "waf_excludedRules",
+                "waf_ja3_fingerprint",
+                "waf_nonTerminatingMatchingRules",
+                "waf_rateBasedRuleList",
+                "waf_requestHeadersInserted",
+                "waf_requestId",
+                "waf_responseCodeSent",
+                "waf_ruleGroupList",
+                "waf_source_id",
+                "waf_terminatingRuleId",
+                "waf_terminatingRuleMatchDetails",
+                "waf_terminatingRuleType",
+                "waf_webaclId",
+                "accept",
+                "accept-encoding",
+                "accept-language",
+                "host",
+                "priority",
+                "range",
+                "referer",
+                "sec-ch-ua",
+                "sec-ch-ua-mobile",
+                "sec-ch-ua-platform",
+                "sec-fetch-dest",
+                "sec-fetch-mode",
+                "sec-fetch-site",
+                "user-agent",
+                "cache-control",
+                "cloudfront-viewer-header-count",
+                "cloudfront-viewer-header-order",
+                "pragma",
+                "x-amz-cf-id",
+                "origin",
+                "if-range",
+                "sec-fetch-user",
+                "upgrade-insecure-requests"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "logs"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "label": "",
+        "name": "table",
+        "query": "aws.waf",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "definition": "SELECT http_headers['host'] as host FROM ${table} WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Host",
+        "multi": true,
+        "name": "host",
+        "options": [],
+        "query": "SELECT http_headers['host'] as host FROM ${table} WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "timestamp",
+          "value": "timestamp"
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "timefilter",
+        "options": [],
+        "query": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "definition": "SELECT arrayJoin(topK(10)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Request Method",
+        "multi": true,
+        "name": "request_method",
+        "options": [],
+        "query": "SELECT arrayJoin(topK(10)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "definition": "SELECT arrayJoin(topK(10)(waf_action))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Waf Action",
+        "multi": true,
+        "name": "waf_action",
+        "options": [],
+        "query": "SELECT arrayJoin(topK(10)(waf_action))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "definition": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Country",
+        "multi": true,
+        "name": "client_country_iso_code",
+        "options": [],
+        "query": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "name": "request_path",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "label": "client_ip",
+        "name": "client_ip",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "name": "waf_requestId",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "name": "x_amz_cf_id",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "name": "user_agent",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-2d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Cascade - WAF",
+  "uid": "__UUID__",
+  "version": 34,
+  "weekStart": ""
+}
