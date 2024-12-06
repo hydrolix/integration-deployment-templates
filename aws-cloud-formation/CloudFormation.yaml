@@ -1,0 +1,185 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation Cascade Foundation Dec.4.2024.2
+
+Resources:
+  # Create a DynamoDB Table with On-Demand Capacity
+  CascadeDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      #TableName: ""  # Let AWS generate it
+      AttributeDefinitions:
+        - AttributeName: "leaseKey"
+          AttributeType: "S"  # "S" for string, "N" for number, "B" for binary
+      KeySchema:
+        - AttributeName: "leaseKey"
+          KeyType: "HASH"  # Partition key
+      BillingMode: PAY_PER_REQUEST  # Enables on-demand (pay-per-request) capacity mode
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true  # Enables point-in-time recovery for the table
+
+  # Create an IAM User with policies directly attached
+  MyIAMUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub "CascadeCustomerFoundation-${AWS::Region}"
+      Policies:
+        - PolicyName: CascadeAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*                       # Full access to S3
+                  - kinesis:*                  # Full access to Kinesis
+                  - cloudfront:*               # Full access to CloudFront
+                  - dynamodb:*               # Full access to DynamoDB
+                  - waf:*                      # Full access to WAF (Global WAF Classic actions)
+                  - wafv2:*                    # Full access to WAFv2 (WAF regional)
+                  - firehose:*                 # Full access to Firehose
+                  - iam:PassRole               # Allow passing roles
+                Resource: "*"                  # Apply to all resources
+
+  # Create an IAM Access Key for the IAM User
+  MyIAMAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref MyIAMUser
+
+  # Create an IAM Role for the Lambda function
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaBasicExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  # Lambda function to post config data to an endpoint
+  WriteConfigFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          AWS_KEY: !Ref MyIAMAccessKey
+          AWS_SECRET: !GetAtt MyIAMAccessKey.SecretAccessKey
+          IAM_ROLE_ARN: !GetAtt MyIAMRole.Arn
+          DYNAMO_TABLE_ARN: !GetAtt CascadeDynamoDBTable.Arn
+          #KINESIS_STREAM_ARN: !GetAtt MyKinesisStream.Arn
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import logging
+          import os
+          import cfnresponse
+          import urllib.request
+
+          def handler(event, context):
+              # Set up the logger
+              logger = logging.getLogger()
+              logger.setLevel(logging.INFO)
+              
+              request_type = event.get("RequestType")
+              if request_type == "Delete":
+                # Immediately respond with success for delete operations
+                cfnresponse.send(event, context, cfnresponse.SUCCESS, {"Message": "Deletion handled successfully"})
+                return
+
+              # Read parameters from the event object
+              aws_key = os.environ['AWS_KEY']
+              aws_secret = os.environ['AWS_SECRET']
+              iam_role_arn = os.environ['IAM_ROLE_ARN']
+              dynamo_table_arn = os.environ['DYNAMO_TABLE_ARN']
+              aws_region = os.getenv("AWS_REGION")
+
+              data = {
+                'bucket_name': 'tbd',
+                'aws_key': aws_key,
+                'aws_secret': aws_secret,
+                'iam_role_arn': iam_role_arn,
+                'dynamo_table_arn': dynamo_table_arn,
+                'aws_region': aws_region
+              }
+                     
+              try:
+                  url = 'https://rh33tegp9s.us-east-1.awsapprunner.com/lambda'
+                  request = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), method='POST')
+                  with urllib.request.urlopen(request) as response:
+                      response_data = response.read().decode('utf-8')
+                      logger.info(f"Data posted successfully: {response_data}")
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+              except Exception as e:
+                  logger.error(f"Error posting data: {e}")
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {'Error': str(e)})
+       
+      Runtime: python3.9
+      Timeout: 300
+
+  # Create an IAM Role for future use
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "CascadeCustomerRoleFoundation-${AWS::Region}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CascadeAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*                       # Full access to S3
+                  - kinesis:*                  # Full access to Kinesis
+                  - cloudfront:*               # Full access to CloudFront
+                  - waf:*                      # Full access to WAF (Global WAF Classic actions)
+                  - wafv2:*                    # Full access to WAFv2 (WAF regional)
+                  - firehose:*                 # Full access to Firehose
+                  - dynamodb:*                 # Full access to DynamoDB
+                Resource: "*"                  # Apply to all resources
+
+  # Custom resource to trigger the Lambda function
+  CustomResource:
+    Type: Custom::WriteConfig
+    Properties:
+      ServiceToken: !GetAtt WriteConfigFunction.Arn
+      AWS_KEY: !Ref MyIAMAccessKey
+      AWS_SECRET: !GetAtt MyIAMAccessKey.SecretAccessKey
+      IAM_ROLE_ARN: !GetAtt MyIAMRole.Arn
+    DependsOn: 
+      - MyIAMUser
+      - MyIAMAccessKey
+      - LambdaExecutionRole
+
+Outputs:
+  RedirectUrl:
+    Description: "Visit this URL after the stack creation"
+    Value: "https://cascade-console.hydrolix.io/"
+  AWSKey:
+    Description: "The Key for this service"
+    Value: !Ref MyIAMAccessKey
+  AWSSecret:
+    Description: "The Secret for this service"
+    Value: !GetAtt MyIAMAccessKey.SecretAccessKey
+
