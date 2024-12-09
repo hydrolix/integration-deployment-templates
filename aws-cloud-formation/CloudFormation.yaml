@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: CloudFormation Cascade Foundation Dec.4.2024.2
+Description: CloudFormation Cascade Foundation Dec.6.2024.3
 
 Resources:
   # Create a DynamoDB Table with On-Demand Capacity
@@ -141,7 +141,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: ecs-tasks.amazonaws.com
+              Service:
+                - ecs-tasks.amazonaws.com
+                - firehose.amazonaws.com 
             Action: sts:AssumeRole
       Policies:
         - PolicyName: CascadeAccessPolicy
@@ -157,6 +159,7 @@ Resources:
                   - wafv2:*                    # Full access to WAFv2 (WAF regional)
                   - firehose:*                 # Full access to Firehose
                   - dynamodb:*                 # Full access to DynamoDB
+                  - iam:PassRole
                 Resource: "*"                  # Apply to all resources
 
   # Custom resource to trigger the Lambda function
@@ -182,4 +185,3 @@ Outputs:
   AWSSecret:
     Description: "The Secret for this service"
     Value: !GetAtt MyIAMAccessKey.SecretAccessKey
-
