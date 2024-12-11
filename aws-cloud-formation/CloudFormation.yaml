@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: CloudFormation Cascade Foundation Dec.6.2024.3
+Description: CloudFormation Cascade Foundation Dec.11.2024
 
 Resources:
   # Create a DynamoDB Table with On-Demand Capacity
@@ -80,7 +80,6 @@ Resources:
           AWS_SECRET: !GetAtt MyIAMAccessKey.SecretAccessKey
           IAM_ROLE_ARN: !GetAtt MyIAMRole.Arn
           DYNAMO_TABLE_ARN: !GetAtt CascadeDynamoDBTable.Arn
-          #KINESIS_STREAM_ARN: !GetAtt MyKinesisStream.Arn
       Code:
         ZipFile: |
           import json
@@ -116,18 +115,34 @@ Resources:
                 'dynamo_table_arn': dynamo_table_arn,
                 'aws_region': aws_region
               }
-                     
-              try:
-                  url = 'https://rh33tegp9s.us-east-1.awsapprunner.com/lambda'
-                  request = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), method='POST')
-                  with urllib.request.urlopen(request) as response:
-                      response_data = response.read().decode('utf-8')
-                      logger.info(f"Data posted successfully: {response_data}")
-                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
-              except Exception as e:
-                  logger.error(f"Error posting data: {e}")
-                  cfnresponse.send(event, context, cfnresponse.FAILED, {'Error': str(e)})
-       
+
+              MAX_RETRIES = 5
+              try_count = 0
+              success = False
+              url = "https://rh33tegp9s.us-east-1.awsapprunner.com/lambda"
+
+              while try_count < MAX_RETRIES and not success:
+                  try:
+                      request = urllib.request.Request(
+                          url, data=json.dumps(data).encode("utf-8"), method="POST"
+                      )
+                      with urllib.request.urlopen(request) as response:
+                          response_data = response.read().decode("utf-8")
+                          logger.info(f"Data posted successfully: {response_data}")
+                          cfnresponse.send(
+                              event, context, cfnresponse.SUCCESS, {"Message": "Success"}
+                          )
+                          success = True
+                  except Exception as e:
+                      try_count += 1
+                      logger.error(f"Attempt {try_count} failed. Error: {e}")
+                      if try_count < MAX_RETRIES:
+                          logger.info(f"Retrying...")
+                      else:
+                          logger.error("All retries failed to post to middleware.")
+                          cfnresponse.send(
+                              event, context, cfnresponse.FAILED, {"Error": str(e)}
+                          )       
       Runtime: python3.9
       Timeout: 300
 
@@ -185,3 +200,4 @@ Outputs:
   AWSSecret:
     Description: "The Secret for this service"
     Value: !GetAtt MyIAMAccessKey.SecretAccessKey
+
