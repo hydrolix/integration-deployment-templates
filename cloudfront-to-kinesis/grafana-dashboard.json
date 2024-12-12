@@ -1,7 +1,4 @@
 {
-  "folderUid": "__FOLDER_UUID__",
-  "overwrite": false,
-  "dashboard": {
     "annotations": {
       "list": [
         {
@@ -484,7 +481,7 @@
           {
             "datasource": {
               "type": "grafana-clickhouse-datasource",
-              "uid": "cdwb8vc7ofs3kb"
+              "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
             "format": 0,
@@ -2585,4 +2582,4 @@
     "version": 63,
     "weekStart": ""
   }
-}
+  
