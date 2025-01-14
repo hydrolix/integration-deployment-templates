@@ -7,6 +7,153 @@
       "name": "Hydrolix",
       "projects": [
         {
+          "created": "2025-01-14T19:18:51.226008Z",
+          "description": "Cascade AWS Marketplace",
+          "functions": null,
+          "modified": "2025-01-14T19:18:51.226019Z",
+          "name": "cascade_273354644753_texas_785362",
+          "org": "8557af87-33cd-47e6-9d2a-e5113a849dd4",
+          "settings": {
+            "blob": {},
+            "default_query_options": {},
+            "rate_limit": null
+          },
+          "tables": [
+            {
+              "created": "2025-01-14T19:25:39.999210Z",
+              "description": null,
+              "modified": "2025-01-14T19:25:39.999224Z",
+              "name": "firehose",
+              "primary_key": "",
+              "project": "63e8e3c7-ba3c-4417-bf70-196494cb6f2c",
+              "settings": {
+                "age": {
+                  "max_age_days": 0
+                },
+                "autoingest": [
+                  {
+                    "bucket_credential_id": null,
+                    "dry_run": false,
+                    "enabled": false,
+                    "max_active_partitions": 50,
+                    "max_minutes_per_partition": 60,
+                    "max_rows_per_partition": 12288000,
+                    "pattern": "",
+                    "source": "",
+                    "source_credential_id": null,
+                    "source_region": ""
+                  }
+                ],
+                "default_query_options": {
+                  "hdx_query_max_execution_time": 120,
+                  "hdx_query_max_result_rows": 1000000,
+                  "hdx_query_max_timerange_sec": 129600,
+                  "hdx_query_timerange_required": true
+                },
+                "max_future_days": 0,
+                "max_request_bytes": 0,
+                "merge": {
+                  "enabled": true
+                },
+                "rate_limit": null,
+                "reaper": {
+                  "max_age_days": 1
+                },
+                "shard_key": null,
+                "sort_keys": [],
+                "stream": {
+                  "cold_data_max_active_partitions": 168,
+                  "cold_data_max_age_days": 3650,
+                  "cold_data_max_idle_seconds": 30,
+                  "cold_data_max_minutes_per_partition": 60,
+                  "cold_data_max_open_seconds": 120,
+                  "cold_data_max_rows_per_partition": 1048576,
+                  "hot_data_max_active_partitions": 12,
+                  "hot_data_max_age_minutes": 60,
+                  "hot_data_max_idle_seconds": 10,
+                  "hot_data_max_minutes_per_partition": 5,
+                  "hot_data_max_open_seconds": 20,
+                  "hot_data_max_rows_per_partition": 1048576,
+                  "message_queue_max_rows": 500,
+                  "token_list": []
+                }
+              },
+              "table_type": null,
+              "transforms": null,
+              "url": "https://us-west-2.hydrolix.live/config/v1/orgs/8557af87-33cd-47e6-9d2a-e5113a849dd4/projects/63e8e3c7-ba3c-4417-bf70-196494cb6f2c/tables/a4a48cc7-09c9-4922-a9e8-127204ec3aa6",
+              "uuid": "a4a48cc7-09c9-4922-a9e8-127204ec3aa6"
+            },
+            {
+              "created": "2025-01-14T19:23:47.603448Z",
+              "description": null,
+              "modified": "2025-01-14T19:23:47.603461Z",
+              "name": "kinesis",
+              "primary_key": "",
+              "project": "63e8e3c7-ba3c-4417-bf70-196494cb6f2c",
+              "settings": {
+                "age": {
+                  "max_age_days": 0
+                },
+                "autoingest": [
+                  {
+                    "bucket_credential_id": null,
+                    "dry_run": false,
+                    "enabled": false,
+                    "max_active_partitions": 50,
+                    "max_minutes_per_partition": 60,
+                    "max_rows_per_partition": 12288000,
+                    "pattern": "",
+                    "source": "",
+                    "source_credential_id": null,
+                    "source_region": ""
+                  }
+                ],
+                "default_query_options": {
+                  "hdx_query_max_execution_time": 120,
+                  "hdx_query_max_result_rows": 1000000,
+                  "hdx_query_max_timerange_sec": 129600,
+                  "hdx_query_timerange_required": true
+                },
+                "max_future_days": 0,
+                "max_request_bytes": 0,
+                "merge": {
+                  "enabled": true
+                },
+                "rate_limit": null,
+                "reaper": {
+                  "max_age_days": 1
+                },
+                "shard_key": null,
+                "sort_keys": [],
+                "stream": {
+                  "cold_data_max_active_partitions": 168,
+                  "cold_data_max_age_days": 3650,
+                  "cold_data_max_idle_seconds": 30,
+                  "cold_data_max_minutes_per_partition": 60,
+                  "cold_data_max_open_seconds": 120,
+                  "cold_data_max_rows_per_partition": 1048576,
+                  "hot_data_max_active_partitions": 12,
+                  "hot_data_max_age_minutes": 60,
+                  "hot_data_max_idle_seconds": 10,
+                  "hot_data_max_minutes_per_partition": 5,
+                  "hot_data_max_open_seconds": 20,
+                  "hot_data_max_rows_per_partition": 1048576,
+                  "message_queue_max_rows": 500,
+                  "token_list": [
+                    "2a4W3"
+                  ]
+                }
+              },
+              "table_type": null,
+              "transforms": null,
+              "url": "https://us-west-2.hydrolix.live/config/v1/orgs/8557af87-33cd-47e6-9d2a-e5113a849dd4/projects/63e8e3c7-ba3c-4417-bf70-196494cb6f2c/tables/7b1d9ea7-4f29-4ce4-9fe5-140f9fdb322b",
+              "uuid": "7b1d9ea7-4f29-4ce4-9fe5-140f9fdb322b"
+            }
+          ],
+          "url": "https://us-west-2.hydrolix.live/config/v1/orgs/8557af87-33cd-47e6-9d2a-e5113a849dd4/projects/63e8e3c7-ba3c-4417-bf70-196494cb6f2c",
+          "uuid": "63e8e3c7-ba3c-4417-bf70-196494cb6f2c"
+        },
+        {
           "created": "2024-12-18T18:37:38.449516Z",
           "description": "Cascade AWS Marketplace",
           "functions": null,
@@ -76756,6 +76903,26 @@
         }
       ],
       "storages": [
+        {
+          "created": "2025-01-14T19:19:56.737262Z",
+          "description": "Cascade storage for cascade-273354644753-texas-785362",
+          "modified": "2025-01-14T19:19:56.737275Z",
+          "name": "s3_cascade_273354644753_texas_785362",
+          "org": "8557af87-33cd-47e6-9d2a-e5113a849dd4",
+          "publish_task_id": null,
+          "settings": {
+            "account_name": null,
+            "bucket_name": "cascade-273354644753-texas-785362",
+            "bucket_path": "/",
+            "cloud": "aws",
+            "credential_id": "2b5b87cb-5387-44c2-a06c-f78651ba75da",
+            "endpoint": null,
+            "is_default": false,
+            "region": "us-west-2"
+          },
+          "url": "https://us-west-2.hydrolix.live/config/v1/orgs/8557af87-33cd-47e6-9d2a-e5113a849dd4/storages/aee7641c-39c2-4772-aba6-2dee735d0d2f",
+          "uuid": "aee7641c-39c2-4772-aba6-2dee735d0d2f"
+        },
         {
           "created": "2024-12-18T18:38:42.996005Z",
           "description": "Cascade storage for cascade-273354644753-colorado-912842",
