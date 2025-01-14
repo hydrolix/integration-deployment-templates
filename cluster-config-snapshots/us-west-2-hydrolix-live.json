@@ -20,6 +20,70 @@
           },
           "tables": [
             {
+              "created": "2025-01-14T14:51:37.119280Z",
+              "description": null,
+              "modified": "2025-01-14T14:51:37.119293Z",
+              "name": "firehose",
+              "primary_key": "",
+              "project": "a3191df1-d4f3-468f-b1b5-ad6f212be1b3",
+              "settings": {
+                "age": {
+                  "max_age_days": 0
+                },
+                "autoingest": [
+                  {
+                    "bucket_credential_id": null,
+                    "dry_run": false,
+                    "enabled": false,
+                    "max_active_partitions": 50,
+                    "max_minutes_per_partition": 60,
+                    "max_rows_per_partition": 12288000,
+                    "pattern": "",
+                    "source": "",
+                    "source_credential_id": null,
+                    "source_region": ""
+                  }
+                ],
+                "default_query_options": {
+                  "hdx_query_max_execution_time": 120,
+                  "hdx_query_max_result_rows": 1000000,
+                  "hdx_query_max_timerange_sec": 129600,
+                  "hdx_query_timerange_required": true
+                },
+                "max_future_days": 0,
+                "max_request_bytes": 0,
+                "merge": {
+                  "enabled": true
+                },
+                "rate_limit": null,
+                "reaper": {
+                  "max_age_days": 1
+                },
+                "shard_key": null,
+                "sort_keys": [],
+                "stream": {
+                  "cold_data_max_active_partitions": 168,
+                  "cold_data_max_age_days": 3650,
+                  "cold_data_max_idle_seconds": 30,
+                  "cold_data_max_minutes_per_partition": 60,
+                  "cold_data_max_open_seconds": 120,
+                  "cold_data_max_rows_per_partition": 1048576,
+                  "hot_data_max_active_partitions": 12,
+                  "hot_data_max_age_minutes": 60,
+                  "hot_data_max_idle_seconds": 10,
+                  "hot_data_max_minutes_per_partition": 5,
+                  "hot_data_max_open_seconds": 20,
+                  "hot_data_max_rows_per_partition": 1048576,
+                  "message_queue_max_rows": 500,
+                  "token_list": []
+                }
+              },
+              "table_type": null,
+              "transforms": null,
+              "url": "https://us-west-2.hydrolix.live/config/v1/orgs/8557af87-33cd-47e6-9d2a-e5113a849dd4/projects/a3191df1-d4f3-468f-b1b5-ad6f212be1b3/tables/fbfa09a9-a1b2-4599-bb51-08a2fbebfc7a",
+              "uuid": "fbfa09a9-a1b2-4599-bb51-08a2fbebfc7a"
+            },
+            {
               "created": "2025-01-14T14:29:27.170701Z",
               "description": null,
               "modified": "2025-01-14T14:29:27.170714Z",
