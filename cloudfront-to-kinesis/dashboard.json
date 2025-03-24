@@ -40,7 +40,7 @@
             "showLineNumbers": false,
             "showMiniMap": false
           },
-          "content": "<img src=\"https://hydrolix-public.s3.us-east-2.amazonaws.com/Cascade-Logo.png\" align=\"left\" />\n<a href=\"/d/${__dashboard.uid}/${__dashboard}?${filters:queryparam} AND ${query:raw}\">Click here to add filter:</a>\n <code>${query:raw}</code>\nCurrent Filters:\n <code>${filters:raw}</code>",
+          "content": "<img src=\"https://hydrolix-public.s3.us-east-2.amazonaws.com/605146-hydrolix-icon-logotype-rgb-320x132.png\" align=\"left\" />\n<a href=\"/d/${__dashboard.uid}/${__dashboard}?${filters:queryparam} AND ${query:raw}\">Click here to add filter:</a>\n <code>${query:raw}</code>\nCurrent Filters:\n <code>${filters:raw}</code>",
           "mode": "html"
         },
         "pluginVersion": "10.4.1",
@@ -2578,7 +2578,7 @@
       ]
     },
     "timezone": "utc",
-    "title": "Cascade - Cloudfront",
+    "title": "Hydrolix - Cloudfront",
     "uid": "__DASHBOARD_UUID__",
     "version": 63,
     "weekStart": ""
