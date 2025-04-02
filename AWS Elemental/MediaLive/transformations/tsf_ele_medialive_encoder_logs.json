@@ -1,0 +1,237 @@
+{
+  "name": "tsf_ele_medialive_encoder_logs",
+  "description": "",
+  "uuid": "ba202735-09f1-4ef0-89e0-0a42bf12c120",
+  "created": "2025-03-23T04:39:01.625018Z",
+  "modified": "2025-03-23T04:39:01.625029Z",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT \n    splitByChar(':', assumeNotNull(channel_arn))[4] as region,\n    splitByChar(':', assumeNotNull(channel_arn))[5] as account_id,\n    splitByChar(':', assumeNotNull(channel_arn))[7] as channel_id,\n    multiIf(\n        severity='D' , 'debug',\n        severity='I' , 'info',\n        severity='W' , 'warning',\n        severity='E' , 'error',\n        'unknown') AS level,\n    *\nFROM { STREAM }",
+    "null_values": [],
+    "sample_data": {
+      "records": [
+        {
+          "data": "eyJjaGFubmVsX2FybiI6ICJhcm46YXdzOm1lZGlhbGl2ZTp1cy1lYXN0LTE6NDcxMTEyNzAwOTI2OmNoYW5uZWw6NDE2MTM5NSIsICJlbmNvZGVyX3BpcGVsaW5lIjogMCwgImxvZ2dlcl9uYW1lIjogIiIsICJtZXNzYWdlIjogImNtYWZfaW5nZXN0X291dHB1dC5lbmFibGVfZWJ1dHRkIHNldHRpbmcgaWdub3JlZDogaW5zdGFuY2UuY21hZl9pbmdlc3Rfb3V0cHV0IGFkZGl0aW9uYWxQcm9wZXJ0eSBcImVuYWJsZV9lYnV0dGRcIiBleGlzdHMgaW4gaW5zdGFuY2Ugd2hlbiBub3QgYWxsb3dlZCIsICJzZXZlcml0eSI6ICJXIiwgInRpbWVzdGFtcCI6ICIyMDI1LTAyLTEwVDAxOjA0OjAyLjY3MTg4MiJ9CnsiY2hhbm5lbF9hcm4iOiAiYXJuOmF3czptZWRpYWxpdmU6dXMtZWFzdC0xOjQ3MTExMjcwMDkyNjpjaGFubmVsOjQxNjEzOTUiLCAiZW5jb2Rlcl9waXBlbGluZSI6IDAsICJsb2dnZXJfbmFtZSI6ICIiLCAibWVzc2FnZSI6ICJjbWFmX2luZ2VzdF9vdXRwdXQuZW5hYmxlX3dlYnZ0dF9vdXRwdXQgc2V0dGluZyBpZ25vcmVkOiBpbnN0YW5jZS5jbWFmX2luZ2VzdF9vdXRwdXQgYWRkaXRpb25hbFByb3BlcnR5IFwiZW5hYmxlX3dlYnZ0dF9vdXRwdXRcIiBleGlzdHMgaW4gaW5zdGFuY2Ugd2hlbiBub3QgYWxsb3dlZCIsICJzZXZlcml0eSI6ICJXIiwgInRpbWVzdGFtcCI6ICIyMDI1LTAyLTEwVDAxOjA0OjAyLjY3MTkzMiJ9CnsiY2hhbm5lbF9hcm4iOiAiYXJuOmF3czptZWRpYWxpdmU6dXMtZWFzdC0xOjQ3MTExMjcwMDkyNjpjaGFubmVsOjQxNjEzOTUiLCAiZW5jb2Rlcl9waXBlbGluZSI6IDAsICJsb2dnZXJfbmFtZSI6ICIiLCAibWVzc2FnZSI6ICJzY3RlMzUuaW5pdGlhbGl6ZV9wbXRfZGVzY3JpcHRvcnNfZnJvbV9zb3VyY2Ugc2V0dGluZyBpZ25vcmVkOiBpbnN0YW5jZS5zY3RlMzUgYWRkaXRpb25hbFByb3BlcnR5IFwiaW5pdGlhbGl6ZV9wbXRfZGVzY3JpcHRvcnNfZnJvbV9zb3VyY2VcIiBleGlzdHMgaW4gaW5zdGFuY2Ugd2hlbiBub3QgYWxsb3dlZCIsICJzZXZlcml0eSI6ICJXIiwgInRpbWVzdGFtcCI6ICIyMDI1LTAyLTEwVDAxOjA0OjAyLjY3MTk2MSJ9Cg=="
+        }
+      ],
+      "requestId": "608d6059-83fd-45b7-85fc-15ad612f1ed3",
+      "timestamp": 1739149516062
+    },
+    "data_mirroring_target": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05.999999",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "encoder_pipeline",
+        "datatype": {
+          "type": "int8",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "logger_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "message",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "level",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "channel_arn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "region",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "account_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "channel_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "severity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": true
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "subtype": "firehose",
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/7c532fe5-b4ff-4417-81ab-a0de34be0619/tables/028e66c4-d5e6-468c-a26e-12f58e6d920e/transforms/ba202735-09f1-4ef0-89e0-0a42bf12c120",
+  "type": "json",
+  "table": "028e66c4-d5e6-468c-a26e-12f58e6d920e"
+}
