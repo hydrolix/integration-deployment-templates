@@ -2,12 +2,13 @@
   "dashboard": {
     "__inputs": [
       {
-        "name": "__DATASOURCE__",
+        "name": "DS_DEMO.AWS.HYDROLIX.LIVE",
         "label": "demo.aws.hydrolix.live",
         "description": "",
         "type": "datasource",
         "pluginId": "grafana-clickhouse-datasource",
-        "pluginName": "ClickHouse"
+        "pluginName": "ClickHouse",
+        "uid": "__DATASOURCE__"
       },
       {
         "name": "VAR_V_HDXPROJECT",
