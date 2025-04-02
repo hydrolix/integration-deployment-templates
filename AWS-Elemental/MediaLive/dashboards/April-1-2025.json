@@ -1791,7 +1791,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "AWS Elemental MediaLive",
-  "uid": "dedshrf7xl69sb",
+  "uid": "__DASHBOARD_UUID__",
   "version": 14,
   "weekStart": ""
 }
