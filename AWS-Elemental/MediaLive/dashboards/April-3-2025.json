@@ -188,7 +188,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Active Alerts Count\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'ActiveAlerts'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT max(timestamp)\n      FROM ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\n      WHERE metric_name = 'ActiveAlerts'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER by \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Active Alerts Count\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveAlerts'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT max(timestamp)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveAlerts'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER by \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -341,7 +341,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  labels['OutputGroupName'] AS \"Group Name\", labels['Pipeline'] AS \"Pipeline\", value['min'] AS \"Active\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'ActiveOutputs'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT addMinutes(max(timestamp), -1)\n      FROM ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\n      WHERE metric_name = 'ActiveOutputs'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER BY \"Group Name\" ASC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  labels['OutputGroupName'] AS \"Group Name\", labels['Pipeline'] AS \"Pipeline\", value['min'] AS \"Active\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveOutputs'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT addMinutes(max(timestamp), -1)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveOutputs'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER BY \"Group Name\" ASC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -421,7 +421,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, value['sum'] AS \"Output 5xx Errors\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'Output5xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
+                        "rawSql": "SELECT\n  timestamp, value['sum'] AS \"Output 5xx Errors\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'Output5xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
                         "refId": "A"
                     }
                 ],
@@ -501,7 +501,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, value['sum'] AS \"Output 4xx Errors\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'Output4xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
+                        "rawSql": "SELECT\n  timestamp, value['sum'] AS \"Output 4xx Errors\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'Output4xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
                         "refId": "A"
                     }
                 ],
@@ -632,7 +632,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Max Input Video Frame Rate\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'InputVideoFrameRate'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Max Input Video Frame Rate\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'InputVideoFrameRate'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -762,7 +762,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"Sum Dropped Frames\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'DroppedFrames'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"Sum Dropped Frames\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'DroppedFrames'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -892,7 +892,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \" \"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'SvqTime'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \" \"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'SvqTime'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1016,7 +1016,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \" \"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'FillMsec'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \" \"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'FillMsec'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1144,7 +1144,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum']/value['count'] AS \"Rate Network In\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'NetworkIn'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum']/value['count'] AS \"Rate Network In\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'NetworkIn'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1278,7 +1278,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum']/value['count'] AS \" \"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'NetworkOut'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum']/value['count'] AS \" \"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'NetworkOut'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1414,7 +1414,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"5xx Errors\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'Output5xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"5xx Errors\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'Output5xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1537,7 +1537,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"4xx Errors\"\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE metric_name = 'Output4xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  timestamp, concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['sum'] AS \"4xx Errors\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'Output4xxErrors'\nAND account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\nAND $__timeFilter(timestamp)\nORDER BY timestamp DESC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -1616,7 +1616,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "logs",
-                        "rawSql": "SELECT timestamp, concat(channel_id, ' - ', toString(encoder_pipeline), ' - ', message) AS \"log_message\", level, channel_id, encoder_pipeline, message\nFROM ${v_HdxProject}.${v_HdxMediaLiveEncoderLogsTbl}\nWHERE \n  account_id = '${v_AWS_AccountId}'\n  AND channel_id = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(encoder_pipeline IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
+                        "rawSql": "SELECT timestamp, concat(channel_id, ' - ', toString(encoder_pipeline), ' - ', message) AS \"log_message\", level, channel_id, encoder_pipeline, message\nFROM __PROJECT_NAME__.__ENCODING_TABLE__\nWHERE \n  account_id = '${v_AWS_AccountId}'\n  AND channel_id = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(encoder_pipeline IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\nORDER BY timestamp DESC",
                         "refId": "A"
                     }
                 ],
@@ -1676,18 +1676,18 @@
                     "hide": 2,
                     "label": "MediaLive Metrics Table Name",
                     "name": "v_HdxMediaLiveMetricsTbl",
-                    "query": "__MEDIA_TABLE__",
+                    "query": "__METRICS_TABLE__",
                     "skipUrlSync": true,
                     "type": "constant",
                     "current": {
-                        "value": "__MEDIA_TABLE__",
-                        "text": "__MEDIA_TABLE__",
+                        "value": "__METRICS_TABLE__",
+                        "text": "__METRICS_TABLE__",
                         "selected": true
                     },
                     "options": [
                         {
-                            "value": "__MEDIA_TABLE__",
-                            "text": "__MEDIA_TABLE__",
+                            "value": "__METRICS_TABLE__",
+                            "text": "__METRICS_TABLE__",
                             "selected": true
                         }
                     ]
@@ -1719,12 +1719,12 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT\n  DISTINCT(account_id)\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE\n $__timeFilter(timestamp)",
+                    "definition": "SELECT\n  DISTINCT(account_id)\nFROM\n __PROJECT_NAME__.__METRICS_TABLE__\nWHERE\n $__timeFilter(timestamp)",
                     "includeAll": false,
                     "label": "AWS Account ID",
                     "name": "v_AWS_AccountId",
                     "options": [],
-                    "query": "SELECT\n  DISTINCT(account_id)\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE\n $__timeFilter(timestamp)",
+                    "query": "SELECT\n  DISTINCT(account_id)\nFROM\n __PROJECT_NAME__.__METRICS_TABLE__\nWHERE\n $__timeFilter(timestamp)",
                     "refresh": 2,
                     "regex": "",
                     "type": "query"
@@ -1735,12 +1735,12 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT\n DISTINCT(labels['ChannelId'])\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND $__timeFilter(timestamp)",
+                    "definition": "SELECT\n DISTINCT(labels['ChannelId'])\nFROM\n __PROJECT_NAME__.__METRICS_TABLE__\nWHERE account_id = '${v_AWS_AccountId}'\nAND $__timeFilter(timestamp)",
                     "includeAll": false,
                     "label": "Channel ID",
                     "name": "v_MediaLive_ChannelId",
                     "options": [],
-                    "query": "SELECT\n DISTINCT(labels['ChannelId'])\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND $__timeFilter(timestamp)",
+                    "query": "SELECT\n DISTINCT(labels['ChannelId'])\nFROM\n __PROJECT_NAME__.__METRICS_TABLE__\nWHERE account_id = '${v_AWS_AccountId}'\nAND $__timeFilter(timestamp)",
                     "refresh": 2,
                     "regex": "",
                     "type": "query"
@@ -1751,13 +1751,13 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT\n  DISTINCT(labels['Pipeline'])\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__timeFilter(timestamp)",
+                    "definition": "SELECT\n  DISTINCT(labels['Pipeline'])\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__timeFilter(timestamp)",
                     "includeAll": false,
                     "label": "Pipeline",
                     "multi": true,
                     "name": "v_MediaLive_Pipeline",
                     "options": [],
-                    "query": "SELECT\n  DISTINCT(labels['Pipeline'])\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__timeFilter(timestamp)",
+                    "query": "SELECT\n  DISTINCT(labels['Pipeline'])\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__timeFilter(timestamp)",
                     "refresh": 1,
                     "regex": "",
                     "type": "query"
