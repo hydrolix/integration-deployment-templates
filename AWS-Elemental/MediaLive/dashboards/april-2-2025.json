@@ -2,15 +2,6 @@
 "dashboard": {
   "__inputs": [
     {
-      "name": "DS_DEMO.AWS.HYDROLIX.LIVE",
-      "label": "hydrolix-datasource",
-      "description": "",
-      "value": "__DATASOURCE__",
-      "type": "datasource",
-      "pluginId": "grafana-clickhouse-datasource",
-      "pluginName": "ClickHouse"
-    },
-    {
       "name": "VAR_V_HDXPROJECT",
       "type": "constant",
       "label": "Hydrolix Project Name",
@@ -144,7 +135,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The total number of alerts that are active.",
       "fieldConfig": {
@@ -204,7 +195,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -238,7 +229,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of outputs that are being produced and successfully written to the destination.",
       "fieldConfig": {
@@ -357,7 +348,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -383,7 +374,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of 5xx HTTP errors that have been received from the destination while delivering output.",
       "fieldConfig": {
@@ -437,7 +428,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -463,7 +454,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of 4xx HTTP errors that have been received from the destination while delivering output.",
       "fieldConfig": {
@@ -517,7 +508,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -556,7 +547,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "This metric is an indicator of the health of the input. If the value isn't stable, investigate determine if there are problems with your source, and/or problems in the network between MediaLive and the upstream system.",
       "fieldConfig": {
@@ -648,7 +639,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -688,7 +679,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of input frames that MediaLive has dropped in the period. A value of 0 is expected and indicates that MediaLive is processing incoming frames in real time. A value other than 0 indicates that the encoder can't process the incoming video fast enough to keep up with real time.",
       "fieldConfig": {
@@ -778,7 +769,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -818,7 +809,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The percentage of time that MediaLive has had to reduce quality optimizations in order to emit output in real time. SVQ stands for speed versus quality. Any encoding task must balance emitting output in real time against a desire to produce the best quality possible. But sometimes MediaLive must reduce quality in order to encode fast enough to keep up with real time.",
       "fieldConfig": {
@@ -908,7 +899,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -942,7 +933,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The current length of time (the fill period) during which MediaLive has filled the video output with fill frames. The fill period starts when the pipeline does not receive content from the input within the expected time. The expected time is based on the input frame rate. The fine points of the fill frame behavior are controlled by the input loss behavior fields in the channel configuration.",
       "fieldConfig": {
@@ -1032,7 +1023,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1066,7 +1057,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The rate of traffic coming into MediaLive. This number includes all traffic received into MediaLive—push inputs, pull inputs, responses from the upstream system of a pull input, responses from the downstream system for any output, and instance traffic such as DNS resolution and NTP. Even when a channel is not ingesting, there will be some traffic.",
       "fieldConfig": {
@@ -1160,7 +1151,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1200,7 +1191,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The rate of traffic out of MediaLive. This number includes all traffic sent from MediaLive — the media output, HTTP GET requests for pull inputs, NTP traffic, and DNS traffic. Even when a channel is not delivering output, there will be some traffic.",
       "fieldConfig": {
@@ -1294,7 +1285,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1341,7 +1332,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of 5xx HTTP errors that have been received from the destination while delivering output.",
       "fieldConfig": {
@@ -1430,7 +1421,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1464,7 +1455,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of 4xx HTTP errors that have been received from the destination while delivering output.",
       "fieldConfig": {
@@ -1553,7 +1544,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1600,7 +1591,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "",
       "gridPos": {
@@ -1632,7 +1623,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 2,
@@ -1739,7 +1730,7 @@
         "current": {},
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT\n  DISTINCT(account_id)\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE\n $__timeFilter(timestamp)",
         "includeAll": false,
@@ -1755,7 +1746,7 @@
         "current": {},
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT\n DISTINCT(labels['ChannelId'])\nFROM\n ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND $__timeFilter(timestamp)",
         "includeAll": false,
@@ -1771,7 +1762,7 @@
         "current": {},
         "datasource": {
           "type": "grafana-clickhouse-datasource",
-          "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+          "uid": "__DATASOURCE__"
         },
         "definition": "SELECT\n  DISTINCT(labels['Pipeline'])\nFROM\n  ${v_HdxProject}.${v_HdxMediaLiveMetricsTbl}\nWHERE account_id = '${v_AWS_AccountId}'\nAND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\nAND $__timeFilter(timestamp)",
         "includeAll": false,
