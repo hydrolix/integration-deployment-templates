@@ -1666,18 +1666,18 @@
                     "hide": 2,
                     "label": "MediaLive Metrics Table Name",
                     "name": "v_HdxMediaLiveMetricsTbl",
-                    "query": "ele_medialive_metrics",
+                    "query": ${v_HdxMediaLiveMetricsTbl},
                     "skipUrlSync": true,
                     "type": "constant",
                     "current": {
-                        "value": "ele_medialive_metrics",
-                        "text": "ele_medialive_metrics",
+                        "value": ${v_HdxMediaLiveMetricsTbl},
+                        "text": ${v_HdxMediaLiveMetricsTbl},
                         "selected": false
                     },
                     "options": [
                         {
-                            "value": "ele_medialive_metrics",
-                            "text": "ele_medialive_metrics",
+                            "value": ${v_HdxMediaLiveMetricsTbl},
+                            "text": ${v_HdxMediaLiveMetricsTbl},
                             "selected": false
                         }
                     ]
@@ -1687,18 +1687,18 @@
                     "hide": 2,
                     "label": "MediaLive Encoder Logs Table Name",
                     "name": "v_HdxMediaLiveEncoderLogsTbl",
-                    "query": "ele_medialive_encoder_logs",
+                    "query": "${v_HdxMediaLiveEncoderLogsTbl}",
                     "skipUrlSync": true,
                     "type": "constant",
                     "current": {
-                        "value": "ele_medialive_encoder_logs",
-                        "text": "ele_medialive_encoder_logs",
+                        "value": "${v_HdxMediaLiveEncoderLogsTbl}",
+                        "text": "${v_HdxMediaLiveEncoderLogsTbl}",
                         "selected": false
                     },
                     "options": [
                         {
-                            "value": "ele_medialive_encoder_logs",
-                            "text": "ele_medialive_encoder_logs",
+                            "value": "${v_HdxMediaLiveEncoderLogsTbl}",
+                            "text": "${v_HdxMediaLiveEncoderLogsTbl}",
                             "selected": false
                         }
                     ]
