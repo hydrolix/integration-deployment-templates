@@ -119,7 +119,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "timeseries",
-                        "rawSql": "SELECT count(), $__timeInterval(${timefilter}) as time\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY time\nORDER BY time",
+                        "rawSql": "SELECT count(), $__timeInterval(${timefilter}) as time\nFROM __PROJECT_NAME.__TABLE_NAME__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY time\nORDER BY time",
                         "refId": "A"
                     }
                 ],
@@ -224,7 +224,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "timeseries",
-                        "rawSql": "SELECT count(), waf_action, $__timeInterval(${timefilter}) as time\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action, time\nORDER BY time",
+                        "rawSql": "SELECT count(), waf_action, $__timeInterval(${timefilter}) as time\nFROM __PROJECT_NAME.__TABLE_NAME__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action, time\nORDER BY time",
                         "refId": "A"
                     }
                 ],
@@ -302,7 +302,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT count(), client_country_iso_code\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY client_country_iso_code",
+                        "rawSql": "SELECT count(), client_country_iso_code\nFROM __PROJECT_NAME.__TABLE_NAME__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY client_country_iso_code",
                         "refId": "A"
                     }
                 ],
@@ -380,7 +380,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT count(), waf_action\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action",
+                        "rawSql": "SELECT count(), waf_action\nFROM __PROJECT_NAME.__TABLE_NAME__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nGROUP BY waf_action",
                         "refId": "A"
                     }
                 ],
@@ -429,7 +429,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "logs",
-                        "rawSql": "SELECT *\nFROM ${table}\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nORDER BY ${timefilter} DESC\nLIMIT 100",
+                        "rawSql": "SELECT *\nFROM __PROJECT_NAME.__TABLE_NAME__\nWHERE $__timeFilter(${timefilter})\nAND $__conditionalAll(http_headers['host'] IN (${host:sqlstring}),$host)\nAND $__conditionalAll(request_method IN (${request_method:sqlstring}),$request_method)\nAND $__conditionalAll(waf_action IN (${waf_action:sqlstring}),$waf_action)\nAND $__conditionalAll(request_path IN (${request_path:sqlstring}),$request_path)\nAND $__conditionalAll(client_country_iso_code IN (${client_country_iso_code:sqlstring}),$client_country_iso_code)\nAND $__conditionalAll(client_ip IN (${client_ip:sqlstring}),$client_ip)\nAND $__conditionalAll(waf_requestId IN (${waf_requestId:sqlstring}),$waf_requestId)\nAND $__conditionalAll(http_headers['x-amz-cf-id'] IN (${x_amz_cf_id:sqlstring}),$x_amz_cf_id)\nAND $__conditionalAll(http_headers['user-agent'] IN (${user_agent:sqlstring}),$user_agent)\nORDER BY ${timefilter} DESC\nLIMIT 100",
                         "refId": "A"
                     }
                 ],
@@ -537,14 +537,14 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT http_headers['host'] as host FROM ${table} WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
+                    "definition": "SELECT http_headers['host'] as host FROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
                     "hide": 0,
                     "includeAll": true,
                     "label": "Host",
                     "multi": true,
                     "name": "host",
                     "options": [],
-                    "query": "SELECT http_headers['host'] as host FROM ${table} WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
+                    "query": "SELECT http_headers['host'] as host FROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})\nGROUP BY host\nLIMIT 100",
                     "refresh": 1,
                     "regex": "",
                     "skipUrlSync": false,
@@ -561,13 +561,13 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
+                    "definition": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '__PROJECT_NAME.__TABLE_NAME__')[1]\nAND table = splitByChar('.', '__PROJECT_NAME.__TABLE_NAME__')[2]",
                     "hide": 2,
                     "includeAll": false,
                     "multi": false,
                     "name": "timefilter",
                     "options": [],
-                    "query": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '${table}')[1]\nAND table = splitByChar('.', '${table}')[2]",
+                    "query": " SELECT primary_key FROM system.tables WHERE database = splitByChar('.', '__PROJECT_NAME.__TABLE_NAME__')[1]\nAND table = splitByChar('.', '__PROJECT_NAME.__TABLE_NAME__')[2]",
                     "refresh": 1,
                     "regex": "",
                     "skipUrlSync": false,
@@ -588,14 +588,14 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT arrayJoin(topK(10)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "definition": "SELECT arrayJoin(topK(10)(request_method))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "hide": 0,
                     "includeAll": true,
                     "label": "Request Method",
                     "multi": true,
                     "name": "request_method",
                     "options": [],
-                    "query": "SELECT arrayJoin(topK(10)(request_method))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "query": "SELECT arrayJoin(topK(10)(request_method))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "refresh": 1,
                     "regex": "",
                     "skipUrlSync": false,
@@ -616,14 +616,14 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT arrayJoin(topK(10)(waf_action))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "definition": "SELECT arrayJoin(topK(10)(waf_action))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "hide": 0,
                     "includeAll": true,
                     "label": "Waf Action",
                     "multi": true,
                     "name": "waf_action",
                     "options": [],
-                    "query": "SELECT arrayJoin(topK(10)(waf_action))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "query": "SELECT arrayJoin(topK(10)(waf_action))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "refresh": 1,
                     "regex": "",
                     "skipUrlSync": false,
@@ -644,14 +644,14 @@
                         "type": "grafana-clickhouse-datasource",
                         "uid": "__DATASOURCE__"
                     },
-                    "definition": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "definition": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "hide": 0,
                     "includeAll": true,
                     "label": "Country",
                     "multi": true,
                     "name": "client_country_iso_code",
                     "options": [],
-                    "query": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM ${table} WHERE $__timeFilter(${timefilter})",
+                    "query": "SELECT arrayJoin(topK(10)(client_country_iso_code))\nFROM __PROJECT_NAME.__TABLE_NAME__ WHERE $__timeFilter(${timefilter})",
                     "refresh": 1,
                     "regex": "",
                     "skipUrlSync": false,
