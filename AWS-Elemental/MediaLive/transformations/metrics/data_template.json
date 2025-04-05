@@ -9,7 +9,7 @@
             "ChannelId": "6955047",
             "Pipeline": "0"
         },
-        "timestamp": __DYNAMIC_TIMESTAMP__,
+        "timestamp": __DYNAMIC_UNIX_EPOCH__,
         "value": {
             "max": __FLOAT_1_to_100,
             "min": __FLOAT_1_to_100,
