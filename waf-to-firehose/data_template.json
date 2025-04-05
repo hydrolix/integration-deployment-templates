@@ -1,0 +1,40 @@
+{
+  "formatVersion": "1.0",
+  "timestamp": __DYNAMIC_TIMESTAMP__,
+  "httpRequest": {
+    "clientIp": "203.0.113.42",
+    "country": "US",
+    "uri": "/example/path",
+    "args": "param1=value1&param2=value2",
+    "httpMethod": "GET",
+    "httpVersion": "HTTP/1.1",
+    "requestId": "abcd1234efgh5678",
+    "headers": [
+      { "host": "example.com" },
+      { "user-agent": "curl/7.68.0" },
+      { "accept": "*/*" }
+    ]
+  },
+  "action": "ALLOW",
+  "httpSourceId": "example-source-id",
+  "responseCodeSent": "200",
+  "ja3Fingerprint": "abc123ja3fingerprint",
+  "nonTerminatingMatchingRules": ["rule1", "rule2"],
+  "rateBasedRuleList": ["rateRule1"],
+  "ruleGroupList": ["group1"],
+  "requestId": "abcd1234efgh5678",
+  "terminatingRuleId": "rule-terminate-123",
+  "terminatingRuleMatchDetails": ["detail1", "detail2"],
+  "excludedRules": ["excludedRule1"],
+  "requestHeadersInserted": ["header1: value1"],
+  "terminatingRuleType": "REGULAR",
+  "webaclId": "webacl-example-id",
+  "captchaResponse": {
+    "responseCode": "captcha-code",
+    "status": "PASSED"
+  },
+  "challengeResponse": {
+    "responseCode": "challenge-code",
+    "status": "PASSED"
+  }
+}
