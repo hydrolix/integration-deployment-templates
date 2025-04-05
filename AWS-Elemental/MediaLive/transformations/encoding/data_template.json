@@ -1,7 +1,7 @@
 {
     "encoder_pipeline": 0,
     "severity": "I",
-    "timestamp": "__DYNAMIC_TIMESTAMP__",
+    "timestamp": "__DYNAMIC_TIMESTAMP_ISO8601__",
     "channel_arn": "arn:aws:medialive:us-west-2:111122223333:channel:5106412",
     "logger_name": "Fake logger",
     "message": "Probing input media..."
