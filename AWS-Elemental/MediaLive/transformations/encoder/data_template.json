@@ -1,20 +1,8 @@
 {
-    "version": "1.0",
-    "account_id": "123456789012",
-    "region": "us-east-1",
-    "namespace": "AWS/MediaLive",
-    "metric_stream_name": "MediaLive-Firehose-Stream",
-    "metric_name": "DroppedFrames",
-    "dimensions": {
-        "ChannelId": "6955047",
-        "Pipeline": "0"
-    },
+    "encoder_pipeline": 0,
+    "severity": "I",
     "timestamp": "__DYNAMIC_TIMESTAMP__",
-    "value": {
-        "max": "__FLOAT_1_to_100__",
-        "min": "__FLOAT_1_to_100__",
-        "sum": "__FLOAT_1_to_100__",
-        "count": "__FLOAT_1_to_100__"
-    },
-    "unit": "Count"
-}
+    "channel_arn": "arn:aws:medialive:us-west-2:111122223333:channel:5106412",
+    "logger_name": "Fake logger",
+    "message": "Probing input media..."
+  }  
