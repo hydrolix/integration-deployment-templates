@@ -1,5 +1,5 @@
 {
-  "timestamp": "__DYNAMIC_UNIX_EPOCH_SECONDS__",
+  "timestamp": __DYNAMIC_UNIX_EPOCH_SECONDS__,
   "client_ip": "66.58.176.77",
   "cf_response_time_to_first_byte": 0.013,
   "response_status_code": 200,
