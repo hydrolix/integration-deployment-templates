@@ -188,7 +188,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Active Alerts Count\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveAlerts'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT max(timestamp)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveAlerts'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER by \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  concat('Pipeline #', labels['Pipeline']) AS \"Pipeline\", value['max'] AS \"Active Alerts Count\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveAlerts'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT max(timestamp)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveAlerts'\n  AND $__timeFilter(timestamp)  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER by \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
@@ -341,7 +341,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  labels['OutputGroupName'] AS \"Group Name\", labels['Pipeline'] AS \"Pipeline\", value['min'] AS \"Active\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveOutputs'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT addMinutes(max(timestamp), -1)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveOutputs'\n      AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER BY \"Group Name\" ASC, \"Pipeline\" ASC",
+                        "rawSql": "SELECT\n  labels['OutputGroupName'] AS \"Group Name\", labels['Pipeline'] AS \"Pipeline\", value['min'] AS \"Active\"\nFROM\n  __PROJECT_NAME__.__METRICS_TABLE__\nWHERE metric_name = 'ActiveOutputs'\n  AND account_id = '${v_AWS_AccountId}'\n  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  AND $__conditionalAll(labels['Pipeline'] IN (${v_MediaLive_Pipeline}), ${v_MediaLive_Pipeline})\n  AND $__timeFilter(timestamp)\n  AND timestamp = (\n      SELECT max(timestamp)\n      FROM __PROJECT_NAME__.__METRICS_TABLE__\n      WHERE metric_name = 'ActiveOutputs'\n  AND $__timeFilter(timestamp)  AND labels['ChannelId'] = '${v_MediaLive_ChannelId}'\n  )\nORDER BY \"Group Name\" ASC, \"Pipeline\" ASC",
                         "refId": "A"
                     }
                 ],
