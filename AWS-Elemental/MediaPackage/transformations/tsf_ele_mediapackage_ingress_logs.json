@@ -1,0 +1,341 @@
+{
+  "name": "tsf_aws_mediapackage_ingress_logs",
+  "description": "",
+  "uuid": "609af3dc-a8e8-4c4e-a6e1-39142dea8ed7",
+  "created": "2025-02-20T04:58:40.055488Z",
+  "modified": "2025-02-20T04:58:40.075783Z",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": null,
+    "null_values": [],
+    "sample_data": {
+      "records": [
+        {
+          "data": "ewogICAgImRhdGEudGltZXN0YW1wIjogIjIwMjUtMDItMjBUMDA6NTk6NTAuOTg1NTgwWiIsCiAgICAiY2xpZW50SXAiOiAiMy4yMTUuMTQ5LjE1NCIsCiAgICAicHJvY2Vzc2luZ1RpbWUiOiAwLjA0MiwKICAgICJzdGF0dXNDb2RlIjogIjIwMSIsCiAgICAicmVjZWl2ZWRCeXRlcyI6IDExODUsCiAgICAic2VudEJ5dGVzIjogNjAxLAogICAgIm1ldGhvZCI6ICJQVVQiLAogICAgInJlcXVlc3QiOiAiaHR0cHM6Ly80NGU4OGNhMjEyZmE5MWZiLm1lZGlhcGFja2FnZS51cy1lYXN0LTEuYW1hem9uYXdzLmNvbTo0NDMvaW4vdjIvMmI0ZjAzMWJiZmFkNDkyY2I5MzUxMDRkOTYwNmRmYjcvMmI0ZjAzMWJiZmFkNDkyY2I5MzUxMDRkOTYwNmRmYjcvY2hhbm5lbF8xLm0zdTgiLAogICAgInByb3RvY29sIjogIkhUVFAvMS4xIiwKICAgICJ1c2VyQWdlbnQiOiAiQVdTRWxlbWVudGFsTWVkaWFMaXZlIiwKICAgICJkb21haW5OYW1lIjogIjQ0ZTg4Y2EyMTJmYTkxZmIubWVkaWFwYWNrYWdlLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tIiwKICAgICJkYXRhLnJlcXVlc3RJZCI6ICJSb290PTEtNjdiNjdlODYtMWJlMDY5NDUwMTlmNjViMDI3YzVhOWQyIiwKICAgICJhY2NvdW50IjogIjQ3MTExMjcwMDkyNiIsCiAgICAiY2hhbm5lbElkIjogImJpZy1idWNrLWJ1bm55LWNoYW5uZWwiLAogICAgImNoYW5uZWxBcm4iOiAiYXJuOmF3czptZWRpYXBhY2thZ2U6dXMtZWFzdC0xOjQ3MTExMjcwMDkyNjpjaGFubmVscy8yYjRmMDMxYmJmYWQ0OTJjYjkzNTEwNGQ5NjA2ZGZiNyIKfQ=="
+        }
+      ],
+      "requestId": "12cd776f-da58-43d6-8222-24b9acb04543",
+      "timestamp": 1740011580144
+    },
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05.999999Z",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "account",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "channelArn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "channelId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientIp",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "domainName",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "catch_all",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "catch_all": true,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "processingTime",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "sentBytes",
+        "datatype": {
+          "type": "int32",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "receivedBytes",
+        "datatype": {
+          "type": "int32",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "statusCode",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "userAgent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "requestId",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.requestId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "subtype": "firehose",
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "url": "https://camsellem-cascade-dev.hydrolix.dev/config/v1/orgs/85da2381-13f2-4ff8-944d-8f5c2cfa4f96/projects/0dbcc346-51eb-4a9b-ac90-c3682168ef04/tables/9fe5e2d4-7c21-4357-a698-c6931e7c8ae4/transforms/609af3dc-a8e8-4c4e-a6e1-39142dea8ed7",
+  "type": "json",
+  "table": "9fe5e2d4-7c21-4357-a698-c6931e7c8ae4"
+}
