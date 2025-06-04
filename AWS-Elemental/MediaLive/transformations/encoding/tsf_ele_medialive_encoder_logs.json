@@ -17,7 +17,6 @@
       "requestId": "608d6059-83fd-45b7-85fc-15ad612f1ed3",
       "timestamp": 1739149516062
     },
-    "data_mirroring_target": null,
     "output_columns": [
       {
         "name": "timestamp",
