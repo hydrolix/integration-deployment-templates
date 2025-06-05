@@ -143,7 +143,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+        "uid": "__DATASOURCE__"
       },
       "description": "The number of ads for which MediaTailor bills customers based on insertion.",
       "fieldConfig": {
@@ -200,7 +200,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -226,7 +226,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "\t\nThe number of times that the ADS pointed at an ad that wasn't yet transcoded by the internal transcoder service in the time period that you specified.\n\nA high value for this metric might contribute to a low overall Avail.FillRate.",
       "fieldConfig": {
@@ -283,7 +283,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -309,7 +309,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The number of errors received while MediaTailor was generating manifests in the CloudWatch time period that you specified.",
       "fieldConfig": {
@@ -374,7 +374,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -400,7 +400,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The number of non-HTTP 200 status code responses and timed-out responses that MediaTailor received from the origin server in the CloudWatch time period that you specified.\n\nAll origin.* metrics are emitted for requests that are fulfilled directly from the origin. They are not emitted for cached origin responses.",
       "fieldConfig": {
@@ -457,7 +457,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -483,7 +483,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "Avail.Duration\n\nThe planned total number of milliseconds of ad avails within the CloudWatch time period. The planned total is based on the ad avail durations in the origin manifest.\n\nAvail.FilledDuration\n\nThe planned number of milliseconds of ad avail time that MediaTailor will fill with ads within the CloudWatch time period.",
       "fieldConfig": {
@@ -569,7 +569,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -604,7 +604,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "",
       "fieldConfig": {
@@ -696,7 +696,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -751,7 +751,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "This metric is an indicator of the health of the input. If the value isn't stable, investigate determine if there are problems with your source, and/or problems in the network between MediaLive and the upstream system.",
       "fieldConfig": {
@@ -843,7 +843,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -884,7 +884,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The simple average of the rates at which the responses from the ADS filled the corresponding individual ad avails for the time period that you specified.\n\nTo get the weighted average, calculate the AdDecisionServer.Duration as a percentage of the Avail.Duration. For more information about simple and weighted averages, see Simple and weighted averages.",
       "fieldConfig": {
@@ -974,7 +974,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1014,7 +1014,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The number of non-HTTP 200 status code responses, empty responses, and timed-out responses that MediaTailor received from the ADS within the CloudWatch time period that you specified.",
       "fieldConfig": {
@@ -1104,7 +1104,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1144,7 +1144,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The number of timed-out requests to the ADS in the CloudWatch time period that you specified.",
       "fieldConfig": {
@@ -1234,7 +1234,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1287,7 +1287,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The file size of the origin manifest in bytes for both HLS and DASH. Typically this metric is used in conjunction with Origin.ManifestFileSizeTooLarge.\n\nAll origin.* metrics are emitted for requests that are fulfilled directly from the origin. They are not emitted for cached origin responses.",
       "fieldConfig": {
@@ -1373,7 +1373,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+             "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
@@ -1407,7 +1407,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+         "uid": "__DATASOURCE__"
       },
       "description": "The number of errors received while MediaTailor was generating manifests in the CloudWatch time period that you specified.",
       "fieldConfig": {
@@ -1494,7 +1494,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "${DS_DEMO.AWS.HYDROLIX.LIVE}"
+            "uid": "__DATASOURCE__"
           },
           "editorType": "sql",
           "format": 1,
