@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "path": "waf-to-firehose-global/dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "method": "firehose",
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
+  "name": "firehose-waf-global",
+  "source": "waf",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "waf_firehose_global",
+      "transforms": [
+        {
+          "data_template_path": "waf-to-firehose-global/data_template.json",
+          "path": "waf-to-firehose-global/transformations/current.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "doc_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Waf.html",
+    "method_full_title": "Amazon Data Firehose",
+    "method_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png",
+    "source_full_title": "AWS WAF for CloudFront",
+    "source_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/waf.png",
+    "source_type": "security"
+  }
+}
+
+
