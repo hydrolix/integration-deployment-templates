@@ -13,7 +13,7 @@
       "name": "cloudfront_kinesis",
       "transforms": [
         {
-          "data_template_path": "transformations/data_template.tsv",
+          "data_template_path": "transformations/sample_data_template.tsv",
           "path": "transformations/current.json"
         }
       ]
