@@ -22,8 +22,8 @@
       "name": "medialive_metrics",
       "transforms": [
         {
-          "data_template_path": "AWS-Elemental/MediaLive/transformations/metrics/data_template.json",
-          "path": "AWS-Elemental/MediaLive/transformations/metrics/tsf_ele_medialive_metrics.json"
+          "data_template_path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/metrics/sample_data_template.json",
+          "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/metrics/current.json"
         }
       ]
     }
