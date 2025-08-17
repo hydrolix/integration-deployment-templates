@@ -1,31 +1,30 @@
 {
    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/cloudfront-to-kinesis",
-  "dashboard": {
-    "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__"
-  },
-  "method": "kinesis",
-  "name": "kinesis-cloudfront",
-  "source": "cloudfront",
-  "tables": [
-    {
-      "dashboard_var": "__TABLE_NAME__",
-      "name": "cloudfront_kinesis",
-      "transforms": [
-        {
-          "data_template_path": "transformations/sample_data_template.tsv",
-          "path": "transformations/current.json"
-        }
-      ]
-    }
-  ],
-  "ui": {
-    "doc_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
-    "method_full_title": "Amazon Kinesis",
-    "method_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png",
-    "source_full_title": "CloudFront",
-    "source_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png",
-    "source_type": "cdn"
-  }
+   "dashboard": {
+      "path": "dashboards/current.json",
+      "project_var": "__PROJECT_NAME__"
+   },
+   "method": "kinesis",
+   "name": "kinesis-cloudfront",
+   "source": "cloudfront",
+   "tables": [
+      {
+         "dashboard_var": "__TABLE_NAME__",
+         "name": "cloudfront_kinesis",
+         "transforms": [
+            {
+               "data_template_path": "transformations/sample_data_template.tsv",
+               "path": "transformations/current.json"
+            }
+         ]
+      }
+   ],
+   "ui": {
+      "doc_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
+      "method_full_title": "Amazon Kinesis",
+      "method_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png",
+      "source_full_title": "CloudFront",
+      "source_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png",
+      "source_type": "cdn"
+   }
 }
-
