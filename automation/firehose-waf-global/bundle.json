@@ -1,5 +1,5 @@
 {
-   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-waf-global/",
+   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-waf-global",
    "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
