@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "path": "AWS-Elemental/MediaLive/dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "method": "firehose",
+  "name": "firehose-medialive",
+  "source": "medialive",
+  "tables": [
+    {
+      "dashboard_var": "__ENCODING_TABLE__",
+      "name": "medialive_encoding",
+      "transforms": [
+        {
+          "data_template_path": "AWS-Elemental/MediaLive/transformations/encoding/data_template.json",
+          "path": "AWS-Elemental/MediaLive/transformations/encoding/tsf_ele_medialive_encoder_logs.json"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__METRICS_TABLE__",
+      "name": "medialive_metrics",
+      "transforms": [
+        {
+          "data_template_path": "AWS-Elemental/MediaLive/transformations/metrics/data_template.json",
+          "path": "AWS-Elemental/MediaLive/transformations/metrics/tsf_ele_medialive_metrics.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "doc_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaLive.html",
+    "method_full_title": "Amazon Data Firehose",
+    "method_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png",
+    "source_full_title": "AWS Elemental MediaLive",
+    "source_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/medialive.png",
+    "source_type": "video"
+  }
+}
+
