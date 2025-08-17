@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "path": "AWS-Elemental/MediaLive/dashboards/current.json",
+    "path":"https://github.com/hydrolix/integration-deployment-templates/blob/first-automation/automation/firehose-medialive/dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
   },
   "method": "firehose",
