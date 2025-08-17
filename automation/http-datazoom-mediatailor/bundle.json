@@ -5,7 +5,7 @@
     "project_var": "__PROJECT_NAME__"
   },
   "method": "http_streaming",
-  "name": "http-datazoom-mediatailor",
+  "name": "http_streaming-datazoom-mediatailor",
   "source": "mediatailor",
   "tables": [
     {
