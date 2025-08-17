@@ -11,10 +11,10 @@
   },
   "timestamp": __DYNAMIC_UNIX_EPOCH__,
   "value": {
-    "max": __FLOAT_1_to_100,
-    "min": __FLOAT_1_to_100,
-    "sum": __FLOAT_1_to_100,
-    "count": __FLOAT_1_to_100
+    "max": __FLOAT_1_to_100__,
+    "min": __FLOAT_1_to_100__,
+    "sum": __FLOAT_1_to_100__,
+    "count": __FLOAT_1_to_100__
   },
   "unit": "Count"
 }
