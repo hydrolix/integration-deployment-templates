@@ -1,6 +1,7 @@
 {
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive",
   "dashboard": {
-    "path":"https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/dashboards/current.json",
+    "path":"dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
   },
   "method": "firehose",
@@ -12,8 +13,8 @@
       "name": "medialive_encoding",
       "transforms": [
         {
-          "data_template_path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/encoding/sample_data_template.json",
-          "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/encoding/current.json"
+          "data_template_path": "transformations/encoding/sample_data_template.json",
+          "path": "transformations/encoding/current.json"
         }
       ]
     },
@@ -22,8 +23,8 @@
       "name": "medialive_metrics",
       "transforms": [
         {
-          "data_template_path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/metrics/sample_data_template.json",
-          "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/metrics/current.json"
+          "data_template_path": "transformations/metrics/sample_data_template.json",
+          "path": "transformations/metrics/current.json"
         }
       ]
     }
