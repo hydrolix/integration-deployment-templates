@@ -1,0 +1,52 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-mediapackage",
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "method": "firehose",
+  "name": "firehose-mediapackage",
+  "source": "mediapackage",
+  "tables": [
+    {
+      "dashboard_var": "__EGRESS_TABLE__",
+      "name": "mediapackage_egress",
+      "transforms": [
+        {
+          "data_template_path": "transformations/egress/sample-data_template.json",
+          "path": "transformations/egress/current.json"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__INGRESS_TABLE__",
+      "name": "mediapackage_ingress",
+      "transforms": [
+        {
+          "data_template_path": "transformations/ingress/sample-data_template.json",
+          "path": "transformations/ingress/current.json"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__METRICS_TABLE__",
+      "name": "mediapackage_metrics",
+      "transforms": [
+        {
+          "data_template_path": "transformations/metrics/sample-data_template.json",
+          "path": "transformations/metrics/current.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "doc_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaPackage.html",
+    "method_full_title": "Amazon Data Firehose",
+    "method_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png",
+    "source_full_title": "AWS Elemental MediaPackage",
+    "source_icon_path": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediapackage.jpeg",
+    "source_type": "video"
+  }
+}
+
+

@@ -1,0 +1,23 @@
+{
+  "metric_stream_name": "MediaPackage-Firehose-Stream",
+  "account_id": "111111111111",
+  "region": "us-east-1",
+  "namespace": "AWS/MediaLive",
+  "metric_name": "InputVideoFrameRate",
+  "dimensions": {
+    "ActiveInputFailoverLabel": "primary",
+    "ChannelId": "6955047",
+    "Pipeline": "0",
+    "Channel":"hdx-round-trip-test"
+  },
+  "timestamp": __DYNAMIC_UNIX_EPOCH__,
+  "value": {
+    "max": 23.992,
+    "min": 23.99,
+    "sum": 1439.4399999999998,
+    "count": 60.0
+  },
+  "unit": "Count/Second"
+}
+
+

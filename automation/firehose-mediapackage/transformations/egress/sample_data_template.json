@@ -1,0 +1,20 @@
+{
+  "account": "111111111111",
+  "channelArn": "arn:aws:mediapackage:us-east-1:111111111111:channels/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+  "channelId": "hdx-round-trip-test",
+  "clientIp": "11.255.111.11",
+  "domainName": "1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com",
+  "endpointArn": "arn:aws:mediapackage:us-east-1:111111111111:origin_endpoints/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+  "endpointId": "Bunny-Channel-1-Startover",
+  "method": "GET",
+  "processingTime": 0.029,
+  "protocol": "HTTP/2.0",
+  "receivedBytes": 57,
+  "request": "https://1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com:443/out/v1/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a/index_1.m3u8",
+  "requestId": "01a1a01a-02e1-10a1-a1aa-0a1a1a10a1a1",
+  "sentBytes": 654,
+  "statusCode": "200",
+  "timestamp": "__DYNAMIC_TIMESTAMP_WITH_ZONE_ISO8601__",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
+}
+

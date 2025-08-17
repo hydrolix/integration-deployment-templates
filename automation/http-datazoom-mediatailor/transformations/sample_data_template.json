@@ -8,6 +8,7 @@
     "requestId": "23ecbae8-2b4e-417b-a9d5-c030e0a12c39",
     "eventDescription": "Successfully filled avail",
     "sessionId": "e87009a0-a50c-4e86-a504-5914292c2626",
+    "source_sessionId": "__UUID__",
     "avail": {
         "availId": "1748956155669",
         "originAvailDuration": 55.0,

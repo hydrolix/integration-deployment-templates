@@ -1,0 +1,18 @@
+{
+  "data.timestamp": "__DYNAMIC_TIMESTAMP_WITH_ZONE_ISO8601__",
+  "clientIp": "11.255.111.11",
+  "processingTime": 0.042,
+  "statusCode": "201",
+  "receivedBytes": 1185,
+  "sentBytes": 601,
+  "method": "PUT",
+  "request": "https://1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com:443/in/v2/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a/channel_1.m3u8",
+  "protocol": "HTTP/1.1",
+  "userAgent": "AWSElementalMediaLive",
+  "domainName": "1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com",
+  "data.requestId": "Root=1-11111111-1a1a1a1a1a1a1a1a1a1a1a1a",
+  "account": "111111111111",
+  "channelId": "hdx-round-trip-test",
+  "channelArn": "arn:aws:mediapackage:us-east-1:111111111111:channels/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"
+}
+
