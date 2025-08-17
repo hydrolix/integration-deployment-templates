@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "path": "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/main/automation/firehose-waf-global/dashboards/current.json",
+    "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-waf-global/dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
   },
   "method": "firehose",
