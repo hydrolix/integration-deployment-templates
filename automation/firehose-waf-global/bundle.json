@@ -17,7 +17,7 @@
       "transforms": [
         {
           "data_template_path": "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/main/automation/firehose-waf-global/transformations/sample_data_template.json",
-          "path": "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/main/automation/firehose-waf-global/transformations/current.json"
+          "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-waf-global/transformations/current.json"
         }
       ]
     }
