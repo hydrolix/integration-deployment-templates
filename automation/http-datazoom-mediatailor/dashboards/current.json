@@ -1,0 +1,2341 @@
+{
+    "dashboard": {
+        "__elements": {},
+        "__requires": [
+            {
+                "type": "grafana",
+                "id": "grafana",
+                "name": "Grafana",
+                "version": "11.6.0"
+            },
+            {
+                "type": "datasource",
+                "id": "grafana-clickhouse-datasource",
+                "name": "ClickHouse",
+                "version": "4.0.6"
+            },
+            {
+                "type": "panel",
+                "id": "logs",
+                "name": "Logs",
+                "version": ""
+            },
+            {
+                "type": "panel",
+                "id": "stat",
+                "name": "Stat",
+                "version": ""
+            },
+            {
+                "type": "panel",
+                "id": "table",
+                "name": "Table",
+                "version": ""
+            },
+            {
+                "type": "panel",
+                "id": "text",
+                "name": "Text",
+                "version": ""
+            },
+            {
+                "type": "panel",
+                "id": "timeseries",
+                "name": "Time series",
+                "version": ""
+            }
+        ],
+        "annotations": {
+            "list": [
+                {
+                    "builtIn": 1,
+                    "datasource": {
+                        "type": "grafana",
+                        "uid": "-- Grafana --"
+                    },
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                }
+            ]
+        },
+        "editable": true,
+        "fiscalYearStartMonth": 0,
+        "graphTooltip": 0,
+        "id": 167,
+        "links": [
+            {
+                "asDropdown": false,
+                "icon": "dashboard",
+                "includeVars": false,
+                "keepTime": true,
+                "tags": [],
+                "targetBlank": false,
+                "title": "Clear all variables",
+                "tooltip": "Clear all variables",
+                "type": "link",
+                "uid": "https://dashboards.hydrolix.live/d/8576f521-4e35-4b69-900f-b752e19af856/620635d?orgId=1&from=now-12h&to=now&timezone=browser&var-session_id=&var-request_id=&var-os_name=$__all&var-city=$__all&var-session_id1=&editIndex=0"
+            }
+        ],
+        "panels": [
+            {
+                "collapsed": false,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 0
+                },
+                "id": 61,
+                "panels": [],
+                "title": "Summary",
+                "type": "row"
+            },
+            {
+                "fieldConfig": {
+                    "defaults": {},
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 1
+                },
+                "id": 3,
+                "options": {
+                    "code": {
+                        "language": "plaintext",
+                        "showLineNumbers": false,
+                        "showMiniMap": false
+                    },
+                    "content": "<table style=\"width:100%; height:100%;border:0px solid black;\">\n    </tr>\n        <td style=\"text-align: center; vertical-align: middle; border:0px;\">\n            <img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAACcCAYAAACHkM/7AAAAAXNSR0IArs4c6QAAAG5lWElmTU0AKgAAAAgAAwESAAMAAAABAAEAAAExAAIAAAARAAAAModpAAQAAAABAAAARAAAAABBZG9iZSBJbWFnZVJlYWR5AAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAADIKADAAQAAAABAAAAnAAAAAAs7VLIAAABy2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgICAgICAgPHRpZmY6T3JpZW50YXRpb24+MTwvdGlmZjpPcmllbnRhdGlvbj4KICAgICAgICAgPHhtcDpDcmVhdG9yVG9vbD5BZG9iZSBJbWFnZVJlYWR5PC94bXA6Q3JlYXRvclRvb2w+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpRV3oSAAA71UlEQVR4Ae2dS5IbyZWuESC71DNBZmqznt3gCgocVKnUGlRAlIZdRK6AyBUwuYLMXAGzVpDgChIsDaXqBAd9VY8BUStgaHbNWm2CZnoUgfv/yEASiYx3uHs88LvRGQF/nHP8cw8PP/FKr6cgAiIgAiIgAiIgAiIgAiCw/uO/+731P4e9tTe8A6Tfm/f+9uPCGy2Xd9L1QwRKEPBK1FEVERABERABERABERCBjhBYXw8GvZ88nKA5zxDvOh732zjved4r75f/M72fpRQRyEdADkg+TiolAiIgAiIgAiIgAp0jsP7jv0166/VLNGxQrHHrEI7IsffLP8+L1VNpEej15IBoFIhAAQLr9TooULxI0dDzvLBIBZUVgUMngOORV2oLLppyUVvieFzkKqlCIlCQAMYtxyzHro2wwNhd5hEc3fW4RNlxnvKJZda9c+9Xfz5LzFeGCMQQkAMSA0VJIpBEACeOdVJexfRznDTOKspQdRE4KAI4HK/R4MBCo+c4HkcW5EqkCOBmw+ZCFseujTDC2J1nCY6cD9pgxhFar6fer/73OEuv8kVgS6C/3dFWBERABERABERABETgAAj85OElWmnG+SAuz5us//vnZ9xVEIE8BOSA5KGkMiIgAiIgAiIgAiLQAQLr//vzEzRjbLwpXu90/d//Zs6pMW6gBDaJgByQJvWGbBEBERABERABERABSwQ2j171eqeWxONOyOZldmviJbg7BOSAdKcv1RIREAEREAEREAERSCbw0UPe/RgkF6icE6z/+POgshQJ6DwBOSCd72I1UAREQAREQAREQARAwFs/s85h5UCH9UZIgW0CckBsE5Z8ERABERABERABEaiZwM37GZ5v3QzPM/9+iXWjpcA1ATkgrolLnwiIgAiIgAiIgAi4JtA3+NWrdNsH6z/+u59eRLmHTkAOyKGPALVfBERABERABESg+wRWa99dI390qMtdq6TJHAE5IOZYSpIIiIAIiIAIiIAIiIAIiEAGATkgGYCULQIiIAIiIAIiIAIiIAIiYI6AHBBzLCVJBERABERABERABERg5S0FQQTSCMgBSaOjPBEQAREQAREQARHoAoF+b+6qGd6v/mfhSpf0tJOAHJB29pusFgEREAEREAEREIH8BP72oyunYJ7fKJU8VAJyQA6159VuERABERABERCBgyHgjZZ8LGrmoMGvHeiQipYTkAPS8g6U+SIgAiIgAiIgAiKQi4DX+zJXufKFlr2//zgtX101D4XAwTkg6/X6kvFQOljtFAEREAEREAEREAES8H755zk2jHbCuvdldKfFjnxJ7QyBh51pSY6GRI7HhEWx3/M87zhHNRURAREQAREQAREQgW4Q8B4e99Y/vkVjBoYbtPB+9eczwzIlrqMEDuYOyK7zEfXlRHdCOjqq1SwREAEREAEREIFYAt4v/1+Iy7CmL8Aue2td1I0FrsRYAgfhgMDReInWT2IIyAmJgaIkERABERABERCB7hLw/uN/Z3gMxJQTQudjpE/vdne82GhZ5x0QOB8TgDtJgScnJAWO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\"\n                height=\"50px\"></img>\n        </td>\n    </tr>\n    <tr>\n        <td style=\"text-align: center; vertical-align: middle; border:0px;\">\n            <img src=\"https://hydrolix-public.s3.us-east-2.amazonaws.com/datazoom_logo_white_stacked.png\"\n                height=\"90px\" style=\"margin-right: 20px;\"></img>\n            <img src=\"data:image/jpeg;base64,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\"\n                height=\"90px\"></img>\n            <h2 style=\"font-family: Verdana; color: #36BDB1; padding-top:10px\">Datazoom + AWS Elemental MediaTailor</h2>\n        </td>\n    <tr>\n        <td style=\"text-align: center; vertical-align: middle; border:0px;\">\n            <div style=\"font-family: Verdana; padding-top:20px\">To generate traffic, open our <a href=\"https://demo.datazoomlabs.com/MT/datazoom-hydrolix-mediatailor/\" target=\"_blank\">test stream url.</a></div>\n        </td>\n    </tr>\n</table>",
+                    "mode": "html"
+                },
+                "pluginVersion": "12.0.0",
+                "title": "",
+                "transparent": true,
+                "type": "text"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "blue"
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 1
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 100
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 4,
+                    "x": 12,
+                    "y": 1
+                },
+                "id": 51,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "horizontal",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "sum"
+                        ],
+                        "fields": "/^Manifest Errors$/",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  sum(length(JSONExtractArrayRaw(coalesce(mt_log_vast_response_errors, ''))))\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND mt_log_vast_response_errors IS NOT NULL\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ADS Vast Response Errors; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "ADS Vast Response Errors",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "blue"
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 1
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 100
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 4,
+                    "x": 16,
+                    "y": 1
+                },
+                "id": 24,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "horizontal",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "sum"
+                        ],
+                        "fields": "/^Manifest Errors$/",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  count(mt_log_error_message) AS error_count\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND transform_name = 'manifest_service_logs'\n  AND mt_log_error_message != ''\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Manifest Errors; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Manifest Errors",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "blue"
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 4,
+                    "x": 20,
+                    "y": 1
+                },
+                "id": 25,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "horizontal",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "sum"
+                        ],
+                        "fields": "/^Origin\\.Errors$/",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  count(mt_log_error_message) AS error_count\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND transform_name = 'transcode_logs'\n  AND mt_log_error_message != ''\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Transcode Errors; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Transcode Errors",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Percentage of Ads watched (Datazoom Variable)",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "percentage",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        },
+                        "unit": "percent"
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byType",
+                                "options": "number"
+                            },
+                            "properties": []
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 0,
+                    "y": 9
+                },
+                "id": 45,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "/^Ad_Completion_Rate$/",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  (CAST(SUM(assumeNotNull(event.type) = 'playback_complete') AS DOUBLE) / CAST(SUM(assumeNotNull(event.type) = 'playback_start') AS DOUBLE)) * 100 AS Ad_Completion_Rate\nFROM\n __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n\t\t\t\tAND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\tAND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\n  AND video.media_type = 'ad'\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Completion Rate; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Completion Rate",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "The simple average of the rates at which the responses from the ADS filled the corresponding individual ad avails for the time period that you specified.\n\nTo get the weighted average, calculate the AdDecisionServer.Duration as a percentage of the Avail.Duration. For more information about simple and weighted averages, see Simple and weighted averages.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        },
+                        "unit": "percentunit"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 6,
+                    "y": 9
+                },
+                "id": 39,
+                "links": [
+                    {
+                        "targetBlank": true,
+                        "title": "AWS Documentation",
+                        "url": "https://docs.aws.amazon.com/mediatailor/latest/ug/stale-manifest-diagnose.html"
+                    }
+                ],
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  avg(mt_log_avail_fill_rate)\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ --under 20% in the red? above 15 good?\nWHERE $__timeFilter(${timestamp})\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\n--AND transform_name = 'ad_decision_server_logs'\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Ad Decision Server Fillrate; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Ad Decision Server FillRate",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "5 minute average",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 20,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                                "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                                "group": "A",
+                                "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                                "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        },
+                        "unit": "percentunit"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 9
+                },
+                "id": 44,
+                "links": [
+                    {
+                        "targetBlank": true,
+                        "title": "AWS Documentation",
+                        "url": "https://docs.aws.amazon.com/mediatailor/latest/ug/stale-manifest-diagnose.html"
+                    }
+                ],
+                "options": {
+                    "legend": {
+                        "calcs": [],
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  toStartOfFiveMinutes(${timestamp}),\n  avg(mt_log_avail_fill_rate) AS \"Average Fill Rate\"\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(${timestamp})\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\n--AND transform_name = 'ad_decision_server_logs'\nGROUP BY toStartOfFiveMinutes(${timestamp})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Ad Decision Server FillRate Over Time; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Ad Decision Server FillRate Over Time",
+                "transformations": [
+                    {
+                        "id": "prepareTimeSeries",
+                        "options": {
+                            "format": "multi"
+                        }
+                    },
+                    {
+                        "id": "labelsToFields",
+                        "options": {
+                            "valueLabel": "Pipeline"
+                        }
+                    }
+                ],
+                "type": "timeseries"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Ad Impressions filled from Datazoom and the amount of filled avail within the same time range\n\nThe planned total number of milliseconds of ad avails within the CloudWatch time period. The planned total is based on the ad avail durations in the origin manifest.\n\nAvail.FilledDuration\n\nThe planned number of milliseconds of ad avail time that MediaTailor will fill with ads within the CloudWatch time period.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "displayName": "${__field.name}",
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "#508642",
+                                    "value": 0.25
+                                },
+                                {
+                                    "color": "#BA43A9",
+                                    "value": 0.35
+                                },
+                                {
+                                    "color": "#705DA0",
+                                    "value": 0.45
+                                },
+                                {
+                                    "color": "#1F78C1",
+                                    "value": 0.5
+                                },
+                                {
+                                    "color": "#E24D42",
+                                    "value": 0.6
+                                },
+                                {
+                                    "color": "#EF843C",
+                                    "value": 0.7
+                                },
+                                {
+                                    "color": "#6ED0E0",
+                                    "value": 0.75
+                                },
+                                {
+                                    "color": "#EAB839",
+                                    "value": 0.85
+                                },
+                                {
+                                    "color": "semi-dark-green",
+                                    "value": 0.95
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 0,
+                    "y": 17
+                },
+                "id": 63,
+                "links": [
+                    {
+                        "targetBlank": true,
+                        "title": "AWS Documentation",
+                        "url": "https://docs.aws.amazon.com/mediatailor/latest/ug/monitoring-cloudwatch-metrics.html"
+                    }
+                ],
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT \nCOUNT(CASE WHEN ((event.type) LIKE 'ad_impression') THEN 1 ELSE NULL END) AS \"DZ Ad Impressions\"\n\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\n\nWHERE $__timeFilter(event.timestamp)\n\t\t\t\tAND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\tAND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Ad Impressions; du=${__user.login}'",
+                        "refId": "A"
+                    },
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  COUNT(*) AS \"MT Ad Impressions\"\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  mt_log_event_type = 'FILLED_AVAIL'\n  AND $__timeFilter(event.timestamp)\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Ad Impressions; du=${__user.login}'",
+                        "refId": "B"
+                    }
+                ],
+                "title": "Ad Impressions",
+                "transformations": [
+                    {
+                        "id": "merge",
+                        "options": {}
+                    }
+                ],
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        },
+                        "unit": "ms"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 17
+                },
+                "id": 40,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  AVG(mt_log_avail_origin_avail_duration) AS \"AVG Avail Duration\"\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(${timestamp})\n  --AND transform_name = 'ad_decision_server_logs'\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AVG Origin Avail Duration; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "AVG Origin Avail Duration",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "5 minute average\n\nThe planned total number of milliseconds of ad avails within the CloudWatch time period. The planned total is based on the ad avail durations in the origin manifest.\n\nAvail.FilledDuration\n\nThe planned number of milliseconds of ad avail time that MediaTailor will fill with ads within the CloudWatch time period.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisBorderShow": false,
+                            "axisCenteredZero": false,
+                            "axisColorMode": "text",
+                            "axisLabel": "",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "barWidthFactor": 0.6,
+                            "drawStyle": "line",
+                            "fillOpacity": 0,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                                "type": "linear"
+                            },
+                            "showPoints": "auto",
+                            "spanNulls": false,
+                            "stacking": {
+                                "group": "A",
+                                "mode": "none"
+                            },
+                            "thresholdsStyle": {
+                                "mode": "off"
+                            }
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        },
+                        "unit": "ms"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 17
+                },
+                "id": 31,
+                "links": [
+                    {
+                        "targetBlank": true,
+                        "title": "AWS Documentation",
+                        "url": "https://docs.aws.amazon.com/mediatailor/latest/ug/monitoring-cloudwatch-metrics.html"
+                    }
+                ],
+                "options": {
+                    "legend": {
+                        "calcs": [],
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\ntoStartOfFiveMinutes(event.timestamp) as five_minutes,\navg(mt_log_avail_origin_avail_duration) as \"Origin Avail Duration\", \navg(mt_log_avail_filled_duration) as \"Avail Filled Duration\"\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE \n $__timeFilter(event.timestamp)\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nGROUP BY toStartOfFiveMinutes(event.timestamp)\nORDER BY toStartOfFiveMinutes(event.timestamp) DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Avail Durations Over Time; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Avail Durations Over Time",
+                "transformations": [
+                    {
+                        "id": "prepareTimeSeries",
+                        "options": {
+                            "format": "multi"
+                        }
+                    }
+                ],
+                "type": "timeseries"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        },
+                        "unit": "ms"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 21
+                },
+                "id": 52,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  AVG(mt_log_avail_filled_duration) AS \"AVG Filled Duration\"\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(${timestamp})\n  --AND transform_name = 'ad_decision_server_logs'\n\t\t\t\t--AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\t--AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AVG Avail Filled Duration; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "AVG Avail Filled Duration",
+                "type": "stat"
+            },
+            {
+                "collapsed": false,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 25
+                },
+                "id": 49,
+                "panels": [],
+                "title": "Overview of Session IDs",
+                "type": "row"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "custom": {
+                            "align": "auto",
+                            "cellOptions": {
+                                "type": "auto"
+                            },
+                            "inspect": false
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "Session ID"
+                            },
+                            "properties": [
+                                {
+                                    "id": "links",
+                                    "value": [
+                                        {
+                                            "title": "Filter by Session ID",
+                                            "url": "/d/${__dashboard.uid}/${__dashboard}?${__all_variables}&var-session_id=${__data.fields[\"Session ID\"]}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 18,
+                    "w": 10,
+                    "x": 0,
+                    "y": 26
+                },
+                "id": 48,
+                "options": {
+                    "cellHeight": "sm",
+                    "footer": {
+                        "countRows": false,
+                        "fields": "",
+                        "reducer": [
+                            "sum"
+                        ],
+                        "show": false
+                    },
+                    "showHeader": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  source_sessionId AS \"Session ID\",\n  count() AS \"Event Count\"\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n    $__timeFilter(${timestamp})\n    AND source_sessionId IS NOT NULL\nGROUP BY\n  source_sessionId\nORDER BY \"Event Count\" DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Count of Session IDs; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Count of Events per Session ID",
+                "type": "table"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            }
+                        },
+                        "mappings": []
+                    },
+                    "overrides": [
+                        {
+                            "__systemRef": "hideSeriesFrom",
+                            "matcher": {
+                                "id": "byNames",
+                                "options": {
+                                    "mode": "exclude",
+                                    "names": [
+                                        "Viewers"
+                                    ],
+                                    "prefix": "All except:",
+                                    "readOnly": true
+                                }
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.hideFrom",
+                                    "value": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 7,
+                    "x": 10,
+                    "y": 26
+                },
+                "id": 57,
+                "options": {
+                    "displayLabels": [],
+                    "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                    },
+                    "pieType": "donut",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  geo_location.city AS City\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY City\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by City; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Distinct Sessions by City",
+                "type": "piechart"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            }
+                        },
+                        "mappings": []
+                    },
+                    "overrides": [
+                        {
+                            "__systemRef": "hideSeriesFrom",
+                            "matcher": {
+                                "id": "byNames",
+                                "options": {
+                                    "mode": "exclude",
+                                    "names": [
+                                        "Viewers"
+                                    ],
+                                    "prefix": "All except:",
+                                    "readOnly": true
+                                }
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.hideFrom",
+                                    "value": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 7,
+                    "x": 17,
+                    "y": 26
+                },
+                "id": 59,
+                "options": {
+                    "displayLabels": [],
+                    "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                    },
+                    "pieType": "donut",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  page.site_domain AS Domain\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY Domain\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Domain; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Distinct Sessions by Domain",
+                "type": "piechart"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            }
+                        },
+                        "mappings": []
+                    },
+                    "overrides": [
+                        {
+                            "__systemRef": "hideSeriesFrom",
+                            "matcher": {
+                                "id": "byNames",
+                                "options": {
+                                    "mode": "exclude",
+                                    "names": [
+                                        "Viewers"
+                                    ],
+                                    "prefix": "All except:",
+                                    "readOnly": true
+                                }
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.hideFrom",
+                                    "value": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 7,
+                    "x": 10,
+                    "y": 35
+                },
+                "id": 58,
+                "options": {
+                    "displayLabels": [],
+                    "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                    },
+                    "pieType": "donut",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  device.os_name AS \"Device OS\"\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY \"Device OS\"\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Device OS; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Distinct Sessions by Device OS",
+                "type": "piechart"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            }
+                        },
+                        "mappings": []
+                    },
+                    "overrides": [
+                        {
+                            "__systemRef": "hideSeriesFrom",
+                            "matcher": {
+                                "id": "byNames",
+                                "options": {
+                                    "mode": "exclude",
+                                    "names": [
+                                        "Viewers"
+                                    ],
+                                    "prefix": "All except:",
+                                    "readOnly": true
+                                }
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.hideFrom",
+                                    "value": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 7,
+                    "x": 17,
+                    "y": 35
+                },
+                "id": 60,
+                "options": {
+                    "displayLabels": [],
+                    "legend": {
+                        "displayMode": "table",
+                        "placement": "right",
+                        "showLegend": true,
+                        "values": [
+                            "percent",
+                            "value"
+                        ]
+                    },
+                    "pieType": "donut",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                    },
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  player.player_name AS \"Player Name\"\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY \"Player Name\"\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Player Name; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Distinct Sessions by Player Name",
+                "type": "piechart"
+            },
+            {
+                "collapsed": false,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 44
+                },
+                "id": 62,
+                "panels": [],
+                "title": "Breakdown for Session ID: ${session_id}",
+                "type": "row"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Requires setting Session ID variable",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "custom": {
+                            "align": "auto",
+                            "cellOptions": {
+                                "type": "auto",
+                                "wrapText": true
+                            },
+                            "inspect": false,
+                            "minWidth": 80
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 24,
+                    "x": 0,
+                    "y": 45
+                },
+                "id": 53,
+                "options": {
+                    "cellHeight": "sm",
+                    "footer": {
+                        "countRows": false,
+                        "fields": "",
+                        "reducer": [
+                            "sum"
+                        ],
+                        "show": false
+                    },
+                    "showHeader": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  geo_location.country AS Country,\n  geo_location.city AS City,\n  device.device_type AS \"Device Type\",\n  device.os_name AS OS\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND source_sessionId = '${session_id}'\nGROUP BY \n  source_sessionId,\n  device.device_type,\n  device.os_name,\n  geo_location.country,\n  geo_location.city",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Info about Session",
+                "type": "table"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Requires setting Session ID variable",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "continuous-GrYlRd"
+                        },
+                        "custom": {
+                            "axisPlacement": "auto",
+                            "fillOpacity": 70,
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "insertNulls": 4000,
+                            "lineWidth": 0,
+                            "spanNulls": false
+                        },
+                        "mappings": [
+                            {
+                                "options": {
+                                    "AD_MARKER_FOUND": {
+                                        "color": "yellow",
+                                        "index": 3
+                                    },
+                                    "BEACON_FIRED": {
+                                        "color": "blue",
+                                        "index": 6
+                                    },
+                                    "FILLED_AVAIL": {
+                                        "color": "red",
+                                        "index": 0
+                                    },
+                                    "MAKING_ADS_REQUEST": {
+                                        "color": "purple",
+                                        "index": 1
+                                    },
+                                    "VAST_RESPONSE": {
+                                        "color": "blue",
+                                        "index": 2
+                                    },
+                                    "ad": {
+                                        "color": "yellow",
+                                        "index": 5
+                                    },
+                                    "content": {
+                                        "color": "semi-dark-orange",
+                                        "index": 4
+                                    }
+                                },
+                                "type": "value"
+                            }
+                        ],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "mt_log_event_type"
+                            },
+                            "properties": [
+                                {
+                                    "id": "displayName",
+                                    "value": "MT Event Type"
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "event.type"
+                            },
+                            "properties": [
+                                {
+                                    "id": "displayName",
+                                    "value": "DZ Event Type"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 24,
+                    "x": 0,
+                    "y": 49
+                },
+                "id": 64,
+                "options": {
+                    "alignValue": "left",
+                    "legend": {
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": true
+                    },
+                    "mergeValues": true,
+                    "rowHeight": 0.9,
+                    "showValue": "auto",
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  event.timestamp AS record_timestamp,\n  \"video.media_type\",\n  event.type,\n  NULL AS mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${session_id:sqlstring} != ''\n  AND source_sessionId = ${session_id:sqlstring}\n  AND $__timeFilter(${timestamp})\n\nUNION ALL\n\nSELECT\n  ${timestamp} AS record_timestamp,\n  NULL AS \"video.media_type\",\n  NULL AS event_type,\n  mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${session_id:sqlstring} != ''\n  AND mt_log_session_id = ${session_id:sqlstring}\n  AND $__timeFilter(${timestamp})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Session; du=${__user.login}'",
+                        "refId": "B"
+                    }
+                ],
+                "title": "Events in Session",
+                "transformations": [
+                    {
+                        "id": "merge",
+                        "options": {}
+                    }
+                ],
+                "type": "state-timeline"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Requires setting Session ID variable",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "custom": {
+                            "axisPlacement": "auto",
+                            "fillOpacity": 70,
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "insertNulls": false,
+                            "lineWidth": 0,
+                            "spanNulls": false
+                        },
+                        "displayName": "${__field.name}",
+                        "fieldMinMax": false,
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "Request ID"
+                            },
+                            "properties": [
+                                {
+                                    "id": "links",
+                                    "value": [
+                                        {
+                                            "title": "Filter by Request ID",
+                                            "url": "/d/${__dashboard.uid}/${__dashboard}?${__all_variables}&var-request_id=${__data.fields[\"Request ID\"]}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 24,
+                    "x": 0,
+                    "y": 58
+                },
+                "id": 55,
+                "options": {
+                    "alignValue": "left",
+                    "legend": {
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": true
+                    },
+                    "mergeValues": true,
+                    "rowHeight": 0.9,
+                    "showValue": "auto",
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  MIN(event.timestamp) AS \"Start Time\",\n  MAX(event.timestamp) AS \"End Time\",\n  mt_log_request_id AS \"Request ID\"\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ AS mt\nWHERE\n  $__timeFilter(event.timestamp)\n  AND mt_log_session_id = ${session_id:sqlstring}\nGROUP BY \n  mt_log_request_id\nORDER BY \n  MIN(event.timestamp)",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Requests in Session",
+                "type": "state-timeline"
+            },
+            {
+                "collapsed": false,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 67
+                },
+                "id": 65,
+                "panels": [],
+                "title": "Breakdown for Request ID: ${request_id}",
+                "type": "row"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "Requires setting Request ID variable",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "continuous-GrYlRd"
+                        },
+                        "custom": {
+                            "axisPlacement": "auto",
+                            "fillOpacity": 70,
+                            "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                            },
+                            "insertNulls": 4000,
+                            "lineWidth": 0,
+                            "spanNulls": false
+                        },
+                        "mappings": [
+                            {
+                                "options": {
+                                    "AD_MARKER_FOUND": {
+                                        "color": "yellow",
+                                        "index": 3
+                                    },
+                                    "FILLED_AVAIL": {
+                                        "color": "red",
+                                        "index": 0
+                                    },
+                                    "MAKING_ADS_REQUEST": {
+                                        "color": "purple",
+                                        "index": 1
+                                    },
+                                    "VAST_RESPONSE": {
+                                        "color": "blue",
+                                        "index": 2
+                                    }
+                                },
+                                "type": "value"
+                            }
+                        ],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green"
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "mt_log_event_type"
+                            },
+                            "properties": [
+                                {
+                                    "id": "displayName",
+                                    "value": "MT Event Type"
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "event.type"
+                            },
+                            "properties": [
+                                {
+                                    "id": "displayName",
+                                    "value": "DZ Event Type"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 24,
+                    "x": 0,
+                    "y": 68
+                },
+                "id": 66,
+                "options": {
+                    "alignValue": "left",
+                    "legend": {
+                        "displayMode": "list",
+                        "placement": "bottom",
+                        "showLegend": true
+                    },
+                    "mergeValues": true,
+                    "rowHeight": 0.9,
+                    "showValue": "auto",
+                    "tooltip": {
+                        "hideZeros": false,
+                        "mode": "single",
+                        "sort": "none"
+                    }
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "hide": false,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "table",
+                        "rawSql": "SELECT\n  ${timestamp} AS event.timestamp,\n  mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${request_id:sqlstring} != ''\n  AND mt_log_session_id = ${session_id:sqlstring}\n  AND (mt_log_request_id = ${request_id:sqlstring} OR ${request_id:sqlstring} = '')\n  AND $__timeFilter(${timestamp})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Request; du=${__user.login}'",
+                        "refId": "B"
+                    }
+                ],
+                "title": "Events in Request",
+                "type": "state-timeline"
+            },
+            {
+                "collapsed": false,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 77
+                },
+                "id": 54,
+                "panels": [],
+                "title": "Datazoom Raw Logs",
+                "type": "row"
+            },
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {},
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "logs"
+                            },
+                            "properties": []
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 9,
+                    "w": 24,
+                    "x": 0,
+                    "y": 78
+                },
+                "id": 47,
+                "links": [
+                    {
+                        "targetBlank": true,
+                        "title": "AWS Documentation",
+                        "url": "https://docs.aws.amazon.com/medialive/latest/ug/working-with-logs.html#content-logs"
+                    }
+                ],
+                "options": {
+                    "dedupStrategy": "none",
+                    "enableInfiniteScrolling": false,
+                    "enableLogDetails": true,
+                    "prettifyLogMessage": true,
+                    "showCommonLabels": false,
+                    "showLabels": false,
+                    "showTime": true,
+                    "sortOrder": "Descending",
+                    "wrapLogMessage": true
+                },
+                "pluginVersion": "12.0.0",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 2,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.0.6",
+                        "queryType": "logs",
+                        "rawSql": "SELECT *\t\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(${timestamp})\nORDER BY ${timestamp} DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Datazoom Logs; du=${__user.login}'",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Datazoom Logs",
+                "transformations": [
+                    {
+                        "id": "merge",
+                        "options": {}
+                    }
+                ],
+                "type": "logs"
+            }
+        ],
+        "preload": false,
+        "refresh": "",
+        "schemaVersion": 41,
+        "tags": [],
+        "templating": {
+            "list": [
+                {
+                    "current": {
+                        "text": "event.timestamp",
+                        "value": "event.timestamp"
+                    },
+                    "hide": 2,
+                    "name": "timestamp",
+                    "query": "event.timestamp",
+                    "skipUrlSync": true,
+                    "type": "constant"
+                },
+                {
+                    "current": {
+                        "text": "datazoom.mediatailor_one",
+                        "value": "datazoom.mediatailor_one"
+                    },
+                    "hide": 2,
+                    "name": "mt_table",
+                    "query": "__PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__",
+                    "skipUrlSync": true,
+                    "type": "constant"
+                },
+                {
+                    "current": {
+                        "text": "datazoom.events",
+                        "value": "datazoom.events"
+                    },
+                    "hide": 2,
+                    "name": "dz_table",
+                    "query": "__PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__",
+                    "skipUrlSync": true,
+                    "type": "constant"
+                },
+                {
+                    "current": {
+                        "text": "",
+                        "value": ""
+                    },
+                    "description": "Must clear this before setting a new value",
+                    "label": "Session ID",
+                    "name": "session_id",
+                    "options": [
+                        {
+                            "selected": true,
+                            "text": "",
+                            "value": ""
+                        }
+                    ],
+                    "query": "",
+                    "type": "textbox"
+                },
+                {
+                    "current": {
+                        "text": "",
+                        "value": ""
+                    },
+                    "description": "Must clear this before setting a new value",
+                    "label": "Request ID",
+                    "name": "request_id",
+                    "options": [
+                        {
+                            "selected": true,
+                            "text": "",
+                            "value": ""
+                        }
+                    ],
+                    "query": "",
+                    "type": "textbox"
+                },
+                {
+                    "current": {
+                        "text": "All",
+                        "value": "$__all"
+                    },
+                    "definition": "SELECT DISTINCT device.os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "hide": 2,
+                    "includeAll": true,
+                    "multi": true,
+                    "name": "os_name",
+                    "options": [],
+                    "query": "SELECT DISTINCT device.os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "refresh": 2,
+                    "regex": "",
+                    "type": "query"
+                },
+                {
+                    "current": {
+                        "text": "All",
+                        "value": "$__all"
+                    },
+                    "definition": "SELECT DISTINCT geo_location.city\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "hide": 2,
+                    "includeAll": true,
+                    "multi": true,
+                    "name": "city",
+                    "options": [],
+                    "query": "SELECT DISTINCT geo_location.city\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "refresh": 2,
+                    "regex": "",
+                    "type": "query"
+                },
+                {
+                    "current": {
+                        "text": "",
+                        "value": ""
+                    },
+                    "hide": 2,
+                    "label": "Session Id",
+                    "name": "session_id1",
+                    "options": [],
+                    "query": "",
+                    "type": "custom"
+                }
+            ]
+        },
+        "time": {
+            "from": "now-12h",
+            "to": "now"
+        },
+        "id":null,
+        "timepicker": {},
+        "timezone": "browser",
+        "title": "AWS Elemental MediaTailor + Datazoom",
+        "uid": "__DASHBOARD_UUID__",
+        "version": 11
+    }
+}
+
+

@@ -1,0 +1,2081 @@
+{
+  "name": "mediatailor_combined",
+  "description": "",
+  "created": "2025-06-25T22:44:28.833439Z",
+  "modified": "2025-06-30T19:27:52.036082Z",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT\n\nJSONExtract(mt_log_avail, 'fillRate', 'Double') AS mt_log_avail_fill_rate,\nJSONExtract(mt_log_avail, 'filledDuration', 'Double') AS mt_log_avail_filled_duration,\nJSONExtract(mt_log_avail, 'numAds', 'UInt32') AS mt_log_avail_num_ads,\nJSONExtract(mt_log_avail, 'originAvailDuration', 'UInt32') AS mt_log_avail_origin_avail_duration,\nJSONExtract(mt_log_avail, 'skippedAds', 'String') AS mt_log_avail_skipped_ads,\nJSONExtract(mt_log_avail, 'skippedReason', 'String') AS mt_log_avail_skipped_reason,\nJSONExtract(mt_log_avail, 'creativeUniqueId', 'String') AS mt_log_avail_creative_unique_id,\nJSONExtract(mt_log_avail, 'availId', 'String') AS mt_log_avail_avail_id,\n\nJSONExtractRaw(COALESCE(mt_log_avail, ''), 'creativeAds')  as mt_log_avail_creative_ads,\n\nJSONExtractRaw(theAd, 'trackingEvents') as mt_log_avail_creative_ads_tracking_events, \nJSONExtractRaw(mt_log_avail_creative_ads_tracking_events, 'impression') as mt_log_avail_creative_ads_tracking_events_impression, \n\nJSONExtract(mt_log_avail, 'slateAd', 'String') AS mt_log_avail_slate_ad,\nJSONExtract(mt_log_avail_slate_ad, 'adContent', 'String') AS mt_log_avail_slate_ad_ad_content,\nJSONExtract(mt_log_avail_slate_ad_ad_content, 'adPlaylistUris', 'String') AS mt_log_avail_slate_ad_ad_content_ad_playlist_uris,\nJSONExtract(mt_log_avail_slate_ad, 'creativeUniqueId', 'String') AS mt_log_avail_slate_ad_creative_unique_id,\nJSONExtract(mt_log_avail_slate_ad, 'transcodedAdDuration', 'UInt32') AS mt_log_avail_slate_ad_transcoded_ad_duration,\nJSONExtract(mt_log_avail_slate_ad, 'uri', 'String') AS mt_log_avail_slate_ad_uri,\n\nJSONExtractRaw(COALESCE(mt_log_vast_response, ''), 'vastAds')  as mt_log_vast_response_vast_ads,\n\nJSONExtract(mt_log_vast_response, 'errors', 'String') AS mt_log_vast_response_errors,\n--JSONExtract(mt_log_vast_response, 'version', 'String') AS mt_log_vast_response_version,\n\nJSONExtractRaw(mt_log_avail_creative_ads, 1) as theAd,\n\nextractAll(mt_log_avail_creative_ads, '\"uri\":\"([^\"]*)\"') AS test_uris,\nextractAll(mt_log_avail_creative_ads, '\"vastDuration\":([^\"]*)}') AS mt_log_avail_creative_ads_vast_duration_array,\nextractAll(mt_log_avail_creative_ads, '\"adSystem\":\"([^\"]*)\"') AS mt_log_avail_creative_ads_ad_system_array,\nextractAll(mt_log_avail_creative_ads, '\"creativeUniqueId\":\"([^\"]*)\"') AS mt_log_avail_creative_ads_creative_unique_id_array,\nextractAll(mt_log_avail_creative_ads, '\"transcodedAdDuration\":([^\"]*),') AS mt_log_avail_creative_ads_transcoded_ad_duration_array,\nextractAll(mt_log_avail_creative_ads, '\"adPlaylistUris\":{\"([^\"]*)}') AS mt_log_avail_creative_ads_ad_content_ad_playlist_uris_array,\n\nJSONExtractRaw(COALESCE(mt_log_avail_creative_ads, ''), 'impression')  as test_impression_string,\n\nextractAll(mt_log_vast_response_vast_ads, '\"apiFramework\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_media_files_api_framework_array,\nextractAll(mt_log_vast_response_vast_ads, '\"bitrate\":([^\"]*),') AS mt_log_vast_response_vast_ads_vast_media_files_bitrate_array,\nextractAll(mt_log_vast_response_vast_ads, '\"delivery\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_media_files_delivery_array,\nextractAll(mt_log_vast_response_vast_ads, '\"height\":([^\"]*),') AS mt_log_vast_response_vast_ads_vast_media_files_height_array,\nextractAll(mt_log_vast_response_vast_ads, '\"id\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_media_files_id_array,\nextractAll(mt_log_vast_response_vast_ads, '\"type\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_media_files_type_array,\nextractAll(mt_log_vast_response_vast_ads, '\"uri\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_media_files_uri_array,\nextractAll(mt_log_vast_response_vast_ads, '\"width\":([^\"]*)}') AS mt_log_vast_response_vast_ads_vast_media_files_width_array,\n\n\n\nextractAll(mt_log_vast_response_vast_ads, '\"uri\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_uri_array,\nextractAll(mt_log_vast_response_vast_ads, '\"duration\":([^\"]*),') AS mt_log_vast_response_vast_ads_array,\nextractAll(mt_log_vast_response_vast_ads, '\"adSystem\":\"([^\"]*)\"') AS mt_log_vast_ad_ad_system_array,\nextractAll(mt_log_vast_response_vast_ads, '\"adTitle\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_ad_title_array,\nextractAll(mt_log_vast_response_vast_ads, '\"creativeAdId\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_creative_ad_id_array,\nextractAll(mt_log_vast_response_vast_ads, '\"creativeId\":{\"([^\"]*)}') AS mt_log_vast_response_vast_ads_creative_id_array,\nextractAll(mt_log_vast_response_vast_ads, '\"vastAdId\":\"([^\"]*)\"') AS mt_log_vast_response_vast_ads_vast_ad_id_array,\n\n\nJSONExtractRaw(COALESCE(mt_log_beacon_info, ''), 'headers')  as mt_log_beacon_info_headers,\nextractAll(mt_log_beacon_info_headers, '\"name\":\"([^\"]*)\"') AS mt_log_beacon_info_headers_name,\nextractAll(mt_log_beacon_info_headers, '\"value\":\"([^\"]*)\"') AS mt_log_beacon_info_headers_value_array,\n\n\n\narrayFlatten(\n    arrayMap(\n        x -> splitByString(\n            '\",\"',\n            replaceRegexpAll(\n                replaceRegexpAll(\n                    JSONExtractRaw(x, 'trackingEvents'),\n                    '\\\\[\\\\\"', ''\n                ),\n                '\\\\\"\\\\]', ''\n            )\n        ),\n        JSONExtractArrayRaw(mt_log_avail_creative_ads)\n    )\n) AS mt_log_avail_creative_ads_tracking_events_array,\n\narrayMap(\n  x -> JSONExtract(x, 'Map(String, Array(String))'), \n  extractAll(\n    mt_log_avail_creative_ads, \n      '\"trackingEvents\":([^\\}]*\\})'\n  )\n) AS mt_log_avail_creative_ads_tracking_events_arrays,\n\n\n\n--JSONExtract(mt_log_avail_creative_ads_tracking_events_array, '\"impression\":\"([^\"]*)\"') AS test_impression_string,\n\n\n\n\n*\nFROM {STREAM}",
+    "null_values": [],
+    "sample_data": {
+      "records": [
+        {
+          "data": "eyJldmVudFRpbWVzdGFtcCI6IjIwMjUtMDYtMDNUMTM6MTA6MzNaIiwiYXdzQWNjb3VudElkIjoiMzQ5MDA5NTgzMjYwIiwib3JpZ2luSWQiOiJMZWZFdmVudEdyb3VwMSIsImN1c3RvbWVySWQiOiJiNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1IiwiZXZlbnRUeXBlIjoiRklMTEVEX0FWQUlMIiwic2Vzc2lvblR5cGUiOiJEQVNIIiwicmVxdWVzdElkIjoiMjNlY2JhZTgtMmI0ZS00MTdiLWE5ZDUtYzAzMGUwYTEyYzM5IiwiZXZlbnREZXNjcmlwdGlvbiI6IlN1Y2Nlc3NmdWxseSBmaWxsZWQgYXZhaWwiLCJzZXNzaW9uSWQiOiJlODcwMDlhMC1hNTBjLTRlODYtYTUwNC01OTE0MjkyYzI2MjYiLCJhdmFpbCI6eyJhdmFpbElkIjoiMTc0ODk1NjE1NTY2OSIsIm9yaWdpbkF2YWlsRHVyYXRpb24iOjU1LjAsIm51bUFkcyI6MywiY3JlYXRpdmVBZHMiOlt7InVyaSI6Imh0dHBzOi8vZDNyZTRpM3ZncHB2cjguY2xvdWRmcm9udC5uZXQvTWVkaWEvQnVtcGVycy9BV1NFbGVtZW50YWxfY29tbWVyaWNhbF9icmVha18xNXMtSEQubXA0IiwiY3JlYXRpdmVVbmlxdWVJZCI6IjAwMDEwIiwidmFzdER1cmF0aW9uIjoxNS4wLCJ0cmFuc2NvZGVkQWREdXJhdGlvbiI6MTUuMCwiYWRDb250ZW50Ijp7ImFkUGxheWxpc3RVcmlzIjp7Imh0dHBzOi8vZHRzdjB4LmVncmVzcy50N2M3emwubWVkaWFwYWNrYWdldjIudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vb3V0L3YxL0xlZkV2ZW50R3JvdXAxL0xlZkV2ZW50MS9jbWFmL2Rhc2gubXBkIjoiaHR0cHM6Ly9zZWdtZW50cy5tZWRpYXRhaWxvci51cy1lYXN0LTEuYW1hem9uYXdzLmNvbS90bS9iNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1Lzk0OTFlNzgzLTgxZDYtNDExNC1iYzAwLTUxZjIzY2UwL2Fzc2V0Lm1wZCJ9fSwiYWRTeXN0ZW0iOiIyLjAiLCJ0cmFja2luZ0V2ZW50cyI6eyJpbXByZXNzaW9uIjpbImh0dHBzOi8vbjhsamZzMGgwOS5leGVjdXRlLWFwaS51cy13ZXN0LTIuYW1hem9uYXdzLmNvbS92MS9pbXByZXNzaW9uIl19fSx7InVyaSI6Imh0dHBzOi8vZDNyZTRpM3ZncHB2cjguY2xvdWRmcm9udC5uZXQvTWVkaWEvQnVtcGVycy9BRC1jYXJpYmJlYW4yLTE1LUhELm1wNCIsImNyZWF0aXZlVW5pcXVlSWQiOiIwMDAwMiIsInZhc3REdXJhdGlvbiI6MTUuMCwidHJhbnNjb2RlZEFkRHVyYXRpb24iOjE1LjAsImFkQ29udGVudCI6eyJhZFBsYXlsaXN0VXJpcyI6eyJodHRwczovL2R0c3YweC5lZ3Jlc3MudDdjN3psLm1lZGlhcGFja2FnZXYyLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL291dC92MS9MZWZFdmVudEdyb3VwMS9MZWZFdmVudDEvY21hZi9kYXNoLm1wZCI6Imh0dHBzOi8vc2VnbWVudHMubWVkaWF0YWlsb3IudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vdG0vYjRhZjljZDdmNTkwYmFlZjQ0YTY4MTY4NmEyNTIwOGVlOTAwYTdhNS8zODU4Y2NjMC04YmY3LTQzNWYtYThiNi03MDZiMzMwZC9hc3NldC5tcGQifX0sImFkU3lzdGVtIjoiMi4wIiwidHJhY2tpbmdFdmVudHMiOnsiaW1wcmVzc2lvbiI6WyJodHRwczovL244bGpmczBoMDkuZXhlY3V0ZS1hcGkudXMtd2VzdC0yLmFtYXpvbmF3cy5jb20vdjEvaW1wcmVzc2lvbiJdfX0seyJ1cmkiOiJodHRwczovL2QzcmU0aTN2Z3BwdnI4LmNsb3VkZnJvbnQubmV0L01lZGlhL0J1bXBlcnMvQUQtbXVzaWMtMTUtSEQubXA0IiwiY3JlYXRpdmVVbmlxdWVJZCI6IjAwMDA0IiwidmFzdER1cmF0aW9uIjoxNS4wLCJ0cmFuc2NvZGVkQWREdXJhdGlvbiI6MTUuMCwiYWRDb250ZW50Ijp7ImFkUGxheWxpc3RVcmlzIjp7Imh0dHBzOi8vZHRzdjB4LmVncmVzcy50N2M3emwubWVkaWFwYWNrYWdldjIudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vb3V0L3YxL0xlZkV2ZW50R3JvdXAxL0xlZkV2ZW50MS9jbWFmL2Rhc2gubXBkIjoiaHR0cHM6Ly9zZWdtZW50cy5tZWRpYXRhaWxvci51cy1lYXN0LTEuYW1hem9uYXdzLmNvbS90bS9iNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1LzcwNWEyNjBjLTg3ZjgtNDQyOC05YmFjLTM1OWZmYThiL2Fzc2V0Lm1wZCJ9fSwiYWRTeXN0ZW0iOiIyLjAiLCJ0cmFja2luZ0V2ZW50cyI6eyJpbXByZXNzaW9uIjpbImh0dHBzOi8vbjhsamZzMGgwOS5leGVjdXRlLWFwaS51cy13ZXN0LTIuYW1hem9uYXdzLmNvbS92MS9pbXByZXNzaW9uIl19fV0sImZpbGxlZER1cmF0aW9uIjo0NS4wLCJmaWxsUmF0ZSI6MC44MTgxODE4MTgxODE4MTgyLCJkcmlmdE1pbGxpc2Vjb25kc0F0QXZhaWxTdGFydCI6MCwic2xhdGVBZCI6eyJ1cmkiOiJodHRwczovL2QxenhmdzluNTViMjNyLmNsb3VkZnJvbnQubmV0L2ludGVyc3RpdGlhbHMvU2xhdGVBZC5tb3YiLCJjcmVhdGl2ZVVuaXF1ZUlkIjoiIiwiYWRDb250ZW50Ijp7ImFkUGxheWxpc3RVcmlzIjp7Imh0dHBzOi8vZHRzdjB4LmVncmVzcy50N2M3emwubWVkaWFwYWNrYWdldjIudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vb3V0L3YxL0xlZkV2ZW50R3JvdXAxL0xlZkV2ZW50MS9jbWFmL2Rhc2gubXBkIjoiaHR0cDovL3RyYW5zY29kZS1hZC1tYW5pZmVzdHMudXMtZWFzdC0xLjU2NjI3MTE0NjY1MC5zZXJ2aWNlbG9va3VwLmludGVybmFsL3RtL2I0YWY5Y2Q3ZjU5MGJhZWY0NGE2ODE2ODZhMjUyMDhlZTkwMGE3YTUvNTBiY2RhZTgtNWFmMy00NTRkLTg4MTktNmNjMjcyOWYvYXNzZXQubXBkIn19LCJ0cmFuc2NvZGVkQWREdXJhdGlvbiI6MTAuMH0sImFkQnJlYWtUcmFja2luZ0V2ZW50cyI6e319fQo="
+        },
+        {
+          "data": "eyJldmVudFRpbWVzdGFtcCI6IjIwMjUtMDYtMDNUMTM6MTA6MzNaIiwiYXdzQWNjb3VudElkIjoiMzQ5MDA5NTgzMjYwIiwib3JpZ2luSWQiOiJMZWZFdmVudEdyb3VwMSIsImN1c3RvbWVySWQiOiJiNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1IiwiZXZlbnRUeXBlIjoiVkFTVF9SRVNQT05TRSIsInNlc3Npb25UeXBlIjoiREFTSCIsInJlcXVlc3RJZCI6IjIzZWNiYWU4LTJiNGUtNDE3Yi1hOWQ1LWMwMzBlMGExMmMzOSIsImV2ZW50RGVzY3JpcHRpb24iOiJHb3QgVkFTVCByZXNwb25zZSIsInNlc3Npb25JZCI6ImU4NzAwOWEwLWE1MGMtNGU4Ni1hNTA0LTU5MTQyOTJjMjYyNiIsInZhc3RSZXNwb25zZSI6eyJ2ZXJzaW9uIjoiMy4wIiwidmFzdEFkcyI6W3sidmFzdEFkSWQiOiIiLCJhZFN5c3RlbSI6IjIuMCIsImFkVGl0bGUiOiJBV1NFbGVtZW50YWxfY29tbWVyaWNhbF9icmVha18xNSIsImNyZWF0aXZlSWQiOiIwMDAxMCIsImNyZWF0aXZlQWRJZCI6IiIsImR1cmF0aW9uIjoxNS4wLCJ2YXN0TWVkaWFGaWxlcyI6W3sidXJpIjoiaHR0cHM6Ly9kM3JlNGkzdmdwcHZyOC5jbG91ZGZyb250Lm5ldC9NZWRpYS9CdW1wZXJzL0FXU0VsZW1lbnRhbF9jb21tZXJpY2FsX2JyZWFrXzE1cy1IRC5tcDQiLCJpZCI6IjAwMDEwIiwiZGVsaXZlcnkiOiJwcm9ncmVzc2l2ZSIsInR5cGUiOiJ2aWRlby9tcDQiLCJhcGlGcmFtZXdvcmsiOiIiLCJ3aWR0aCI6MTI4MCwiaGVpZ2h0Ijo3MjAsImJpdHJhdGUiOjB9XSwidHJhY2tpbmdFdmVudHMiOnsiaW1wcmVzc2lvbiI6WyJodHRwczovL244bGpmczBoMDkuZXhlY3V0ZS1hcGkudXMtd2VzdC0yLmFtYXpvbmF3cy5jb20vdjEvaW1wcmVzc2lvbiJdfX0seyJ2YXN0QWRJZCI6IiIsImFkU3lzdGVtIjoiMi4wIiwiYWRUaXRsZSI6IkFELWNhcmliYmVhbjItMTUiLCJjcmVhdGl2ZUlkIjoiMDAwMDIiLCJjcmVhdGl2ZUFkSWQiOiIiLCJkdXJhdGlvbiI6MTUuMCwidmFzdE1lZGlhRmlsZXMiOlt7InVyaSI6Imh0dHBzOi8vZDNyZTRpM3ZncHB2cjguY2xvdWRmcm9udC5uZXQvTWVkaWEvQnVtcGVycy9BRC1jYXJpYmJlYW4yLTE1LUhELm1wNCIsImlkIjoiMDAwMDIiLCJkZWxpdmVyeSI6InByb2dyZXNzaXZlIiwidHlwZSI6InZpZGVvL21wNCIsImFwaUZyYW1ld29yayI6IiIsIndpZHRoIjoxMjgwLCJoZWlnaHQiOjcyMCwiYml0cmF0ZSI6MH1dLCJ0cmFja2luZ0V2ZW50cyI6eyJpbXByZXNzaW9uIjpbImh0dHBzOi8vbjhsamZzMGgwOS5leGVjdXRlLWFwaS51cy13ZXN0LTIuYW1hem9uYXdzLmNvbS92MS9pbXByZXNzaW9uIl19fSx7InZhc3RBZElkIjoiIiwiYWRTeXN0ZW0iOiIyLjAiLCJhZFRpdGxlIjoiQUQtbXVzaWMtMTUiLCJjcmVhdGl2ZUlkIjoiMDAwMDQiLCJjcmVhdGl2ZUFkSWQiOiIiLCJkdXJhdGlvbiI6MTUuMCwidmFzdE1lZGlhRmlsZXMiOlt7InVyaSI6Imh0dHBzOi8vZDNyZTRpM3ZncHB2cjguY2xvdWRmcm9udC5uZXQvTWVkaWEvQnVtcGVycy9BRC1tdXNpYy0xNS1IRC5tcDQiLCJpZCI6IjAwMDA0IiwiZGVsaXZlcnkiOiJwcm9ncmVzc2l2ZSIsInR5cGUiOiJ2aWRlby9tcDQiLCJhcGlGcmFtZXdvcmsiOiIiLCJ3aWR0aCI6MTI4MCwiaGVpZ2h0Ijo3MjAsImJpdHJhdGUiOjB9XSwidHJhY2tpbmdFdmVudHMiOnsiaW1wcmVzc2lvbiI6WyJodHRwczovL244bGpmczBoMDkuZXhlY3V0ZS1hcGkudXMtd2VzdC0yLmFtYXpvbmF3cy5jb20vdjEvaW1wcmVzc2lvbiJdfX1dLCJub25MaW5lYXJBZHNMaXN0IjpbXSwiZXJyb3JzIjpbXX19Cg=="
+        },
+        {
+          "data": "eyJldmVudFRpbWVzdGFtcCI6IjIwMjUtMDYtMDNUMTM6MTA6MzNaIiwiYXdzQWNjb3VudElkIjoiMzQ5MDA5NTgzMjYwIiwib3JpZ2luSWQiOiJMZWZFdmVudEdyb3VwMSIsImN1c3RvbWVySWQiOiJiNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1IiwiZXZlbnRUeXBlIjoiQURfTUFSS0VSX0ZPVU5EIiwic2Vzc2lvblR5cGUiOiJEQVNIIiwicmVxdWVzdElkIjoiMjNlY2JhZTgtMmI0ZS00MTdiLWE5ZDUtYzAzMGUwYTEyYzM5IiwiZXZlbnREZXNjcmlwdGlvbiI6IkZvdW5kIGFkIG1hcmtlciBpbiB0aGUgbWFuaWZlc3QiLCJzZXNzaW9uSWQiOiJlODcwMDlhMC1hNTBjLTRlODYtYTUwNC01OTE0MjkyYzI2MjYiLCJhZE1hcmtlcnMiOiI8RXZlbnQgeG1sbnM9XCJ1cm46bXBlZzpkYXNoOnNjaGVtYTptcGQ6MjAxMVwiIGR1cmF0aW9uPVwiNDk1MDAwMFwiIHByZXNlbnRhdGlvblRpbWU9XCIyODA1NzUwMTY0NDBcIj5cbiAgICAgICAgPHNjdGUzNTpTcGxpY2VJbmZvU2VjdGlvbiB4bWxuczpzY3RlMzU9XCJ1cm46c2N0ZTpzY3RlMzU6MjAxMzp4bWxcIiBkdXJhdGlvbj1cIjQ5NTAwMDBcIiBwcm90b2NvbFZlcnNpb249XCIwXCIgcHRzQWRqdXN0bWVudD1cIjEyMzA3MDQ2NFwiIHRpZXI9XCI0MDk1XCI+XG4gICAgICAgICAgPHNjdGUzNTpTcGxpY2VJbnNlcnQgYXZhaWxOdW09XCIxNzdcIiBhdmFpbHNFeHBlY3RlZD1cIjE3N1wiIG91dE9mTmV0d29ya0luZGljYXRvcj1cInRydWVcIiBzcGxpY2VFdmVudENhbmNlbEluZGljYXRvcj1cImZhbHNlXCIgc3BsaWNlRXZlbnRJZD1cIjIxOTM3XCIgc3BsaWNlSW1tZWRpYXRlRmxhZz1cImZhbHNlXCIgdW5pcXVlUHJvZ3JhbUlkPVwiMVwiPlxuICAgICAgICAgICAgPHNjdGUzNTpQcm9ncmFtPlxuICAgICAgICAgICAgICA8c2N0ZTM1OlNwbGljZVRpbWUgcHRzVGltZT1cIjU1NzQwMzkwMzJcIi8+XG4gICAgICAgICAgICA8L3NjdGUzNTpQcm9ncmFtPlxuICAgICAgICAgICAgPHNjdGUzNTpCcmVha0R1cmF0aW9uIGF1dG9SZXR1cm49XCJ0cnVlXCIgZHVyYXRpb249XCI0OTUwMDAwXCIvPlxuICAgICAgICAgIDwvc2N0ZTM1OlNwbGljZUluc2VydD5cbiAgICAgICAgPC9zY3RlMzU6U3BsaWNlSW5mb1NlY3Rpb24+XG4gICAgICA8L0V2ZW50PiJ9Cg=="
+        },
+        {
+          "data": "eyJldmVudFRpbWVzdGFtcCI6IjIwMjUtMDYtMDNUMTM6MTA6MzNaIiwiYXdzQWNjb3VudElkIjoiMzQ5MDA5NTgzMjYwIiwib3JpZ2luSWQiOiJMZWZFdmVudEdyb3VwMSIsImN1c3RvbWVySWQiOiJiNGFmOWNkN2Y1OTBiYWVmNDRhNjgxNjg2YTI1MjA4ZWU5MDBhN2E1IiwiZXZlbnRUeXBlIjoiTUFLSU5HX0FEU19SRVFVRVNUIiwic2Vzc2lvblR5cGUiOiJEQVNIIiwicmVxdWVzdElkIjoiMjNlY2JhZTgtMmI0ZS00MTdiLWE5ZDUtYzAzMGUwYTEyYzM5IiwiZXZlbnREZXNjcmlwdGlvbiI6IlJlcXVlc3RpbmcgYWR2ZXJ0aXNlbWVudHMgZnJvbSBBZCBEZWNpc2lvbiBTZXJ2ZXIiLCJzZXNzaW9uSWQiOiJlODcwMDlhMC1hNTBjLTRlODYtYTUwNC01OTE0MjkyYzI2MjYiLCJhZHNSZXF1ZXN0VXJsIjoiaHR0cHM6Ly9uOGxqZnMwaDA5LmV4ZWN1dGUtYXBpLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tL3YxL2Fkcz9kdXJhdGlvbj01NSIsInJlcXVlc3RIZWFkZXJzIjpbeyJuYW1lIjoiVXNlci1BZ2VudCIsInZhbHVlIjoiTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTVfNykgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNi4wLjAuMCBTYWZhcmkvNTM3LjM2In0seyJuYW1lIjoiWC1EZXZpY2UtVXNlci1BZ2VudCIsInZhbHVlIjoiTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTVfNykgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNi4wLjAuMCBTYWZhcmkvNTM3LjM2In0seyJuYW1lIjoiWC1Gb3J3YXJkZWQtRm9yIiwidmFsdWUiOiIyNC42MS4xOTMuNTYsIDE1LjE1OC41Mi4xMCJ9XX0K"
+        }
+      ],
+      "requestId": "5ddc2d50-194a-4351-bcd7-b64caeecd910",
+      "timestamp": 1748956299226
+    },
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "ingest.event.timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": true,
+          "primary": false,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "timestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "event.timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05.999999999Z",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "eventTimestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_event_description",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "eventDescription"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_event_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "eventType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_creative_unique_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "creativeUniqueId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_profile_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "profileName"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adUri"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_transcode_request_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "transcodeRequestId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_cache_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cacheStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_aws_account_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "awsAccountId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_customer_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "customerId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_session_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sessionId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_origin_request_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "originRequestUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_media_tailor_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "mediaTailorPath"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_response_body",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "responseBody"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_session_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sessionType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_next_token",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestNextToken"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_asset_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "assetPath"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_origin_full_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "originFullUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_origin_prefix_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "originPrefixUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_additional_info",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "additionalInfo"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_cause",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cause"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_response",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "response"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_http_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_error_message",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "errorMessage"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_ads_response",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adAdsResponse"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_ads_raw_response",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adAdsRawResponse"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_ads_request",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adAdsRequest"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_num_new_avails",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adNumNewAvails"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_generated_media_playlist",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "generatedMediaPlaylist"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_start_time",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestStartTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_end_time",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestEndTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_start_time_epoch_millis",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestStartTimeEpochMillis"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_end_time_tpoch_millis",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestEndTimeEpochMillis"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "transform_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "vastAd"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vod_creative_offsets",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "vodCreativeOffsets"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "avail"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "vastResponse"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_fill_rate",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/fillRate"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_filled_duration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/filledDuration"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_num_ads",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/numAds"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_origin_avail_duration",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/originAvailDuration"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_skipped_ads",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_skipped_reason",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_avail_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_unique_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/creativeUniqueId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_tracking_events",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/creativeAds/trackingEvents"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/creativeUri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_ad_content",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad_ad_content",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad_ad_content_ad_playlist_uris",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad_creative_unique_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_slate_ad_transcoded_ad_duration",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_errors",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_version",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastResponse/vastAds"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "thevastAds",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_ad_system",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_tracking_events",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastResponse/vastAds/trackingEvents"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_ad_tag_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastResponse/vastAds/vastAdTagUri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastResponse/vastAds/vastMediaFiles"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "vastMFs",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {},
+          "suppress": true
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_ad_title",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/adTitle"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_creative_ad_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/creativeAdId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_creative_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/creativeId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_duration",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/duration"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_tracking_events",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/trackingEvents"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_ad_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastAdId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_ad_tag_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastAdTagUri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_api_framework",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/apiFramework"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_bitrate",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/bitrate"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_delivery",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/delivery"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_height",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/height"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/id"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/type"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/uri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_vast_media_files_width",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/vastAd/vastMediaFiles/width"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_tracking_events_impression",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/avail/creativeAds/trackingEvents/impression"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_raw_ads_response",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "rawAdsResponse"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "beaconInfo"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_beacon_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/beaconInfo/beaconUri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_original_beacon_uri",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/beaconInfo/originalBeaconUri"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_tracking_event",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/beaconInfo/trackingEvent"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_beacon_http_response_code_int",
+        "datatype": {
+          "type": "uint8",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/beaconInfo/beaconHttpResponseCode"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_headers",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/beaconInfo/headers"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_headers_name_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_beacon_info_headers_value_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ad_markers",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adMarkers"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "catch_all",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_uri_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_vast_duration_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_creative_unique_id_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_ad_system_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_transcoded_ad_duration_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_ad_content_ad_playlist_uris_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "test_impression",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_width_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_uri_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_type_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_id_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_height_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_delivery_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_bitrate_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_media_files_api_framework_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_uri_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_ad_ad_system_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_ad_title_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_creative_ad_id_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_creative_id_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_vast_response_vast_ads_vast_ad_id_array",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ingest_request_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.requestId"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_request_headers",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestHeaders"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_origin_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "originId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_ads_request_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "adsRequestUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mt_log_avail_creative_ads_tracking_events_arrays",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": false,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "array",
+                  "index": false,
+                  "elements": [
+                    {
+                      "type": "string",
+                      "index": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "subtype": "firehose",
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/c0d1088c-6cbb-4b21-85d5-fc9e369dc58c/tables/246a5618-5b5b-4d77-a80d-9674623cfaec/transforms/9aea3903-2728-42d3-bdfb-866be9a82906",
+  "type": "json",
+  "table": "246a5618-5b5b-4d77-a80d-9674623cfaec"
+}
+

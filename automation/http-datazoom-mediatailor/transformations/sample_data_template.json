@@ -1,0 +1,84 @@
+{
+    "eventTimestamp": "__DYNAMIC_TIMESTAMP_WITH_ZULU__",
+    "awsAccountId": "349009583260",
+    "originId": "LefEventGroup1",
+    "customerId": "b4af9cd7f590baef44a681686a25208ee900a7a5",
+    "eventType": "FILLED_AVAIL",
+    "sessionType": "DASH",
+    "requestId": "23ecbae8-2b4e-417b-a9d5-c030e0a12c39",
+    "eventDescription": "Successfully filled avail",
+    "sessionId": "e87009a0-a50c-4e86-a504-5914292c2626",
+    "avail": {
+        "availId": "1748956155669",
+        "originAvailDuration": 55.0,
+        "numAds": 3,
+        "creativeAds": [
+            {
+                "uri": "https://d3re4i3vgppvr8.cloudfront.net/Media/Bumpers/AWSElemental_commerical_break_15s-HD.mp4",
+                "creativeUniqueId": "00010",
+                "vastDuration": 15.0,
+                "transcodedAdDuration": 15.0,
+                "adContent": {
+                    "adPlaylistUris": {
+                        "https://dtsv0x.egress.t7c7zl.mediapackagev2.us-east-1.amazonaws.com/out/v1/LefEventGroup1/LefEvent1/cmaf/dash.mpd": "https://segments.mediatailor.us-east-1.amazonaws.com/tm/b4af9cd7f590baef44a681686a25208ee900a7a5/9491e783-81d6-4114-bc00-51f23ce0/asset.mpd"
+                    }
+                },
+                "adSystem": "2.0",
+                "trackingEvents": {
+                    "impression": [
+                        "https://n8ljfs0h09.execute-api.us-west-2.amazonaws.com/v1/impression"
+                    ]
+                }
+            },
+            {
+                "uri": "https://d3re4i3vgppvr8.cloudfront.net/Media/Bumpers/AD-caribbean2-15-HD.mp4",
+                "creativeUniqueId": "00002",
+                "vastDuration": 15.0,
+                "transcodedAdDuration": 15.0,
+                "adContent": {
+                    "adPlaylistUris": {
+                        "https://dtsv0x.egress.t7c7zl.mediapackagev2.us-east-1.amazonaws.com/out/v1/LefEventGroup1/LefEvent1/cmaf/dash.mpd": "https://segments.mediatailor.us-east-1.amazonaws.com/tm/b4af9cd7f590baef44a681686a25208ee900a7a5/3858ccc0-8bf7-435f-a8b6-706b330d/asset.mpd"
+                    }
+                },
+                "adSystem": "2.0",
+                "trackingEvents": {
+                    "impression": [
+                        "https://n8ljfs0h09.execute-api.us-west-2.amazonaws.com/v1/impression"
+                    ]
+                }
+            },
+            {
+                "uri": "https://d3re4i3vgppvr8.cloudfront.net/Media/Bumpers/AD-music-15-HD.mp4",
+                "creativeUniqueId": "00004",
+                "vastDuration": 15.0,
+                "transcodedAdDuration": 15.0,
+                "adContent": {
+                    "adPlaylistUris": {
+                        "https://dtsv0x.egress.t7c7zl.mediapackagev2.us-east-1.amazonaws.com/out/v1/LefEventGroup1/LefEvent1/cmaf/dash.mpd": "https://segments.mediatailor.us-east-1.amazonaws.com/tm/b4af9cd7f590baef44a681686a25208ee900a7a5/705a260c-87f8-4428-9bac-359ffa8b/asset.mpd"
+                    }
+                },
+                "adSystem": "2.0",
+                "trackingEvents": {
+                    "impression": [
+                        "https://n8ljfs0h09.execute-api.us-west-2.amazonaws.com/v1/impression"
+                    ]
+                }
+            }
+        ],
+        "filledDuration": 45.0,
+        "fillRate": 0.8181818181818182,
+        "driftMillisecondsAtAvailStart": 0,
+        "slateAd": {
+            "uri": "https://d1zxfw9n55b23r.cloudfront.net/interstitials/SlateAd.mov",
+            "creativeUniqueId": "",
+            "adContent": {
+                "adPlaylistUris": {
+                    "https://dtsv0x.egress.t7c7zl.mediapackagev2.us-east-1.amazonaws.com/out/v1/LefEventGroup1/LefEvent1/cmaf/dash.mpd": "http://transcode-ad-manifests.us-east-1.566271146650.servicelookup.internal/tm/b4af9cd7f590baef44a681686a25208ee900a7a5/50bcdae8-5af3-454d-8819-6cc2729f/asset.mpd"
+                }
+            },
+            "transcodedAdDuration": 10.0
+        },
+        "adBreakTrackingEvents": {}
+    }
+}
+
