@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "path":"https://github.com/hydrolix/integration-deployment-templates/blob/first-automation/automation/firehose-medialive/dashboards/current.json",
+    "path":"https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
   },
   "method": "firehose",
@@ -13,7 +13,7 @@
       "transforms": [
         {
           "data_template_path": "AWS-Elemental/MediaLive/transformations/encoding/data_template.json",
-          "path": "AWS-Elemental/MediaLive/transformations/encoding/tsf_ele_medialive_encoder_logs.json"
+          "path": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-medialive/transformations/encoding/current.json"
         }
       ]
     },
