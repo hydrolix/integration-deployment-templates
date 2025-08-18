@@ -13,7 +13,7 @@
       "name": "mediapackage_egress",
       "transforms": [
         {
-          "data_template_path": "transformations/egress/sample-data_template.json",
+          "data_template_path": "transformations/egress/sample_data_template.json",
           "path": "transformations/egress/current.json"
         }
       ]
@@ -23,7 +23,7 @@
       "name": "mediapackage_ingress",
       "transforms": [
         {
-          "data_template_path": "transformations/ingress/sample-data_template.json",
+          "data_template_path": "transformations/ingress/sample_data_template.json",
           "path": "transformations/ingress/current.json"
         }
       ]
@@ -33,7 +33,7 @@
       "name": "mediapackage_metrics",
       "transforms": [
         {
-          "data_template_path": "transformations/metrics/sample-data_template.json",
+          "data_template_path": "transformations/metrics/sample_data_template.json",
           "path": "transformations/metrics/current.json"
         }
       ]
