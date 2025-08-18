@@ -2,6 +2,7 @@
   "name": "kinesis-cloudfront",
   "source": "cloudfront",
   "method": "kinesis",
+  "beta": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/cloudfront-to-kinesis",
   "dashboard": {
     "path": "dashboards/current.json",
