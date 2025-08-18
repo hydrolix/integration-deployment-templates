@@ -41,7 +41,7 @@
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon Data Firehose",
     "channel_type": "AWS",
-    "source_type": "security"
+    "data_category": "video"
   }
 }
 
