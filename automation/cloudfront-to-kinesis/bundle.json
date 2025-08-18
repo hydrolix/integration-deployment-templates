@@ -20,7 +20,7 @@
       ]
     }
   ],
-  "docs": {
+  "ui": {
     "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
     "method": {
       "full_title": "Amazon Kinesis",
@@ -29,13 +29,13 @@
     "source": {
       "full_title": "CloudFront",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
-    }
+    },
+    "data_category": "cdn"
   },
   "metadata": {
     "version": "1.0.0",
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon Kinesis Cloudfront",
-    "channel_type": "AWS",
-    "data_category": "cdn"
+    "channel_type": "AWS"
   }
 }
