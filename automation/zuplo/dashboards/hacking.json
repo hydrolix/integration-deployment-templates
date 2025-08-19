@@ -1,5 +1,14 @@
 {
   "dashboard": {
+    "__inputs": [
+      {
+        "name": "__PROJECT_NAME__.__TABLE_NAME__",
+        "type": "constant",
+        "label": "Table",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
+      }
+    ],
     "__elements": {
       "fecxpuv0un9xcc": {
         "name": "Zuplo: Geographic Request Distribution Heatmap",
