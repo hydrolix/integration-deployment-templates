@@ -1,14 +1,5 @@
 {
   "dashboard": {
-    "__inputs": [
-      {
-        "name": "__PROJECT_NAME__.__TABLE_NAME__",
-        "type": "constant",
-        "label": "Table",
-        "value": "__PROJECT_NAME__.__TABLE_NAME__",
-        "description": ""
-      }
-    ],
     "__elements": {
       "fecxpuv0un9xcc": {
         "name": "Zuplo: Geographic Request Distribution Heatmap",
@@ -114,69 +105,12 @@
           "pluginVersion": "10.4.1",
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "count",
-                    "alias": "requests",
-                    "column": "requestId"
-                  }
-                ],
-                "columns": [
-                  {
-                    "custom": false,
-                    "name": "country",
-                    "type": "Nullable(String)"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [
-                  "country"
-                ],
-                "limit": 1000,
-                "meta": {},
-                "mode": "aggregate",
-                "orderBy": [],
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "count",
-                      "alias": "requests",
-                      "column": "requestId"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "custom": false,
-                      "name": "country",
-                      "type": "Nullable(String)"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [
-                    "country"
-                  ],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "aggregate",
-                  "orderBy": [],
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
               "rawSql": "SELECT country, count(requestId) as requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY country LIMIT 1000",
               "refId": "Geographic Requests"
@@ -240,67 +174,14 @@
           "pluginVersion": "10.4.1",
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "count",
-                    "alias": "total_requests",
-                    "column": "requestId"
-                  }
-                ],
-                "columns": [
-                  {
-                    "custom": false,
-                    "name": "requestId",
-                    "type": "Nullable(String)"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [],
-                "limit": 1000,
-                "meta": {},
-                "mode": "aggregate",
-                "orderBy": [],
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "count",
-                      "alias": "total_requests",
-                      "column": "requestId"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "custom": false,
-                      "name": "requestId",
-                      "type": "Nullable(String)"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "aggregate",
-                  "orderBy": [],
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    count(requestId) AS total_requests\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "rawSql": "SELECT count(requestId) AS total_requests FROM ${table} WHERE $__timeFilter(timestamp)",
               "refId": "A"
             }
           ],
@@ -392,23 +273,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    toDate(timestamp) AS date,  -- Extract the date part\n    count(*) AS daily_requests   -- Count requests for each day\nFROM ${table}\nWHERE timestamp >= toDateTime(now() - INTERVAL 14 DAY) AND timestamp <= toDateTime(now()) -- customized to used fixed values\nGROUP BY date                   -- Group by date\nORDER BY date ASC              -- Order by date",
+              "rawSql": "SELECT toDate(timestamp) AS date, count(*) AS daily_requests FROM ${table} WHERE timestamp >= toDateTime(now() - INTERVAL 14 DAY) AND timestamp <= toDateTime(now()) GROUP BY date ORDER BY date ASC",
               "refId": "A"
             }
           ],
@@ -501,23 +371,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time, -- Time bucket (adjust as needed)\n    quantile(0.5)(durationMs) AS median_duration,\n    avg(durationMs) AS average_duration,\n    quantile(0.95)(durationMs) AS p95_duration\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time ASC",
+              "rawSql": "SELECT toStartOfMinute(timestamp) AS time, quantile(0.5)(durationMs) AS median_duration, avg(durationMs) AS average_duration, quantile(0.95)(durationMs) AS p95_duration FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY time ORDER BY time ASC",
               "refId": "Request Times"
             }
           ],
@@ -527,7 +386,7 @@
         }
       },
       "cecxpyk5wt7nkf": {
-        "name": "Zuplo: Top 20 Requests by Route Path",
+        "name": "Zuplo: Top 10 Requests by Route Path",
         "uid": "cecxpyk5wt7nkf",
         "kind": 1,
         "model": {
@@ -535,7 +394,7 @@
             "type": "grafana-clickhouse-datasource",
             "uid": "__DATASOURCE__"
           },
-          "description": "The top 10 routes that demand the most trafic.",
+          "description": "The top 10 routes that demand the most traffic.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -581,43 +440,14 @@
           "pluginVersion": "10.4.1",
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [],
-                "columns": [],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [],
-                "limit": 1000,
-                "meta": {},
-                "mode": "list",
-                "orderBy": [],
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [],
-                  "columns": [],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "list",
-                  "orderBy": [],
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    routePath,\n    count(*) AS request_count\nFROM ${table}\nWHERE $__timeFilter(timestamp)  -- Grafana time filter (essential)\nGROUP BY routePath\nORDER BY request_count DESC\nLIMIT 10",
+              "rawSql": "SELECT routePath, count(*) AS request_count FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY routePath ORDER BY request_count DESC LIMIT 10",
               "refId": "A"
             }
           ],
@@ -680,63 +510,14 @@
           },
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "count",
-                    "alias": "method_requests",
-                    "column": "method"
-                  }
-                ],
-                "columns": [
-                  {
-                    "name": "method"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "groupBy": [
-                  "method"
-                ],
-                "limit": 1000,
-                "meta": {},
-                "mode": "aggregate",
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "count",
-                      "alias": "method_requests",
-                      "column": "method"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "name": "method"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "groupBy": [
-                    "method"
-                  ],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "aggregate",
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT method, count(method) as method_requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY method LIMIT 1000\n\n",
+              "rawSql": "SELECT method, count(*) as method_requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY method LIMIT 1000",
               "refId": "A"
             }
           ],
@@ -827,99 +608,14 @@
           },
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "avg",
-                    "alias": "Request_Duration",
-                    "column": "durationMs"
-                  }
-                ],
-                "columns": [
-                  {
-                    "hint": "time",
-                    "name": "timestamp",
-                    "type": "DateTime64(3)"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [
-                  {
-                    "condition": "AND",
-                    "filterType": "custom",
-                    "hint": "time",
-                    "key": "",
-                    "operator": "WITH IN DASHBOARD TIME RANGE",
-                    "type": "datetime"
-                  }
-                ],
-                "groupBy": [],
-                "limit": 1000,
-                "meta": {},
-                "mode": "trend",
-                "orderBy": [
-                  {
-                    "default": true,
-                    "dir": "ASC",
-                    "hint": "time",
-                    "name": ""
-                  }
-                ],
-                "queryType": "timeseries",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 0,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "avg",
-                      "alias": "Request_Duration",
-                      "column": "durationMs"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "hint": "time",
-                      "name": "timestamp",
-                      "type": "DateTime64(3)"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [
-                    {
-                      "condition": "AND",
-                      "filterType": "custom",
-                      "hint": "time",
-                      "key": "",
-                      "operator": "WITH IN DASHBOARD TIME RANGE",
-                      "type": "datetime"
-                    }
-                  ],
-                  "groupBy": [],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "trend",
-                  "orderBy": [
-                    {
-                      "default": true,
-                      "dir": "ASC",
-                      "hint": "time",
-                      "name": ""
-                    }
-                  ],
-                  "queryType": "timeseries",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "timeseries",
-              "rawSql": "SELECT $__timeInterval(timestamp) as time, avg(durationMs) as Request_Duration FROM ${table} WHERE ( time >= $__fromTime AND time <= $__toTime ) GROUP BY time ORDER BY time ASC LIMIT 1000",
+              "rawSql": "SELECT $__timeInterval(timestamp) as time, avg(durationMs) as Request_Duration FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY time ORDER BY time ASC LIMIT 1000",
               "refId": "A"
             }
           ],
@@ -1008,93 +704,14 @@
           "pluginVersion": "10.4.1",
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "count",
-                    "alias": "request_count",
-                    "column": "requestId"
-                  }
-                ],
-                "columns": [
-                  {
-                    "custom": false,
-                    "name": "clientIP",
-                    "type": "Nullable(String)"
-                  },
-                  {
-                    "custom": false,
-                    "name": "requestId",
-                    "type": "Nullable(String)"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [
-                  "clientIP",
-                  "requestId"
-                ],
-                "limit": 10,
-                "meta": {},
-                "mode": "aggregate",
-                "orderBy": [
-                  {
-                    "dir": "DESC",
-                    "name": "request_count"
-                  }
-                ],
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "count",
-                      "alias": "request_count",
-                      "column": "requestId"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "custom": false,
-                      "name": "clientIP",
-                      "type": "Nullable(String)"
-                    },
-                    {
-                      "custom": false,
-                      "name": "requestId",
-                      "type": "Nullable(String)"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [
-                    "clientIP",
-                    "requestId"
-                  ],
-                  "limit": 10,
-                  "meta": {},
-                  "mode": "aggregate",
-                  "orderBy": [
-                    {
-                      "dir": "DESC",
-                      "name": "request_count"
-                    }
-                  ],
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT clientIP, requestId, count(requestId) as request_count FROM ${table} GROUP BY clientIP, requestId ORDER BY request_count DESC LIMIT 10",
+              "rawSql": "SELECT clientIP, count(*) as request_count FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY clientIP ORDER BY request_count DESC LIMIT 10",
               "refId": "A"
             }
           ],
@@ -1157,23 +774,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    (COUNT(CASE WHEN statusCode = 429 THEN 1 END) * 100) / COUNT(*) AS rate_limited_percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "rawSql": "SELECT (COUNT(CASE WHEN statusCode = 429 THEN 1 END) * 100.0) / COUNT(*) AS rate_limited_percentage FROM ${table} WHERE $__timeFilter(timestamp)",
               "refId": "A"
             }
           ],
@@ -1263,105 +869,14 @@
           },
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [
-                  {
-                    "aggregateType": "count",
-                    "alias": "Code",
-                    "column": "statusCode"
-                  },
-                  {
-                    "aggregateType": "count",
-                    "alias": "requests",
-                    "column": "requestId"
-                  }
-                ],
-                "columns": [
-                  {
-                    "custom": false,
-                    "name": "statusCode",
-                    "type": "Nullable(Int32)"
-                  },
-                  {
-                    "custom": false,
-                    "name": "timestamp",
-                    "type": "DateTime64(3)"
-                  },
-                  {
-                    "custom": false,
-                    "name": "requestId",
-                    "type": "Nullable(String)"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [
-                  "timestamp",
-                  "requestId",
-                  "statusCode"
-                ],
-                "limit": 1000,
-                "meta": {},
-                "mode": "aggregate",
-                "orderBy": [],
-                "queryType": "table",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [
-                    {
-                      "aggregateType": "count",
-                      "alias": "Code",
-                      "column": "statusCode"
-                    },
-                    {
-                      "aggregateType": "count",
-                      "alias": "requests",
-                      "column": "requestId"
-                    }
-                  ],
-                  "columns": [
-                    {
-                      "custom": false,
-                      "name": "statusCode",
-                      "type": "Nullable(Int32)"
-                    },
-                    {
-                      "custom": false,
-                      "name": "timestamp",
-                      "type": "DateTime64(3)"
-                    },
-                    {
-                      "custom": false,
-                      "name": "requestId",
-                      "type": "Nullable(String)"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [
-                    "timestamp",
-                    "requestId",
-                    "statusCode"
-                  ],
-                  "limit": 1000,
-                  "meta": {},
-                  "mode": "aggregate",
-                  "orderBy": [],
-                  "queryType": "table",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time,\n    CASE WHEN statusCode = 200 THEN count(*) ELSE 0 END AS \"200\",  -- Success\n    CASE WHEN statusCode = 400 THEN count(*) ELSE 0 END AS \"400\",  -- Bad Request\n    CASE WHEN statusCode = 401 THEN count(*) ELSE 0 END AS \"401\",  -- Unauthorized\n    CASE WHEN statusCode = 403 THEN count(*) ELSE 0 END AS \"403\",  -- Forbidden\n    CASE WHEN statusCode = 404 THEN count(*) ELSE 0 END AS \"404\",  -- Not Found\n    CASE WHEN statusCode = 429 THEN count(*) ELSE 0 END AS \"429\",  -- Too Many Requests (Rate Limiting)\n    CASE WHEN statusCode = 500 THEN count(*) ELSE 0 END AS \"500\",  -- Internal Server Error\n    CASE WHEN statusCode = 502 THEN count(*) ELSE 0 END AS \"502\",  -- Bad Gateway\n    CASE WHEN statusCode = 503 THEN count(*) ELSE 0 END AS \"503\",  -- Service Unavailable\n    CASE WHEN statusCode = 504 THEN count(*) ELSE 0 END AS \"504\"   -- Gateway Timeout\nFROM ${table}\nWHERE $__timeFilter(timestamp)  -- Important for Grafana time range\nGROUP BY time, statusCode\nORDER BY time ASC",
+              "rawSql": "SELECT toStartOfMinute(timestamp) AS time, statusCode, count(*) as requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY time, statusCode ORDER BY time ASC",
               "refId": "Requests by Status Code"
             }
           ],
@@ -1424,23 +939,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    (COUNT(CASE WHEN statusCode = 401 THEN 1 END) * 100) / COUNT(*) AS unauthorized_percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "rawSql": "SELECT (COUNT(CASE WHEN statusCode = 401 THEN 1 END) * 100.0) / COUNT(*) AS unauthorized_percentage FROM ${table} WHERE $__timeFilter(timestamp)",
               "refId": "A"
             }
           ],
@@ -1534,69 +1038,14 @@
           },
           "targets": [
             {
-              "builderOptions": {
-                "aggregates": [],
-                "columns": [
-                  {
-                    "alias": "time",
-                    "hint": "time",
-                    "name": "timestamp",
-                    "type": "datetime"
-                  }
-                ],
-                "database": "sbxzuplotwist",
-                "filters": [],
-                "groupBy": [
-                  "time"
-                ],
-                "meta": {},
-                "mode": "list",
-                "orderBy": [
-                  {
-                    "dir": "ASC",
-                    "name": "time"
-                  }
-                ],
-                "queryType": "timeseries",
-                "table": "zuplotest"
-              },
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "aggregates": [],
-                  "columns": [
-                    {
-                      "alias": "time",
-                      "hint": "time",
-                      "name": "timestamp",
-                      "type": "datetime"
-                    }
-                  ],
-                  "database": "sbxzuplotwist",
-                  "filters": [],
-                  "groupBy": [
-                    "time"
-                  ],
-                  "meta": {},
-                  "mode": "list",
-                  "orderBy": [
-                    {
-                      "dir": "ASC",
-                      "name": "time"
-                    }
-                  ],
-                  "queryType": "timeseries",
-                  "table": "zuplotest"
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time,\n    CASE\n        WHEN statusCode = 400 THEN count(*)  -- Count 400 errors\n        ELSE 0                               -- Other status codes\n    END AS \"400\",  -- Alias for 400 errors\n    CASE\n        WHEN statusCode = 401 THEN count(*)  -- Count 401 errors\n        ELSE 0\n    END AS \"401\",  -- Alias for 401 errors\n    --... Add similar CASE statements for other status codes...\n    CASE\n        WHEN statusCode = 500 THEN count(*)  -- Count 500 errors\n        ELSE 0\n    END AS \"500\"   -- Alias for 500 errors\nFROM ${table}\nWHERE $__timeFilter(timestamp) AND statusCode BETWEEN 400 AND 599\nGROUP BY time, statusCode\nORDER BY time ASC",
+              "rawSql": "SELECT toStartOfMinute(timestamp) AS time, statusCode, count(*) as error_count FROM ${table} WHERE $__timeFilter(timestamp) AND statusCode BETWEEN 400 AND 599 GROUP BY time, statusCode ORDER BY time ASC",
               "refId": "Error Rates"
             }
           ],
@@ -1779,23 +1228,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    latitude,\n    longitude,\n    CASE\n        WHEN percentage < 5 THEN 1  -- Band 1\n        WHEN percentage >= 5 AND percentage < 10 THEN 2  -- Band 2\n        WHEN percentage >= 10 AND percentage < 20 THEN 3  -- Band 3\n        WHEN percentage >= 20 AND percentage < 30 THEN 4  -- Band 4\n        WHEN percentage >= 30 AND percentage < 40 THEN 5  -- Band 5\n        WHEN percentage >= 40 AND percentage < 50 THEN 6  -- Band 6\n        WHEN percentage >= 50 AND percentage < 60 THEN 7  -- Band 7\n        WHEN percentage >= 60 AND percentage < 70 THEN 8  -- Band 8\n        WHEN percentage >= 70 AND percentage < 80 THEN 9  -- Band 9\n        WHEN percentage >= 80 AND percentage < 90 THEN 10  -- Band 10\n        WHEN percentage >= 90 AND percentage <= 100 THEN 11  -- Band 9\n        ELSE 0  -- Default (shouldn't happen)\n    END AS percentage_band, percentage\nFROM (\n    SELECT\n        latitude,\n        longitude,\n        ROUND((request_count / sum(request_count) OVER ()) * 100, 2) AS percentage  -- Round to 2 decimal places\n    FROM (\n        SELECT\n            latitude,\n            longitude,\n            count(*) AS request_count\n        FROM ${table}\n        WHERE $__timeFilter(timestamp)\n        GROUP BY latitude, longitude\n    )\n)\nORDER BY percentage_band",
+              "rawSql": "SELECT latitude, longitude, CASE WHEN percentage < 5 THEN 1 WHEN percentage >= 5 AND percentage < 10 THEN 2 WHEN percentage >= 10 AND percentage < 20 THEN 3 WHEN percentage >= 20 AND percentage < 30 THEN 4 WHEN percentage >= 30 AND percentage < 40 THEN 5 WHEN percentage >= 40 AND percentage < 50 THEN 6 WHEN percentage >= 50 AND percentage < 60 THEN 7 WHEN percentage >= 60 AND percentage < 70 THEN 8 WHEN percentage >= 70 AND percentage < 80 THEN 9 WHEN percentage >= 80 AND percentage < 90 THEN 10 WHEN percentage >= 90 AND percentage <= 100 THEN 11 ELSE 0 END AS percentage_band, percentage FROM (SELECT latitude, longitude, ROUND((request_count / sum(request_count) OVER ()) * 100, 2) AS percentage FROM (SELECT latitude, longitude, count(*) AS request_count FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY latitude, longitude)) ORDER BY percentage_band",
               "refId": "Geo as Percentages"
             }
           ],
@@ -1930,23 +1368,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    colo,\n    count(*) AS request_count\nFROM (\n    SELECT\n        colo,\n        *\n    FROM ${table}\n)\nWHERE $__timeFilter(timestamp)\nGROUP BY colo\nORDER BY request_count DESC\nLIMIT 20",
+              "rawSql": "SELECT colo, count(*) AS request_count FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY colo ORDER BY request_count DESC LIMIT 20",
               "refId": "A"
             }
           ],
@@ -2032,18 +1459,14 @@
           "pluginVersion": "10.4.1",
           "targets": [
             {
-              "builderOptions": "The query is not a select statement.",
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": "The query is not a select statement."
-              },
-              "pluginVersion": "4.0.6",
-              "rawSql": "SELECT\n    city,\n    count(*) AS request_count\nFROM (\n    SELECT\n        city,  -- Assuming you have a 'city' column in your table\n        *\n    FROM ${table}\n)\nWHERE $__timeFilter(timestamp)\nGROUP BY city\nORDER BY request_count DESC\nLIMIT 10",
+              "queryType": "table",
+              "rawSql": "SELECT city, count(*) AS request_count FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY city ORDER BY request_count DESC LIMIT 10",
               "refId": "A"
             }
           ],
@@ -2080,10 +1503,6 @@
             },
             "overrides": []
           },
-          "libraryPanel": {
-            "name": "Zuplo: Current Most Active Timezones",
-            "uid": "eecxq6tlm1se8e"
-          },
           "options": {
             "legend": {
               "displayMode": "table",
@@ -2108,23 +1527,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    timezone,\n    (count(*) * 100) / (SELECT count(*) FROM \"sbxzuplotwist\".\"zuplotest\" WHERE $__timeFilter(timestamp)) AS percentage\nFROM \"sbxzuplotwist\".\"zuplotest\"\nWHERE $__timeFilter(timestamp)\nGROUP BY timezone\nORDER BY percentage DESC\nLIMIT 5",
+              "rawSql": "SELECT timezone, (count(*) * 100.0) / (SELECT count(*) FROM ${table} WHERE $__timeFilter(timestamp)) AS percentage FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY timezone ORDER BY percentage DESC LIMIT 5",
               "refId": "A"
             }
           ],
@@ -2189,23 +1597,12 @@
             {
               "datasource": {
                 "type": "grafana-clickhouse-datasource",
-                "uid": "de5x84pgij7r4a"
+                "uid": "__DATASOURCE__"
               },
               "editorType": "sql",
               "format": 1,
-              "meta": {
-                "builderOptions": {
-                  "columns": [],
-                  "database": "",
-                  "limit": 1000,
-                  "mode": "list",
-                  "queryType": "table",
-                  "table": ""
-                }
-              },
-              "pluginVersion": "4.0.6",
               "queryType": "table",
-              "rawSql": "SELECT\n    colo AS colo_with_percentage,\n    count(*) AS request_count,\n    (count(*) * 100) / (SELECT count(*) FROM \"sbxzuplotwist\".\"zuplotest\" WHERE $__timeFilter(timestamp)) AS percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY colo\nORDER BY request_count DESC",
+              "rawSql": "SELECT colo AS colo_with_percentage, count(*) AS request_count, (count(*) * 100.0) / (SELECT count(*) FROM ${table} WHERE $__timeFilter(timestamp)) AS percentage FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY colo ORDER BY request_count DESC",
               "refId": "A"
             }
           ],
@@ -2407,19 +1804,8 @@
             },
             "editorType": "sql",
             "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    time,\n    requests / (toUInt64(time) - toUInt64(neighbor(time, -1, toDateTime64(0, 3)))) AS rps  -- Corrected type handling\nFROM (\n    SELECT\n        toStartOfSecond(timestamp) AS time,  -- Time bucket (adjust as needed)\n        count(*) AS requests\n    FROM \"sbxzuplotwist\".\"zuplotest\"\n    WHERE $__timeFilter(timestamp)\n    GROUP BY time\n    ORDER BY time ASC\n)",
+            "rawSql": "SELECT toStartOfSecond(timestamp) AS time, count(*) AS requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY time ORDER BY time ASC",
             "refId": "A"
           }
         ],
@@ -2450,7 +1836,7 @@
         "id": 12,
         "libraryPanel": {
           "uid": "cecxpyk5wt7nkf",
-          "name": "Zuplo: Top 20 Requests by Route Path"
+          "name": "Zuplo: Top 10 Requests by Route Path"
         }
       },
       {
@@ -2642,42 +2028,44 @@
     "templating": {
       "list": [
         {
-          "current": {
-            "selected": false,
-            "text": "Hydrolix - sbxzuplotwist",
-            "value": "de5x84pgij7r4a"
-          },
+          "name": "DS_CLICKHOUSE",
+          "type": "datasource",
+          "label": "Data Source",
           "hide": 0,
           "includeAll": false,
-          "label": "Data Source",
           "multi": false,
-          "name": "selected_data_source",
-          "options": [],
           "query": "grafana-clickhouse-datasource",
           "queryValue": "",
           "refresh": 1,
           "regex": "",
           "skipUrlSync": false,
-          "type": "datasource"
+          "current": {
+            "selected": false,
+            "text": "ClickHouse",
+            "value": "__DATASOURCE__" 
+          },
+          "options": [] 
         },
         {
-          "description": "",
-          "hide": 2,
-          "label": "Table",
           "name": "table",
-          "query": "${__PROJECT_NAME__.__TABLE_NAME__}",
-          "skipUrlSync": false,
           "type": "constant",
+          "label": "Table",
+          "description": "The database table to query",
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "skipUrlSync": false,
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "current": {
-            "value": "${__PROJECT_NAME__.__TABLE_NAME__}",
-            "text": "${__PROJECT_NAME__.__TABLE_NAME__}",
-            "selected": false
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
-              "value": "${__PROJECT_NAME__.__TABLE_NAME__}",
-              "text": "${__PROJECT_NAME__.__TABLE_NAME__}",
-              "selected": false
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         }
@@ -2689,9 +2077,9 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Zuplo Main Dashboard",
+    "title": "Zuplo Main Dashboard - Fixed",
     "uid": "__DASHBOARD_UUID__",
-    "version": 90,
+    "version": 1,
     "weekStart": ""
   }
 }
