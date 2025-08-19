@@ -1,5 +1,5 @@
 {
-    "name": "zuplo",
+    "name": "WAF zuplo",
     "source": "waf",
     "method": "http",
     "beta": true,
@@ -11,7 +11,7 @@
     "tables": [
       {
         "dashboard_var": "__TABLE_NAME__",
-        "name": "zuplo",
+        "name": "WAF zuplo",
         "transforms": [
           {
             "data_template_path": "transformations/sample_data_template.json",
