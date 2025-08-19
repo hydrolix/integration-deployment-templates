@@ -1,6 +1,6 @@
 {
     "name": "zuplo",
-    "source": "zuplo",
+    "source": "waf",
     "method": "http",
     "beta": true,
     "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/zuplo",
