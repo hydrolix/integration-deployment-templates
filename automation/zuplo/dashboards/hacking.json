@@ -2028,25 +2028,6 @@
     "templating": {
       "list": [
         {
-          "name": "DS_CLICKHOUSE",
-          "type": "datasource",
-          "label": "Data Source",
-          "hide": 0,
-          "includeAll": false,
-          "multi": false,
-          "query": "grafana-clickhouse-datasource",
-          "queryValue": "",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "current": {
-            "selected": false,
-            "text": "ClickHouse",
-            "value": "__DATASOURCE__" 
-          },
-          "options": [] 
-        },
-        {
           "name": "table",
           "type": "constant",
           "label": "Table",
@@ -2077,7 +2058,7 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Zuplo Main Dashboard - Fixed",
+    "title": "Zuplo Main Dashboard - Better",
     "uid": "__DASHBOARD_UUID__",
     "version": 1,
     "weekStart": ""
