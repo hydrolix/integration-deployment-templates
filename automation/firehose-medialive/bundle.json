@@ -44,7 +44,7 @@
   },
    "metadata": {
     "version": "1.0.0",
-    "maintainer": "jaygoodson@hydrolix.io",
+    "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon Firehose MediaLive Itegration",
     "channel_type": "AWS"
   }
