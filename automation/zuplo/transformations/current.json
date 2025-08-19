@@ -1,0 +1,539 @@
+{
+    "name": "zuplojson",
+    "description": "",
+    "settings": {
+      "is_default": false,
+      "rate_limit": null,
+      "sql_transform": "select * from {STREAM}",
+      "null_values": [],
+      "sample_data": {
+        "url": "http://localhost:9000/hello-world?-d%20allow_url_include=1%20-d%20auto_prepend_file=php://input=",
+        "method": "GET",
+        "requestId": "30a44f3a-0bfa-468e-8edf-a960d7b8eb28",
+        "routePath": "/hello-world",
+        "timestamp": "2025-02-05T22:42:36.715Z",
+        "durationMs": 15,
+        "instanceId": "14688480-0f83-4ecf-8b8c-984fc262b14c",
+        "statusCode": 200,
+        "deploymentName": "",
+        "zuploUserAgent": "Zuplo/0.0.0"
+      },
+      "data_mirroring_target": null,
+      "output_columns": [
+        {
+          "name": "deploymentName",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "timestamp",
+          "datatype": {
+            "type": "datetime",
+            "index": false,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": true,
+            "ignore": false,
+            "format": "2006-01-02T15:04:05.000Z",
+            "resolution": "ms",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "requestId",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "routePath",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "url",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "statusCode",
+          "datatype": {
+            "type": "int32",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "durationMs",
+          "datatype": {
+            "type": "int32",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "method",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "instanceId",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "zuploUserAgent",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "projectName",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "accountName",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "userSub",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "colo",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "city",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "country",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "continent",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "latitude",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "longitude",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "postalCode",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "metroCode",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "region",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "regionCode",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "timezone",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "asn",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "asOrganization",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "systemRouteName",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientIP",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "logSourceVersion",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "index_options": {
+              "fulltext": false
+            },
+            "primary": false,
+            "ignore": false,
+            "format": null,
+            "resolution": "seconds",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        }
+      ],
+      "compression": "",
+      "wurfl": null,
+      "format_details": {
+        "flattening": {
+          "depth": null,
+          "active": false,
+          "map_flattening_strategy": {
+            "left": "",
+            "right": ""
+          },
+          "slice_flattening_strategy": {
+            "left": "",
+            "right": ""
+          }
+        }
+      }
+    },
+    "url": "https://partnersandbox.trafficpeak.live/config/v1/orgs/b646d78a-5fb2-4d5f-afef-b705bf185174/projects/fdee43d5-bbb3-471c-823e-05dba510e474/tables/2c1224ba-c0d0-42b4-819b-2df462a33199/transforms/ae2ca981-c4d1-4555-86e3-052ad7532493",
+    "type": "json",
+    "table": "2c1224ba-c0d0-42b4-819b-2df462a33199"
+  }
+  

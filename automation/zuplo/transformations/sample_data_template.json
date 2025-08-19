@@ -1,0 +1,12 @@
+{
+    "url": "http://localhost:9000/hello-world?-d%20allow_url_include=1%20-d%20auto_prepend_file=php://input=",
+    "method": "GET",
+    "requestId": "30a44f3a-0bfa-468e-8edf-a960d7b8eb28",
+    "routePath": "/hello-world",
+    "timestamp": "2025-02-05T22:42:36.715Z",
+    "durationMs": 15,
+    "instanceId": "14688480-0f83-4ecf-8b8c-984fc262b14c",
+    "statusCode": 200,
+    "deploymentName": "",
+    "zuploUserAgent": "Zuplo/0.0.0"
+}

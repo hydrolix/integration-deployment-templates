@@ -1,0 +1,2719 @@
+{
+    "__inputs": [
+      {
+        "name": "DS_HYDROLIX_- SBXZUPLOTWIST",
+        "label": "Hydrolix - sbxzuplotwist",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "grafana-clickhouse-datasource",
+        "pluginName": "ClickHouse"
+      },
+      {
+        "name": "DS_HYDROLIX_- SBXZUPLOTWIST-FOR-LIBRARY-PANEL",
+        "label": "Hydrolix - sbxzuplotwist",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "grafana-clickhouse-datasource",
+        "pluginName": "ClickHouse",
+        "usage": {
+          "libraryPanels": [
+            {
+              "name": "Zuplo: Current Most Active Timezones",
+              "uid": "eecxq6tlm1se8e"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "Table",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
+      }
+    ],
+    "__elements": {
+      "fecxpuv0un9xcc": {
+        "name": "Zuplo: Geographic Request Distribution Heatmap",
+        "uid": "fecxpuv0un9xcc",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "Overview of where traffic to your API originates",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "basemap": {
+              "config": {},
+              "name": "Layer 0",
+              "opacity": 0.8,
+              "type": "default"
+            },
+            "controls": {
+              "mouseWheelZoom": true,
+              "showAttribution": true,
+              "showDebug": false,
+              "showMeasure": false,
+              "showScale": false,
+              "showZoom": true
+            },
+            "layers": [
+              {
+                "config": {
+                  "nightColor": "#a7a6ba4D",
+                  "show": "to",
+                  "sun": false
+                },
+                "name": "Night/Day",
+                "opacity": 0.4,
+                "tooltip": true,
+                "type": "dayNight"
+              },
+              {
+                "config": {
+                  "blur": 10,
+                  "radius": 8,
+                  "weight": {
+                    "fixed": 1,
+                    "max": 1,
+                    "min": 0
+                  }
+                },
+                "filterData": {
+                  "id": "byRefId",
+                  "options": "Geographic Requests"
+                },
+                "location": {
+                  "lookup": "country",
+                  "mode": "lookup"
+                },
+                "name": "Requesting Geo",
+                "opacity": 0.5,
+                "tooltip": true,
+                "type": "heatmap"
+              }
+            ],
+            "tooltip": {
+              "mode": "details"
+            },
+            "view": {
+              "allLayers": true,
+              "id": "coords",
+              "lat": 16.07157,
+              "lon": 14.310928,
+              "zoom": 1.72
+            }
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "requests",
+                    "column": "requestId"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "country",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [
+                  "country"
+                ],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "requests",
+                      "column": "requestId"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "custom": false,
+                      "name": "country",
+                      "type": "Nullable(String)"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [
+                    "country"
+                  ],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT country, count(requestId) as requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY country LIMIT 1000",
+              "refId": "Geographic Requests"
+            }
+          ],
+          "title": "Geographic Request Distribution",
+          "transparent": true,
+          "type": "geomap"
+        }
+      },
+      "cecxpwfex4ikgc": {
+        "name": "Zuplo Total Request Volume (Single Metric)",
+        "uid": "cecxpwfex4ikgc",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The total number of requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#ff00bd",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "total_requests",
+                    "column": "requestId"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "requestId",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "total_requests",
+                      "column": "requestId"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "custom": false,
+                      "name": "requestId",
+                      "type": "Nullable(String)"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    count(requestId) AS total_requests\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Requests",
+          "transparent": true,
+          "type": "stat"
+        }
+      },
+      "aecxpx1wf7wn4f": {
+        "name": "Zuplo: Requests Per Day (Fixed 14 Days)",
+        "uid": "aecxpx1wf7wn4f",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The total number of API requests per day (default time range is 14 days)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#ff00bd",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "barRadius": 0.1,
+            "barWidth": 0.1,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "vertical",
+            "showValue": "auto",
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "date",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    toDate(timestamp) AS date,  -- Extract the date part\n    count(*) AS daily_requests   -- Count requests for each day\nFROM ${table}\nWHERE timestamp >= toDateTime(now() - INTERVAL 14 DAY) AND timestamp <= toDateTime(now()) -- customized to used fixed values\nGROUP BY date                   -- Group by date\nORDER BY date ASC              -- Order by date",
+              "refId": "A"
+            }
+          ],
+          "title": "Requests Per Day (Fixed 14 Days)",
+          "transparent": true,
+          "type": "barchart"
+        }
+      },
+      "becxpxy81f3eod": {
+        "name": "Zuplo: Request Response Time",
+        "uid": "becxpxy81f3eod",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "Request response times as Median, Average and P95",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time, -- Time bucket (adjust as needed)\n    quantile(0.5)(durationMs) AS median_duration,\n    avg(durationMs) AS average_duration,\n    quantile(0.95)(durationMs) AS p95_duration\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time ASC",
+              "refId": "Request Times"
+            }
+          ],
+          "title": "Request Response Time",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "cecxpyk5wt7nkf": {
+        "name": "Zuplo: Top 20 Requests by Route Path",
+        "uid": "cecxpyk5wt7nkf",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The top 10 routes that demand the most trafic.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "mode": "lcd",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#ff00bd",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": [],
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [],
+                "columns": [],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "list",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [],
+                  "columns": [],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    routePath,\n    count(*) AS request_count\nFROM ${table}\nWHERE $__timeFilter(timestamp)  -- Grafana time filter (essential)\nGROUP BY routePath\nORDER BY request_count DESC\nLIMIT 10",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Routes by Request Count",
+          "transparent": true,
+          "type": "table"
+        }
+      },
+      "decxpz3jy0g74d": {
+        "name": "Zuplo: Total Request Distribution by Method",
+        "uid": "decxpz3jy0g74d",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "Overall view of the proportion of different HTTP methods in use.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": []
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
+            "legend": {
+              "displayMode": "list",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "percent"
+              ]
+            },
+            "pieType": "pie",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "method_requests",
+                    "column": "method"
+                  }
+                ],
+                "columns": [
+                  {
+                    "name": "method"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "groupBy": [
+                  "method"
+                ],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "method_requests",
+                      "column": "method"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "name": "method"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "groupBy": [
+                    "method"
+                  ],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT method, count(method) as method_requests FROM ${table} WHERE $__timeFilter(timestamp) GROUP BY method LIMIT 1000\n\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Request Distribution by Method",
+          "transparent": true,
+          "type": "piechart"
+        }
+      },
+      "becxpzp3ghkw0f": {
+        "name": "Zuplo: Average API Request Duration",
+        "uid": "becxpzp3ghkw0f",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "Overview of the average request durations",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "bars",
+                "fillOpacity": 0,
+                "gradientMode": "hue",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "avg",
+                    "alias": "Request_Duration",
+                    "column": "durationMs"
+                  }
+                ],
+                "columns": [
+                  {
+                    "hint": "time",
+                    "name": "timestamp",
+                    "type": "DateTime64(3)"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [
+                  {
+                    "condition": "AND",
+                    "filterType": "custom",
+                    "hint": "time",
+                    "key": "",
+                    "operator": "WITH IN DASHBOARD TIME RANGE",
+                    "type": "datetime"
+                  }
+                ],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "trend",
+                "orderBy": [
+                  {
+                    "default": true,
+                    "dir": "ASC",
+                    "hint": "time",
+                    "name": ""
+                  }
+                ],
+                "queryType": "timeseries",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 0,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "avg",
+                      "alias": "Request_Duration",
+                      "column": "durationMs"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "hint": "time",
+                      "name": "timestamp",
+                      "type": "DateTime64(3)"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [
+                    {
+                      "condition": "AND",
+                      "filterType": "custom",
+                      "hint": "time",
+                      "key": "",
+                      "operator": "WITH IN DASHBOARD TIME RANGE",
+                      "type": "datetime"
+                    }
+                  ],
+                  "groupBy": [],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "trend",
+                  "orderBy": [
+                    {
+                      "default": true,
+                      "dir": "ASC",
+                      "hint": "time",
+                      "name": ""
+                    }
+                  ],
+                  "queryType": "timeseries",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "timeseries",
+              "rawSql": "SELECT $__timeInterval(timestamp) as time, avg(durationMs) as Request_Duration FROM ${table} WHERE ( time >= $__fromTime AND time <= $__toTime ) GROUP BY time ORDER BY time ASC LIMIT 1000",
+              "refId": "A"
+            }
+          ],
+          "title": "Average API Request Duration",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "cecxq0dtk8ao0c": {
+        "name": "Zuplo: Top Requesting IP Addresses",
+        "uid": "cecxq0dtk8ao0c",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The IP Addresses that are making the most requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "barRadius": 0.5,
+            "barWidth": 0.62,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "clientIP",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "request_count",
+                    "column": "requestId"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "clientIP",
+                    "type": "Nullable(String)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "requestId",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [
+                  "clientIP",
+                  "requestId"
+                ],
+                "limit": 10,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [
+                  {
+                    "dir": "DESC",
+                    "name": "request_count"
+                  }
+                ],
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "request_count",
+                      "column": "requestId"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "custom": false,
+                      "name": "clientIP",
+                      "type": "Nullable(String)"
+                    },
+                    {
+                      "custom": false,
+                      "name": "requestId",
+                      "type": "Nullable(String)"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [
+                    "clientIP",
+                    "requestId"
+                  ],
+                  "limit": 10,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "orderBy": [
+                    {
+                      "dir": "DESC",
+                      "name": "request_count"
+                    }
+                  ],
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT clientIP, requestId, count(requestId) as request_count FROM ${table} GROUP BY clientIP, requestId ORDER BY request_count DESC LIMIT 10",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Requesting IP Addresses",
+          "transparent": true,
+          "type": "barchart"
+        }
+      },
+      "decxq1bd5pukgf": {
+        "name": "Zuplo: Percentage of Requests Rate Limited (Gauge)",
+        "uid": "decxq1bd5pukgf",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "What percentage of requests are subject to a 429",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/^rate_limited_percentage$/",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    (COUNT(CASE WHEN statusCode = 429 THEN 1 END) * 100) / COUNT(*) AS rate_limited_percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "refId": "A"
+            }
+          ],
+          "title": "Percentage of Requests Rate Limited",
+          "transparent": true,
+          "type": "gauge"
+        }
+      },
+      "aecxq1x4kveo0a": {
+        "name": "Zuplo: Requests by Status Code",
+        "uid": "aecxq1x4kveo0a",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "How many requests are being processed of what HTTP status code",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 3,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "Code",
+                    "column": "statusCode"
+                  },
+                  {
+                    "aggregateType": "count",
+                    "alias": "requests",
+                    "column": "requestId"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "statusCode",
+                    "type": "Nullable(Int32)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "timestamp",
+                    "type": "DateTime64(3)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "requestId",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [
+                  "timestamp",
+                  "requestId",
+                  "statusCode"
+                ],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "Code",
+                      "column": "statusCode"
+                    },
+                    {
+                      "aggregateType": "count",
+                      "alias": "requests",
+                      "column": "requestId"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "custom": false,
+                      "name": "statusCode",
+                      "type": "Nullable(Int32)"
+                    },
+                    {
+                      "custom": false,
+                      "name": "timestamp",
+                      "type": "DateTime64(3)"
+                    },
+                    {
+                      "custom": false,
+                      "name": "requestId",
+                      "type": "Nullable(String)"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [
+                    "timestamp",
+                    "requestId",
+                    "statusCode"
+                  ],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time,\n    CASE WHEN statusCode = 200 THEN count(*) ELSE 0 END AS \"200\",  -- Success\n    CASE WHEN statusCode = 400 THEN count(*) ELSE 0 END AS \"400\",  -- Bad Request\n    CASE WHEN statusCode = 401 THEN count(*) ELSE 0 END AS \"401\",  -- Unauthorized\n    CASE WHEN statusCode = 403 THEN count(*) ELSE 0 END AS \"403\",  -- Forbidden\n    CASE WHEN statusCode = 404 THEN count(*) ELSE 0 END AS \"404\",  -- Not Found\n    CASE WHEN statusCode = 429 THEN count(*) ELSE 0 END AS \"429\",  -- Too Many Requests (Rate Limiting)\n    CASE WHEN statusCode = 500 THEN count(*) ELSE 0 END AS \"500\",  -- Internal Server Error\n    CASE WHEN statusCode = 502 THEN count(*) ELSE 0 END AS \"502\",  -- Bad Gateway\n    CASE WHEN statusCode = 503 THEN count(*) ELSE 0 END AS \"503\",  -- Service Unavailable\n    CASE WHEN statusCode = 504 THEN count(*) ELSE 0 END AS \"504\"   -- Gateway Timeout\nFROM ${table}\nWHERE $__timeFilter(timestamp)  -- Important for Grafana time range\nGROUP BY time, statusCode\nORDER BY time ASC",
+              "refId": "Requests by Status Code"
+            }
+          ],
+          "title": "Requests by Status Code",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "aecxq2m1ju2o0e": {
+        "name": "Zuplo: Percentage of Requests Unauthorized (401) (Gauge)",
+        "uid": "aecxq2m1ju2o0e",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "What percentage of requests are being made by unauthorized clients",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/^unauthorized_percentage$/",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    (COUNT(CASE WHEN statusCode = 401 THEN 1 END) * 100) / COUNT(*) AS unauthorized_percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)",
+              "refId": "A"
+            }
+          ],
+          "title": "Percentage of Requests Unauthorized (401)",
+          "transparent": true,
+          "type": "gauge"
+        }
+      },
+      "fecxq36cgp728d": {
+        "name": "Zuplo: Error Rates",
+        "uid": "fecxq36cgp728d",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "How many HTTP status errors between 40x and 50x are being seen",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Requests",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 400
+                  },
+                  {
+                    "color": "red",
+                    "value": 500
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [],
+                "columns": [
+                  {
+                    "alias": "time",
+                    "hint": "time",
+                    "name": "timestamp",
+                    "type": "datetime"
+                  }
+                ],
+                "database": "sbxzuplotwist",
+                "filters": [],
+                "groupBy": [
+                  "time"
+                ],
+                "meta": {},
+                "mode": "list",
+                "orderBy": [
+                  {
+                    "dir": "ASC",
+                    "name": "time"
+                  }
+                ],
+                "queryType": "timeseries",
+                "table": "zuplotest"
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [],
+                  "columns": [
+                    {
+                      "alias": "time",
+                      "hint": "time",
+                      "name": "timestamp",
+                      "type": "datetime"
+                    }
+                  ],
+                  "database": "sbxzuplotwist",
+                  "filters": [],
+                  "groupBy": [
+                    "time"
+                  ],
+                  "meta": {},
+                  "mode": "list",
+                  "orderBy": [
+                    {
+                      "dir": "ASC",
+                      "name": "time"
+                    }
+                  ],
+                  "queryType": "timeseries",
+                  "table": "zuplotest"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    toStartOfMinute(timestamp) AS time,\n    CASE\n        WHEN statusCode = 400 THEN count(*)  -- Count 400 errors\n        ELSE 0                               -- Other status codes\n    END AS \"400\",  -- Alias for 400 errors\n    CASE\n        WHEN statusCode = 401 THEN count(*)  -- Count 401 errors\n        ELSE 0\n    END AS \"401\",  -- Alias for 401 errors\n    --... Add similar CASE statements for other status codes...\n    CASE\n        WHEN statusCode = 500 THEN count(*)  -- Count 500 errors\n        ELSE 0\n    END AS \"500\"   -- Alias for 500 errors\nFROM ${table}\nWHERE $__timeFilter(timestamp) AND statusCode BETWEEN 400 AND 599\nGROUP BY time, statusCode\nORDER BY time ASC",
+              "refId": "Error Rates"
+            }
+          ],
+          "title": "Error Rates",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "fecxq41xxgni8a": {
+        "name": "Zuplo: Traffic Location Geo (Percentage)",
+        "uid": "fecxq41xxgni8a",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The geographic location of API requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#6ED0E0",
+                    "value": 5
+                  },
+                  {
+                    "color": "#EF843C",
+                    "value": 10
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 20
+                  },
+                  {
+                    "color": "#447EBC",
+                    "value": 30
+                  },
+                  {
+                    "color": "#CCA300",
+                    "value": 40
+                  },
+                  {
+                    "color": "#508642",
+                    "value": 50
+                  },
+                  {
+                    "color": "#705DA0",
+                    "value": 60
+                  },
+                  {
+                    "color": "#BA43A9",
+                    "value": 70
+                  },
+                  {
+                    "color": "#1F78C1",
+                    "value": 80
+                  },
+                  {
+                    "color": "#E24D42",
+                    "value": 90
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "options": {
+            "basemap": {
+              "config": {},
+              "name": "Layer 0",
+              "type": "default"
+            },
+            "controls": {
+              "mouseWheelZoom": true,
+              "showAttribution": true,
+              "showDebug": true,
+              "showMeasure": false,
+              "showScale": false,
+              "showZoom": true
+            },
+            "layers": [
+              {
+                "config": {
+                  "nightColor": "#a7a6ba4D",
+                  "show": "to",
+                  "sun": false
+                },
+                "name": "Night/Day",
+                "opacity": 0.4,
+                "tooltip": true,
+                "type": "dayNight"
+              },
+              {
+                "config": {
+                  "showLegend": true,
+                  "style": {
+                    "color": {
+                      "field": "percentage_band",
+                      "fixed": "dark-green"
+                    },
+                    "opacity": 0.4,
+                    "rotation": {
+                      "fixed": 0,
+                      "max": 360,
+                      "min": -360,
+                      "mode": "mod"
+                    },
+                    "size": {
+                      "field": "percentage",
+                      "fixed": 5,
+                      "max": 20,
+                      "min": 1
+                    },
+                    "symbol": {
+                      "fixed": "img/icons/marker/circle.svg",
+                      "mode": "fixed"
+                    },
+                    "symbolAlign": {
+                      "horizontal": "center",
+                      "vertical": "center"
+                    },
+                    "text": {
+                      "field": "percentage_band",
+                      "fixed": "",
+                      "mode": "fixed"
+                    },
+                    "textConfig": {
+                      "fontSize": 12,
+                      "offsetX": 0,
+                      "offsetY": 0,
+                      "textAlign": "center",
+                      "textBaseline": "middle"
+                    }
+                  }
+                },
+                "filterData": {
+                  "id": "byRefId",
+                  "options": "Geo as Percentages"
+                },
+                "location": {
+                  "mode": "auto"
+                },
+                "name": "Location",
+                "tooltip": true,
+                "type": "markers"
+              }
+            ],
+            "tooltip": {
+              "mode": "none"
+            },
+            "view": {
+              "allLayers": true,
+              "id": "coords",
+              "lat": 12.0028,
+              "lon": 11.636296,
+              "zoom": 2
+            }
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    latitude,\n    longitude,\n    CASE\n        WHEN percentage < 5 THEN 1  -- Band 1\n        WHEN percentage >= 5 AND percentage < 10 THEN 2  -- Band 2\n        WHEN percentage >= 10 AND percentage < 20 THEN 3  -- Band 3\n        WHEN percentage >= 20 AND percentage < 30 THEN 4  -- Band 4\n        WHEN percentage >= 30 AND percentage < 40 THEN 5  -- Band 5\n        WHEN percentage >= 40 AND percentage < 50 THEN 6  -- Band 6\n        WHEN percentage >= 50 AND percentage < 60 THEN 7  -- Band 7\n        WHEN percentage >= 60 AND percentage < 70 THEN 8  -- Band 8\n        WHEN percentage >= 70 AND percentage < 80 THEN 9  -- Band 9\n        WHEN percentage >= 80 AND percentage < 90 THEN 10  -- Band 10\n        WHEN percentage >= 90 AND percentage <= 100 THEN 11  -- Band 9\n        ELSE 0  -- Default (shouldn't happen)\n    END AS percentage_band, percentage\nFROM (\n    SELECT\n        latitude,\n        longitude,\n        ROUND((request_count / sum(request_count) OVER ()) * 100, 2) AS percentage  -- Round to 2 decimal places\n    FROM (\n        SELECT\n            latitude,\n            longitude,\n            count(*) AS request_count\n        FROM ${table}\n        WHERE $__timeFilter(timestamp)\n        GROUP BY latitude, longitude\n    )\n)\nORDER BY percentage_band",
+              "refId": "Geo as Percentages"
+            }
+          ],
+          "title": "Traffic Location Geo",
+          "transparent": true,
+          "type": "geomap"
+        }
+      },
+      "fecxq5iaecykgb": {
+        "name": "Zuplo: Requests by Colo/IATA (Top 20) (Map)",
+        "uid": "fecxq5iaecykgb",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The colocation node that requests are hitting",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "basemap": {
+              "config": {},
+              "name": "Layer 0",
+              "type": "default"
+            },
+            "controls": {
+              "mouseWheelZoom": true,
+              "showAttribution": true,
+              "showDebug": false,
+              "showMeasure": false,
+              "showScale": false,
+              "showZoom": true
+            },
+            "layers": [
+              {
+                "config": {
+                  "showLegend": true,
+                  "style": {
+                    "color": {
+                      "fixed": "#ff00db"
+                    },
+                    "opacity": 0.4,
+                    "rotation": {
+                      "fixed": 0,
+                      "max": 360,
+                      "min": -360,
+                      "mode": "mod"
+                    },
+                    "size": {
+                      "field": "request_count",
+                      "fixed": 5,
+                      "max": 50,
+                      "min": 5
+                    },
+                    "symbol": {
+                      "fixed": "img/icons/marker/circle.svg",
+                      "mode": "fixed"
+                    },
+                    "symbolAlign": {
+                      "horizontal": "center",
+                      "vertical": "center"
+                    },
+                    "text": {
+                      "fixed": "",
+                      "mode": "field"
+                    },
+                    "textConfig": {
+                      "fontSize": 12,
+                      "offsetX": 0,
+                      "offsetY": 0,
+                      "textAlign": "center",
+                      "textBaseline": "middle"
+                    }
+                  }
+                },
+                "filterData": {
+                  "id": "byRefId",
+                  "options": "A"
+                },
+                "location": {
+                  "gazetteer": "public/gazetteer/airports.geojson",
+                  "lookup": "colo",
+                  "mode": "lookup"
+                },
+                "name": "COLO/IATA",
+                "tooltip": true,
+                "type": "markers"
+              }
+            ],
+            "tooltip": {
+              "mode": "details"
+            },
+            "view": {
+              "allLayers": true,
+              "id": "coords",
+              "lat": 16.45913,
+              "lon": 25.699299,
+              "zoom": 1.53
+            }
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    colo,\n    count(*) AS request_count\nFROM (\n    SELECT\n        colo,\n        *\n    FROM ${table}\n)\nWHERE $__timeFilter(timestamp)\nGROUP BY colo\nORDER BY request_count DESC\nLIMIT 20",
+              "refId": "A"
+            }
+          ],
+          "title": "Requests by Colo/IATA (Top 20)",
+          "transparent": true,
+          "type": "geomap"
+        }
+      },
+      "decxq6bkoxekgf": {
+        "name": "Zuplo: Top 10 Locations",
+        "uid": "decxq6bkoxekgf",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "hue",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": true,
+              "mappings": [],
+              "noValue": "N/A",
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "barRadius": 0.2,
+            "barWidth": 1,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "horizontal",
+            "showValue": "auto",
+            "stacking": "normal",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "city",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": "The query is not a select statement.",
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": "The query is not a select statement."
+              },
+              "pluginVersion": "4.0.6",
+              "rawSql": "SELECT\n    city,\n    count(*) AS request_count\nFROM (\n    SELECT\n        city,  -- Assuming you have a 'city' column in your table\n        *\n    FROM ${table}\n)\nWHERE $__timeFilter(timestamp)\nGROUP BY city\nORDER BY request_count DESC\nLIMIT 10",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Locations",
+          "transparent": true,
+          "type": "barchart"
+        }
+      },
+      "eecxq6tlm1se8e": {
+        "name": "Zuplo: Current Most Active Timezones",
+        "uid": "eecxq6tlm1se8e",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST-FOR-LIBRARY-PANEL}"
+          },
+          "description": "Which timezone is the most active in terms of requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "libraryPanel": {
+            "name": "Zuplo: Current Most Active Timezones",
+            "uid": "eecxq6tlm1se8e"
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    timezone,\n    (count(*) * 100) / (SELECT count(*) FROM \"sbxzuplotwist\".\"zuplotest\" WHERE $__timeFilter(timestamp)) AS percentage\nFROM \"sbxzuplotwist\".\"zuplotest\"\nWHERE $__timeFilter(timestamp)\nGROUP BY timezone\nORDER BY percentage DESC\nLIMIT 5",
+              "refId": "A"
+            }
+          ],
+          "title": "Current Most Active Timezones",
+          "transparent": true,
+          "type": "piechart"
+        }
+      },
+      "becxq7ho7bmyod": {
+        "name": "Zuplo: Traffic Distribution (Colo/IATA)",
+        "uid": "becxq7ho7bmyod",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+          },
+          "description": "The distribution of request traffic on each colo node using their IATA designation",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": [],
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayLabels": [],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "percent",
+                "value"
+              ]
+            },
+            "pieType": "pie",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/^percentage$/",
+              "limit": 10,
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "de5x84pgij7r4a"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    colo AS colo_with_percentage,\n    count(*) AS request_count,\n    (count(*) * 100) / (SELECT count(*) FROM \"sbxzuplotwist\".\"zuplotest\" WHERE $__timeFilter(timestamp)) AS percentage\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY colo\nORDER BY request_count DESC",
+              "refId": "A"
+            }
+          ],
+          "title": "Traffic Distribution (Colo/IATA)",
+          "transparent": true,
+          "type": "piechart"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "10.4.1"
+      },
+      {
+        "type": "datasource",
+        "id": "grafana-clickhouse-datasource",
+        "name": "ClickHouse",
+        "version": "4.0.6"
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Everything available, all in one place!",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+      {
+        "gridPos": {
+          "h": 11,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 6,
+        "libraryPanel": {
+          "uid": "fecxpuv0un9xcc",
+          "name": "Zuplo: Geographic Request Distribution Heatmap"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 11
+        },
+        "id": 9,
+        "libraryPanel": {
+          "uid": "cecxpwfex4ikgc",
+          "name": "Zuplo Total Request Volume (Single Metric)"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 11
+        },
+        "id": 11,
+        "libraryPanel": {
+          "uid": "aecxpx1wf7wn4f",
+          "name": "Zuplo: Requests Per Day (Fixed 14 Days)"
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "id": 15,
+        "panels": [],
+        "title": "Request Summaries",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "dashed"
+              }
+            },
+            "fieldMinMax": true,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 100
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 200
+                },
+                {
+                  "color": "red",
+                  "value": 300
+                }
+              ]
+            },
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-clickhouse-datasource",
+              "uid": "${DS_HYDROLIX_- SBXZUPLOTWIST}"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT\n    time,\n    requests / (toUInt64(time) - toUInt64(neighbor(time, -1, toDateTime64(0, 3)))) AS rps  -- Corrected type handling\nFROM (\n    SELECT\n        toStartOfSecond(timestamp) AS time,  -- Time bucket (adjust as needed)\n        count(*) AS requests\n    FROM \"sbxzuplotwist\".\"zuplotest\"\n    WHERE $__timeFilter(timestamp)\n    GROUP BY time\n    ORDER BY time ASC\n)",
+            "refId": "A"
+          }
+        ],
+        "title": "Requests Per Second",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        },
+        "id": 19,
+        "libraryPanel": {
+          "uid": "becxpxy81f3eod",
+          "name": "Zuplo: Request Response Time"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 28
+        },
+        "id": 12,
+        "libraryPanel": {
+          "uid": "cecxpyk5wt7nkf",
+          "name": "Zuplo: Top 20 Requests by Route Path"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 28
+        },
+        "id": 3,
+        "libraryPanel": {
+          "uid": "decxpz3jy0g74d",
+          "name": "Zuplo: Total Request Distribution by Method"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 36
+        },
+        "id": 2,
+        "libraryPanel": {
+          "uid": "becxpzp3ghkw0f",
+          "name": "Zuplo: Average API Request Duration"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 36
+        },
+        "id": 7,
+        "libraryPanel": {
+          "uid": "cecxq0dtk8ao0c",
+          "name": "Zuplo: Top Requesting IP Addresses"
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 44
+        },
+        "id": 16,
+        "panels": [],
+        "title": "Status Codes & Error Rates",
+        "type": "row"
+      },
+      {
+        "gridPos": {
+          "h": 9,
+          "w": 7,
+          "x": 0,
+          "y": 45
+        },
+        "id": 17,
+        "libraryPanel": {
+          "uid": "decxq1bd5pukgf",
+          "name": "Zuplo: Percentage of Requests Rate Limited (Gauge)"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 9,
+          "w": 17,
+          "x": 7,
+          "y": 45
+        },
+        "id": 8,
+        "libraryPanel": {
+          "uid": "aecxq1x4kveo0a",
+          "name": "Zuplo: Requests by Status Code"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 0,
+          "y": 54
+        },
+        "id": 18,
+        "libraryPanel": {
+          "uid": "aecxq2m1ju2o0e",
+          "name": "Zuplo: Percentage of Requests Unauthorized (401) (Gauge)"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 17,
+          "x": 7,
+          "y": 54
+        },
+        "id": 4,
+        "libraryPanel": {
+          "uid": "fecxq36cgp728d",
+          "name": "Zuplo: Error Rates"
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 62
+        },
+        "id": 14,
+        "panels": [],
+        "title": "Geo",
+        "type": "row"
+      },
+      {
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 63
+        },
+        "id": 13,
+        "libraryPanel": {
+          "uid": "fecxq41xxgni8a",
+          "name": "Zuplo: Traffic Location Geo (Percentage)"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 14,
+          "x": 0,
+          "y": 75
+        },
+        "id": 22,
+        "libraryPanel": {
+          "uid": "fecxq5iaecykgb",
+          "name": "Zuplo: Requests by Colo/IATA (Top 20) (Map)"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 15,
+          "w": 10,
+          "x": 14,
+          "y": 75
+        },
+        "id": 20,
+        "libraryPanel": {
+          "uid": "decxq6bkoxekgf",
+          "name": "Zuplo: Top 10 Locations"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 7,
+          "w": 6,
+          "x": 0,
+          "y": 83
+        },
+        "id": 23,
+        "libraryPanel": {
+          "uid": "eecxq6tlm1se8e",
+          "name": "Zuplo: Current Most Active Timezones"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 6,
+          "y": 83
+        },
+        "id": 21,
+        "libraryPanel": {
+          "uid": "becxq7ho7bmyod",
+          "name": "Zuplo: Traffic Distribution (Colo/IATA)"
+        }
+      }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "Hydrolix - sbxzuplotwist",
+            "value": "de5x84pgij7r4a"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Data Source",
+          "multi": false,
+          "name": "selected_data_source",
+          "options": [],
+          "query": "grafana-clickhouse-datasource",
+          "queryValue": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "description": "",
+          "hide": 2,
+          "label": "Table",
+          "name": "table",
+          "query": "${VAR_TABLE}",
+          "skipUrlSync": false,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_TABLE}",
+            "text": "${VAR_TABLE}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_TABLE}",
+              "text": "${VAR_TABLE}",
+              "selected": false
+            }
+          ]
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Zuplo Main Dashboard",
+    "uid": "aecqkprbwhxj4a",
+    "version": 90,
+    "weekStart": ""
+  }
