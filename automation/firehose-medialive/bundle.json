@@ -38,7 +38,8 @@
     },
     "source": {
       "full_title": "AWS Elemental MediaLive",
-      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/medialive.png",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/medialive.png"
+    },  
     "data_category": "video"
   },
    "metadata": {
