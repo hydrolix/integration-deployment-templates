@@ -39,7 +39,6 @@
     "channel_type": "AWS",
     "grafana_min_version": "12.1",
     "clickhouse_min_version": "4.3"
-}
-    
   }
 }
+
