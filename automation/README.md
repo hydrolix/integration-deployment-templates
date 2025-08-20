@@ -105,8 +105,8 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `region` | `string` | ✅ | AWS region override |
-| `stream_prefix` | `string` | ✅ | Stream name prefix |
+| `region` | `string` | ❌  | AWS region override |
+| `stream_prefix` | `string` | ❌  | Stream name prefix |
 
 ### Validation Rules for MethodOverrides
 - `region` must be exactly `"us-east-1"`
@@ -130,8 +130,8 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Plugin identifier |
-| `version` | `string` | ✅ | Plugin version requirement |
+| `name` | `string` | ❌  | Plugin identifier |
+| `version` | `string` | ❌  | Plugin version requirement |
 
 ### HydrolixDependencies Object
 
@@ -145,24 +145,24 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Dictionary identifier |
-| `source` | `string` | ✅ | HTTPS URL to dictionary source |
+| `name` | `string` | ❌  | Dictionary identifier |
+| `source` | `string` | ❌  | HTTPS URL to dictionary source |
 
 ### Function Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Function name |
-| `definition` | `string` | ✅ | Function SQL definition |
+| `name` | `string` | ❌  | Function name |
+| `definition` | `string` | ❌  | Function SQL definition |
 
 ### DataSource Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Data source name |
-| `type` | `string` | ✅ | Data source type |
-| `url` | `string` | ✅ | Data source connection URL |
-| `access` | `string` | ✅ | Data access mode |
+| `name` | `string` | ❌  | Data source name |
+| `type` | `string` | ❌  | Data source type |
+| `url` | `string` | ❌  | Data source connection URL |
+| `access` | `string` | ❌  | Data access mode |
 
 ### Validation Rules for Dependencies
 - All URLs in `dependencies.hydrolix.required_dictionaries[].source` must start with `https://`
