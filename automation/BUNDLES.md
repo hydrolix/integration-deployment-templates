@@ -7,9 +7,7 @@ It serves as a blueprint for connecting data sources, transforming data, creatin
 
 The details are located here: 
 
-[download the latest release here](./downloads/latest.zip).
-
-(README.md)[https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/README.md]
+[README.md](https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/README.md)
 
 ## Key Components
 
