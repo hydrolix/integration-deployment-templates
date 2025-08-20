@@ -37,5 +37,31 @@
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon Kinesis Cloudfront",
     "channel_type": "AWS"
+  },
+  "dependencies": {
+    "grafana": {
+      "version": "^12.1.0",
+      "plugins": [
+        {
+          "name": "grafana-clickhouse-datasource",
+          "version": "^4.10.1"
+        }
+      ]
+    },
+    "hydrolix": {
+      "cluster_version": "^5.4.0",
+      "required_dictionaries": [
+        {
+          "name": "geoip_asm",
+          "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz"
+        },
+        {
+          "name": "geoip_city",
+          "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz"
+        }
+      ],
+      "required_functions": []
+    },
+    "data-sources": []
   }
 }
