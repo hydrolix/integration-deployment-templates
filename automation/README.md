@@ -249,7 +249,7 @@ Additional validation rules ensure consistency across the bundle:
   "source": "cloudfront",
   "method": "kinesis",
   "beta": true,
-  "base_url": "file:///Users/javiani/integration-deployment-templates/automation/cloudfront-to-kinesis",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/automation/cloudfront-to-kinesis",
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
