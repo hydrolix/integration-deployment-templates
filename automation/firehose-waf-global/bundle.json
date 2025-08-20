@@ -35,14 +35,14 @@
     "source": {
       "full_title": "AWS WAF for CloudFront",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/waf.png"
-    }
+    },
+    "data_category": "security"
   },
   "metadata": {
     "version": "1.0.0",
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon WAF Data Firehose",
-    "channel_type": "AWS",
-    "data_category": "security"
+    "channel_type": "AWS"
   }
 }
 
