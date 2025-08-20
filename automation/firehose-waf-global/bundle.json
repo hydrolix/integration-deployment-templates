@@ -42,7 +42,7 @@
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon WAF Data Firehose",
     "channel_type": "AWS",
-    "data_category": "video"
+    "data_category": "security"
   }
 }
 
