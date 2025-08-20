@@ -1,11 +1,10 @@
-# Hydrolix Bundle Manifest
+# Hydrolix Bundle
 
-## What is a Bundle Manifest?
+## What is a Bundle?
 
-A Hydrolix Bundle Manifest is a structured JSON configuration file that defines a complete data integration package for the Hydrolix platform.
+A Hydrolix Bundle is a structured JSON configuration file that defines a complete data integration package for the Hydrolix platform.
 It serves as a blueprint for connecting data sources, transforming data, creating visualizations, and managing dependencies.
 
-The Bundle Manifest transforms complex data engineering tasks into manageable, version-controlled packages that can be easily deployed, shared, and maintained across organizations.
 
 ## Key Components
 
