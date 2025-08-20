@@ -1,6 +1,6 @@
 # Bundle Format Documentation
 
-A bundle is a Hydrolix JSON configuration file that packages transformations, dashboards, and documentation for data integration and visualization. 
+A bundle is a Hydrolix JSON configuration file that packages transformations, dashboards, and documentation for data integration and visualization.
 
 This document describes all valid fields and their validation rules.
 
@@ -17,10 +17,11 @@ This document describes all valid fields and their validation rules.
 | `tables` | `Table[]` | ✅ | Array of table definitions |
 | `ui` | `Ui` | ✅ | User interface configuration |
 | `metadata` | `Metadata` | ✅ | Bundle metadata |
-| `method_overrides` | `MethodOverrides` | - | Optional method-specific overrides |
+| `method_overrides` | `MethodOverrides` | ❌ | Optional method-specific overrides |
+| `dependencies` | `Dependencies` | ❌ | Optional dependency requirements |
 
 ### Validation Rules for Root Object
-- `base_url` must start with `https://`
+- `base_url` must start with `https://` or `file://`
 - `name` must contain both the `source` and `method` values as substrings
 - No duplicate table names across all tables
 - No duplicate `dashboard_var` values across all tables
@@ -71,8 +72,8 @@ This document describes all valid fields and their validation rules.
 | `source` | `Graphics` | ✅ | Source display information |
 | `data_category` | `string` | ✅ | Data category classification |
 
-### Validation Rules for UI
-- `primary_url` must start with `https://`
+### Validation Rules for Ui
+- `primary_url` must start with `https://` or `file://`
 - `data_category` must be one of: `"video"`, `"cdn"`, `"security"`
 
 ## Graphics Object
@@ -83,7 +84,7 @@ This document describes all valid fields and their validation rules.
 | `icon_url` | `string` | ✅ | HTTPS URL to icon image |
 
 ### Validation Rules for Graphics
-- `icon_url` must start with `https://`
+- `icon_url` must start with `https://` or `file://`
 
 ## Metadata Object
 
@@ -110,6 +111,65 @@ This document describes all valid fields and their validation rules.
 ### Validation Rules for MethodOverrides
 - `region` must be exactly `"us-east-1"`
 
+## Dependencies Object (Optional)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `grafana` | `GrafanaDependencies` | ❌ | Grafana version and plugin requirements |
+| `hydrolix` | `HydrolixDependencies` | ❌ | Hydrolix cluster requirements |
+| `data-sources` | `DataSource[]` | ❌ | External data source configurations |
+
+### GrafanaDependencies Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `version` | `string` | ❌ | Required Grafana version (semver range) |
+| `plugins` | `GrafanaPlugin[]` | ❌ | Required Grafana plugins |
+
+### GrafanaPlugin Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | ✅ | Plugin identifier |
+| `version` | `string` | ✅ | Plugin version requirement |
+
+### HydrolixDependencies Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `cluster_version` | `string` | ❌ | Required Hydrolix cluster version |
+| `required_dictionaries` | `Dictionary[]` | ❌ | Required external dictionaries |
+| `required_functions` | `Function[]` | ❌ | Required custom functions |
+
+### Dictionary Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | ✅ | Dictionary identifier |
+| `source` | `string` | ✅ | HTTPS URL to dictionary source |
+
+### Function Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | ✅ | Function name |
+| `definition` | `string` | ✅ | Function SQL definition |
+
+### DataSource Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | ✅ | Data source name |
+| `type` | `string` | ✅ | Data source type |
+| `url` | `string` | ✅ | Data source connection URL |
+| `access` | `string` | ✅ | Data access mode |
+
+### Validation Rules for Dependencies
+- All URLs in `dependencies.hydrolix.required_dictionaries[].source` must start with `https://`
+- `dependencies.grafana.plugins[].name` must be valid plugin identifiers
+- `dependencies.grafana.version` must follow semantic version range format
+- `dependencies.hydrolix.cluster_version` must follow semantic version range format
+
 ## Valid Sources
 
 The `source` field must be one of:
@@ -121,6 +181,7 @@ The `source` field must be one of:
 - `"medialive"` - AWS Elemental MediaLive
 - `"mediatailor"` - AWS Elemental MediaTailor
 - `"mediapackage"` - AWS Elemental MediaPackage
+- `"zuplo"` - Zuplo API Gateway
 
 ## Valid Methods
 
@@ -155,7 +216,7 @@ Several fields use macro variable format for template substitution:
 ## URL Validation
 
 HTTPS URLs must:
-- Start with `https://`
+- Start with `https://` or `file://`
 - Be valid URLs according to URL parsing standards
 - Be accessible (return successful HTTP response)
 
@@ -180,7 +241,7 @@ Additional validation rules ensure consistency across the bundle:
    - Contain a non-empty `name` field
    - If they have a subtype, it must be `"firehose"`
 
-## Example Bundle
+## Example Bundle with Dependencies
 
 ```json
 {
@@ -188,7 +249,7 @@ Additional validation rules ensure consistency across the bundle:
   "source": "cloudfront",
   "method": "kinesis",
   "beta": true,
-  "base_url": "https://github.com/example/repo/blob/main/templates",
+  "base_url": "file:///Users/javiani/integration-deployment-templates/automation/cloudfront-to-kinesis",
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
@@ -199,29 +260,56 @@ Additional validation rules ensure consistency across the bundle:
       "name": "cloudfront_kinesis",
       "transforms": [
         {
-          "data_template_path": "transformations/sample_data.tsv",
+          "data_template_path": "transformations/sample_data_template.tsv",
           "path": "transformations/current.json"
         }
       ]
     }
   ],
   "ui": {
-    "primary_url": "https://docs.example.com/cloudfront.html",
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
     "method": {
       "full_title": "Amazon Kinesis",
-      "icon_url": "https://cdn.example.com/kinesis.png"
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png"
     },
     "source": {
       "full_title": "CloudFront",
-      "icon_url": "https://cdn.example.com/cloudfront.png"
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
     },
     "data_category": "cdn"
   },
   "metadata": {
     "version": "1.0.0",
-    "maintainer": "user@example.com",
-    "description": "Amazon Kinesis CloudFront integration",
+    "maintainer": "jgoodson@hydrolix.io",
+    "description": "Amazon Kinesis Cloudfront",
     "channel_type": "AWS"
+  },
+  "dependencies": {
+    "grafana": {
+      "version": "^12.1.0",
+      "plugins": [
+        {
+          "name": "grafana-clickhouse-datasource",
+          "version": "^4.10.1"
+        }
+      ]
+    },
+    "hydrolix": {
+      "cluster_version": "^5.4.0",
+      "required_dictionaries": [
+        {
+          "name": "geoip_asm",
+          "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz"
+        },
+        {
+          "name": "geoip_city",
+          "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz"
+        }
+      ],
+      "required_functions": []
+    },
+    "data-sources": []
   }
 }
 ```
+
