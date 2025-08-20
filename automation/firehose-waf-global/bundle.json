@@ -26,7 +26,7 @@
       ]
     }
   ],
-    "docs": {
+    "ui": {
     "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Waf.html",
     "method": {
       "full_title": "Amazon Data Firehose",
@@ -40,7 +40,7 @@
   "metadata": {
     "version": "1.0.0",
     "maintainer": "jgoodson@hydrolix.io",
-    "description": "Amazon Data Firehose",
+    "description": "Amazon WAF Data Firehose",
     "channel_type": "AWS",
     "data_category": "video"
   }
