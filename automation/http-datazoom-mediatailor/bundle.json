@@ -30,7 +30,13 @@
       "full_title": "AWS Elemental MediaTailor DataZoom",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediatailor.png"
     },
-    "source_type": "video"
+    "data_category": "video"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "jgoodson@hydrolix.io",
+    "description": "AWS Media Tailor Http",
+    "channel_type": "AWS"
   }
 }
 
