@@ -32,6 +32,7 @@ This document describes all valid fields and their validation rules.
 |-------|------|----------|-------------|
 | `path` | `string` | ✅ | Relative path to dashboard JSON file |
 | `project_var` | `string` | ✅ | Variable placeholder for project name |
+| `sha256` | `string` | ❌ | Optional SHA256 of dashboard contents |
 
 ### Validation Rules for Dashboard
 - `path` cannot start with `/`
@@ -57,6 +58,7 @@ This document describes all valid fields and their validation rules.
 |-------|------|----------|-------------|
 | `data_template_path` | `string` | ✅ | Relative path to sample data template |
 | `path` | `string` | ✅ | Relative path to transformation JSON |
+| `sha256` | `string` | ❌ | Optional SHA256 of transformation contents |
 
 ### Validation Rules for Transform
 - Both paths cannot start with `/`
@@ -252,7 +254,8 @@ Additional validation rules ensure consistency across the bundle:
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/automation/cloudfront-to-kinesis",
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__"
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "65d22b569bb986a28e98246637bd41dad5ecf56220965d2cc3491577a160138b"
   },
   "tables": [
     {
@@ -261,7 +264,8 @@ Additional validation rules ensure consistency across the bundle:
       "transforms": [
         {
           "data_template_path": "transformations/sample_data_template.tsv",
-          "path": "transformations/current.json"
+          "path": "transformations/current.json",
+          "sha256": "88cb72324adb0c77e657a883552f086bc014985f0c4738ea84ad976a403dc3ac"
         }
       ]
     }
