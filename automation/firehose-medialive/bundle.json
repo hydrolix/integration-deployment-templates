@@ -6,7 +6,8 @@
   "source": "medialive",
   "dashboard": {
     "path":"dashboards/current.json",
-    "project_var": "__PROJECT_NAME__"
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "23841b517307ee2b3fef5ed25c2c1f24a3e4b144a54836b0d9fb305ede78c634"
   },
   "tables": [
     {
@@ -14,8 +15,9 @@
       "name": "medialive_encoding",
       "transforms": [
         {
-          "data_template_path": "transformations/encoding/sample_data_template.json",
-          "path": "transformations/encoding/current.json"
+          "path": "transformations/encoding/current.json",
+          "sha256": "dd7d6f2a52f24f792e948587af4d6327db25a24446c86f58474b5b05b789b8d9",
+          "data_template_path": "transformations/encoding/sample_data_template.json"
         }
       ]
     },
@@ -24,8 +26,9 @@
       "name": "medialive_metrics",
       "transforms": [
         {
-          "data_template_path": "transformations/metrics/sample_data_template.json",
-          "path": "transformations/metrics/current.json"
+          "path": "transformations/metrics/current.json",
+          "sha256": "2e9bcf58fedc0bd36c0fc0dd21d2ff4e2531dfd7b76409f96e7fa4900f3b1ed3",
+          "data_template_path": "transformations/metrics/sample_data_template.json"
         }
       ]
     }
