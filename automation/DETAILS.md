@@ -39,6 +39,7 @@ This document describes all valid fields and their validation rules.
 - `path` cannot contain `..`
 - `path` must end with `.json` or `.tsv`
 - `project_var` must follow macro format: `__VARIABLE_NAME__`
+- Use `openssl dgst -sha256 <file_name>` to generate the sha256
 
 ## Table Object
 
@@ -64,6 +65,7 @@ This document describes all valid fields and their validation rules.
 - Both paths cannot start with `/`
 - Both paths cannot contain `..`
 - Both paths must end with `.json` or `.tsv`
+- Use `openssl dgst -sha256 <file_name>` to generate the sha256
 
 ## Ui Object
 
