@@ -3,19 +3,19 @@
     "source": "zuplo",
     "method": "http",
     "beta": true,
-    "base_url": "file://Users/javiani/integration-deployment-templates/automation/zuplo",
+    "base_url": "file://Users/jay/projects/gh/integration-deployment-templates/automation/zuplo",
     "dashboard": {
-      "path": "dashboards/hacking.json",
+      "path": "dashboards/current.json",
       "project_var": "__PROJECT_NAME__"
     },
     "tables": [
       {
         "dashboard_var": "__TABLE_NAME__",
-        "name": "WAF zuplo",
+        "name": "zuplo",
         "transforms": [
           {
             "data_template_path": "transformations/sample_data_template.json",
-            "path": "transformations/hacking.json"
+            "path": "transformations/current.json"
           }
         ]
       }
