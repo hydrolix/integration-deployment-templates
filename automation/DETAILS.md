@@ -57,14 +57,13 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `data_template_path` | `string` | ✅ | Relative path to sample data template |
 | `path` | `string` | ✅ | Relative path to transformation JSON |
 | `sha256` | `string` | ❌ | Optional SHA256 of transformation contents |
 
 ### Validation Rules for Transform
-- Both paths cannot start with `/`
-- Both paths cannot contain `..`
-- Both paths must end with `.json` or `.tsv`
+- Path cannot start with `/`
+- Path cannot contain `..`
+- Path must end with `.json`
 - Use `openssl dgst -sha256 <file_name>` to generate the sha256
 
 ## Ui Object
@@ -265,7 +264,6 @@ Additional validation rules ensure consistency across the bundle:
       "name": "cloudfront_kinesis",
       "transforms": [
         {
-          "data_template_path": "transformations/sample_data_template.tsv",
           "path": "transformations/current.json",
           "sha256": "88cb72324adb0c77e657a883552f086bc014985f0c4738ea84ad976a403dc3ac"
         }
