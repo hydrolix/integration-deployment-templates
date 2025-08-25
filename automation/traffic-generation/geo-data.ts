@@ -14,6 +14,7 @@ export interface GeoData {
   timezone: string;
   colo: string;
   clientIP: string;
+  metroCode: string;
 }
 
 const GEO_DATA_LOOKUP: Record<string, GeoData> = {
@@ -28,7 +29,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-73.99670",
     timezone: "America/New_York",
     colo: "JFK",
-    clientIP: "74.125.224.72"
+    clientIP: "74.125.224.72",
+    metroCode: "501"
   },
   "90210": {
     postalCode: "90210",
@@ -41,7 +43,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-118.41022",
     timezone: "America/Los_Angeles",
     colo: "LAX",
-    clientIP: "172.217.164.46"
+    clientIP: "172.217.164.46",
+    metroCode: "803"
   },
   "94102": {
     postalCode: "94102",
@@ -54,7 +57,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-122.42016",
     timezone: "America/Los_Angeles",
     colo: "SFO",
-    clientIP: "216.58.194.174"
+    clientIP: "216.58.194.174",
+    metroCode: "807"
   },
   "60601": {
     postalCode: "60601",
@@ -67,7 +71,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-87.63245",
     timezone: "America/Chicago",
     colo: "ORD",
-    clientIP: "72.21.91.29"
+    clientIP: "72.21.91.29",
+    metroCode: "602"
   },
   "33101": {
     postalCode: "33101",
@@ -80,7 +85,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-80.19366",
     timezone: "America/New_York",
     colo: "MIA",
-    clientIP: "54.239.28.85"
+    clientIP: "54.239.28.85",
+    metroCode: "528"
   },
   "98101": {
     postalCode: "98101",
@@ -93,7 +99,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-122.32945",
     timezone: "America/Los_Angeles",
     colo: "SEA",
-    clientIP: "13.107.42.14"
+    clientIP: "13.107.42.14",
+    metroCode: "819"
   },
   "M5V 3A8": {
     postalCode: "M5V 3A8",
@@ -106,7 +113,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-79.38781",
     timezone: "America/Toronto",
     colo: "YYZ",
-    clientIP: "142.250.191.78"
+    clientIP: "142.250.191.78",
+    metroCode: "508"
   },
   "SW1A 1AA": {
     postalCode: "SW1A 1AA",
@@ -119,7 +127,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-0.12497",
     timezone: "Europe/London",
     colo: "LHR",
-    clientIP: "185.199.108.153"
+    clientIP: "185.199.108.153",
+    metroCode: "100"
   },
   "75001": {
     postalCode: "75001",
@@ -132,7 +141,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "2.34118",
     timezone: "Europe/Paris",
     colo: "CDG",
-    clientIP: "213.186.33.5"
+    clientIP: "213.186.33.5",
+    metroCode: "101"
   },
   "10115": {
     postalCode: "10115",
@@ -145,7 +155,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "13.38262",
     timezone: "Europe/Berlin",
     colo: "TXL",
-    clientIP: "217.160.0.112"
+    clientIP: "217.160.0.112",
+    metroCode: "102"
   },
   "28001": {
     postalCode: "28001",
@@ -158,7 +169,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-3.70256",
     timezone: "Europe/Madrid",
     colo: "MAD",
-    clientIP: "185.60.216.35"
+    clientIP: "185.60.216.35",
+    metroCode: "103"
   },
   "00118": {
     postalCode: "00118",
@@ -171,7 +183,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "12.48366",
     timezone: "Europe/Rome",
     colo: "FCO",
-    clientIP: "151.101.1.140"
+    clientIP: "151.101.1.140",
+    metroCode: "104"
   },
   "1012": {
     postalCode: "1012",
@@ -184,7 +197,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "4.88969",
     timezone: "Europe/Amsterdam",
     colo: "AMS",
-    clientIP: "195.69.146.17"
+    clientIP: "195.69.146.17",
+    metroCode: "105"
   },
   "100-0001": {
     postalCode: "100-0001",
@@ -197,7 +211,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "139.65031",
     timezone: "Asia/Tokyo",
     colo: "NRT",
-    clientIP: "210.155.141.200"
+    clientIP: "210.155.141.200",
+    metroCode: "200"
   },
   "110-001": {
     postalCode: "110-001",
@@ -210,7 +225,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "126.97783",
     timezone: "Asia/Seoul",
     colo: "ICN",
-    clientIP: "203.248.252.2"
+    clientIP: "203.248.252.2",
+    metroCode: "201"
   },
   "100001": {
     postalCode: "100001",
@@ -223,7 +239,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "116.40717",
     timezone: "Asia/Shanghai",
     colo: "PEK",
-    clientIP: "39.156.69.79"
+    clientIP: "39.156.69.79",
+    metroCode: "202"
   },
   "110001": {
     postalCode: "110001",
@@ -236,7 +253,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "77.20902",
     timezone: "Asia/Kolkata",
     colo: "DEL",
-    clientIP: "13.127.70.75"
+    clientIP: "13.127.70.75",
+    metroCode: "203"
   },
   "018956": {
     postalCode: "018956",
@@ -249,7 +267,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "103.81983",
     timezone: "Asia/Singapore",
     colo: "SIN",
-    clientIP: "18.141.177.75"
+    clientIP: "18.141.177.75",
+    metroCode: "204"
   },
   "71606": {
     postalCode: "71606",
@@ -262,7 +281,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "106.62965",
     timezone: "Asia/Ho_Chi_Minh",
     colo: "SGN",
-    clientIP: "103.67.184.73"
+    clientIP: "103.67.184.73",
+    metroCode: "205"
   },
   "10110": {
     postalCode: "10110",
@@ -275,7 +295,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "100.50144",
     timezone: "Asia/Bangkok",
     colo: "BKK",
-    clientIP: "180.183.255.96"
+    clientIP: "180.183.255.96",
+    metroCode: "206"
   },
   "12930": {
     postalCode: "12930",
@@ -288,7 +309,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "106.86504",
     timezone: "Asia/Jakarta",
     colo: "CGK",
-    clientIP: "103.28.148.52"
+    clientIP: "103.28.148.52",
+    metroCode: "207"
   },
   "1000": {
     postalCode: "1000",
@@ -301,7 +323,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "120.98422",
     timezone: "Asia/Manila",
     colo: "MNL",
-    clientIP: "122.2.180.51"
+    clientIP: "122.2.180.51",
+    metroCode: "208"
   },
   "50050": {
     postalCode: "50050",
@@ -314,7 +337,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "101.68685",
     timezone: "Asia/Kuala_Lumpur",
     colo: "KUL",
-    clientIP: "175.139.142.25"
+    clientIP: "175.139.142.25",
+    metroCode: "209"
   },
   "999077": {
     postalCode: "999077",
@@ -327,7 +351,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "114.10949",
     timezone: "Asia/Hong_Kong",
     colo: "HKG",
-    clientIP: "103.2.28.146"
+    clientIP: "103.2.28.146",
+    metroCode: "210"
   },
   "100": {
     postalCode: "100",
@@ -340,7 +365,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "121.56486",
     timezone: "Asia/Taipei",
     colo: "TPE",
-    clientIP: "61.216.4.9"
+    clientIP: "61.216.4.9",
+    metroCode: "211"
   },
   "2000": {
     postalCode: "2000",
@@ -353,7 +379,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "151.20732",
     timezone: "Australia/Sydney",
     colo: "SYD",
-    clientIP: "13.210.67.224"
+    clientIP: "13.210.67.224",
+    metroCode: "300"
   },
   "3000": {
     postalCode: "3000",
@@ -366,7 +393,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "144.96328",
     timezone: "Australia/Melbourne",
     colo: "MEL",
-    clientIP: "3.105.171.164"
+    clientIP: "3.105.171.164",
+    metroCode: "301"
   },
   "1010": {
     postalCode: "1010",
@@ -379,7 +407,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "174.76333",
     timezone: "Pacific/Auckland",
     colo: "AKL",
-    clientIP: "203.97.116.52"
+    clientIP: "203.97.116.52",
+    metroCode: "302"
   },
   "01310-100": {
     postalCode: "01310-100",
@@ -392,7 +421,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-46.65557",
     timezone: "America/Sao_Paulo",
     colo: "GRU",
-    clientIP: "18.231.105.75"
+    clientIP: "18.231.105.75",
+    metroCode: "400"
   },
   "C1001": {
     postalCode: "C1001",
@@ -405,7 +435,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-58.37723",
     timezone: "America/Argentina/Buenos_Aires",
     colo: "EZE",
-    clientIP: "181.209.82.68"
+    clientIP: "181.209.82.68",
+    metroCode: "401"
   },
   "110111": {
     postalCode: "110111",
@@ -418,7 +449,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-74.07209",
     timezone: "America/Bogota",
     colo: "BOG",
-    clientIP: "186.154.164.2"
+    clientIP: "186.154.164.2",
+    metroCode: "402"
   },
   "11000": {
     postalCode: "11000",
@@ -431,7 +463,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "31.23571",
     timezone: "Africa/Cairo",
     colo: "CAI",
-    clientIP: "156.160.0.1"
+    clientIP: "156.160.0.1",
+    metroCode: "500"
   },
   "8001": {
     postalCode: "8001",
@@ -444,7 +477,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "18.42322",
     timezone: "Africa/Johannesburg",
     colo: "CPT",
-    clientIP: "13.246.70.49"
+    clientIP: "13.246.70.49",
+    metroCode: "501"
   },
   "2001": {
     postalCode: "2001",
@@ -457,7 +491,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "28.04363",
     timezone: "Africa/Johannesburg",
     colo: "JNB",
-    clientIP: "105.186.12.53"
+    clientIP: "105.186.12.53",
+    metroCode: "502"
   },
   "101001": {
     postalCode: "101001",
@@ -470,7 +505,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "36.82194",
     timezone: "Africa/Nairobi",
     colo: "NBO",
-    clientIP: "197.248.21.10"
+    clientIP: "197.248.21.10",
+    metroCode: "503"
   },
   "119991": {
     postalCode: "119991",
@@ -483,7 +519,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "37.61729",
     timezone: "Europe/Moscow",
     colo: "SVO",
-    clientIP: "87.250.250.242"
+    clientIP: "87.250.250.242",
+    metroCode: "106"
   },
   "02-679": {
     postalCode: "02-679",
@@ -496,7 +533,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "21.01178",
     timezone: "Europe/Warsaw",
     colo: "WAW",
-    clientIP: "213.59.243.9"
+    clientIP: "213.59.243.9",
+    metroCode: "107"
   },
   "111250": {
     postalCode: "111250",
@@ -509,7 +547,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "28.97696",
     timezone: "Europe/Istanbul",
     colo: "IST",
-    clientIP: "185.125.190.36"
+    clientIP: "185.125.190.36",
+    metroCode: "108"
   },
   "1000-001": {
     postalCode: "1000-001",
@@ -522,7 +561,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-9.13333",
     timezone: "Europe/Lisbon",
     colo: "LIS",
-    clientIP: "185.17.126.10"
+    clientIP: "185.17.126.10",
+    metroCode: "109"
   },
   "08001": {
     postalCode: "08001",
@@ -535,7 +575,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "2.15899",
     timezone: "Europe/Madrid",
     colo: "BCN",
-    clientIP: "94.142.241.111"
+    clientIP: "94.142.241.111",
+    metroCode: "110"
   },
   "1011": {
     postalCode: "1011",
@@ -548,7 +589,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "10.75225",
     timezone: "Europe/Oslo",
     colo: "OSL",
-    clientIP: "129.241.1.99"
+    clientIP: "129.241.1.99",
+    metroCode: "111"
   },
   "111 21": {
     postalCode: "111 21",
@@ -561,7 +603,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "18.06871",
     timezone: "Europe/Stockholm",
     colo: "ARN",
-    clientIP: "213.115.18.10"
+    clientIP: "213.115.18.10",
+    metroCode: "112"
   },
   "1050": {
     postalCode: "1050",
@@ -574,7 +617,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "4.34878",
     timezone: "Europe/Brussels",
     colo: "BRU",
-    clientIP: "195.238.2.21"
+    clientIP: "195.238.2.21",
+    metroCode: "113"
   },
   "8000": {
     postalCode: "8000",
@@ -587,7 +631,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "8.55000",
     timezone: "Europe/Zurich",
     colo: "ZUR",
-    clientIP: "130.59.138.1"
+    clientIP: "130.59.138.1",
+    metroCode: "114"
   },
   "1010": {
     postalCode: "1010",
@@ -600,7 +645,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "16.37208",
     timezone: "Europe/Vienna",
     colo: "VIE",
-    clientIP: "128.130.6.7"
+    clientIP: "128.130.6.7",
+    metroCode: "115"
   },
   "1000": {
     postalCode: "1000",
@@ -613,7 +659,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "12.56553",
     timezone: "Europe/Copenhagen",
     colo: "CPH",
-    clientIP: "130.225.98.98"
+    clientIP: "130.225.98.98",
+    metroCode: "116"
   },
   "00100": {
     postalCode: "00100",
@@ -626,7 +673,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "24.93545",
     timezone: "Europe/Helsinki",
     colo: "HEL",
-    clientIP: "128.214.248.6"
+    clientIP: "128.214.248.6",
+    metroCode: "117"
   },
   "101": {
     postalCode: "101",
@@ -639,7 +687,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "-21.89541",
     timezone: "Atlantic/Reykjavik",
     colo: "KEF",
-    clientIP: "130.208.165.207"
+    clientIP: "130.208.165.207",
+    metroCode: "118"
   },
   "11222": {
     postalCode: "11222",
@@ -652,7 +701,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "55.27078",
     timezone: "Asia/Dubai",
     colo: "DXB",
-    clientIP: "185.46.212.97"
+    clientIP: "185.46.212.97",
+    metroCode: "212"
   },
   "11693": {
     postalCode: "11693",
@@ -665,7 +715,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "46.67529",
     timezone: "Asia/Riyadh",
     colo: "RUH",
-    clientIP: "188.161.165.2"
+    clientIP: "188.161.165.2",
+    metroCode: "213"
   },
   "1431": {
     postalCode: "1431",
@@ -678,7 +729,8 @@ const GEO_DATA_LOOKUP: Record<string, GeoData> = {
     longitude: "34.76647",
     timezone: "Asia/Jerusalem",
     colo: "TLV",
-    clientIP: "212.150.161.84"
+    clientIP: "212.150.161.84",
+    metroCode: "214"
   }
 };
 
