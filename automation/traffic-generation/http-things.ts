@@ -28,6 +28,18 @@ export function randomUserAgent(): string {
 }
 
 /**
+ * Generates a random HTTP method
+ * @returns {string} Random HTTP method
+ * @example
+ * const status = randomHttpMethod();
+ * console.log(status); // 200
+ */
+function randomHttpMethod(): string {
+    const methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
+    return methods[Math.floor(Math.random() * methods.length)];
+}
+
+/**
  * Generates a random HTTP status code
  * @returns {number} Random HTTP status code
  * @example
