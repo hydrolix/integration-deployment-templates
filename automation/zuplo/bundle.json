@@ -3,7 +3,7 @@
     "source": "zuplo",
     "method": "http",
     "beta": true,
-    "base_url": "https://github.com/hydrolix/integration-deployment-templates/edit/main/automation/zuplo",
+    "base_url": "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/automation/zuplo",
     "dashboard": {
       "path": "dashboards/current.json",
       "project_var": "__PROJECT_NAME__",
