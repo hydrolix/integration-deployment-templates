@@ -3,7 +3,7 @@
     "source": "zuplo",
     "method": "http",
     "beta": true,
-    "base_url": "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/automation/zuplo",
+    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/zuplo",
     "dashboard": {
       "path": "dashboards/current.json",
       "project_var": "__PROJECT_NAME__",
@@ -16,7 +16,7 @@
         "transforms": [
           {
             "path": "transformations/current.json",
-	    "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5"
+	        "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5"
           }
         ]
       }
