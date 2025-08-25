@@ -3,10 +3,11 @@
     "source": "zuplo",
     "method": "http",
     "beta": true,
-    "base_url": "file://Users/jay/projects/gh/integration-deployment-templates/automation/zuplo",
+    "base_url": "https://github.com/hydrolix/integration-deployment-templates/edit/main/automation/zuplo",
     "dashboard": {
       "path": "dashboards/current.json",
-      "project_var": "__PROJECT_NAME__"
+      "project_var": "__PROJECT_NAME__",
+      "sha256": "f81c8138004386535a2d3eda962ef9988d5b3d43296b85daa2f9fbc76ed30904"
     },
     "tables": [
       {
@@ -14,8 +15,8 @@
         "name": "zuplo",
         "transforms": [
           {
-            "data_template_path": "transformations/sample_data_template.json",
-            "path": "transformations/current.json"
+            "path": "transformations/current.json",
+	    "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5"
           }
         ]
       }
@@ -39,4 +40,3 @@
       "channel_type": "AWS"
     }
   }
-  
