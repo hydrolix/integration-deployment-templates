@@ -1,7 +1,9 @@
 // geo-data.ts
 // Standalone module for geo data lookup functionality
-// Usage: import { getRandomGeoData, getGeoDataByPostalCode } from "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/main/geo-data.ts";
-// Trying to force a flush cache. 
+// Usage: 
+// import { getAllGeoData, getRandomGeoData, type GeoData }
+//    from "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/automation/traffic-generation/geo-data.ts";
+//
 
 export interface GeoData {
   postalCode: string;
