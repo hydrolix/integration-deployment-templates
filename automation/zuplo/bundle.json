@@ -1,7 +1,7 @@
 {
     "name": "http zuplo",
     "source": "zuplo",
-    "method": "http",
+    "method": "http_streaming",
     "beta": true,
     "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/zuplo",
     "dashboard": {
