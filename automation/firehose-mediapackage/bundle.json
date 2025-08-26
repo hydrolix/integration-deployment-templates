@@ -6,7 +6,8 @@
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-mediapackage",
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__"
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "e04123e3cb59f7cee76252fdbcd217751eb32c449860a014d6133783b92ae3fb"
   },
   "tables": [
     {
@@ -14,7 +15,6 @@
       "name": "mediapackage_egress",
       "transforms": [
         {
-          "data_template_path": "transformations/egress/sample_data_template.json",
           "path": "transformations/egress/current.json"
         }
       ]
@@ -24,7 +24,6 @@
       "name": "mediapackage_ingress",
       "transforms": [
         {
-          "data_template_path": "transformations/ingress/sample_data_template.json",
           "path": "transformations/ingress/current.json"
         }
       ]
@@ -34,7 +33,6 @@
       "name": "mediapackage_metrics",
       "transforms": [
         {
-          "data_template_path": "transformations/metrics/sample_data_template.json",
           "path": "transformations/metrics/current.json"
         }
       ]
