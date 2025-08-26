@@ -6,7 +6,8 @@
    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-waf-global",
    "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__"
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "915de0aac7d5b50cb8fd59b04cb5a2036a5820c5efbc665f07ae49230a5c7a37"
   },
 
   "method_overrides": {
@@ -20,8 +21,8 @@
       "name": "waf_firehose_global",
       "transforms": [
         {
-          "data_template_path": "transformations/sample_data_template.json",
-          "path": "transformations/current.json"
+          "path": "transformations/current.json",
+          "sha256": "a0f4e40cdc56a600ad8b45a36bd7ae4c9c2e233ae37f2539a8b0f6a549b2f603"
         }
       ]
     }
