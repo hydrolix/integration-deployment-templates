@@ -17,7 +17,7 @@
         {
           "path": "transformations/egress/current.json",
           "sha256": "bdc0d45a8e7493f82c436e00434364338551cfbc10e6a86e3cb07036f6323d86",
- 	  "sample": "transformations/egress/data_template.json"
+          "sample": "transformations/egress/data_template.json"
         }
       ]
     },
@@ -27,8 +27,8 @@
       "transforms": [
         {
           "path": "transformations/ingress/current.json",
-	  "ingress": "df7c47731e57fabf5b998dbc3d5c3bb60a868e8d9c523b87169f59c80a36bd96", 
-	  "sample": "transformations/ingress/ata_template.json"
+          "ingress": "df7c47731e57fabf5b998dbc3d5c3bb60a868e8d9c523b87169f59c80a36bd96",
+          "sample": "transformations/ingress/data_template.json"
         }
       ]
     },
@@ -38,8 +38,8 @@
       "transforms": [
         {
           "path": "transformations/metrics/current.json",
-	  "sha256": "ffc4c3936fba2a543b3865024a4283301ee52fedbc3cf8df067c075786fba0e7", 
-	  "sample": "transformations/metrics/data_template.json"
+          "sha256": "ffc4c3936fba2a543b3865024a4283301ee52fedbc3cf8df067c075786fba0e7",
+          "sample": "transformations/metrics/data_template.json"
         }
       ]
     }
@@ -56,12 +56,10 @@
     },
     "data_category": "video"
   },
-   "metadata": {
+  "metadata": {
     "version": "1.0.0",
     "maintainer": "jgoodson@hydrolix.io",
     "description": "Amazon Data Firehose MediaPackage",
     "channel_type": "AWS"
   }
 }
-
-
