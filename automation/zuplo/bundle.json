@@ -16,7 +16,8 @@
         "transforms": [
           {
             "path": "transformations/current.json",
-	        "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5"
+	        "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5",
+		    "sample": "transformations/sample_data_template.json"
           }
         ]
       }
