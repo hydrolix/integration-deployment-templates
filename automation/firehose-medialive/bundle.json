@@ -28,7 +28,7 @@
         {
           "path": "transformations/metrics/current.json",
           "sha256": "2e9bcf58fedc0bd36c0fc0dd21d2ff4e2531dfd7b76409f96e7fa4900f3b1ed3",
-          "sample": "transformations/metric/sample_data_template.json"
+          "sample": "transformations/metrics/sample_data_template.json"
         }
       ]
     }
