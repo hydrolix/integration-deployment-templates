@@ -26,7 +26,7 @@
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png" 
       },
       "source": {
-        "full_title": "Cloudflare",
+        "full_title": "[Not Yet Ready] Cloudflare",
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
       },
       "data_category": "cdn"
