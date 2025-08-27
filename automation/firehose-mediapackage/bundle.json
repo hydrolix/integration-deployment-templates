@@ -27,7 +27,7 @@
       "transforms": [
         {
           "path": "transformations/ingress/current.json",
-          "ingress": "df7c47731e57fabf5b998dbc3d5c3bb60a868e8d9c523b87169f59c80a36bd96",
+          "sha256": "df7c47731e57fabf5b998dbc3d5c3bb60a868e8d9c523b87169f59c80a36bd96",
           "sample": "transformations/ingress/data_template.json"
         }
       ]
