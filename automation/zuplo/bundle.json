@@ -1,5 +1,5 @@
 {
-    "name": "http zuplo",
+    "name": "http_streaming zuplo",
     "source": "zuplo",
     "method": "http_streaming",
     "beta": true,
