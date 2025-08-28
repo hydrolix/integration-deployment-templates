@@ -6,7 +6,15 @@
     "rate_limit": null,
     "sql_transform": "SELECT\narrayMap(x -> mapValues(x), headers) as requests,\narrayMap(x -> x[1], requests)::Array(String) as request_header,\narrayMap(x -> x[2], requests) as request_value,\nmapFromArrays(request_header, request_value) as http_headers,\ndecodeURLComponent(request_query_string) as request_query_string,\n*\nFROM {STREAM}",
     "null_values": [],
-    "sample_data": {},
+   "sample_data": {
+      "records": [
+        {
+          "data": "ewogICJmb3JtYXRWZXJzaW9uIjogIjEuMCIsCiAgInRpbWVzdGFtcCI6IDE3MzU0OTI4MDAsCiAgImh0dHBSZXF1ZXN0IjogewogICAgImNsaWVudElwIjogIjIwMy4wLjExMy40MiIsCiAgICAiY291bnRyeSI6ICJVUyIsCiAgICAidXJpIjogIi9leGFtcGxlL3BhdGgiLAogICAgImFyZ3MiOiAicGFyYW0xPXZhbHVlMSZwYXJhbTI9dmFsdWUyIiwKICAgICJodHRwTWV0aG9kIjogIkdFVCIsCiAgICAiaHR0cFZlcnNpb24iOiAiSFRUUC8xLjEiLAogICAgInJlcXVlc3RJZCI6ICJhYmNkMTIzNGVmZ2g1Njc4IiwKICAgICJoZWFkZXJzIjogWwogICAgICB7ICJob3N0IjogImV4YW1wbGUuY29tIiB9LAogICAgICB7ICJ1c2VyLWFnZW50IjogImN1cmwvNy42OC4wIiB9LAogICAgICB7ICJhY2NlcHQiOiAiKi8qIiB9CiAgICBdCiAgfSwKICAiYWN0aW9uIjogIkFMTE9XIiwKICAiaHR0cFNvdXJjZUlkIjogImV4YW1wbGUtc291cmNlLWlkIiwKICAicmVzcG9uc2VDb2RlU2VudCI6ICIyMDAiLAogICJqYTNGaW5nZXJwcmludCI6ICJhYmMxMjNqYTNmaW5nZXJwcmludCIsCiAgIm5vblRlcm1pbmF0aW5nTWF0Y2hpbmdSdWxlcyI6IFsicnVsZTEiLCAicnVsZTIiXSwKICAicmF0ZUJhc2VkUnVsZUxpc3QiOiBbInJhdGVSdWxlMSJdLAogICJydWxlR3JvdXBMaXN0IjogWyJncm91cDEiXSwKICAicmVxdWVzdElkIjogImFiY2QxMjM0ZWZnaDU2NzgiLAogICJ0ZXJtaW5hdGluZ1J1bGVJZCI6ICJydWxlLXRlcm1pbmF0ZS0xMjMiLAogICJ0ZXJtaW5hdGluZ1J1bGVNYXRjaERldGFpbHMiOiBbImRldGFpbDEiLCAiZGV0YWlsMiJdLAogICJleGNsdWRlZFJ1bGVzIjogWyJleGNsdWRlZFJ1bGUxIl0sCiAgInJlcXVlc3RIZWFkZXJzSW5zZXJ0ZWQiOiBbImhlYWRlcjE6IHZhbHVlMSJdLAogICJ0ZXJtaW5hdGluZ1J1bGVUeXBlIjogIlJFR1VMQVIiLAogICJ3ZWJhY2xJZCI6ICJ3ZWJhY2wtZXhhbXBsZS1pZCIsCiAgImNhcHRjaGFSZXNwb25zZSI6IHsKICAgICJyZXNwb25zZUNvZGUiOiAiY2FwdGNoYS1jb2RlIiwKICAgICJzdGF0dXMiOiAiUEFTU0VEIgogIH0sCiAgImNoYWxsZW5nZVJlc3BvbnNlIjogewogICAgInJlc3BvbnNlQ29kZSI6ICJjaGFsbGVuZ2UtY29kZSIsCiAgICAic3RhdHVzIjogIlBBU1NFRCIKICB9Cn0="
+        }
+      ],
+      "requestId": "1c568c93-33ba-4c8a-b18b-a8e8b1a40f3b",
+      "timestamp": 1740106044100
+    },
     "output_columns": [
       {
         "name": "hdx_source",
