@@ -1,5 +1,5 @@
 {
-  "data.timestamp": "__DYNAMIC_TIMESTAMP_WITH_ZONE_ISO8601__",
+  "data.timestamp": "2025-02-20T00:59:50.985580Z",
   "clientIp": "11.255.111.11",
   "processingTime": 0.042,
   "statusCode": "201",
@@ -12,7 +12,6 @@
   "domainName": "1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com",
   "data.requestId": "Root=1-11111111-1a1a1a1a1a1a1a1a1a1a1a1a",
   "account": "111111111111",
-  "channelId": "hdx-round-trip-test",
+  "channelId": "bunny-channel",
   "channelArn": "arn:aws:mediapackage:us-east-1:111111111111:channels/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"
 }
-
