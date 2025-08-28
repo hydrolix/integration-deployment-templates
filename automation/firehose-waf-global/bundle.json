@@ -22,7 +22,7 @@
       "transforms": [
         {
           "path": "transformations/current.json",
-          "sha256": "a0f4e40cdc56a600ad8b45a36bd7ae4c9c2e233ae37f2539a8b0f6a549b2f603",
+          "sha256": "6e9346be3bc891b1cc59ab79fb2d400994628a515847e0715b3cf71564e6a96c",
 	  "sample": "transformations/sample_data_template.json"
         }
       ]
