@@ -7,10 +7,9 @@
   "dimensions": {
     "ActiveInputFailoverLabel": "primary",
     "ChannelId": "6955047",
-    "Pipeline": "0",
-    "Channel":"hdx-round-trip-test"
+    "Pipeline": "0"
   },
-  "timestamp": __DYNAMIC_UNIX_EPOCH__,
+  "timestamp": 1740105840000,
   "value": {
     "max": 23.992,
     "min": 23.99,
@@ -19,5 +18,4 @@
   },
   "unit": "Count/Second"
 }
-
 
