@@ -1,7 +1,7 @@
 {
   "name": "http_streaming-datazoom-mediatailor",
   "source": "mediatailor",
-  "method": "http_streaming",
+  "method": "firehose",
   "beta": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/http-datazoom-mediatailor",
   "dashboard": {
@@ -25,7 +25,7 @@
   "ui": {
     "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaTailor.html",
     "method": {
-      "full_title": "Hydrolix Http-Streaming",
+      "full_title": "AWS Firehose",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
     },
     "source": {
@@ -37,7 +37,7 @@
   "metadata": {
     "version": "1.0.0",
     "maintainer": "jgoodson@hydrolix.io",
-    "description": "AWS Media Tailor Http",
+    "description": "AWS MediaTailor Firehose",
     "channel_type": "AWS"
   }
 }
