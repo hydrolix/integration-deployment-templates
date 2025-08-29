@@ -1,9 +1,9 @@
 {
-  "name": "datazoom-mediatailor-firehose",
+  "name": "firehose-datazoom-mediatailor",
   "source": "mediatailor",
   "method": "firehose",
   "beta": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/http-datazoom-mediatailor",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/firehose-datazoom-mediatailor",
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__",
