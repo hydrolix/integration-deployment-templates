@@ -26,7 +26,7 @@
     "ui": {
     "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Waf.html",
     "method": {
-      "full_title": "Amazon Data Firehose Regional",
+      "full_title": "Amazon Data Firehose",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
     },
     "source": {
