@@ -1,5 +1,5 @@
 {
-  "name": "http_streaming-datazoom-mediatailor",
+  "name": "datazoom-mediatailor-firehose",
   "source": "mediatailor",
   "method": "firehose",
   "beta": true,
