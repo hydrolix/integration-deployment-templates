@@ -1,3 +1,5 @@
+// Pointless comment
+
 use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
