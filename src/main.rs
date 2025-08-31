@@ -2,6 +2,7 @@
 #[tokio::main]
 async fn main() {
 
-	println!("Hello!");
+	println!("Fake Success!");
+	std::process::exit(0);
 }	
 

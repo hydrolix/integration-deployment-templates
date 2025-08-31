@@ -17,6 +17,8 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
     
     - name: Cache Rust dependencies
+      # Skip cache in act (local testing) since it requires Node.js
+      if: ${{ !env.ACT }}
       uses: actions/cache@v3
       with:
         path: |
@@ -28,7 +30,9 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     
     - name: Build bundle validator
-      run: cargo build --release --bin bundle-validator
+      run: |
+        export PATH="$HOME/.cargo/bin:$PATH"
+        cargo build --release --bin bundle-validator
     
     - name: Run syntax check
       run: ./target/release/bundle-validator
