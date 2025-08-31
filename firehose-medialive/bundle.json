@@ -1,5 +1,5 @@
 {
-  "name": "firehose-medialive-moo",
+  "name": "firehose-medialive",
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-medialive",
   "beta": true,
   "method": "firehose",
