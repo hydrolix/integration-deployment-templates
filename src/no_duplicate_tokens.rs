@@ -4,7 +4,7 @@ use crate::bundle_struct::Bundle;
 
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
     let mut tokens: HashSet<String> = HashSet::new();
-    
+
     // Check for duplicate table names
     for t in &bundle.tables {
         if tokens.contains(&t.name) {
@@ -34,5 +34,3 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
 
     Ok(())
 }
-
-
