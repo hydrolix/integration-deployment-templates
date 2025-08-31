@@ -3,6 +3,8 @@ use tokio::fs;
 use walkdir::WalkDir;
 
 mod bundle_struct;
+mod checksum;
+mod no_duplicate_tokens;
 
 use crate::bundle_struct::Bundle;
 
@@ -27,11 +29,30 @@ async fn main() {
                 std::process::exit(1);
             }
         };
+
+		match validate_bundle(&bundle).await {
+			Ok(_) => (),
+			 Err(e) => {
+                eprintln!("ERROR: Failed bundle validation: {e}");
+                std::process::exit(1);
+            }
+		}
         println!("Bundle={:?}", bundle);
     }
 
     println!("Success");
     std::process::exit(0);
+}
+
+// These are all of our tests...
+async fn validate_bundle(bundle: &Bundle) -> Result<(), String> {
+
+	match no_duplicate_tokens::run(bundle).await {
+		Ok(_) => (),
+		Err(e) => return Err(format!("Found duplicate tokens: {e}"))
+	}
+
+	Ok(())
 }
 
 fn find_bundle_files() -> Vec<std::path::PathBuf> {
