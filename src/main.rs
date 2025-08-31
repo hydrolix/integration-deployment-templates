@@ -3,14 +3,16 @@
 use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
+use tokio::time::Duration;
+use tokio::time::sleep;
+use reqwest::Client;
 
 mod bundle_struct;
+mod grafana;
 mod no_bad_checksums;
 mod no_duplicate_tokens;
-mod grafana;
 
 use crate::bundle_struct::Bundle;
-
 
 use lazy_static::lazy_static;
 
@@ -22,8 +24,6 @@ lazy_static! {
     static ref BUNDLE_TESTING_PASSWORD: String = std::env::var("BUNDLE_TESTING_PASSWORD")
         .expect("BUNDLE_TESTING_PASSWORD environment variable must be set");
 }
-
-
 
 #[tokio::main]
 async fn main() {
@@ -46,8 +46,8 @@ async fn main() {
             }
         };
 
-		let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
-		println!("base_dir={base_dir}");
+        let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
+        println!("base_dir={base_dir}");
 
         match validate_bundle(&base_dir, &bundle).await {
             Ok(_) => (),
@@ -60,6 +60,45 @@ async fn main() {
     }
 
     println!("Success");
+
+    match grafana::container::start().await {
+        Ok(_) => (),
+        Err(e) => {
+            eprintln!("ERROR: Failed to start Grafana...: {e}");
+            std::process::exit(1);
+        }
+    }
+
+	println!("Waiting for Grafana HTTP endpoint to become available...");
+
+let client = Client::new();
+let mut attempts = 0;
+let max_attempts = 30;
+
+while attempts < max_attempts {
+    match client.get("http://localhost:3000/api/health")
+        .timeout(Duration::from_secs(3))
+        .send()
+        .await
+    {
+        Ok(response) if response.status().is_success() => {
+            println!("Grafana is healthy and responding! {:?}", response);
+            break;
+        }
+        _ => {
+            attempts += 1;
+            if attempts % 5 == 0 {
+                println!("Waiting for Grafana health check... (attempt {}/{})", attempts, max_attempts);
+            }
+            sleep(Duration::from_secs(1)).await;
+        }
+    }
+}
+
+if attempts >= max_attempts {
+    eprintln!("ERROR: Grafana health check failed within timeout period");
+    std::process::exit(1);
+}
     std::process::exit(0);
 }
 
