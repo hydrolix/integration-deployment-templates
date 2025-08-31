@@ -5,7 +5,7 @@ use tokio::fs;
 use walkdir::WalkDir;
 
 mod bundle_struct;
-mod checksum;
+mod no_bad_checksums;
 mod no_duplicate_tokens;
 
 use crate::bundle_struct::Bundle;
@@ -18,20 +18,23 @@ async fn main() {
     println!("list={:?}", bundle_list);
     for b in &bundle_list {
         let path = PathBuf::from(b);
-        let string = path
+        let file_path = path
             .into_os_string()
             .into_string()
             .unwrap_or_else(|os_str| os_str.to_string_lossy().into_owned());
 
-        let bundle = match file_to_bundle(&string).await {
+        let bundle = match file_to_bundle(&file_path).await {
             Ok(v) => v,
             Err(e) => {
-                eprintln!("ERROR: Failed to decode the structure: file_path={string} error={e}");
+                eprintln!("ERROR: Failed to decode the structure: file_path={file_path} error={e}");
                 std::process::exit(1);
             }
         };
 
-        match validate_bundle(&bundle).await {
+		let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
+		println!("base_dir={base_dir}");
+
+        match validate_bundle(&base_dir, &bundle).await {
             Ok(_) => (),
             Err(e) => {
                 eprintln!("ERROR: Failed bundle validation: {e}");
@@ -46,10 +49,15 @@ async fn main() {
 }
 
 // These are all of our tests...
-async fn validate_bundle(bundle: &Bundle) -> Result<(), String> {
+async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     match no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
-        Err(e) => return Err(format!("Found duplicate tokens: {e}")),
+        Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
+    }
+
+    match no_bad_checksums::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
     Ok(())
