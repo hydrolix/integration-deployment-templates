@@ -1,0 +1,420 @@
+use serde::{Deserialize, Serialize, de};
+use url::Url;
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Bundle {
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub base_url: String,
+    pub dashboard: Dashboard,
+    #[serde(deserialize_with = "deserialize_valid_method")]
+    pub method: String,
+    pub method_overrides: Option<MethodOverrides>,
+    #[serde(deserialize_with = "deserialize_valid_name")]
+    pub name: String,
+    #[serde(deserialize_with = "deserialize_valid_source")]
+    pub source: String,
+    pub beta: bool,
+    pub tables: Vec<Table>,
+    pub ui: Ui,
+    pub metadata: Metadata,
+    #[serde(default)]
+    pub dependencies: Option<Dependencies>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Dashboard {
+    #[serde(deserialize_with = "deserialize_url_path")]
+    pub path: String,
+    #[serde(deserialize_with = "deserialize_macro_name")]
+    pub project_var: String,
+    #[serde(default, deserialize_with = "deserialize_optional_sha256")]
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct MethodOverrides {
+    #[serde(deserialize_with = "deserialize_us_east_1")]
+    pub region: String,
+    pub stream_prefix: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Table {
+    #[serde(deserialize_with = "deserialize_macro_name")]
+    pub dashboard_var: String,
+    pub name: String,
+    pub transforms: Vec<Transform>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Transform {
+    #[serde(deserialize_with = "deserialize_url_path")]
+    pub path: String,
+    #[serde(default, deserialize_with = "deserialize_optional_sha256")]
+    pub sha256: Option<String>,
+    #[serde(default, deserialize_with = "deserialize_optional_url_path")]
+    pub sample: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Ui {
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub primary_url: String,
+    pub method: Graphics,
+    pub source: Graphics,
+    #[serde(deserialize_with = "deserialize_valid_data_categories")]
+    pub data_category: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Graphics {
+    pub full_title: String,
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub icon_url: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Metadata {
+    pub version: String,
+    pub maintainer: String,
+    pub description: String,
+    #[serde(deserialize_with = "deserialize_valid_channel_type")]
+    pub channel_type: String,
+}
+
+// New structs for dependencies
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Dependencies {
+    pub grafana: Option<GrafanaDependencies>,
+    pub hydrolix: Option<HydrolixDependencies>,
+    #[serde(default)]
+    #[serde(rename = "data-sources")]
+    pub data_sources: Option<Vec<DataSource>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct GrafanaDependencies {
+    pub version: Option<String>,
+    pub plugins: Option<Vec<GrafanaPlugin>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct GrafanaPlugin {
+    pub name: String,
+    pub version: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct HydrolixDependencies {
+    #[serde(rename = "cluster_version")]
+    pub cluster_version: Option<String>,
+    #[serde(rename = "required_dictionaries")]
+    pub required_dictionaries: Option<Vec<Dictionary>>,
+    #[serde(rename = "required_functions")]
+    pub required_functions: Option<Vec<Function>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Dictionary {
+    pub name: String,
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub source: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Function {
+    pub name: String,
+    pub definition: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct DataSource {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub data_source_type: String,
+    pub url: String,
+    pub access: String,
+}
+
+// Custom deserializer for HTTPS URLs
+fn deserialize_https_url<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    // Validate URL format
+    match Url::parse(&s) {
+        Ok(_) => (),
+        Err(e) => return Err(de::Error::custom(format!("Failed to parse URL: {}", e))),
+    }
+
+    // Ensure HTTPS
+    if !s.starts_with("https://") && !s.starts_with("file://") {
+        return Err(de::Error::custom("URL must start with https:// or file://"));
+    }
+    Ok(s)
+}
+
+// Custom deserializer for HTTP path
+fn deserialize_url_path<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    if s.starts_with("/") || s.contains("..") {
+        return Err(de::Error::custom(
+            "Path cannot start with slash or contain 2 dots".to_string(),
+        ));
+    }
+
+    if !s.to_lowercase().ends_with(".json") && !s.to_lowercase().ends_with(".tsv") {
+        return Err(de::Error::custom(
+            "Path must end in .json or .tsv".to_string(),
+        ));
+    }
+
+    Ok(s)
+}
+
+// Custom __VARIABLE__ name
+fn deserialize_macro_name<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    // Must be at least 5 characters: "__X__"
+    if s.len() < 5 {
+        return Err(de::Error::custom(format!(
+            "{s} Must be in format __VARIABLE_NAME__"
+        )));
+    }
+
+    if !s.starts_with("__") || !s.ends_with("__") {
+        return Err(de::Error::custom(format!(
+            "{s} Must be in format __VARIABLE_NAME__"
+        )));
+    }
+
+    // Extract the inner content (between the double underscores)
+    let inner = &s[2..s.len() - 2];
+
+    // Inner content cannot be empty
+    if inner.is_empty() {
+        return Err(de::Error::custom(format!(
+            "{s} Empty inside __VARIABLE_NAME__"
+        )));
+    }
+
+    // Check each character in the inner content
+    for ch in inner.chars() {
+        match ch {
+            'A'..='Z' => continue, // Uppercase letters are allowed
+            '_' => continue,       // Single underscores are allowed
+            _ => {
+                return Err(de::Error::custom(format!(
+                    "{s} Must be upper-case __VARIABLE_NAME__"
+                )));
+            }
+        }
+    }
+
+    // Make sure there are no consecutive underscores (double underscores)
+    if inner.contains("__") {
+        return Err(de::Error::custom(format!(
+            "{s} Inside there are no double underscores"
+        )));
+    }
+
+    Ok(s)
+}
+
+#[allow(dead_code)]
+// Custom deserializer
+fn deserialize_ends_in_json<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.ends_with(".json") {
+        true => Ok(s),
+        false => Err(de::Error::custom(format!("{s} Must end in .json"))),
+    }
+}
+
+// Custom deserializer
+fn deserialize_valid_method<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.as_str() {
+        // Convert String to &str for matching
+        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" => Ok(s),
+        _ => Err(de::Error::custom(format!("{} is an invalid method", s))),
+    }
+}
+
+// Custom deserializer
+fn deserialize_valid_source<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.as_str() {
+        s_str
+            if s_str
+                .chars()
+                .any(|c| c.is_whitespace() || c.is_ascii_punctuation()) =>
+        {
+            return Err(de::Error::custom(format!(
+                "{} contains invalid characters (spaces or punctuation not allowed)",
+                s
+            )));
+        }
+        _ => (),
+    }
+
+    Ok(s)
+}
+
+// Custom deserializer for channel type
+fn deserialize_valid_channel_type<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.as_str() {
+        "AWS" | "Azure" | "GCP" | "3rdParty" | "Internal" => Ok(s),
+        _ => Err(de::Error::custom(format!(
+            "{} is an invalid channel_type",
+            s
+        ))),
+    }
+}
+
+// Custom deserializer
+fn deserialize_us_east_1<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    if s == "us-east-1" {
+        Ok(s)
+    } else {
+        Err(de::Error::custom(format!("{} Must be us-east-1", s)))
+    }
+}
+
+// Custom deserializer
+fn deserialize_valid_data_categories<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.as_str() {
+        // Convert String to &str for matching
+        "video" | "cdn" | "security" => Ok(s),
+        _ => Err(de::Error::custom(format!(
+            "{} is an invalid data category",
+            s
+        ))),
+    }
+}
+
+// Custom deserializer for optional SHA256
+fn deserialize_optional_sha256<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(deserializer)?;
+
+    match opt {
+        Some(s) => {
+            if s.len() != 64 {
+                Err(de::Error::custom(format!(
+                    "{s} needs to be 64 characters long"
+                )))
+            } else if !s.chars().all(|c| c.is_ascii_hexdigit()) {
+                Err(de::Error::custom(format!(
+                    "{s} must contain only hexadecimal characters"
+                )))
+            } else {
+                Ok(Some(s))
+            }
+        }
+        None => Ok(None),
+    }
+}
+
+fn deserialize_valid_name<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+
+    match s.as_str() {
+        s_str
+            if s_str
+                .chars()
+                .any(|c| !c.is_alphanumeric() && c != '_' && c != '-') =>
+        {
+            return Err(de::Error::custom(format!(
+                "{} contains invalid characters (only alphanumeric characters, underscores, and dashes allowed)",
+                s
+            )));
+        }
+        _ => (),
+    }
+
+    Ok(s)
+}
+
+// Custom deserializer for optional SHA256
+fn deserialize_optional_url_path<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(deserializer)?;
+
+    match opt {
+        Some(s) => {
+            if s.starts_with("/") || s.contains("..") {
+                return Err(de::Error::custom(
+                    "Path cannot start with slash or contain 2 dots".to_string(),
+                ));
+            }
+
+            if !s.to_lowercase().ends_with(".json") && !s.to_lowercase().ends_with(".tsv") {
+                return Err(de::Error::custom(
+                    "Path must end in .json or .tsv".to_string(),
+                ));
+            }
+            Ok(Some(s))
+        }
+        None => Ok(None),
+    }
+}
