@@ -1,0 +1,50 @@
+{
+   "name": "firehose-waf-global",
+   "source": "waf",
+   "method": "firehose",
+   "beta": false,
+   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-waf-global",
+   "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "3bde6735467903eb593046db00622213e18c3be379fe110123f5ba3a721bddfe"
+  },
+
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
+ 
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "waf_firehose_global",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sha256": "6e9346be3bc891b1cc59ab79fb2d400994628a515847e0715b3cf71564e6a96c",
+	  "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+    "ui": {
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Waf.html",
+    "method": {
+      "full_title": "Amazon Data Firehose",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
+    },
+    "source": {
+      "full_title": "Global AWS WAF for CloudFront",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/waf.png"
+    },
+    "data_category": "security"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "jgoodson@hydrolix.io",
+    "description": "Amazon WAF Data Firehose",
+    "channel_type": "AWS"
+  }
+}
+

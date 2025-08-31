@@ -1,0 +1,235 @@
+{
+  "name": "tsf_ele_medialive_encoder_logs",
+  "description": "",
+  "created": "2025-03-23T04:39:01.625018Z",
+  "modified": "2025-03-23T04:39:01.625029Z",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT \n    splitByChar(':', assumeNotNull(channel_arn))[4] as region,\n    splitByChar(':', assumeNotNull(channel_arn))[5] as account_id,\n    splitByChar(':', assumeNotNull(channel_arn))[7] as channel_id,\n    multiIf(\n        severity='D' , 'debug',\n        severity='I' , 'info',\n        severity='W' , 'warning',\n        severity='E' , 'error',\n        'unknown') AS level,\n    *\nFROM { STREAM }",
+    "null_values": [],
+    "sample_data": {
+      "records": [
+        {
+          "data": "CnsKICAiY2hhbm5lbF9hcm4iOiAiYXJuOmF3czptZWRpYWxpdmU6dXMtZWFzdC0xOjFhMWExYTFhMWExYTpjaGFubmVsOjFhMWExYTEiLAogICJlbmNvZGVyX3BpcGVsaW5lIjogMCwKICAibG9nZ2VyX25hbWUiOiAiIiwKICAibWVzc2FnZSI6ICJjbWFmX2luZ2VzdF9vdXRwdXQuZW5hYmxlX2VidXR0ZCBzZXR0aW5nIGlnbm9yZWQ6IGluc3RhbmNlLmNtYWZfaW5nZXN0X291dHB1dCBhZGRpdGlvbmFsUHJvcGVydHkgXCJlbmFibGVfZWJ1dHRkXCIgZXhpc3RzIGluIGluc3RhbmNlIHdoZW4gbm90IGFsbG93ZWQiLAogICJzZXZlcml0eSI6ICJXIiwKICAidGltZXN0YW1wIjogIjIwMjUtMDItMTBUMDE6MDQ6MDIuNjcxODgyIgp9Cg=="
+        }
+      ],
+      "requestId": "608d6059-83fd-45b7-85fc-15ad612f1ed3",
+      "timestamp": 1739149516062
+    },
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05.999999",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "encoder_pipeline",
+        "datatype": {
+          "type": "int8",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "logger_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "message",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "level",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "channel_arn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "region",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "account_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "channel_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "severity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": true
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "subtype": "firehose",
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "type": "json"
+}
+
+
