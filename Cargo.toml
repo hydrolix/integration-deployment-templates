@@ -1,0 +1,16 @@
+[package]
+name = "bundle-validator"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "bundle-validator"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0"  # for JSON validation
+# Add more parsing libraries as needed:
+# toml = "0.8"        # for TOML validation
+# serde_yaml = "0.9"  # for YAML validation
+
