@@ -25,7 +25,7 @@ async fn main() {
         let bundle = match file_to_bundle(&string).await {
             Ok(v) => v,
             Err(e) => {
-                eprintln!("ERROR: Failed to decode the structure: {e}");
+                eprintln!("ERROR: Failed to decode the structure: file_path={string} error={e}");
                 std::process::exit(1);
             }
         };
