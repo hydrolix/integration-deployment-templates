@@ -1,0 +1,9 @@
+# Rust things
+/target/
+Cargo.lock
+
+# Local env files
+.env
+.env.local
+
+
