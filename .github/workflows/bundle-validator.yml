@@ -1,4 +1,4 @@
-name: Bundle-Validator
+name: bundle-validator
 
 on:
   push:
