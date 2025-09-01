@@ -6,14 +6,12 @@ use tokio::fs;
 use walkdir::WalkDir;
 
 mod bundle_struct;
-mod dashboard_is_valid;
 mod deploy;
 mod grafana;
 mod hdx;
-mod naming_is_valid;
-mod no_bad_checksums;
-mod no_duplicate_tokens;
+mod headless_browser;
 mod output_struct;
+mod validate;
 
 use crate::bundle_struct::Bundle;
 use crate::output_struct::Output;
@@ -69,24 +67,32 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
-    match no_duplicate_tokens::run(bundle).await {
+    match validate::no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
     }
 
-    match naming_is_valid::run(bundle).await {
+    match validate::naming_is_valid::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
     }
 
-    match no_bad_checksums::run(base, bundle).await {
+    match validate::no_bad_checksums::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
-    match dashboard_is_valid::run(base, bundle).await {
+    match validate::dashboard_is_valid::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
+    }
+
+    match grafana::container::kill().await {
+        Ok(_) => (),
+        Err(e) => {
+            eprintln!("Failed to kill the old Grafana container... error={e}");
+            std::process::exit(1);
+        }
     }
 
     let mut output: Output = Output::default();
@@ -97,6 +103,21 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     };
 
     println!("Dashboard_id={dashboard_id}");
+
+    println!("Checking the Grafana dashboard with headless Chrome");
+    let (datasource_error_count, nodata_error_count) =
+        match headless_browser::run(&dashboard_id).await {
+            Ok(v) => v,
+            Err(e) => return Err(format!("Failed to run headless browser error={e}")),
+        };
+
+    if datasource_error_count > 0 || nodata_error_count > 0 {
+        return Err(format!(
+            "Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}"
+        ));
+    }
+
+    println!("SUCCESS");
 
     Ok(())
 }
