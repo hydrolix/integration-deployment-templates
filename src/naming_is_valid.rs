@@ -1,6 +1,4 @@
-
 use crate::bundle_struct::Bundle;
-
 
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
     // Check method consistency
@@ -85,4 +83,3 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
 
     Ok(())
 }
-

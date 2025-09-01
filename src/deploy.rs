@@ -1,8 +1,8 @@
+use serde_json::Value;
 use tokio::fs;
 use tokio::time::sleep;
 use tokio::time::Duration;
 use uuid::Uuid;
-use serde_json::Value;
 
 use crate::bundle_struct::Bundle;
 use crate::grafana;
@@ -32,7 +32,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
 
     match grafana::container::start().await {
         Ok(_) => (),
-          Err(e) => {
+        Err(e) => {
             return Err(format!(
                 "ERROR: {}.{} Failed to spin up Grafana container error={e}",
                 file!(),
@@ -151,7 +151,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
                 }
             };
 
-
             let sample_data = get_sample_data_as_json(&transform_json);
             if !sample_data.is_null() {
                 println!("Sleeping for 30 seconds to let table get ready for data...");
@@ -206,7 +205,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     Ok(grafana_dashboard_id)
 }
 
-
 fn get_transformation_subtype(transform_json: &Value) -> String {
     transform_json
         .get("settings")
@@ -226,12 +224,12 @@ fn get_transformation_type(transform_json: &Value) -> String {
 
 fn is_there_sample_data(transform_json: &Value) -> bool {
     let sample_data = &transform_json["settings"]["sample_data"];
-    
+
     // Check if it's a non-empty object
     if sample_data.is_object() && !sample_data.as_object().unwrap().is_empty() {
         return true;
     }
-    
+
     // Check if it's a non-empty string
     if sample_data.is_string() {
         let str_value = sample_data.as_str().unwrap();
@@ -239,7 +237,7 @@ fn is_there_sample_data(transform_json: &Value) -> bool {
             return true;
         }
     }
-    
+
     false
 }
 
@@ -251,7 +249,6 @@ fn get_sample_data_as_json(transform_json: &Value) -> Value {
         Value::Null
     }
 }
-
 
 fn get_transformation_name(transform_json: &Value) -> String {
     match transform_json["name"].as_str() {

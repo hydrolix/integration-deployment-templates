@@ -101,7 +101,13 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
         .await
     {
         Ok(v) => v,
-        Err(e) => return Err(format!("ERROR: {}.{} url={url} error={e}", file!(), line!())),
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ))
+        }
     };
 
     // Check if the request was successful
@@ -118,14 +124,22 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
     let table_data = match response.text().await {
         Ok(v) => v,
         Err(e) => {
-            return Err(format!("ERROR: {}.{} url={url} error={e}", file!(), line!()));
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ));
         }
     };
 
     let table_json: Value = match serde_json::from_str(&table_data) {
         Ok(v) => v,
         Err(e) => {
-            return Err(format!("ERROR: {}.{} url={url} error={e}", file!(), line!()));
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ));
         }
     };
 

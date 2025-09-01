@@ -7,13 +7,13 @@ use walkdir::WalkDir;
 
 mod bundle_struct;
 mod dashboard_is_valid;
+mod deploy;
+mod grafana;
+mod hdx;
 mod naming_is_valid;
 mod no_bad_checksums;
 mod no_duplicate_tokens;
-mod deploy;
 mod output_struct;
-mod hdx;
-mod grafana;
 
 use crate::bundle_struct::Bundle;
 use crate::output_struct::Output;
@@ -29,7 +29,7 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-    println!("Hello -- Cluster is {}", BUNDLE_TESTING_CLUSTER.to_string());
+    println!("Hello -- Cluster is {}", *BUNDLE_TESTING_CLUSTER);
 
     // We only check bundles at the root directory
     let bundle_list = find_bundle_files();
@@ -69,7 +69,6 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
-
     match no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
@@ -90,14 +89,14 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
-	 let mut output: Output = Output::default();
+    let mut output: Output = Output::default();
 
-	let dashboard_id = match deploy::run(base, bundle, &mut output).await {
-		  Ok(v) => v,
+    let dashboard_id = match deploy::run(base, bundle, &mut output).await {
+        Ok(v) => v,
         Err(e) => return Err(format!("Failed to deploy error={e}")),
     };
 
-	println!("Dashboard_id={dashboard_id}");
+    println!("Dashboard_id={dashboard_id}");
 
     Ok(())
 }
