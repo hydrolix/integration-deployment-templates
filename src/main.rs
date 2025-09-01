@@ -7,11 +7,11 @@ use walkdir::WalkDir;
 
 mod bundle_struct;
 mod deploy;
-mod grafana;
 mod hdx;
 mod headless_browser;
 mod output_struct;
 mod validate;
+mod grafana;
 
 use crate::bundle_struct::Bundle;
 use crate::output_struct::Output;
@@ -110,6 +110,8 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             Ok(v) => v,
             Err(e) => return Err(format!("Failed to run headless browser error={e}")),
         };
+
+	println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
 
     if datasource_error_count > 0 || nodata_error_count > 0 {
         return Err(format!(
