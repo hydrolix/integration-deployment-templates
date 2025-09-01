@@ -21,7 +21,9 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     println!("Got here: {}.{}", file!(), line!());
 
     let launch_options = match LaunchOptionsBuilder::default()
-        .path(Some("/opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome".into())) 
+        .path(Some(
+            "/opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome".into(),
+        ))
         .window_size(Some((1920, 4080))) // Set to 1920x1080 (Full HD)
         .headless(true)
         .port(None)
