@@ -3,6 +3,7 @@ use serde_json::Value;
 use std::time::Duration;
 use tokio::time::sleep;
 
+use crate::GRAFANA_LOCATION;
 use crate::{BUNDLE_TESTING_CLUSTER, BUNDLE_TESTING_PASSWORD, BUNDLE_TESTING_USERNAME};
 
 const HDX_DATABASE_PORT: &str = "9440";
@@ -67,7 +68,7 @@ pub async fn create_datalink(project_name: &str) -> Result<String, String> {
         }
     };
 
-    let url = "http://localhost:3000/api/datasources".to_string();
+    let url = format!("http://{GRAFANA_LOCATION}/api/datasources");
 
     let response = match post_basic_auth(
         &url,
@@ -102,7 +103,7 @@ pub async fn create_datalink(project_name: &str) -> Result<String, String> {
 }
 
 pub async fn create_dashboard(dashboard_data: &str) -> Result<String, String> {
-    let url = "http://localhost:3000/api/dashboards/import".to_string();
+    let url = format!("http://{GRAFANA_LOCATION}/api/dashboards/import");
 
     let boxed_str: Box<str> = dashboard_data.into();
 
