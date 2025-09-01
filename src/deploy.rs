@@ -5,12 +5,14 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 use crate::bundle_struct::Bundle;
+use crate::grafana;
 use crate::hdx;
 use crate::output_struct::Output;
 use crate::output_struct::OutputTable;
 use crate::output_struct::OutputTransformation;
 use crate::BUNDLE_TESTING_CLUSTER;
-use crate::grafana;
+
+use crate::GRAFANA_LOCATION;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<String, String> {
     let bearer_token = match hdx::get_auth_token().await {
@@ -30,7 +32,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
 
     output.project_name = project_name.to_string();
 
-
     let datalink = match grafana::interface::create_datalink(&project_name).await {
         Ok(v) => v.to_string(),
         Err(e) => {
@@ -42,7 +43,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
         }
     };
 
-    output.grafana_domain = "localhost:3000/".to_string();
+    output.grafana_domain = format!("{GRAFANA_LOCATION}/");
     output.datalink = datalink.to_string();
 
     let full_path = format!("{base}/{}", bundle.dashboard.path);

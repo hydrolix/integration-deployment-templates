@@ -1,11 +1,15 @@
 use headless_chrome::protocol::cdp::types::Event;
 use headless_chrome::protocol::cdp::Network;
 use headless_chrome::{Browser, LaunchOptionsBuilder};
+use std::ffi::OsStr;
+
 use regex::Regex;
 use reqwest::header;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::time::sleep;
+
+use crate::GRAFANA_LOCATION;
 
 // url, grafana_dashboard_id, username, password
 pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
@@ -14,35 +18,63 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
+    println!("Got here: {}.{}", file!(), line!());
+
     let launch_options = match LaunchOptionsBuilder::default()
+        .path(Some("/opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome".into())) 
         .window_size(Some((1920, 4080))) // Set to 1920x1080 (Full HD)
+        .headless(true)
+        .port(None)
+        .args(vec![
+            OsStr::new("--no-sandbox"),
+            OsStr::new("--disable-setuid-sandbox"),
+            OsStr::new("--disable-dev-shm-usage"),
+            OsStr::new("--disable-gpu"),
+            OsStr::new("--remote-debugging-port=0"),
+            OsStr::new("--headless=new"),
+            OsStr::new("--single-process"), // Critical for CI
+            OsStr::new("--no-zygote"),      // Critical for CI
+        ])
         .build()
     {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
+    println!("Got here: {}.{}", file!(), line!());
     let browser = match Browser::new(launch_options) {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    #[allow(deprecated)]
-    let tab = match browser.wait_for_initial_tab() {
+    println!("Got here: {}.{}", file!(), line!());
+
+    let tab = match browser.new_tab() {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
+    /*
+        #[allow(deprecated)]
+        let tab = match browser.wait_for_initial_tab() {
+            Ok(v) => v,
+            Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
+        };
+    */
+    println!("Got here: {}.{}", file!(), line!());
 
     match tab.enable_runtime() {
         Ok(_) => (),
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
+    println!("Got here: {}.{}", file!(), line!());
+
     match tab.enable_log() {
         Ok(_) => (),
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
+    println!("Got here: {}.{}", file!(), line!());
     let bad_datasource_regex = match Regex::new(r"Datasource \w+ was not found") {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
@@ -53,11 +85,15 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
+    println!("Got here: {}.{}", file!(), line!());
+
     let datasource_error_count = Arc::new(Mutex::new(0));
     let datasource_error_count_clone = Arc::clone(&datasource_error_count);
 
     let nodata_error_count = Arc::new(Mutex::new(0));
     let nodata_error_count_clone = Arc::clone(&nodata_error_count);
+
+    println!("Got here: {}.{}", file!(), line!());
 
     #[allow(clippy::match_single_binding)]
     tab.add_event_listener(Arc::new(move |event: &Event| match event {
@@ -75,11 +111,14 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
 
     //tab.enable_network().unwrap();
 
+    println!("Got here: {}.{}", file!(), line!());
+
     let cookie = Network::CookieParam {
         name: cookie_name.to_string(),
         value: cookie_value.to_string(),
-        url: Some("http://localhost:3000/".to_string()),
-        domain: Some("localhost".to_string()),
+        url: Some(format!("http://{GRAFANA_LOCATION}/")),
+        //domain: Some("host.docker.internal".to_string()),
+        domain: None,
         path: Some("/".to_string()),
         secure: Some(false),
         http_only: Some(true),
@@ -98,12 +137,16 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
+    println!("Got here: {}.{}", file!(), line!());
+
     // Navigate to the domain first
-    let url = format!("http://localhost:3000/d/{grafana_dashboard_id}");
+    let url = format!("http://{GRAFANA_LOCATION}/d/{grafana_dashboard_id}");
     let _x = match tab.navigate_to(&url) {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
+
+    println!("Got here: {}.{}", file!(), line!());
 
     match tab.wait_until_navigated() {
         Ok(_) => println!("Page navigation completed"),
@@ -112,6 +155,8 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
 
     // Wait for page to load completely (Grafana needs to pull the data)
     sleep(Duration::from_secs(30)).await;
+
+    println!("Got here: {}.{}", file!(), line!());
 
     let datasource_error_count = *datasource_error_count.lock().unwrap();
     let nodata_error_count = *nodata_error_count.lock().unwrap();
@@ -135,7 +180,7 @@ async fn get_grafana_session_cookie() -> Result<(String, String), String> {
         .unwrap();
 
     let response = client
-        .post("http://localhost:3000/login")
+        .post(format!("http://{GRAFANA_LOCATION}/login"))
         .header(header::CONTENT_TYPE, "application/json")
         .json(&serde_json::json!({
             "user": "admin",

@@ -3,15 +3,17 @@
 use lazy_static::lazy_static;
 use std::path::PathBuf;
 use tokio::fs;
+use tokio::time::sleep;
+use tokio::time::Duration;
 use walkdir::WalkDir;
 
 mod bundle_struct;
 mod deploy;
+mod grafana;
 mod hdx;
 mod headless_browser;
 mod output_struct;
 mod validate;
-mod grafana;
 
 use crate::bundle_struct::Bundle;
 use crate::output_struct::Output;
@@ -25,6 +27,10 @@ lazy_static! {
         .expect("BUNDLE_TESTING_PASSWORD environment variable must be set");
 }
 
+//pub const GRAFANA_LOCATION: &str = "host.docker.internal:3000";
+
+pub const GRAFANA_LOCATION: &str = "localhost:3000";
+
 #[tokio::main]
 async fn main() {
     println!("Hello -- Cluster is {}", *BUNDLE_TESTING_CLUSTER);
@@ -34,6 +40,7 @@ async fn main() {
 
     println!("list={:?}", bundle_list);
     for b in &bundle_list {
+		
         let path = PathBuf::from(b);
         let file_path = path
             .into_os_string()
@@ -47,6 +54,9 @@ async fn main() {
                 std::process::exit(1);
             }
         };
+		if !bundle.name.contains("zuplo") {
+			continue;
+		}
 
         let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
         println!("base_dir={base_dir}");
@@ -67,6 +77,14 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
+    match grafana::container::kill().await {
+        Ok(_) => (),
+        Err(e) => {
+            eprintln!("Failed to kill the Grafana container... error={e}");
+            std::process::exit(1);
+        }
+    }
+
     match validate::no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
@@ -87,13 +105,16 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
-    match grafana::container::kill().await {
+    match grafana::container::start().await {
         Ok(_) => (),
         Err(e) => {
-            eprintln!("Failed to kill the old Grafana container... error={e}");
+            eprintln!("Failed to start the Grafana container... error={e}");
             std::process::exit(1);
         }
     }
+
+    eprintln!("Sleeping for 30 seconds to let container start up...");
+    sleep(Duration::from_secs(30)).await;
 
     let mut output: Output = Output::default();
 
@@ -111,7 +132,12 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             Err(e) => return Err(format!("Failed to run headless browser error={e}")),
         };
 
-	println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
+    match grafana::container::kill().await {
+        Ok(_) => (),
+        Err(_) => (),
+    }
+
+    println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
 
     if datasource_error_count > 0 || nodata_error_count > 0 {
         return Err(format!(

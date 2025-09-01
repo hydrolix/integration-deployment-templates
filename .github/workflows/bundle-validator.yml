@@ -11,20 +11,45 @@ jobs:
     runs-on: ubuntu-latest
     environment: bundle-validator-env
     
-    services:
-      grafana:
-        image: javiani/grafana:latest
-        ports:
-          - 3000:3000
-        options: >-
-          --health-cmd "curl -f http://localhost:3000/api/health || exit 1"
-          --health-interval 30s
-          --health-timeout 10s
-          --health-retries 5
-
     steps:
     - uses: actions/checkout@v4
-    
+
+    - name: Install Chrome dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libgtk-3-dev \
+          libxss-dev \
+          libgconf2-dev \
+          libnspr4 \
+          libnss3 \
+          libatk-bridge2.0-0 \
+          libgtk-3-0 \
+          libxss1 \
+          libgconf-2-4 \
+          libasound2 \
+          libx11-xcb1 \
+          libxcomposite1 \
+          libxcursor1 \
+          libxdamage1 \
+          libxi6 \
+          libxtst6 \
+          libxrandr2 \
+          libxshmfence1
+
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+
+    - name: Verify Chrome works
+      run: |
+        # Use the full path to chrome since it's not in PATH
+        /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome --version
+        /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome --headless --disable-gpu --no-sandbox --dump-dom about:blank > /dev/null && echo "Chrome works!" || echo "Chrome test failed"
+        
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
     
