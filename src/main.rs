@@ -1,5 +1,6 @@
 // Pointless comment
 
+use lazy_static::lazy_static;
 use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
@@ -12,8 +13,19 @@ mod no_duplicate_tokens;
 
 use crate::bundle_struct::Bundle;
 
+lazy_static! {
+    static ref BUNDLE_TESTING_CLUSTER: String = std::env::var("BUNDLE_TESTING_CLUSTER")
+        .expect("BUNDLE_TESTING_CLUSTER environment variable must be set");
+    static ref BUNDLE_TESTING_USERNAME: String = std::env::var("BUNDLE_TESTING_USERNAME")
+        .expect("BUNDLE_TESTING_USERNAME environment variable must be set");
+    static ref BUNDLE_TESTING_PASSWORD: String = std::env::var("BUNDLE_TESTING_PASSWORD")
+        .expect("BUNDLE_TESTING_PASSWORD environment variable must be set");
+}
+
 #[tokio::main]
 async fn main() {
+    println!("Hello -- Cluster is {}", *BUNDLE_TESTING_CLUSTER);
+
     // We only check bundles at the root directory
     let bundle_list = find_bundle_files();
 
