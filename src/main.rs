@@ -6,6 +6,7 @@ use walkdir::WalkDir;
 
 mod bundle_struct;
 mod dashboard_is_valid;
+mod naming_is_valid;
 mod no_bad_checksums;
 mod no_duplicate_tokens;
 
@@ -51,7 +52,13 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
+
     match no_duplicate_tokens::run(bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
+    }
+
+    match naming_is_valid::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
     }
