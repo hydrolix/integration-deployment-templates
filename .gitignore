@@ -3,6 +3,7 @@
 Cargo.lock
 
 # Local env files
+.secrets
 .env
 .env.local
 

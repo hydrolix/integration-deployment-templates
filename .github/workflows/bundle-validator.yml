@@ -9,6 +9,7 @@ on:
 jobs:
   bundle-validator:
     runs-on: ubuntu-latest
+    environment: bundle-validator-env
     
     steps:
     - uses: actions/checkout@v4
