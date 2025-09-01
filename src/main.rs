@@ -10,8 +10,13 @@ mod dashboard_is_valid;
 mod naming_is_valid;
 mod no_bad_checksums;
 mod no_duplicate_tokens;
+mod deploy;
+mod output_struct;
+mod hdx;
+mod grafana;
 
 use crate::bundle_struct::Bundle;
+use crate::output_struct::Output;
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String = std::env::var("BUNDLE_TESTING_CLUSTER")
@@ -24,7 +29,7 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-    println!("Hello -- Cluster is {}", *BUNDLE_TESTING_CLUSTER);
+    println!("Hello -- Cluster is {}", BUNDLE_TESTING_CLUSTER.to_string());
 
     // We only check bundles at the root directory
     let bundle_list = find_bundle_files();
@@ -84,6 +89,15 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
+
+	 let mut output: Output = Output::default();
+
+	let dashboard_id = match deploy::run(base, bundle, &mut output).await {
+		  Ok(v) => v,
+        Err(e) => return Err(format!("Failed to deploy error={e}")),
+    };
+
+	println!("Dashboard_id={dashboard_id}");
 
     Ok(())
 }

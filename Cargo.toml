@@ -22,7 +22,7 @@ base64 = "0.22.1"
 bollard = "0.19.2"
 futures-util = "0.3.31"
 once_cell = "1.21.3"
-scraper = "0.23.1"
+#scraper = "0.23.1"
 headless_chrome = {git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = ["fetch"]}
 sha256 = "1.6.0"
 sha2 = "0.10.9"
