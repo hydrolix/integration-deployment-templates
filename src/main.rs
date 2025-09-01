@@ -40,7 +40,6 @@ async fn main() {
 
     println!("list={:?}", bundle_list);
     for b in &bundle_list {
-		
         let path = PathBuf::from(b);
         let file_path = path
             .into_os_string()
@@ -54,9 +53,9 @@ async fn main() {
                 std::process::exit(1);
             }
         };
-		if !bundle.name.contains("zuplo") {
-			continue;
-		}
+        if !bundle.name.contains("zuplo") {
+            continue;
+        }
 
         let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
         println!("base_dir={base_dir}");
