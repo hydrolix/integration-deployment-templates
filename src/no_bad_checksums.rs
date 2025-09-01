@@ -4,23 +4,27 @@ use tokio::fs;
 use crate::bundle_struct::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
-
     let full_path = format!("{base}/{}", bundle.dashboard.path);
     println!("full_path={full_path}");
 
     match check_checksum(&full_path, bundle.dashboard.sha256.as_deref()).await {
         Ok(_) => (),
-        Err(e) => return Err(format!("Failed dashboard checksum: full_path={full_path} error={e}")),
+        Err(e) => {
+            return Err(format!(
+                "Failed dashboard checksum: full_path={full_path} error={e}"
+            ))
+        }
     }
 
     for t in &bundle.tables {
         for tt in &t.transforms {
-              let full_path = format!("{base}/{}", tt.path);
+            let full_path = format!("{base}/{}", tt.path);
             match check_checksum(&full_path, tt.sha256.as_deref()).await {
                 Ok(_) => (),
                 Err(e) => {
                     return Err(format!(
-                        "Failed transformation checksum: path={full_path} error={e}"))
+                        "Failed transformation checksum: path={full_path} error={e}"
+                    ))
                 }
             }
         }

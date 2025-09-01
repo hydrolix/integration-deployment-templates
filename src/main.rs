@@ -5,6 +5,7 @@ use tokio::fs;
 use walkdir::WalkDir;
 
 mod bundle_struct;
+mod dashboard_is_valid;
 mod no_bad_checksums;
 mod no_duplicate_tokens;
 
@@ -31,8 +32,8 @@ async fn main() {
             }
         };
 
-		let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
-		println!("base_dir={base_dir}");
+        let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
+        println!("base_dir={base_dir}");
 
         match validate_bundle(&base_dir, &bundle).await {
             Ok(_) => (),
@@ -56,6 +57,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     }
 
     match no_bad_checksums::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Found bad checksum: error={e}")),
+    }
+
+    match dashboard_is_valid::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
