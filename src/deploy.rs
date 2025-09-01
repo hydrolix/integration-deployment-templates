@@ -5,12 +5,12 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 use crate::bundle_struct::Bundle;
-use crate::grafana;
 use crate::hdx;
 use crate::output_struct::Output;
 use crate::output_struct::OutputTable;
 use crate::output_struct::OutputTransformation;
 use crate::BUNDLE_TESTING_CLUSTER;
+use crate::grafana;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<String, String> {
     let bearer_token = match hdx::get_auth_token().await {
@@ -30,19 +30,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
 
     output.project_name = project_name.to_string();
 
-    match grafana::container::start().await {
-        Ok(_) => (),
-        Err(e) => {
-            return Err(format!(
-                "ERROR: {}.{} Failed to spin up Grafana container error={e}",
-                file!(),
-                line!()
-            ));
-        }
-    }
-
-    println!("Sleeping for 30 seconds to let Grafana container spin up...");
-    sleep(Duration::from_secs(30)).await;
 
     let datalink = match grafana::interface::create_datalink(&project_name).await {
         Ok(v) => v.to_string(),

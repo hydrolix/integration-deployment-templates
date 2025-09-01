@@ -11,6 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: bundle-validator-env
     
+    services:
+      grafana:
+        image: javiani/grafana:latest
+        ports:
+          - 3000:3000
+        options: >-
+          --health-cmd "curl -f http://localhost:3000/api/health || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
     
