@@ -7,37 +7,15 @@ on:
     branches: [ main ]
 
 jobs:
+
   bundle-validator:
     runs-on: ubuntu-latest
+    container: 
+      image: javiani/my-act-image:latest
     environment: bundle-validator-env
-    
+
     steps:
     - uses: actions/checkout@v4
-
-    - name: Install Google Chrome
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget
-        
-        # Download and install Chrome
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-        
-        # Install dependencies
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libgtk-3-dev \
-          libxss-dev \
-          libgconf2-dev
-        
-        # Verify installation
-        google-chrome --version
-
-    - name: Setup Chrome
-      uses: browser-actions/setup-chrome@v1
-      with:
-        chrome-version: stable
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable

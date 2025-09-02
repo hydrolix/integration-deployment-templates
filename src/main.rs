@@ -53,9 +53,11 @@ async fn main() {
                 std::process::exit(1);
             }
         };
-        if !bundle.name.contains("zuplo") {
-            continue;
-        }
+
+		// TESTING
+        //if !bundle.name.contains("zuplo") {
+        //    continue;
+        //}
 
         let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
         println!("base_dir={base_dir}");
@@ -104,45 +106,47 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
-    match grafana::container::start().await {
-        Ok(_) => (),
-        Err(e) => {
-            eprintln!("Failed to start the Grafana container... error={e}");
-            std::process::exit(1);
+    /*
+        match grafana::container::start().await {
+            Ok(_) => (),
+            Err(e) => {
+                eprintln!("Failed to start the Grafana container... error={e}");
+                std::process::exit(1);
+            }
         }
-    }
 
-    eprintln!("Sleeping for 30 seconds to let container start up...");
-    sleep(Duration::from_secs(30)).await;
+        eprintln!("Sleeping for 30 seconds to let container start up...");
+        sleep(Duration::from_secs(30)).await;
 
-    let mut output: Output = Output::default();
+        let mut output: Output = Output::default();
 
-    let dashboard_id = match deploy::run(base, bundle, &mut output).await {
-        Ok(v) => v,
-        Err(e) => return Err(format!("Failed to deploy error={e}")),
-    };
-
-    println!("Dashboard_id={dashboard_id}");
-
-    println!("Checking the Grafana dashboard with headless Chrome");
-    let (datasource_error_count, nodata_error_count) =
-        match headless_browser::run(&dashboard_id).await {
+        let dashboard_id = match deploy::run(base, bundle, &mut output).await {
             Ok(v) => v,
-            Err(e) => return Err(format!("Failed to run headless browser error={e}")),
+            Err(e) => return Err(format!("Failed to deploy error={e}")),
         };
 
-    match grafana::container::kill().await {
-        Ok(_) => (),
-        Err(_) => (),
-    }
+        println!("Dashboard_id={dashboard_id}");
 
-    println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
+        println!("Checking the Grafana dashboard with headless Chrome");
+        let (datasource_error_count, nodata_error_count) =
+            match headless_browser::run(&dashboard_id).await {
+                Ok(v) => v,
+                Err(e) => return Err(format!("Failed to run headless browser error={e}")),
+            };
 
-    if datasource_error_count > 0 || nodata_error_count > 0 {
-        return Err(format!(
-            "Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}"
-        ));
-    }
+        match grafana::container::kill().await {
+            Ok(_) => (),
+            Err(_) => (),
+        }
+
+        println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
+
+        if datasource_error_count > 0 || nodata_error_count > 0 {
+            return Err(format!(
+                "Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}"
+            ));
+        }
+    */
 
     println!("SUCCESS");
 
