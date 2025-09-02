@@ -7,22 +7,21 @@ on:
     branches: [ main ]
 
 jobs:
-
   bundle-validator:
     runs-on: ubuntu-latest
     container: 
-      image: javiani/my-act-image:latest
+      image: rust:latest  # Use official Rust image instead of plain Ubuntu
     environment: bundle-validator-env
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Rust
+    - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
     
     - name: Cache Rust dependencies
-      # Skip cache in act (local testing) since it requires Node.js
-      if: ${{ !env.ACT }}
       uses: actions/cache@v3
       with:
         path: |
@@ -32,10 +31,11 @@ jobs:
           ~/.cargo/git/db/
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
     
     - name: Build bundle validator
       run: |
-        export PATH="$HOME/.cargo/bin:$PATH"
         cargo build --release --bin bundle-validator
     
     - name: Run bundle-validator
@@ -44,4 +44,3 @@ jobs:
         BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
         BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
         BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
-
