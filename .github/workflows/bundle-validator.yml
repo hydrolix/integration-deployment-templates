@@ -10,7 +10,7 @@ jobs:
   bundle-validator:
     runs-on: ubuntu-latest
     container: 
-      image: rust:latest  # Use official Rust image instead of plain Ubuntu
+      image: rust:latest
     environment: bundle-validator-env
 
     steps:
@@ -22,10 +22,10 @@ jobs:
         toolchain: stable
     
     - name: Cache Rust dependencies
+      if: ${{ !env.ACT }}  # Skip cache when running locally with act
       uses: actions/cache@v3
       with:
         path: |
-          ~/.cargo/bin/
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
