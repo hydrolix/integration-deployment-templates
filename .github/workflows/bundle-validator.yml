@@ -14,41 +14,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Chrome dependencies
+    - name: Install Google Chrome
       run: |
         sudo apt-get update
+        sudo apt-get install -y wget
+        
+        # Download and install Chrome
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+        
+        # Install dependencies
         sudo apt-get install -y \
           libnss3-dev \
           libatk-bridge2.0-dev \
           libgtk-3-dev \
           libxss-dev \
-          libgconf2-dev \
-          libnspr4 \
-          libnss3 \
-          libatk-bridge2.0-0 \
-          libgtk-3-0 \
-          libxss1 \
-          libgconf-2-4 \
-          libx11-xcb1 \
-          libxcomposite1 \
-          libxcursor1 \
-          libxdamage1 \
-          libxi6 \
-          libxtst6 \
-          libxrandr2 \
-          libxshmfence1
+          libgconf2-dev
+        
+        # Verify installation
+        google-chrome --version
 
     - name: Setup Chrome
       uses: browser-actions/setup-chrome@v1
       with:
         chrome-version: stable
 
-    - name: Verify Chrome works
-      run: |
-        # Use the full path to chrome since it's not in PATH
-        /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome --version
-        /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome --headless --disable-gpu --no-sandbox --dump-dom about:blank > /dev/null && echo "Chrome works!" || echo "Chrome test failed"
-        
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
     

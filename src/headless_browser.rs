@@ -11,6 +11,27 @@ use tokio::time::sleep;
 
 use crate::GRAFANA_LOCATION;
 
+fn find_chrome_path() -> Option<std::path::PathBuf> {
+    let possible_paths = vec![
+        "/usr/bin/chromium-browser",
+        "/usr/bin/chromium",
+        "/usr/bin/google-chrome",
+        "/usr/bin/google-chrome-stable",
+        "/snap/bin/chromium",
+        // Add more paths as needed
+    ];
+
+    for path in possible_paths {
+        if std::path::Path::new(path).exists() {
+            println!("Found Chrome at: {}", path);
+            return Some(std::path::PathBuf::from(path));
+        }
+    }
+
+    println!("Chrome not found in any expected location");
+    None
+}
+
 // url, grafana_dashboard_id, username, password
 pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     let (cookie_name, cookie_value) = match get_grafana_session_cookie().await {
@@ -20,12 +41,17 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
 
     println!("Got here: {}.{}", file!(), line!());
 
+    let chrome_path = match find_chrome_path() {
+        Some(v) => v,
+        None => return Err(format!("ERROR: {}.{} Chrome not found", file!(), line!())),
+    };
+
+    println!("Chrome_path={:?}", chrome_path);
+
     let launch_options = match LaunchOptionsBuilder::default()
-        .path(Some(
-            "/opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome".into(),
-        ))
         .window_size(Some((1920, 4080))) // Set to 1920x1080 (Full HD)
         .headless(true)
+        .path(Some(chrome_path))
         .port(None)
         .args(vec![
             OsStr::new("--no-sandbox"),
@@ -33,9 +59,26 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
             OsStr::new("--disable-dev-shm-usage"),
             OsStr::new("--disable-gpu"),
             OsStr::new("--remote-debugging-port=0"),
-            OsStr::new("--headless=new"),
-            OsStr::new("--single-process"), // Critical for CI
-            OsStr::new("--no-zygote"),      // Critical for CI
+            OsStr::new("--headless"), // Use traditional headless instead of new
+            OsStr::new("--single-process"),
+            OsStr::new("--no-zygote"),
+            OsStr::new("--no-first-run"),
+            OsStr::new("--disable-extensions"),
+            OsStr::new("--disable-background-networking"),
+            OsStr::new("--disable-default-apps"),
+            OsStr::new("--disable-translate"),
+            OsStr::new("--disable-sync"),
+            OsStr::new("--metrics-recording-only"),
+            OsStr::new("--safebrowsing-disable-auto-update"),
+            OsStr::new("--disable-client-side-phishing-detection"),
+            OsStr::new("--disable-component-update"),
+            OsStr::new("--disable-features=VizDisplayCompositor"),
+            OsStr::new("--disable-software-rasterizer"),
+            OsStr::new("--use-gl=swiftshader"),
+            OsStr::new("--disable-web-security"),
+            OsStr::new("--allow-running-insecure-content"),
+            OsStr::new("--disable-notifications"),
+            OsStr::new("--disable-popup-blocking"),
         ])
         .build()
     {
