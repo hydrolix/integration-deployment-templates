@@ -8,10 +8,10 @@ use tokio::time::Duration;
 use walkdir::WalkDir;
 
 mod bundle_struct;
-mod deploy;
-mod grafana;
+// FIXME mod deploy;
+// FIXME mod grafana;
 mod hdx;
-mod headless_browser;
+// FIXME mod headless_browser;
 mod output_struct;
 mod validate;
 
@@ -54,7 +54,7 @@ async fn main() {
             }
         };
 
-		// TESTING
+        // TESTING
         //if !bundle.name.contains("zuplo") {
         //    continue;
         //}
@@ -78,6 +78,7 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
+    /* FIXME
     match grafana::container::kill().await {
         Ok(_) => (),
         Err(e) => {
@@ -85,6 +86,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             std::process::exit(1);
         }
     }
+    */
 
     match validate::no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
