@@ -1,6 +1,5 @@
 # Hydrolix Bundle
 
-# TEST2
 ## What is a Bundle?
 
 A Hydrolix Bundle is a structured JSON configuration file that defines a complete data integration package for the Hydrolix platform.
