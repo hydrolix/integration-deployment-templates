@@ -30,7 +30,7 @@
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
     },
     "source": {
-      "full_title": "Regional AWS WAF for CloudFront",
+      "full_title": "Regional AWS WAF",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/waf.png"
     },
     "data_category": "security"
