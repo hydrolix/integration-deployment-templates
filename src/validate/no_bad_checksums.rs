@@ -5,7 +5,6 @@ use crate::bundle_struct::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let full_path = format!("{base}/{}", bundle.dashboard.path);
-    println!("full_path={full_path}");
 
     match check_checksum(&full_path, bundle.dashboard.sha256.as_deref()).await {
         Ok(_) => (),

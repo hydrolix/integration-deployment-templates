@@ -1,7 +1,6 @@
 use headless_chrome::protocol::cdp::types::Event;
 use headless_chrome::protocol::cdp::Network;
 use headless_chrome::{Browser, LaunchOptionsBuilder};
-use std::ffi::OsStr;
 
 use regex::Regex;
 use reqwest::header;
@@ -11,27 +10,6 @@ use tokio::time::sleep;
 
 use crate::GRAFANA_LOCATION;
 
-fn find_chrome_path() -> Option<std::path::PathBuf> {
-    let possible_paths = vec![
-        "/usr/bin/chromium-browser",
-        "/usr/bin/chromium",
-        "/usr/bin/google-chrome",
-        "/usr/bin/google-chrome-stable",
-        "/snap/bin/chromium",
-        // Add more paths as needed
-    ];
-
-    for path in possible_paths {
-        if std::path::Path::new(path).exists() {
-            println!("Found Chrome at: {}", path);
-            return Some(std::path::PathBuf::from(path));
-        }
-    }
-
-    println!("Chrome not found in any expected location");
-    None
-}
-
 // url, grafana_dashboard_id, username, password
 pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     let (cookie_name, cookie_value) = match get_grafana_session_cookie().await {
@@ -39,87 +17,34 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    println!("Got here: {}.{}", file!(), line!());
-
-    let chrome_path = match find_chrome_path() {
-        Some(v) => v,
-        None => return Err(format!("ERROR: {}.{} Chrome not found", file!(), line!())),
-    };
-
-    println!("Chrome_path={:?}", chrome_path);
-
     let launch_options = match LaunchOptionsBuilder::default()
         .window_size(Some((1920, 4080))) // Set to 1920x1080 (Full HD)
-        .headless(true)
-        .path(Some(chrome_path))
-        .port(None)
-        .args(vec![
-            OsStr::new("--no-sandbox"),
-            OsStr::new("--disable-setuid-sandbox"),
-            OsStr::new("--disable-dev-shm-usage"),
-            OsStr::new("--disable-gpu"),
-            OsStr::new("--remote-debugging-port=0"),
-            OsStr::new("--headless"), // Use traditional headless instead of new
-            OsStr::new("--single-process"),
-            OsStr::new("--no-zygote"),
-            OsStr::new("--no-first-run"),
-            OsStr::new("--disable-extensions"),
-            OsStr::new("--disable-background-networking"),
-            OsStr::new("--disable-default-apps"),
-            OsStr::new("--disable-translate"),
-            OsStr::new("--disable-sync"),
-            OsStr::new("--metrics-recording-only"),
-            OsStr::new("--safebrowsing-disable-auto-update"),
-            OsStr::new("--disable-client-side-phishing-detection"),
-            OsStr::new("--disable-component-update"),
-            OsStr::new("--disable-features=VizDisplayCompositor"),
-            OsStr::new("--disable-software-rasterizer"),
-            OsStr::new("--use-gl=swiftshader"),
-            OsStr::new("--disable-web-security"),
-            OsStr::new("--allow-running-insecure-content"),
-            OsStr::new("--disable-notifications"),
-            OsStr::new("--disable-popup-blocking"),
-        ])
         .build()
     {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    println!("Got here: {}.{}", file!(), line!());
     let browser = match Browser::new(launch_options) {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    println!("Got here: {}.{}", file!(), line!());
-
     let tab = match browser.new_tab() {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
-    /*
-        #[allow(deprecated)]
-        let tab = match browser.wait_for_initial_tab() {
-            Ok(v) => v,
-            Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
-        };
-    */
-    println!("Got here: {}.{}", file!(), line!());
 
     match tab.enable_runtime() {
         Ok(_) => (),
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
-    println!("Got here: {}.{}", file!(), line!());
-
     match tab.enable_log() {
         Ok(_) => (),
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
-    println!("Got here: {}.{}", file!(), line!());
     let bad_datasource_regex = match Regex::new(r"Datasource \w+ was not found") {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
@@ -130,15 +55,11 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    println!("Got here: {}.{}", file!(), line!());
-
     let datasource_error_count = Arc::new(Mutex::new(0));
     let datasource_error_count_clone = Arc::clone(&datasource_error_count);
 
     let nodata_error_count = Arc::new(Mutex::new(0));
     let nodata_error_count_clone = Arc::clone(&nodata_error_count);
-
-    println!("Got here: {}.{}", file!(), line!());
 
     #[allow(clippy::match_single_binding)]
     tab.add_event_listener(Arc::new(move |event: &Event| match event {
@@ -153,10 +74,6 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         }
     }))
     .unwrap();
-
-    //tab.enable_network().unwrap();
-
-    println!("Got here: {}.{}", file!(), line!());
 
     let cookie = Network::CookieParam {
         name: cookie_name.to_string(),
@@ -182,16 +99,12 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
-    println!("Got here: {}.{}", file!(), line!());
-
     // Navigate to the domain first
     let url = format!("http://{GRAFANA_LOCATION}/d/{grafana_dashboard_id}");
     let _x = match tab.navigate_to(&url) {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
-
-    println!("Got here: {}.{}", file!(), line!());
 
     match tab.wait_until_navigated() {
         Ok(_) => println!("Page navigation completed"),
@@ -200,8 +113,6 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
 
     // Wait for page to load completely (Grafana needs to pull the data)
     sleep(Duration::from_secs(30)).await;
-
-    println!("Got here: {}.{}", file!(), line!());
 
     let datasource_error_count = *datasource_error_count.lock().unwrap();
     let nodata_error_count = *nodata_error_count.lock().unwrap();
