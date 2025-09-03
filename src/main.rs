@@ -33,6 +33,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--marketplace".to_string())
     };
+    static ref DUMP_OUTPUT: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--output".to_string())
+    };
     static ref MATCH_ONLY: String = {
         let mut value = "".to_string();
         let args: Vec<String> = std::env::args().collect();
@@ -95,15 +99,9 @@ async fn main() {
 
 // These are all of our tests...
 async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
-    if *IS_LOCAL {
-        match grafana::container::kill().await {
-            Ok(_) => (),
-            Err(e) => {
-                eprintln!("Failed to kill the Grafana container... error={e}");
-                std::process::exit(1);
-            }
-        }
-    }
+    println!("Base={base} bundle={:?}", bundle);
+
+    let mut output: Output = Output::default();
 
     match validate::no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
@@ -136,6 +134,12 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     }
 
     if *IS_LOCAL {
+        // Kill the previous container if it exists
+        match grafana::container::kill().await {
+            Ok(_) => (),
+            Err(_) => (),
+        }
+
         match grafana::container::start().await {
             Ok(_) => (),
             Err(e) => {
@@ -146,8 +150,6 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
         eprintln!("Sleeping for 30 seconds to let container start up...");
         sleep(Duration::from_secs(30)).await;
-
-        let mut output: Output = Output::default();
 
         let dashboard_id = match deploy::run(base, bundle, &mut output).await {
             Ok(v) => v,
@@ -163,17 +165,20 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
                 Err(e) => return Err(format!("Failed to run headless browser error={e}")),
             };
 
-        match grafana::container::kill().await {
-            Ok(_) => (),
-            Err(_) => (),
-        }
-
         println!("Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}");
 
         if datasource_error_count > 0 || nodata_error_count > 0 {
             return Err(format!(
                 "Dashboard Errors={datasource_error_count} NoDataErrors={nodata_error_count}"
             ));
+        }
+    }
+
+    if *DUMP_OUTPUT {
+        if let Ok(pretty_output) = serde_json::to_string_pretty(&output) {
+            println!("OUTPUT FOR TRAFFIC GENERATION: \n\n{}", pretty_output);
+        } else {
+            println!("{:?}", output);
         }
     }
 

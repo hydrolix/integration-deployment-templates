@@ -13,13 +13,13 @@ deno run --allow-net --allow-env --allow-read generate-zuplo-fake-data.ts test-c
 
 
 import { getAllGeoData, getRandomGeoData, type GeoData }
-    from "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/TRAFFIC-DENO/geo-data.ts";
+    from "../TRAFFIC-DENO/geo-data.ts";
 
 import { randomUserAgent, randomHttpMethod, randomHttpStatusCode, randomOrganizationName, randomRoutePath }
-    from "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/TRAFFIC-DENO/http-things.ts";
+    from "../TRAFFIC-DENO/http-things.ts";
 
 import { loadConfig, validateConfig, type Config, type Value }
-    from "https://raw.githubusercontent.com/hydrolix/integration-deployment-templates/refs/heads/main/TRAFFIC-DENO/config-reader.ts";
+    from "../TRAFFIC-DENO/config-reader.ts";
 
 // main.ts
 const HTTP_TIMEOUT = 120;
