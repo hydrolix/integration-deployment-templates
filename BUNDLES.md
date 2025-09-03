@@ -5,7 +5,7 @@
 A Hydrolix Bundle is a structured JSON configuration file that defines a complete data integration package for the Hydrolix platform.
 It serves as a blueprint for connecting data sources, transforming data, creating visualizations, and managing dependencies.
 
-The specification of the Bundle format is located here: [DETAILS.md](https://github.com/hydrolix/integration-deployment-templates/blob/main/automation/DETAILS.md)
+The specification of the Bundle format is located here: [DETAILS.md](https://github.com/hydrolix/integration-deployment-templates/blob/main/DETAILS.md)
 
 ## Key Components
 

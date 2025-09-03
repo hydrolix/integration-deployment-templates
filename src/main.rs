@@ -120,6 +120,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
     }
 
+    match validate::transforms_are_valid::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Found bad checksum: error={e}")),
+    }
+
     match validate::dashboard_is_valid::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad checksum: error={e}")),
