@@ -20,7 +20,7 @@ export BUNDLE_TESTING_PASSWORD="your-password"
 
 ## Basic Usage
 
-### 1. Run All Bundle Tests (Validation Only)
+### 1. Run All Bundle Tests (Basic Validation Only)
 ```bash
 cargo run
 ```
