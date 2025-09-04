@@ -1,5 +1,5 @@
 {
-   "name": "firehose-waf-regional",
+   "name": "firehose-waf",
    "source": "waf",
    "method": "firehose",
    "beta": false,
