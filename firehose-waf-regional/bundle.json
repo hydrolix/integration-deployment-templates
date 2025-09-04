@@ -9,7 +9,9 @@
     "project_var": "__PROJECT_NAME__",
     "sha256": "dcf93a0d1ec5c0f8922ddad4859af4a2b9e3c4a069ce0f40ef7ca4fdb3b02de2"
   },
-
+   "method_overrides": {
+     "stream_prefix": "aws-waf-logs-hdx"
+   },
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
