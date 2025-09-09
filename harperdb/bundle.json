@@ -1,0 +1,41 @@
+{
+    "name": "http_streaming-harperdb",
+    "source": "harperdb",
+    "method": "http_streaming",
+    "beta": true,
+    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/harperdb",
+    "dashboard": {
+      "path": "dashboards/current.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    "tables": [
+      {
+        "dashboard_var": "__TABLE_NAME__",
+        "name": "harperdb",
+        "transforms": [
+          {
+            "path": "transformations/current.json",
+		    "sample": "transformations/sample_data_template.json"
+          }
+        ]
+      }
+    ],
+    "ui": {
+      "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
+      "method": {
+        "full_title": "Http-Streaming",
+        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png" 
+      },
+      "source": {
+        "full_title": "HarperDB",
+        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
+      },
+      "data_category": "security"
+    },
+    "metadata": {
+      "version": "1.0.0",
+      "maintainer": "jgoodson@hydrolix.io",
+      "description": "HarperDB",
+      "channel_type": "AWS"
+    }
+  }
