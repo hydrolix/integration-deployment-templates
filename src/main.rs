@@ -3,8 +3,6 @@
 use lazy_static::lazy_static;
 use std::path::PathBuf;
 use tokio::fs;
-use tokio::time::sleep;
-use tokio::time::Duration;
 use walkdir::WalkDir;
 
 mod bundle_struct;
@@ -45,6 +43,7 @@ lazy_static! {
     static ref MATCH_ONLY: String = {
         let mut value = "".to_string();
         let args: Vec<String> = std::env::args().collect();
+        #[allow(clippy::needless_range_loop)]
         for i in 1..args.len() {
             if !args[i].starts_with("--") {
                 value = args[i].to_string();
@@ -78,11 +77,9 @@ async fn main() {
             }
         };
 
-        if !MATCH_ONLY.is_empty() {
-            if !bundle.name.contains(&*MATCH_ONLY) {
-                println!("Ignoring {}", bundle.name);
-                continue;
-            }
+        if !MATCH_ONLY.is_empty() && !bundle.name.contains(&*MATCH_ONLY) {
+            println!("Ignoring {}", bundle.name);
+            continue;
         }
 
         let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
@@ -140,10 +137,8 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
     if *IS_LOCAL_DASHBOARD_ONLY {
         // Kill the previous container if it exists
-        match grafana::container::kill().await {
-            Ok(_) => (),
-            Err(_) => (),
-        }
+        _ = grafana::container::kill().await;
+
         match grafana::container::start().await {
             Ok(_) => (),
             Err(e) => {
@@ -151,9 +146,6 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
                 std::process::exit(1);
             }
         }
-
-        eprintln!("Sleeping for 10 seconds to let container start up...");
-        sleep(Duration::from_secs(10)).await;
 
         let dashboard_id = match deploy_only_dashboard::run(base, bundle, &mut output).await {
             Ok(v) => v,
@@ -164,10 +156,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
     if *IS_LOCAL {
         // Kill the previous container if it exists
-        match grafana::container::kill().await {
-            Ok(_) => (),
-            Err(_) => (),
-        }
+        _ = grafana::container::kill().await;
 
         match grafana::container::start().await {
             Ok(_) => (),
@@ -176,9 +165,6 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
                 std::process::exit(1);
             }
         }
-
-        eprintln!("Sleeping for 30 seconds to let container start up...");
-        sleep(Duration::from_secs(30)).await;
 
         let dashboard_id = match deploy::run(base, bundle, &mut output).await {
             Ok(v) => v,
