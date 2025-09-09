@@ -32,14 +32,12 @@ pub struct Dashboard {
     pub sha256: Option<String>,
 }
 
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct MethodOverrides {
     pub region: Option<String>,
     pub stream_prefix: Option<String>,
 }
-
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -314,7 +312,6 @@ where
     }
 }
 
-
 // Custom deserializer
 fn deserialize_valid_data_categories<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
@@ -405,5 +402,3 @@ where
         None => Ok(None),
     }
 }
-
-

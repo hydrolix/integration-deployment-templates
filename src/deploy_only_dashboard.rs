@@ -1,4 +1,3 @@
-
 use tokio::fs;
 use uuid::Uuid;
 
@@ -9,9 +8,7 @@ use crate::output_struct::Output;
 use crate::GRAFANA_LOCATION;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<String, String> {
-   
     output.grafana_domain = format!("{GRAFANA_LOCATION}/");
-
 
     let full_path = format!("{base}/{}", bundle.dashboard.path);
 
@@ -44,4 +41,3 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     output.dashboard_id = grafana_dashboard_id.to_string();
     Ok(grafana_dashboard_id)
 }
-

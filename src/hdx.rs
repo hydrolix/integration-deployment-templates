@@ -74,9 +74,8 @@ pub async fn get_auth_token() -> Result<String, String> {
 pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String, String> {
     // Prepare the JSON payload
 
-    let payload;
-    if *FOR_MARKETPLACE {
-        payload = json!({
+    let payload = if *FOR_MARKETPLACE {
+        json!({
                 "name": table_name,
                 "description": "testing",
                 "settings": {
@@ -92,9 +91,9 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
                         "hdx_query_max_execution_time": 120
                     },
                 }
-        });
+        })
     } else {
-        payload = json!({
+        json!({
                 "name": table_name,
                 "description": "testing",
                 "settings": {
@@ -105,8 +104,8 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
                         "enabled": false
                     }
                 }
-        });
-    }
+        })
+    };
 
     let url = format!(
         "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
