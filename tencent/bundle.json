@@ -27,7 +27,7 @@
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png" 
       },
       "source": {
-        "full_title": "Zuplo",
+        "full_title": "Tencent",
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
       },
       "data_category": "cdn"
