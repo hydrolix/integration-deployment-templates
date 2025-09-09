@@ -48,13 +48,25 @@ This performs complete end-to-end testing including:
 - Dashboard rendering verification
 - Browser-based error detection
 
-### 4. Generate Output for Traffic Generation
+### 4. Local Dashboard Testing Only
+```bash
+cargo run -- --local-dashboard-only
+```
+This performs dashboard-specific testing including:
+- All validation checks
+- Grafana container deployment
+- Dashboard deployment verification
+- **Does NOT include** browser-based testing or error detection
+
+This is useful for testing dashboard deployment without the overhead of browser automation.
+
+### 5. Generate Output for Traffic Generation
 ```bash
 cargo run -- --output
 ```
 Dumps detailed output in JSON format for use in traffic generation.
 
-### 5. Marketplace Testing
+### 6. Marketplace Testing
 ```bash
 cargo run -- --marketplace
 ```
@@ -64,7 +76,8 @@ Runs tests specifically for marketplace bundles.
 
 | Flag | Description |
 |------|-------------|
-| `--local` | Enable full integration testing with local Grafana container |
+| `--local` | Enable full integration testing with local Grafana container and browser testing |
+| `--local-dashboard-only` | Enable dashboard deployment testing without browser validation |
 | `--marketplace` | Enable marketplace-specific testing |
 | `--output` | Dump detailed output in JSON format |
 | `[filter]` | Test only bundles containing this string in their name |
@@ -89,11 +102,19 @@ Runs tests specifically for marketplace bundles.
 - ✅ Transform content validation
 - ✅ Sample data existence
 
+### Dashboard Testing (With `--local-dashboard-only`)
+
+#### Grafana Container Testing
+- ✅ Automatic container cleanup and restart
+- ✅ Dashboard-only deployment to Grafana
+- ✅ Dashboard ID verification
+- ✅ 30-second startup wait period
+
 ### Local Integration Tests (Only with `--local`)
 
 #### Grafana Container Testing
 - ✅ Automatic container cleanup and restart
-- ✅ Bundle deployment to Grafana
+- ✅ Full bundle deployment to Grafana
 - ✅ 30-second startup wait period
 
 #### Browser Testing
@@ -111,10 +132,17 @@ Runs tests specifically for marketplace bundles.
 4. **Validation**: Runs all validation checks
 5. **Results**: Reports success or failure
 
+### Dashboard-Only Testing Workflow
+1. **Basic validation** (steps 1-4 above)
+2. **Container setup**: Kills existing Grafana, starts fresh
+3. **Dashboard deployment**: Deploys only dashboard to Grafana
+4. **Verification**: Confirms dashboard deployment success
+5. **Cleanup**: Container management
+
 ### Local Testing Workflow
 1. **Basic validation** (steps 1-4 above)
 2. **Container setup**: Kills existing Grafana, starts fresh
-3. **Deployment**: Deploys bundle to Grafana
+3. **Full deployment**: Deploys complete bundle to Grafana
 4. **Browser testing**: Loads dashboard in headless Chrome
 5. **Error scanning**: Checks for datasource/data errors
 6. **Cleanup**: Container management
@@ -126,6 +154,9 @@ Runs tests specifically for marketplace bundles.
 # Quick validation check
 cargo run -- my_bundle
 
+# Dashboard deployment testing (faster than full local)
+cargo run -- --local-dashboard-only my_bundle
+
 # Full local testing
 cargo run -- --local my_bundle
 ```
@@ -135,6 +166,9 @@ cargo run -- --local my_bundle
 # Validate all bundles
 cargo run
 
+# Dashboard deployment test for all bundles
+cargo run -- --local-dashboard-only
+
 # Full integration test for all bundles
 cargo run -- --local
 ```
@@ -143,6 +177,9 @@ cargo run -- --local
 ```bash
 # Get detailed output
 cargo run -- --output my_bundle
+
+# Test dashboard deployment only
+cargo run -- --local-dashboard-only my_bundle
 
 # Test specific bundle with full logging
 cargo run -- --local my_bundle
@@ -154,6 +191,7 @@ cargo run -- --local my_bundle
 ```
 Testing my_bundle_name
 Bundle=Bundle { name: "my_bundle_name", ... }
+Dashboard_id=12345  // Only with --local or --local-dashboard-only
 SUCCESS
 Success
 ```
@@ -163,7 +201,7 @@ Success
 ERROR: Failed bundle validation: Found duplicate tokens: error=...
 ```
 
-### Browser Test Results
+### Browser Test Results (--local only)
 ```
 Dashboard Errors=0 NoDataErrors=0  // ✅ Success
 Dashboard Errors=2 NoDataErrors=1  // ❌ Failure
@@ -214,11 +252,21 @@ docker rm grafana-container-name
 
 ## Best Practices
 
-1. **Always run validation first**: Use `cargo run` before `--local` testing
-2. **Test specific bundles**: Use name filters during development
-3. **Clean environment**: Ensure no conflicting Docker containers
-4. **Check logs**: Review all error messages for specific failure details
-5. **Incremental testing**: Fix validation errors before running integration tests
+1. **Always run validation first**: Use `cargo run` before local testing
+2. **Use dashboard-only for faster iteration**: Use `--local-dashboard-only` during development
+3. **Test specific bundles**: Use name filters during development
+4. **Clean environment**: Ensure no conflicting Docker containers
+5. **Check logs**: Review all error messages for specific failure details
+6. **Incremental testing**: Fix validation errors before running integration tests
+7. **Choose appropriate test level**: Use `--local-dashboard-only` for deployment verification, `--local` for full end-to-end testing
+
+## Testing Strategy Comparison
+
+| Test Level | Speed | Coverage | Use Case |
+|------------|-------|----------|----------|
+| Basic (`cargo run`) | Fast | Validation only | Development, CI/CD validation |
+| Dashboard Only (`--local-dashboard-only`) | Medium | Validation + Dashboard deployment | Dashboard iteration, deployment verification |
+| Full Local (`--local`) | Slow | Complete end-to-end | Final verification, production readiness |
 
 ## Exit Codes
 
@@ -226,3 +274,5 @@ docker rm grafana-container-name
 - **1**: Test failure (validation error, deployment failure, or dashboard errors)
 
 The tool exits immediately on the first failure encountered.
+
+
