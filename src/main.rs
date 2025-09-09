@@ -9,6 +9,7 @@ use walkdir::WalkDir;
 
 mod bundle_struct;
 mod deploy;
+mod deploy_only_dashboard;
 mod grafana;
 mod hdx;
 mod headless_browser;
@@ -28,6 +29,10 @@ lazy_static! {
     static ref IS_LOCAL: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--local".to_string())
+    };
+    static ref IS_LOCAL_DASHBOARD_ONLY: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--local-dashboard-only".to_string())
     };
     static ref FOR_MARKETPLACE: bool = {
         let args: Vec<String> = std::env::args().collect();
@@ -131,6 +136,30 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     match validate::sample_data_exists::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("No sample data: error={e}")),
+    }
+
+    if *IS_LOCAL_DASHBOARD_ONLY {
+        // Kill the previous container if it exists
+        match grafana::container::kill().await {
+            Ok(_) => (),
+            Err(_) => (),
+        }
+        match grafana::container::start().await {
+            Ok(_) => (),
+            Err(e) => {
+                eprintln!("Failed to start the Grafana container... error={e}");
+                std::process::exit(1);
+            }
+        }
+
+        eprintln!("Sleeping for 10 seconds to let container start up...");
+        sleep(Duration::from_secs(10)).await;
+
+        let dashboard_id = match deploy_only_dashboard::run(base, bundle, &mut output).await {
+            Ok(v) => v,
+            Err(e) => return Err(format!("Failed to deploy dashboard error={e}")),
+        };
+        println!("Dashboard_id={dashboard_id}");
     }
 
     if *IS_LOCAL {
