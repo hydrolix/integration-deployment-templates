@@ -1,0 +1,115 @@
+{
+    "dashboard": {
+        "__inputs": [],
+        "__elements": {},
+        "__requires": [
+            {
+                "type": "grafana",
+                "id": "grafana",
+                "name": "Grafana",
+                "version": "12.0.3"
+            },
+            {
+                "type": "datasource",
+                "id": "grafana-clickhouse-datasource",
+                "name": "ClickHouse",
+                "version": "4.8.1"
+            },
+            {
+                "type": "panel",
+                "id": "logs",
+                "name": "Logs",
+                "version": ""
+            }
+        ],
+        "annotations": {
+            "list": [
+                {
+                    "builtIn": 1,
+                    "datasource": {
+                        "type": "grafana",
+                        "uid": "-- Grafana --"
+                    },
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                }
+            ]
+        },
+        "editable": true,
+        "fiscalYearStartMonth": 0,
+        "graphTooltip": 0,
+        "id": null,
+        "links": [],
+        "panels": [
+            {
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "__DATASOURCE__"
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                },
+                "id": 1,
+                "options": {
+                    "dedupStrategy": "none",
+                    "enableInfiniteScrolling": false,
+                    "enableLogDetails": true,
+                    "prettifyLogMessage": false,
+                    "showCommonLabels": false,
+                    "showLabels": false,
+                    "showTime": false,
+                    "sortOrder": "Descending",
+                    "wrapLogMessage": false
+                },
+                "pluginVersion": "12.0.3",
+                "targets": [
+                    {
+                        "datasource": {
+                            "type": "grafana-clickhouse-datasource",
+                            "uid": "__DATASOURCE__"
+                        },
+                        "editorType": "sql",
+                        "format": 1,
+                        "meta": {
+                            "builderOptions": {
+                                "columns": [],
+                                "database": "",
+                                "limit": 1000,
+                                "mode": "list",
+                                "queryType": "table",
+                                "table": ""
+                            }
+                        },
+                        "pluginVersion": "4.8.1",
+                        "queryType": "table",
+                        "rawSql": "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__ LIMIT 1000",
+                        "refId": "A"
+                    }
+                ],
+                "title": "Latest Logs",
+                "type": "logs"
+            }
+        ],
+        "schemaVersion": 41,
+        "tags": [],
+        "templating": {
+            "list": []
+        },
+        "time": {
+            "from": "now-6h",
+            "to": "now"
+        },
+        "timepicker": {},
+        "timezone": "browser",
+        "title": "TenCent EdgeOne Logs",
+        "uid": "__DASHBOARD_UUID__",
+        "version": 2,
+        "weekStart": ""
+    }
+}
