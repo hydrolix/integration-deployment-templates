@@ -25,11 +25,11 @@
   "ui": {
     "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaTailor.html",
     "method": {
-      "full_title": "AWS Firehose",
+      "full_title": "Amazon Data Firehose",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
     },
     "source": {
-      "full_title": "AWS Elemental MediaTailor DataZoom",
+      "full_title": "AWS Elemental MediaTailor & DataZoom",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediatailor.png"
     },
     "data_category": "video"
@@ -41,5 +41,3 @@
     "channel_type": "AWS"
   }
 }
-
-

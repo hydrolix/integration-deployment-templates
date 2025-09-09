@@ -9,6 +9,8 @@ const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
 const PROJ_UUID: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
 const PROJ_NAME: &str = "sample_project";
 
+use crate::FOR_MARKETPLACE;
+
 use crate::{BUNDLE_TESTING_CLUSTER, BUNDLE_TESTING_PASSWORD, BUNDLE_TESTING_USERNAME};
 
 const HTTP_TIMEOUT: u64 = 120;
@@ -71,18 +73,40 @@ pub async fn get_auth_token() -> Result<String, String> {
 
 pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String, String> {
     // Prepare the JSON payload
-    let payload = json!({
-        "name": table_name,
-        "description": "testing",
-        "settings": {
-            "age": {
-                "max_age_days": 1
-            },
-            "merge": {
-                "enabled": false
-            }
-        }
-    });
+
+    let payload;
+    if *FOR_MARKETPLACE {
+        payload = json!({
+                "name": table_name,
+                "description": "testing",
+                "settings": {
+                    "age": {
+                        "max_age_days": 1
+                    },
+                    "merge": {
+                        "enabled": false
+                    },
+                    "default_query_options": {
+                        "hdx_query_max_timerange_sec": 129600,
+                        "hdx_query_max_result_rows": 1000000,
+                        "hdx_query_max_execution_time": 120
+                    },
+                }
+        });
+    } else {
+        payload = json!({
+                "name": table_name,
+                "description": "testing",
+                "settings": {
+                    "age": {
+                        "max_age_days": 1
+                    },
+                    "merge": {
+                        "enabled": false
+                    }
+                }
+        });
+    }
 
     let url = format!(
         "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
@@ -422,6 +446,7 @@ pub fn create_project_name() -> String {
     PROJ_NAME.to_string()
 }
 
+#[allow(dead_code)]
 pub async fn get_table_list(bearer_token: &str, debug_mode: bool) -> Result<String, String> {
     let url = format!(
         "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
@@ -463,6 +488,7 @@ pub async fn get_table_list(bearer_token: &str, debug_mode: bool) -> Result<Stri
     }
 }
 
+#[allow(dead_code)]
 pub async fn delete_a_table(bearer_token: &str, uuid: &str) -> Result<(), String> {
     let url = format!(
         "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables/{uuid}",

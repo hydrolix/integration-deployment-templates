@@ -5,7 +5,7 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 use crate::bundle_struct::Bundle;
-// FIXME use crate::grafana;
+use crate::grafana;
 use crate::hdx;
 use crate::output_struct::Output;
 use crate::output_struct::OutputTable;
@@ -47,7 +47,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     output.datalink = datalink.to_string();
 
     let full_path = format!("{base}/{}", bundle.dashboard.path);
-    println!("full_path={full_path}");
 
     let mut dashboard_data = match fs::read_to_string(&full_path).await {
         Ok(v) => v,
@@ -96,7 +95,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
 
         for tt in &t.transforms {
             let full_path = format!("{base}/{}", tt.path);
-            println!("full_path={full_path}");
 
             let content = match fs::read_to_string(&full_path).await {
                 Ok(v) => v,
@@ -210,25 +208,6 @@ fn get_transformation_type(transform_json: &Value) -> String {
     }
 }
 
-fn is_there_sample_data(transform_json: &Value) -> bool {
-    let sample_data = &transform_json["settings"]["sample_data"];
-
-    // Check if it's a non-empty object
-    if sample_data.is_object() && !sample_data.as_object().unwrap().is_empty() {
-        return true;
-    }
-
-    // Check if it's a non-empty string
-    if sample_data.is_string() {
-        let str_value = sample_data.as_str().unwrap();
-        if !str_value.trim().is_empty() {
-            return true;
-        }
-    }
-
-    false
-}
-
 fn get_sample_data_as_json(transform_json: &Value) -> Value {
     let sample_data = &transform_json["settings"]["sample_data"];
     if sample_data.is_object() && !sample_data.as_object().unwrap().is_empty() {
@@ -238,6 +217,7 @@ fn get_sample_data_as_json(transform_json: &Value) -> Value {
     }
 }
 
+#[allow(dead_code)]
 fn get_transformation_name(transform_json: &Value) -> String {
     match transform_json["name"].as_str() {
         Some(v) => v.to_string(),

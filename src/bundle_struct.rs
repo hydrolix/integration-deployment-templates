@@ -27,19 +27,19 @@ pub struct Bundle {
 pub struct Dashboard {
     #[serde(deserialize_with = "deserialize_url_path")]
     pub path: String,
-    #[serde(deserialize_with = "deserialize_macro_name")]
     pub project_var: String,
     #[serde(default, deserialize_with = "deserialize_optional_sha256")]
     pub sha256: Option<String>,
 }
 
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct MethodOverrides {
-    #[serde(deserialize_with = "deserialize_us_east_1")]
-    pub region: String,
-    pub stream_prefix: String,
+    pub region: Option<String>,
+    pub stream_prefix: Option<String>,
 }
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -314,19 +314,6 @@ where
     }
 }
 
-// Custom deserializer
-fn deserialize_us_east_1<'de, D>(deserializer: D) -> Result<String, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
-
-    if s == "us-east-1" {
-        Ok(s)
-    } else {
-        Err(de::Error::custom(format!("{} Must be us-east-1", s)))
-    }
-}
 
 // Custom deserializer
 fn deserialize_valid_data_categories<'de, D>(deserializer: D) -> Result<String, D::Error>
@@ -418,3 +405,5 @@ where
         None => Ok(None),
     }
 }
+
+

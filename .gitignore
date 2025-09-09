@@ -6,5 +6,6 @@ Cargo.lock
 .secrets
 .env
 .env.local
+.DS_Store
 
 

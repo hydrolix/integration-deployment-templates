@@ -34,7 +34,7 @@ export function randomUserAgent(): string {
  * const status = randomHttpMethod();
  * console.log(status); // 200
  */
-function randomHttpMethod(): string {
+export function randomHttpMethod(): string {
     const methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
     return methods[Math.floor(Math.random() * methods.length)];
 }
@@ -49,18 +49,6 @@ function randomHttpMethod(): string {
 export function randomHttpStatusCode(): number {
   const statusCodes = [200, 201, 203, 204, 301, 302, 304, 400, 401, 403, 404, 429, 500, 502, 503];
   return statusCodes[Math.floor(Math.random() * statusCodes.length)];
-}
-
-/**
- * Generates a random HTTP method
- * @returns {string} Random HTTP method
- * @example
- * const method = randomHttpMethod();
- * console.log(method); // "GET"
- */
-export function randomHttpMethod(): string {
-  const methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
-  return methods[Math.floor(Math.random() * methods.length)];
 }
 
 /**
