@@ -58,9 +58,13 @@ lazy_static! {
 
 pub const GRAFANA_LOCATION: &str = "localhost:3000";
 
+use std::collections::HashSet;
+
 #[tokio::main]
 async fn main() {
     let bundle_list = find_bundle_files();
+
+    let mut ui_source_names: HashSet<String> = HashSet::new();
 
     for b in &bundle_list {
         let path = PathBuf::from(b);
@@ -76,6 +80,16 @@ async fn main() {
                 std::process::exit(1);
             }
         };
+        if !bundle.ui.source.full_title.is_empty() {
+            if ui_source_names.contains(&bundle.ui.source.full_title) {
+                eprintln!(
+                    "ERROR: Cannot have duplicated ui_source_name: {} {}",
+                    file_path, bundle.ui.source.full_title
+                );
+                std::process::exit(1);
+            }
+            ui_source_names.insert(bundle.ui.source.full_title.to_string());
+        }
 
         if !MATCH_ONLY.is_empty() && !bundle.name.contains(&*MATCH_ONLY) {
             println!("Ignoring {}", bundle.name);
