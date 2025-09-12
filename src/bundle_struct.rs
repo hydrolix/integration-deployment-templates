@@ -278,21 +278,14 @@ where
     D: de::Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-
-    match s.as_str() {
-        s_str
-            if s_str
-                .chars()
-                .any(|c| c.is_whitespace() || c.is_ascii_punctuation()) =>
-        {
-            return Err(de::Error::custom(format!(
-                "{} contains invalid characters (spaces or punctuation not allowed)",
-                s
-            )));
-        }
-        _ => (),
+    
+    if s.chars().any(|c| !c.is_alphanumeric() && c != '-' && c != '_') {
+        return Err(de::Error::custom(format!(
+            "{} contains invalid characters (only alphanumeric, dashes, and underscores allowed)",
+            s
+        )));
     }
-
+    
     Ok(s)
 }
 
