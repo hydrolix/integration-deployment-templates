@@ -10,9 +10,9 @@ pub struct Bundle {
     #[serde(deserialize_with = "deserialize_valid_method")]
     pub method: String,
     pub method_overrides: Option<MethodOverrides>,
-    #[serde(deserialize_with = "deserialize_valid_name")]
+    #[serde(deserialize_with = "deserialize_alpha_no_space")]
     pub name: String,
-    #[serde(deserialize_with = "deserialize_valid_source")]
+    #[serde(deserialize_with = "deserialize_alpha_no_space")]
     pub source: String,
     pub beta: bool,
     pub tables: Vec<Table>,
@@ -272,23 +272,6 @@ where
     }
 }
 
-// Custom deserializer
-fn deserialize_valid_source<'de, D>(deserializer: D) -> Result<String, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
-    
-    if s.chars().any(|c| !c.is_alphanumeric() && c != '-' && c != '_') {
-        return Err(de::Error::custom(format!(
-            "{} contains invalid characters (only alphanumeric, dashes, and underscores allowed)",
-            s
-        )));
-    }
-    
-    Ok(s)
-}
-
 // Custom deserializer for channel type
 fn deserialize_valid_channel_type<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
@@ -347,7 +330,7 @@ where
     }
 }
 
-fn deserialize_valid_name<'de, D>(deserializer: D) -> Result<String, D::Error>
+fn deserialize_alpha_no_space<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
