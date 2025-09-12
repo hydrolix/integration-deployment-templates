@@ -1,5 +1,5 @@
 {
-    "name": "http_streaming-fake-zuplo",
+    "name": "http_streaming_fake_zuplo",
     "source": "fake-zuplo",
     "method": "http_streaming",
     "beta": true,
