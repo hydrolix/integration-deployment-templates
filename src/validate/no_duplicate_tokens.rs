@@ -5,8 +5,28 @@ use crate::bundle_struct::Bundle;
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
     let mut tokens: HashSet<String> = HashSet::new();
 
-    // Check for duplicate table names
+    // Check every table name...
     for t in &bundle.tables {
+        // Validate table name starts with a letter
+        if t.name.is_empty() || !t.name.chars().next().unwrap().is_alphabetic() {
+            return Err(format!(
+                "ERROR: {}.{} Invalid table name '{}' - must start with a letter",
+                file!(),
+                line!(),
+                t.name
+            ));
+        }
+
+        // Validate table name contains only alphanumeric characters and underscores
+        if !t.name.chars().all(|c| c.is_alphanumeric() || c == '_') {
+            return Err(format!(
+            "ERROR: {}.{} Invalid table name '{}' - only letters, digits, and underscores allowed",
+            file!(),
+            line!(),
+            t.name
+        ));
+        }
+
         if tokens.contains(&t.name) {
             return Err(format!(
                 "ERROR: {}.{} Duplicate table name {}",

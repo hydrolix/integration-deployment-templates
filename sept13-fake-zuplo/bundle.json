@@ -1,9 +1,9 @@
 {
-    "name": "http_streaming-fake-zuplo",
+    "name": "http_streaming_sept13-fake-zuplo",
     "source": "fake-zuplo",
     "method": "http_streaming",
     "beta": true,
-    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/fake-zuplo",
+    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/sept13-fake-zuplo",
     "dashboard": {
       "path": "dashboards/current.json",
       "project_var": "__PROJECT_NAME__",
@@ -11,7 +11,7 @@
     },
     "tables": [
       {
-        "name": "fake-zuplo",
+        "name": "sept_13_fake_zuplo",
         "dashboard_var": "__TABLE_NAME__",
         "transforms": [
           {
@@ -29,7 +29,7 @@
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png" 
       },
       "source": {
-        "full_title": "FakeZuplo",
+        "full_title": "Sept13FakeZuplo",
         "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
       },
       "data_category": "security"
