@@ -105,6 +105,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
     let mut output: Output = Output::default();
 
+    match validate::valid_base_url::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Found invalid base url: error={e}")),
+    }
+
     match validate::no_duplicate_tokens::run(bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),

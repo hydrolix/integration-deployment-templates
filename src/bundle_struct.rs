@@ -278,14 +278,16 @@ where
     D: de::Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-    
-    if s.chars().any(|c| !c.is_alphanumeric() && c != '-' && c != '_') {
+
+    if s.chars()
+        .any(|c| !c.is_alphanumeric() && c != '-' && c != '_')
+    {
         return Err(de::Error::custom(format!(
             "{} contains invalid characters (only alphanumeric, dashes, and underscores allowed)",
             s
         )));
     }
-    
+
     Ok(s)
 }
 
