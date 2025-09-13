@@ -1,5 +1,5 @@
 {
-  "name": "firehose-waf-global",
+  "name": "fake-sept13-firehose-waf-global",
   "source": "waf",
   "method": "firehose",
   "beta": false,
