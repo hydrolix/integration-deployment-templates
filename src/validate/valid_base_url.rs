@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::bundle_struct::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
