@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use crate::bundle_struct::Bundle;
 
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
-    let mut tokens: HashSet<String> = HashSet::new();
+    let mut tables: HashSet<String> = HashSet::new();
 
     // Check every table name...
     for t in &bundle.tables {
@@ -27,7 +27,7 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
         ));
         }
 
-        if tokens.contains(&t.name) {
+        if tables.contains(&t.name) {
             return Err(format!(
                 "ERROR: {}.{} Duplicate table name {}",
                 file!(),
@@ -35,8 +35,9 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
                 t.name
             ));
         }
-        tokens.insert(t.name.to_string());
+        tables.insert(t.name.to_string());
     }
+    println!("tables={:?}", tables);
 
     // Check for duplicate database_var values
     let mut tokens: HashSet<String> = HashSet::new();
