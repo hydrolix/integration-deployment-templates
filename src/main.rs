@@ -62,6 +62,8 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 async fn main() {
     let bundle_list = find_bundle_files();
 
+    let mut final_bundle_list: Vec<Bundle> = vec![];
+
     for b in &bundle_list {
         let path = PathBuf::from(b);
         let file_path = path
@@ -92,7 +94,18 @@ async fn main() {
                 std::process::exit(1);
             }
         }
+
         println!("Bundle={:?}", bundle);
+        final_bundle_list.push(bundle.clone());
+    }
+
+    println!("Final check on all of the bundles...");
+    match validate::no_global_duplicates::run(&final_bundle_list) {
+        Ok(_) => (),
+        Err(e) => {
+            eprintln!("ERROR: Failed bundle validation: {e}");
+            std::process::exit(1);
+        }
     }
 
     println!("Success");
