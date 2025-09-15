@@ -1,115 +1,197 @@
-# Bundle Testing Checks
+# Test Coverage - Bundle Validation System
 
-This document describes all validation checks performed when running bundle tests locally (`cargo run -- --local`).
+This document outlines the comprehensive validation checks performed by the bundle validation system. The system ensures that integration deployment bundles meet all quality, consistency, and functional requirements before deployment.
 
-## Structural Validation (During JSON Parsing)
+## Overview
 
-These checks happen automatically when the `bundle.json` file is parsed:
+The bundle checker performs validation in two phases:
+1. **Individual Bundle Validation** - Each bundle is validated independently
+2. **Global Cross-Bundle Validation** - All bundles are validated together for conflicts
 
-### URL Format Validation
-- ✅ `base_url` must start with `https://` or `file://`
-- ✅ `ui.primary_url` must start with `https://` or `file://`
-- ✅ `ui.method.icon_url` must start with `https://` or `file://`
-- ✅ `ui.source.icon_url` must start with `https://` or `file://`
-- ✅ Dictionary source URLs must start with `https://` or `file://`
+## Individual Bundle Validation
 
-### Path Format Validation
-- ✅ Dashboard and transform paths cannot start with `/`
-- ✅ Paths cannot contain `..` (directory traversal protection)
-- ✅ Dashboard path must end with `.json` or `.tsv`
-- ✅ Transform paths must end with `.json` or `.tsv`
+### 1. Base URL Validation (`valid_base_url.rs`)
 
-### Macro Variable Format
-- ✅ `dashboard.project_var` must follow `__VARIABLE_NAME__` format
-- ✅ `tables[].dashboard_var` must follow `__VARIABLE_NAME__` format
-- ✅ Macro variables must be uppercase with proper underscore format
+**Purpose**: Ensures bundle references the correct GitHub repository location.
 
-### Enum Validation
-- ✅ `method` must be one of: `firehose`, `s3`, `kinesis`, `lambda`, `http_streaming`, `http`
-- ✅ `ui.data_category` must be one of: `video`, `cdn`, `security`
-- ✅ `metadata.channel_type` must be one of: `AWS`, `Azure`, `GCP`, `3rdParty`, `Internal`
-- ✅ `method_overrides.region` must be exactly `us-east-1` (if present)
+**Checks**:
+- Validates that `bundle.base_url` matches the expected GitHub URL format
+- Expected format: `https://github.com/hydrolix/integration-deployment-templates/blob/main/{base}`
+- Prevents bundles from referencing incorrect or malicious repositories
 
-### Format Validation
-- ✅ SHA256 values must be exactly 64 hexadecimal characters
-- ✅ Bundle name can only contain alphanumeric characters, underscores, and dashes
-- ✅ Source can contain any characters except whitespace and punctuation
+**Failure Conditions**:
+- Base URL doesn't match the expected GitHub repository pattern
 
-## Business Logic Validation
+### 2. Transform File Validation (`transforms_are_valid.rs`)
 
-### Duplicate Detection
-- ✅ **No duplicate table names** across all tables in the bundle
-- ✅ **No duplicate dashboard_var values** across all tables
+**Purpose**: Validates all transformation files referenced in the bundle.
 
-### Naming Consistency
-- ✅ **Method title consistency**: UI method title must match the method type
-  - `firehose` → must contain "Amazon Data Firehose", "AWS Firehose", or "Kinesis Data Firehose"
-  - `s3` → must contain "Amazon S3" or "AWS S3"  
-  - `kinesis` → must contain "Amazon Kinesis" or "AWS Kinesis"
-- ✅ **WAF source rule**: If source is "waf", the source title must contain "WAF"
-- ✅ **Name contains source and method**: Bundle name must include both source and method values
-- ✅ **Version format**: Must follow semantic versioning (e.g., "1.0.0")
-- ✅ **Email format**: Maintainer must be a valid email address
-- ✅ **Description**: Cannot be empty or whitespace only
+**Checks**:
+- **File Accessibility**: All transform files can be read from disk
+- **JSON Validity**: Transform files contain valid JSON syntax
+- **Required Fields**: 
+  - `name` field exists and is a non-empty string
+  - `subtype` field (if present) must equal "firehose"
+- **Data Integrity**: Transform file structure matches expected schema
 
-### File Integrity
-- ✅ **Checksum validation**: SHA256 checksums are verified for dashboard and transform files (if provided)
-- ✅ **File existence**: All referenced dashboard and transform files must exist
+**Failure Conditions**:
+- Transform file cannot be read
+- Invalid JSON syntax in transform file
+- Missing or empty `name` field
+- Invalid `subtype` value (must be "firehose" if present)
+- `name` field is not a string type
 
-### Dashboard Validation
-- ✅ **Valid JSON structure**: Dashboard file must be valid JSON
-- ✅ **Proper dashboard structure**: Must have top-level "dashboard" object
-- ✅ **No ID conflicts**: Dashboard cannot have "id" field pre-set
-- ✅ **Required variables**: Dashboard must contain:
-  - `__DASHBOARD_UUID__`
-  - `__DATASOURCE__`
-  - `__PROJECT_NAME__`
-  - All table `dashboard_var` values from the bundle
+### 3. Sample Data Validation (`sample_data_exists.rs`)
 
-### Transform Content Validation
-- ✅ **Valid JSON**: All transform files must be valid JSON
-- ✅ **Required name field**: Each transform must have a non-empty "name" field
-- ✅ **Subtype validation**: If "subtype" field exists, it must be "firehose"
+**Purpose**: Ensures all transforms include sample data for testing and validation.
 
-### Sample Data
-- ✅ **Sample data exists**: Required sample data files must be present
+**Checks**:
+- **Sample Data Presence**: Each transform contains `settings.sample_data`
+- **Data Format**: Sample data is either:
+  - A non-empty JSON object
+  - A non-empty string (after trimming whitespace)
+- **Content Validation**: Sample data contains meaningful test data
 
-## Local Integration Testing
+**Failure Conditions**:
+- Missing `sample_data` field in transform settings
+- Empty sample data object or string
+- Sample data field exists but contains only whitespace
 
-When running with `--local` flag, additional end-to-end testing is performed:
+### 4. Duplicate Token Validation (`no_duplicate_tokens.rs`)
 
-### Grafana Container Testing
-- ✅ **Container management**: Kills any existing Grafana container and starts fresh
-- ✅ **Deployment testing**: Deploys the bundle to local Grafana instance
-- ✅ **Startup validation**: Waits for Grafana to be ready (30-second startup delay)
+**Purpose**: Prevents naming conflicts within a single bundle.
 
-### Headless Browser Testing
-- ✅ **Dashboard rendering**: Uses headless Chrome to load the deployed dashboard
-- ✅ **Error detection**: Scans for:
-  - Datasource connection errors
-  - "No data" errors in panels
-- ✅ **Zero-error requirement**: Any dashboard errors cause the test to fail
+**Checks**:
+- **Table Name Validation**:
+  - No duplicate table names within the bundle
+  - Table names start with a letter (alphabetic character)
+  - Table names contain only alphanumeric characters and underscores
+- **Dashboard Variable Validation**:
+  - No duplicate `dashboard_var` values within the bundle
+  - Each table has a unique dashboard variable identifier
 
-### Container Cleanup
-- ✅ **Cleanup**: Stops and removes Grafana container after testing
+**Failure Conditions**:
+- Duplicate table names within the same bundle
+- Table name doesn't start with a letter
+- Table name contains invalid characters (not alphanumeric or underscore)
+- Duplicate dashboard variable values
 
-## Exit Conditions
+### 5. Checksum Validation (`no_bad_checksums.rs`)
 
-**Success**: Test passes only if ALL checks pass and dashboard renders without errors
+**Purpose**: Ensures file integrity through SHA256 checksum verification.
 
-**Failure**: Test fails immediately on:
-- Any structural validation error during JSON parsing
-- Any business logic validation failure  
-- File integrity issues (missing files, bad checksums)
-- Dashboard deployment failures
-- Any dashboard errors detected in browser testing
+**Checks**:
+- **Dashboard Files**: Validates SHA256 checksums for dashboard files
+- **Transform Files**: Validates SHA256 checksums for all transform files
+- **File Integrity**: Computed checksums match declared checksums
+- **File Accessibility**: All files can be read for checksum computation
 
-## Environment Requirements
+**Failure Conditions**:
+- File cannot be read for checksum calculation
+- Computed SHA256 doesn't match declared checksum
+- Missing checksum when expected
 
-For local testing you need:
-- Docker (for Grafana container)
-- Chrome/Chromium (for headless browser testing)
-- Required environment variables:
-  - `BUNDLE_TESTING_CLUSTER`
-  - `BUNDLE_TESTING_USERNAME` 
-  - `BUNDLE_TESTING_PASSWORD`
+### 6. Naming Convention Validation (`naming_is_valid.rs`)
+
+**Purpose**: Enforces consistent naming conventions across bundle components.
+
+**Checks**:
+- **Method-Title Consistency**:
+  - `firehose` method: UI title contains "Amazon Data Firehose", "AWS Firehose", or "Kinesis Data Firehose"
+  - `s3` method: UI title contains "Amazon S3" or "AWS S3"
+  - `kinesis` method: UI title contains "Amazon Kinesis" or "AWS Kinesis"
+- **Source-Title Consistency**:
+  - WAF source: UI title must contain "WAF" (case-insensitive)
+- **Bundle Name Requirements**:
+  - Bundle name includes both source and method (case-insensitive)
+- **Version Format**: Semantic versioning (X.Y.Z format)
+- **Maintainer Format**: Valid email address format
+- **Description**: Non-empty description field
+
+**Failure Conditions**:
+- Method and UI title mismatch
+- WAF source without "WAF" in title
+- Bundle name missing source or method
+- Invalid semantic version format
+- Invalid email format for maintainer
+- Empty description
+
+### 7. Dashboard Validation (`dashboard_is_valid.rs`)
+
+**Purpose**: Validates Grafana dashboard files and their template variables.
+
+**Checks**:
+- **File Accessibility**: Dashboard file can be read
+- **JSON Validity**: Dashboard contains valid JSON
+- **Required Placeholders**:
+  - `__DASHBOARD_UUID__` - Dashboard identifier placeholder
+  - `__DATASOURCE__` - Data source placeholder
+  - `__PROJECT_NAME__` - Project name placeholder
+  - All table dashboard variables from bundle configuration
+- **Dashboard Structure**: 
+  - Top-level `dashboard` object exists
+  - No hardcoded `id` field (must use placeholder)
+
+**Failure Conditions**:
+- Dashboard file cannot be read
+- Invalid JSON in dashboard file
+- Missing required placeholder variables
+- Dashboard lacks required structure
+- Hardcoded ID present instead of placeholder
+
+## Global Cross-Bundle Validation
+
+### 8. Global Duplicate Prevention (`no_global_duplicates.rs`)
+
+**Purpose**: Prevents conflicts across all bundles in the repository.
+
+**Checks**:
+- **Bundle Name Uniqueness**: No two bundles share the same name
+- **UI Source Title Uniqueness**: No duplicate source titles in UI configuration
+- **Table Name Uniqueness**: No table names are duplicated across all bundles
+
+**Failure Conditions**:
+- Multiple bundles with identical names
+- Multiple bundles with identical UI source titles
+- Multiple bundles declaring tables with identical names
+
+## Integration Testing (Local Mode)
+
+When run with `--local` flag, the system performs additional functional testing:
+
+### Dashboard Deployment Testing
+- Deploys dashboard to local Grafana instance
+- Validates dashboard renders without errors
+- Checks for missing datasource configurations
+
+### Headless Browser Testing (`headless_browser.rs`)
+- Automated Grafana dashboard testing using headless Chrome
+- **Error Detection**:
+  - Datasource errors (regex: `Datasource \w+ was not found`)
+  - No-data errors (regex: `api/ds/query\?ds_type=[^&]+-clickhouse-datasource`)
+- **Visual Validation**: 30-second load time to ensure all panels render
+- **Authentication**: Automatic Grafana session management
+
+### Data Integration Testing (`hdx.rs`)
+- Creates test tables in Hydrolix platform
+- Deploys transforms to test environment
+- Ingests sample data using configured transforms
+- Validates end-to-end data flow
+
+## Test Execution Flow
+
+1. **Discovery**: Finds all `bundle.json` files in repository
+2. **Individual Validation**: Each bundle undergoes all validation checks
+3. **Global Validation**: Cross-bundle conflict detection
+4. **Integration Testing** (if enabled): Functional testing with live systems
+5. **Reporting**: Detailed error reporting with file locations and line numbers
+
+## Error Handling
+
+All validation functions provide detailed error messages including:
+- Source file and line number for debugging
+- Specific failure reason
+- Relevant file paths and configuration values
+- Actionable guidance for resolution
+
+The system exits with non-zero status code on any validation failure, making it suitable for CI/CD pipeline integration.
