@@ -1,0 +1,678 @@
+{
+    "name": "logs",
+    "description": "",
+    "uuid": "5dc972ca-6761-4382-b11a-d04755dc52d1",
+    "created": "2025-08-05T14:00:40.787272Z",
+    "modified": "2025-08-05T14:00:40.787289Z",
+    "settings": {
+      "is_default": true,
+      "rate_limit": null,
+      "sql_transform": "SELECT *,\n  multiIf(\n    hashmap_message IS NULL, CAST(map(), 'Map(String, String)'),\n    hashmap_message = '', CAST(map(), 'Map(String, String)'),\n    length(arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2')))) = 0, CAST(map(), 'Map(String, String)'),\n    mapFromArrays(\n      arrayMap(x -> trim(splitByString('=', x)[1]), \n               arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2')))),\n      arrayMap(x -> trim(splitByString('=', x)[2]), \n               arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2'))))\n    )\n  ) AS auto_key_value_map,\n  toString(rand()) AS auto_random_string\nFROM {STREAM}",
+      "null_values": [
+        "-",
+        "null"
+      ],
+      "sample_data": {
+        "cacheAge": -1,
+        "clientIP": "24.106.191.34",
+        "serverIP": "109.61.91.198",
+        "tcpRTTus": 20487,
+        "clientASN": 11426,
+        "timestamp": "2025-07-29T14:09:41.172Z",
+        "clientPort": 49343,
+        "locationID": "ashburnUSVA",
+        "resourceID": 1874163231,
+        "serverPort": 443,
+        "cacheStatus": "MISS",
+        "startTimeMs": 1753798181172,
+        "clientCountry": "US",
+        "requestTimeMs": 243,
+        "responseBytes": 607,
+        "clientSSLFlags": 0,
+        "responseStatus": 200,
+        "clientSSLCipher": "TLS_AES_256_GCM_SHA384",
+        "hashmap_message": "User login successful request_id:12334 exec_time=24ms mem_used=78mb",
+        "clientRequestVia": "",
+        "clientRequestHost": "1874163231.rsc.cdn77.org",
+        "clientRequestPath": "/hello-world.html",
+        "clientSSLProtocol": "TLS13",
+        "timeToFirstByteMs": 243,
+        "clientRequestBytes": 326,
+        "clientRequestRange": "",
+        "clientRequestAccept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "clientRequestMethod": "GET",
+        "clientRequestScheme": "HTTPS",
+        "responseContentType": "text/html",
+        "clientRequestReferer": "",
+        "responseContentRange": "",
+        "clientRequestProtocol": "HTTP20",
+        "clientRequestCompleted": true,
+        "clientRequestUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15",
+        "clientRequestServerPush": false,
+        "responseContentEncoding": "GZIP",
+        "clientRequestConnTimeout": false,
+        "clientRequestContentType": "",
+        "clientRequestXForwardedFor": "24.106.191.0"
+      },
+      "shadow_table": null,
+      "output_columns": [
+        {
+          "name": "auto_random_string",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "auto_key_value_map",
+          "datatype": {
+            "type": "map",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "elements": [
+              {
+                "type": "string",
+                "index": true
+              },
+              {
+                "type": "string",
+                "index": true
+              }
+            ],
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "cacheAge",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "cacheStatus",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientASN",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientCountry",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientIP",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientPort",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestAccept",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestBytes",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestCompleted",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestConnTimeout",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestContentType",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestHost",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestMethod",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestPath",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestProtocol",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestRange",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestReferer",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestScheme",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestServerPush",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestUserAgent",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestVia",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientRequestXForwardedFor",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientSSLCipher",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientSSLFlags",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "clientSSLProtocol",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "hashmap_message",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "locationID",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "requestTimeMs",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "resourceID",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "responseBytes",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "responseContentEncoding",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "responseContentRange",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "responseContentType",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "responseStatus",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "serverIP",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "serverPort",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "startTimeMs",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "tcpRTTus",
+          "datatype": {
+            "type": "string",
+            "index": false,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "timeToFirstByteMs",
+          "datatype": {
+            "type": "string",
+            "index": true,
+            "primary": false,
+            "format": null,
+            "resolution": null,
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        },
+        {
+          "name": "timestamp",
+          "datatype": {
+            "type": "datetime",
+            "index": false,
+            "primary": true,
+            "format": "(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})T(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})\\.(?P<millisecond>[0-9]{3})Z",
+            "resolution": "ms",
+            "default": null,
+            "script": null,
+            "source": null,
+            "suppress": false
+          }
+        }
+      ],
+      "compression": "none",
+      "wurfl": null,
+      "format_details": {
+        "flattening": {
+          "active": true,
+          "map_flattening_strategy": {
+            "left": ".",
+            "right": ""
+          },
+          "slice_flattening_strategy": {
+            "left": "[",
+            "right": "]"
+          },
+          "depth": 10
+        }
+      }
+    },
+    "url": "https://partnersandbox.trafficpeak.live/config/v1/orgs/b646d78a-5fb2-4d5f-afef-b705bf185174/projects/36fd1b59-9988-402c-8351-6297c132bf55/tables/605165b6-245d-4615-9b5c-e950cd5e5082/transforms/5dc972ca-6761-4382-b11a-d04755dc52d1",
+    "type": "json",
+    "table": "605165b6-245d-4615-9b5c-e950cd5e5082"
+  }
