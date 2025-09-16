@@ -1,0 +1,2532 @@
+{
+    "dashboard": {
+        "annotations": {
+            "list": [
+                {
+                    "builtIn": 1,
+                    "datasource": "-- Grafana --",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                }
+            ]
+        },
+        "description": "A collection of Grafana panels for monitoring Fastly CDN logs",
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "id": 8,
+        "iteration": 1616612088905,
+        "links": [
+            {
+                "icon": "external link",
+                "tags": [],
+                "targetBlank": true,
+                "title": "Hydrolix Version Information",
+                "type": "link",
+                "url": "https://{hostname}.hydrolix.live/version"
+            }
+        ],
+        "panels": [
+            {
+                "collapsed": false,
+                "datasource": null,
+                "gridPos": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 0
+                },
+                "id": 56,
+                "panels": [],
+                "title": "Main",
+                "type": "row"
+            },
+            {
+                "datasource": null,
+                "description": "Success (1xx/2xx), Redirect(3xx), Error(4xx/5xx)",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-background",
+                            "filterable": false
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 3,
+                    "w": 24,
+                    "x": 0,
+                    "y": 1
+                },
+                "id": 45,
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\ntoStartOfMonth(day) AS month,\nsum(reqtotal) AS total_requests,\nsum(\"1XX/2XX\") AS success_total,\nround((success_total/total_requests)*100, 2) AS success_rate,\nsum(\"3XX\") AS redirect_total,\nround((redirect_total/total_requests)*100, 2) AS redirect_rate,\nsum(\"4XX/5XX\") AS error_total,\nround((error_total/total_requests)*100, 2) AS error_rate\nFROM (\n  SELECT\n  toDate($dateTimeCol) AS day,\n  count(request) AS reqtotal,\n\tcountIf(match(status, '^[12]\\d\\d')) AS \"1XX/2XX\",\n \tcountIf(match(status, '^3\\d\\d')) AS \"3XX\",\n \tcountIf(match(status, '^[45]\\d\\d')) AS \"4XX/5XX\" \n \tFROM $table\n \tWHERE $timeFilter AND host IN ($servers)\n \tGROUP BY day\n \tORDER BY day\n    )\nGROUP BY month\nORDER BY month",
+                        "rawQuery": "SELECT\ntoStartOfMonth(day) AS month,\nsum(reqtotal) AS total_requests,\nsum(\"1XX/2XX\") AS success_total,\nround((success_total/total_requests)*100, 2) AS success_rate,\nsum(\"3XX\") AS redirect_total,\nround((redirect_total/total_requests)*100, 2) AS redirect_rate,\nsum(\"4XX/5XX\") AS error_total,\nround((error_total/total_requests)*100, 2) AS error_rate\nFROM (\n  SELECT\n  toDate(time_start) AS day,\n  count(request) AS reqtotal,\n\tcountIf(match(status, '^[12]\\d\\d')) AS \"1XX/2XX\",\n \tcountIf(match(status, '^3\\d\\d')) AS \"3XX\",\n \tcountIf(match(status, '^[45]\\d\\d')) AS \"4XX/5XX\" \n \tFROM __PROJECT_NAME__.__TABLE_NAME__\n \tWHERE time_start \u003E= toDateTime(1616370691) AND host IN ('try.hydrolix.io','docs.hydrolix.io')\n \tGROUP BY day\n \tORDER BY day\n    )\nGROUP BY month\nORDER BY month",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "HTTP Response Code Metrics (Selected Server:  $servers)",
+                "type": "table"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": null,
+                "description": "Based on the Fastly cache_status field.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgba(41, 127, 227, 0.77)",
+                            "mode": "palette-classic"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 24,
+                    "x": 0,
+                    "y": 4
+                },
+                "id": 40,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "last"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "showThresholdLabels": false,
+                    "showThresholdMarkers": true,
+                    "text": {}
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n    toStartOfMonth(day) AS month,\n    sum(hits) AS hits,\n    sum(miss) AS miss,\n    sum(pass) AS pass,\n    sum(error) AS error,\n    sum(hit_synth) AS hit_synth,\n    sum(hit_stale) AS hit_stale,\n    sum(hitpass) AS hitpass,\n    sum(none) AS none\nFROM \n(\nSELECT\n        toDate($dateTimeCol) AS day,\n        countIf(cache_status = 'HIT') AS hits,\n        countIf(cache_status = 'MISS') AS miss,\n        countIf(cache_status = 'PASS') AS pass,\n        countIf(cache_status = 'ERROR') AS error,\n        countIf(cache_status = 'HIT-SYNTH') AS hit_synth,\n        countIf(cache_status = 'HIT-STALE') AS hit_stale,\n        countIf(cache_status = 'HITPASS') AS hitpass,\n        countIf(cache_status = 'NONE') AS none\n    FROM $table\n    WHERE $timeFilter AND host IN ($servers)\n    GROUP BY day\n    ORDER BY day\n    )\nGROUP BY month\nORDER BY month\n\n",
+                        "rawQuery": "SELECT\n    toStartOfMonth(day) AS month,\n    sum(hits) AS hits,\n    sum(miss) AS miss,\n    sum(pass) AS pass,\n    sum(error) AS error,\n    sum(hit_synth) AS hit_synth,\n    sum(hit_stale) AS hit_stale,\n    sum(hitpass) AS hitpass,\n    sum(none) AS none\nFROM \n(\nSELECT\n        toDate(time_start) AS day,\n        countIf(cache_status = 'HIT') AS hits,\n        countIf(cache_status = 'MISS') AS miss,\n        countIf(cache_status = 'PASS') AS pass,\n        countIf(cache_status = 'ERROR') AS error,\n        countIf(cache_status = 'HIT-SYNTH') AS hit_synth,\n        countIf(cache_status = 'HIT-STALE') AS hit_stale,\n        countIf(cache_status = 'HITPASS') AS hitpass,\n        countIf(cache_status = 'NONE') AS none\n    FROM __PROJECT_NAME__.__TABLE_NAME__\n    WHERE time_start \u003E= toDateTime(1608783295) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n    GROUP BY day\n    ORDER BY day\n    )\nGROUP BY month\nORDER BY month",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Cache Status Overview (Selected Server:  $servers)",
+                "type": "gauge"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": null,
+                "description": "Simple cache hit ratio calculation. Does not take into account edge and peer caches but can easily be modified:   https://www.fastly.com/blog/truth-about-cache-hit-ratios . Only counts HTTP GET requests.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8
+                },
+                "id": 32,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "center",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "",
+                        "values": true
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \n  sum(request = 'GET') AS total_get_requests,\n  sum(cache_status = 'HIT') AS cache_hits,\n  round(100*cache_hits/total_get_requests, 2) AS \"chr_%\"\n  FROM $table\n  WHERE $timeFilter AND host IN ($servers)\n  \n",
+                        "rawQuery": "SELECT \n  sum(request = 'GET') AS total_get_requests,\n  sum(cache_status = 'HIT') AS cache_hits,\n  round(100*cache_hits/total_get_requests, 2) AS \"chr_%\"\n  FROM __PROJECT_NAME__.__TABLE_NAME__\n  WHERE time_start \u003E= toDateTime(1616373473) AND host IN ('docs.hydrolix.io','try.hydrolix.io')",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Simple Cache Hit Rate (Selected Server:  $servers)",
+                "type": "stat"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": "__DATASOURCE__",
+                "description": "Simple cache error rate calculation based off of total requests (not limited to GETs but can easily be modified).",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgb(56, 113, 125)",
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8
+                },
+                "id": 41,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "last"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n    toStartOfMonth(day) AS month,\n    sum(error) AS error,\n    sum(total) AS sumtotal,\n    round((error/sumtotal)*100, 2) AS error_rate\nFROM (\n  SELECT\n        toDate($dateTimeCol) AS day,\n        count(request) AS total,\n        countIf(cache_status = 'ERROR') AS error\n        FROM $table\n        WHERE $timeFilter AND host IN ($servers)\n        GROUP BY day\n        ORDER BY day\n    )\nGROUP BY month\nORDER BY month\n\n",
+                        "rawQuery": "SELECT\n    toStartOfMonth(day) AS month,\n    sum(error) AS error,\n    sum(total) AS sumtotal,\n    round((error/sumtotal)*100, 2) AS error_rate\nFROM (\n  SELECT\n        toDate(time_start) AS day,\n        count(request) AS total,\n        countIf(cache_status = 'ERROR') AS error\n        FROM __PROJECT_NAME__.__TABLE_NAME__\n        WHERE time_start \u003E= toDateTime(1616373454) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n        GROUP BY day\n        ORDER BY day\n    )\nGROUP BY month\nORDER BY month",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Cache Error Rate (Selected Server:  $servers)",
+                "type": "stat"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": "Hydrolix",
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-text",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        },
+                        "unit": "short"
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "day"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 90
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "cache_status"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 120
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "75%-tile (ms)"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 290
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 12
+                },
+                "id": 8,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "repeat": null,
+                "repeatDirection": "v",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \n  toDate($dateTimeCol) AS day, host, cache_status, \n  (quantileExact(0.50)(time_elapsed)/1000) AS \"50%-tile (ms)\",\n  (quantileExact(0.75)(time_elapsed)/1000) AS \"75%-tile (ms)\",\n  (quantileExact(0.99)(time_elapsed)/1000) AS \"99%-tile (ms)\"\n  FROM $table\n  WHERE $timeFilter AND host IN ($servers)\n  GROUP BY day, host, cache_status \n  ORDER BY day, cache_status\n",
+                        "rawQuery": "SELECT \n  toDate(time_start) AS day, host, cache_status, \n  (quantileExact(0.50)(time_elapsed)/1000) AS \"50%-tile (ms)\",\n  (quantileExact(0.75)(time_elapsed)/1000) AS \"75%-tile (ms)\",\n  (quantileExact(0.99)(time_elapsed)/1000) AS \"99%-tile (ms)\"\n  FROM __PROJECT_NAME__.__TABLE_NAME__\n  WHERE time_start \u003E= toDateTime(1616373487) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n  GROUP BY day, host, cache_status \n  ORDER BY day, cache_status",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Origin Server Response Time Distribution by Cache Verdict",
+                "type": "table"
+            },
+            {
+                "datasource": "Hydrolix",
+                "description": "Useful for detecting anomalies and total request time deviations.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "axisLabel": "Time (ms)",
+                            "axisPlacement": "auto",
+                            "barAlignment": 0,
+                            "drawStyle": "line",
+                            "fillOpacity": 100,
+                            "gradientMode": "none",
+                            "hideFrom": {
+                                "graph": false,
+                                "legend": false,
+                                "tooltip": false
+                            },
+                            "lineInterpolation": "linear",
+                            "lineWidth": 1,
+                            "pointSize": 5,
+                            "scaleDistribution": {
+                                "type": "linear"
+                            },
+                            "showPoints": "never",
+                            "spanNulls": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        },
+                        "unit": "short"
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 18
+                },
+                "id": 28,
+                "options": {
+                    "graph": {},
+                    "legend": {
+                        "calcs": [
+                            "last",
+                            "min",
+                            "max",
+                            "mean"
+                        ],
+                        "displayMode": "table",
+                        "placement": "right"
+                    },
+                    "tooltipOptions": {
+                        "mode": "single"
+                    }
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT $timeSeries AS t, \n(quantile(0.90)(time_elapsed)/1000) AS latency, \ncache_status\nFROM $table\nWHERE $timeFilter AND host IN ($servers)\nGROUP BY t, cache_status\nORDER BY t\n\n",
+                        "rawQuery": "SELECT (intDiv(toUInt32(time_start), 120) * 120) * 1000 AS t, \n(quantile(0.90)(time_elapsed)/1000) AS latency, \ncache_status\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616370669) AND host IN ('try.hydrolix.io','docs.hydrolix.io')\nGROUP BY t, cache_status\nORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "90%-tile Response Times by Origin Server and Cache Status (Selected Server:  $servers)",
+                "type": "timeseries"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": null,
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "lcd-gauge",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "#EAB839",
+                                    "value": 150
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 300
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 12,
+                    "w": 24,
+                    "x": 0,
+                    "y": 24
+                },
+                "id": 30,
+                "links": [],
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT geo_datacenter AS dc, avg(time_elapsed)/1000 AS avg_request_time_ms, sum(request= 'GET') AS total_requests\nFROM $table\nWHERE $timeFilter\nGROUP BY dc\nORDER BY avg_request_time_ms DESC, total_requests\n",
+                        "rawQuery": "SELECT geo_datacenter AS dc, avg(time_elapsed)/1000 AS avg_request_time_ms, sum(request= 'GET') AS total_requests\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616373304)\nGROUP BY dc\nORDER BY avg_request_time_ms DESC, total_requests",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Fastly Data Center Performance - Average Request Time",
+                "type": "table"
+            },
+            {
+                "aliasColors": {},
+                "bars": false,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": null,
+                "decimals": 0,
+                "description": "Panel minimal interval set to 5 mins. Adjust as required.",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {}
+                    },
+                    "overrides": []
+                },
+                "fill": 1,
+                "fillGradient": 0,
+                "gridPos": {
+                    "h": 7,
+                    "w": 24,
+                    "x": 0,
+                    "y": 36
+                },
+                "hiddenSeries": false,
+                "id": 34,
+                "interval": "5m",
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                },
+                "lines": true,
+                "linewidth": 1,
+                "nullPointMode": "null",
+                "options": {
+                    "alertThreshold": true
+                },
+                "percentage": false,
+                "pluginVersion": "7.4.3",
+                "pointradius": 2,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT t, CHR\nFROM\n(\n  SELECT\n    $timeSeries AS t,\n    sum(request = 'GET') AS requests, sum(cache_status = 'HIT') AS hits,\n    round(hits*100/requests, 1) AS CHR\n    FROM $table\n    WHERE $timeFilter AND host IN ($servers)\n    GROUP BY t\n    ORDER BY t\n)\n",
+                        "rawQuery": "SELECT t, CHR\nFROM\n(\n  SELECT\n    (intDiv(toUInt32(time_start), 300) * 300) * 1000 AS t,\n    sum(request = 'GET') AS requests, sum(cache_status = 'HIT') AS hits,\n    round(hits*100/requests, 1) AS CHR\n    FROM __PROJECT_NAME__.__TABLE_NAME__\n    WHERE time_start \u003E= toDateTime(1616373532) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n    GROUP BY t\n    ORDER BY t\n)",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "thresholds": [],
+                "timeFrom": null,
+                "timeRegions": [],
+                "timeShift": null,
+                "title": "Cache Hit Rate (CHR) Over Time (Selected Server:  $servers)",
+                "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                },
+                "yaxes": [
+                    {
+                        "$$hashKey": "object:881",
+                        "format": "percent",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": "-5",
+                        "show": true
+                    },
+                    {
+                        "$$hashKey": "object:882",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": false
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": 1
+                }
+            },
+            {
+                "aliasColors": {},
+                "bars": true,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": "Hydrolix",
+                "description": "Average time it took all requests to be completed per unit of time per server. Select desired origin server at top left of dashboard or build into query.",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fill": 3,
+                "fillGradient": 10,
+                "gridPos": {
+                    "h": 10,
+                    "w": 24,
+                    "x": 0,
+                    "y": 43
+                },
+                "hiddenSeries": false,
+                "id": 14,
+                "legend": {
+                    "alignAsTable": false,
+                    "avg": true,
+                    "current": true,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                },
+                "lines": false,
+                "linewidth": 1,
+                "nullPointMode": "null",
+                "options": {
+                    "alertThreshold": true
+                },
+                "percentage": false,
+                "pluginVersion": "7.4.3",
+                "pointradius": 2,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n$timeSeries AS t,\navg(time_elapsed)/1000 AS AvgRT /*average time it took all requests to be completed per unit of time unit per server */\nFROM $table\nWHERE $timeFilter AND host IN ($servers)\nGROUP BY t\nORDER BY t\n",
+                        "rawQuery": "SELECT\n(intDiv(toUInt32(time_start), 120) * 120) * 1000 AS t,\navg(time_elapsed)/1000 AS AvgRT \nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616373544) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY t\nORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "thresholds": [
+                    {
+                        "$$hashKey": "object:1936",
+                        "colorMode": "critical",
+                        "fill": false,
+                        "line": true,
+                        "op": "gt",
+                        "value": 500,
+                        "yaxis": "left"
+                    },
+                    {
+                        "$$hashKey": "object:1942",
+                        "colorMode": "warning",
+                        "fill": false,
+                        "line": true,
+                        "op": "gt",
+                        "value": 150,
+                        "yaxis": "left"
+                    }
+                ],
+                "timeFrom": null,
+                "timeRegions": [],
+                "timeShift": null,
+                "title": "Overall Average Request Time (Selected Server:  $servers)",
+                "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                },
+                "yaxes": [
+                    {
+                        "$$hashKey": "object:700",
+                        "format": "short",
+                        "label": "Time (ms)",
+                        "logBase": 2,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    },
+                    {
+                        "$$hashKey": "object:701",
+                        "decimals": null,
+                        "format": "short",
+                        "label": "",
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": false
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "datasource": null,
+                "description": "Time-bucketed $dateTimeCol to toStartOfWeek. Adjust LIMIT n BY as required.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgb(150, 127, 199)",
+                            "mode": "fixed"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-text",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        },
+                        "unit": "short"
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "full_url"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 1250
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "time_elapsed_ms"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 145
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "week"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 84
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 53
+                },
+                "id": 43,
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT week, (time_elapsed/1000) AS time_elapsed_ms, concat(host, url) AS full_url\nFROM  (\n   SELECT toStartOfWeek($dateTimeCol) AS week, host, url, time_elapsed \n   FROM $table \n   WHERE $timeFilter AND host IN ($servers)\n   GROUP BY week, host, url, time_elapsed \n   LIMIT 3 BY host\n      ) \nGROUP BY week, full_url, time_elapsed_ms \nORDER BY week, time_elapsed_ms DESC\n\n\n",
+                        "rawQuery": "SELECT week, (time_elapsed/1000) AS time_elapsed_ms, concat(host, url) AS full_url\nFROM  (\n   SELECT toStartOfWeek(time_start) AS week, host, url, time_elapsed \n   FROM __PROJECT_NAME__.__TABLE_NAME__ \n   WHERE time_start \u003E= toDateTime(1616380283) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n   GROUP BY week, host, url, time_elapsed \n   LIMIT 3 BY host\n      ) \nGROUP BY week, full_url, time_elapsed_ms \nORDER BY week, time_elapsed_ms DESC",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Weekly Top 3 Slowest URLs (Selected Server:  $servers)",
+                "type": "table"
+            },
+            {
+                "datasource": null,
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-text",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "path"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 385
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "status"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 77
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "url"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 933
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "day"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 145
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "cache_status"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 115
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "host"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 127
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "week"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 96
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "count()"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 80
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "req_count"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 99
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 12,
+                    "w": 24,
+                    "x": 0,
+                    "y": 61
+                },
+                "id": 36,
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT toStartOfWeek($dateTimeCol) AS week, status, cache_status, host, url, count() AS req_count\nfrom $table\nWHERE $timeFilter AND match(status, '^[45]\\d\\d') AND  host IN ($servers)\nGROUP BY week, host, url, status, cache_status\nORDER by req_count DESC\nLIMIT 10\n\n\n\n",
+                        "rawQuery": "SELECT toStartOfWeek(time_start) AS week, status, cache_status, host, url, count() AS req_count\nfrom __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616380334) AND match(status, '^[45]\\d\\d') AND  host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY week, host, url, status, cache_status\nORDER by req_count DESC\nLIMIT 10",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Weekly Top Error Causing URLs by 4XX/5XX HTTP Response Codes",
+                "type": "table"
+            },
+            {
+                "datasource": null,
+                "description": "Grouped monthly but topK(N)(column) assessment controlled by timeFilter.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "semi-dark-red",
+                            "mode": "palette-classic"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 24,
+                    "x": 0,
+                    "y": 73
+                },
+                "id": 51,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "fields": "/^ct$/",
+                        "values": true
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\ntoStartOfMonth($dateTimeCol) AS month,\ntopK(3)(content_type) AS ct\nFROM $table \nWHERE $timeFilter AND host IN ($servers)\nGROUP BY month\nORDER BY month\nLIMIT 12\n",
+                        "rawQuery": "SELECT\ntoStartOfMonth(time_start) AS month,\ntopK(3)(content_type) AS ct\nFROM __PROJECT_NAME__.__TABLE_NAME__ \nWHERE time_start \u003E= toDateTime(1616380367) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY month\nORDER BY month\nLIMIT 12",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Monthly Top 3 Content Types",
+                "type": "stat"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": "Hydrolix",
+                "description": "Increase LIMIT n BY if more days and hosts are desired.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "continuous-BlPu"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-background",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "day"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 93
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "host"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 127
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "requests"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 95
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 77
+                },
+                "id": 16,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\nformatDateTime(toDate($dateTimeCol), '%F') AS day,\nhost, cutQueryString(url) AS urlpath, count() AS requests\nFROM $table\nWHERE $timeFilter\nAND  match(url,'^.*\\.(css$|js$|json$|jpg$|js$|png$|svg$|xml$)') != 1 AND host IN ($servers)\nGROUP BY day, host, urlpath\nORDER BY day, host, requests DESC\nLIMIT 3 BY day, host\nLIMIT 6\n",
+                        "rawQuery": "SELECT\nformatDateTime(toDate(time_start), '%F') AS day,\nhost, cutQueryString(url) AS urlpath, count() AS requests\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1615948936)\nAND  match(url,'^.*\\.(css$|js$|json$|jpg$|js$|png$|svg$|xml$)') != 1 AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY day, host, urlpath\nORDER BY day, host, requests DESC\nLIMIT 3 BY day, host\nLIMIT 6",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Daily Top 3 Requested URL Paths Per Host",
+                "type": "table"
+            },
+            {
+                "datasource": null,
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgb(48, 28, 171)",
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 5,
+                    "w": 5,
+                    "x": 0,
+                    "y": 85
+                },
+                "id": 49,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "last"
+                        ],
+                        "fields": "/^%tls$/",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \nsum(is_tls = '1') AS tls,\nsum(is_tls = '0') AS not_tls,\nround(tls/(tls + not_tls)*100, 2) AS \"%tls\"\nFROM $table\nWHERE $timeFilter and host IN ($servers)\n",
+                        "rawQuery": "SELECT \nsum(is_tls = '1') AS tls,\nsum(is_tls = '0') AS not_tls,\nround(tls/(tls + not_tls)*100, 2) AS \"%tls\"\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616373940) and host IN ('docs.hydrolix.io','try.hydrolix.io')",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Percent TLS Usage",
+                "type": "stat"
+            },
+            {
+                "datasource": null,
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgb(82, 182, 204)",
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 5,
+                    "w": 5,
+                    "x": 5,
+                    "y": 85
+                },
+                "id": 53,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "last"
+                        ],
+                        "fields": "/^%h2$/",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \nsum(is_h2 = '1') AS h2,\nsum(is_h2 = '0') AS not_h2,\nround(h2/(h2 + not_h2)*100, 2) AS \"%h2\"\nFROM $table\nWHERE $timeFilter and host IN ($servers)\n",
+                        "rawQuery": "SELECT \nsum(is_h2 = '1') AS h2,\nsum(is_h2 = '0') AS not_h2,\nround(h2/(h2 + not_h2)*100, 2) AS \"%h2\"\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616373973) and host IN ('docs.hydrolix.io','try.hydrolix.io')",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Percent HTTP/2 Usage",
+                "type": "stat"
+            },
+            {
+                "datasource": null,
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgb(108, 133, 168)",
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 5,
+                    "w": 4,
+                    "x": 10,
+                    "y": 85
+                },
+                "id": 54,
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "last"
+                        ],
+                        "fields": "/^%ipv6$/",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \nsum(is_ipv6 = '1') AS ipv6,\nsum(is_ipv6 = '0') AS not_ipv6,\nround(ipv6/(ipv6 + not_ipv6)*100, 2) AS \"%ipv6\"\nFROM $table\nWHERE $timeFilter and host IN ($servers)\n",
+                        "rawQuery": "SELECT \nsum(is_ipv6 = '1') AS ipv6,\nsum(is_ipv6 = '0') AS not_ipv6,\nround(ipv6/(ipv6 + not_ipv6)*100, 2) AS \"%ipv6\"\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616373981) and host IN ('docs.hydrolix.io','try.hydrolix.io')",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "title": "Percent IPv6 Usage",
+                "type": "stat"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": null,
+                "description": "All request types. Total includes headers and body.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 5,
+                    "w": 5,
+                    "x": 14,
+                    "y": 85
+                },
+                "id": 38,
+                "interval": "1s",
+                "links": [],
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "mean"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT t, avg(total)\nFROM\n(\n  SELECT \n  $dateTimeCol AS t,\n  sum(req_header_size) AS rs,\n  sum(req_body_size) AS rb,\n  (rs+rb) AS total\n  FROM $table \n  WHERE $timeFilter AND host IN ($servers)\n  GROUP BY t\n  ORDER by t\n)\nGROUP BY t\nORDER BY t",
+                        "rawQuery": "SELECT t, avg(total)\nFROM\n(\n  SELECT \n  time_start AS t,\n  sum(req_header_size) AS rs,\n  sum(req_body_size) AS rb,\n  (rs+rb) AS total\n  FROM __PROJECT_NAME__.__TABLE_NAME__ \n  WHERE time_start \u003E= toDateTime(1616374054) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n  GROUP BY t\n  ORDER by t\n)\nGROUP BY t\nORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Average Request Size (Bytes)",
+                "type": "stat"
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": null,
+                "description": "All request types. Total includes headers and body.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "rgba(128, 128, 128, 0.47)",
+                            "mode": "fixed"
+                        },
+                        "custom": {},
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 5,
+                    "w": 5,
+                    "x": 19,
+                    "y": 85
+                },
+                "id": 39,
+                "interval": "1s",
+                "links": [],
+                "options": {
+                    "colorMode": "background",
+                    "graphMode": "none",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "reduceOptions": {
+                        "calcs": [
+                            "mean"
+                        ],
+                        "fields": "",
+                        "values": false
+                    },
+                    "text": {},
+                    "textMode": "auto"
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT t, avg(total)\nFROM\n(\n  SELECT \n  $dateTimeCol as t,\n  (sum(resp_header_size)/1000) AS rs,\n  (sum(resp_body_size)/1000) AS rb,\n  (rs+rb) AS total\n  FROM $table \n  WHERE $timeFilter AND host IN ($servers)\n  GROUP BY t\n  ORDER by t\n)\nGROUP BY t\nORDER BY t",
+                        "rawQuery": "SELECT t, avg(total)\nFROM\n(\n  SELECT \n  time_start as t,\n  (sum(resp_header_size)/1000) AS rs,\n  (sum(resp_body_size)/1000) AS rb,\n  (rs+rb) AS total\n  FROM __PROJECT_NAME__.__TABLE_NAME__ \n  WHERE time_start \u003E= toDateTime(1616374090) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\n  GROUP BY t\n  ORDER by t\n)\nGROUP BY t\nORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Average Response Size (KB)",
+                "type": "stat"
+            },
+            {
+                "aliasColors": {},
+                "breakPoint": "50%",
+                "cacheTimeout": null,
+                "combine": {
+                    "label": "Others",
+                    "threshold": "0.01"
+                },
+                "datasource": null,
+                "description": " 1 AS t, /* fake timestamp value */ for proper bucketing. Reference https://grafana.com/grafana/plugins/vertamedia-clickhouse-datasource/ for more information.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {},
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fontSize": "80%",
+                "format": "short",
+                "gridPos": {
+                    "h": 8,
+                    "w": 7,
+                    "x": 0,
+                    "y": 90
+                },
+                "id": 47,
+                "interval": null,
+                "legend": {
+                    "percentage": true,
+                    "show": true,
+                    "values": true
+                },
+                "legendType": "Right side",
+                "links": [],
+                "nullPointMode": "connected",
+                "pieType": "pie",
+                "pluginVersion": "7.4.3",
+                "strokeWidth": 1,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n1 AS t, \ngeo_datacenter AS dc, \ncount() AS cnt \nFROM $table\nWHERE $timeFilter AND host IN ($servers)\nGROUP BY t, dc\nORDER BY cnt DESC\nLIMIT 10\n",
+                        "rawQuery": "SELECT\n1 AS t, \ngeo_datacenter AS dc, \ncount() AS cnt \nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616529594) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY t, dc\nORDER BY cnt DESC\nLIMIT 10",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Requests by Fastly Data Center (Selected Server: $servers)",
+                "type": "grafana-piechart-panel",
+                "valueName": "total"
+            },
+            {
+                "aliasColors": {},
+                "breakPoint": "50%",
+                "cacheTimeout": null,
+                "combine": {
+                    "label": "Others",
+                    "threshold": "0.01"
+                },
+                "datasource": "Hydrolix",
+                "description": "Substitute Hydrolix hosts. Alternatively, the query could be changed to do a simple count() against all hosts and the origin host filter($servers) variable applied as an example.",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fontSize": "100%",
+                "format": "short",
+                "gridPos": {
+                    "h": 8,
+                    "w": 7,
+                    "x": 7,
+                    "y": 90
+                },
+                "id": 26,
+                "interval": null,
+                "legend": {
+                    "percentage": true,
+                    "show": true,
+                    "values": false
+                },
+                "legendType": "Under graph",
+                "links": [],
+                "nullPointMode": "connected",
+                "pieType": "donut",
+                "pluginVersion": "7.3.6",
+                "strokeWidth": 1,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \n  $dateTimeCol as t,     \n  countIf(startsWith(host,'docs')) / count() * 100 as \"docs.hydrolix.io\",\n  countIf(startsWith(host,'try')) / count() * 100 as \"try.hydrolix.io\"\n  FROM $table  \n  WHERE $timeFilter\n  GROUP BY t\n  ORDER BY t ",
+                        "rawQuery": "SELECT \n  time_start as t,     \n  countIf(startsWith(host,'docs')) / count() * 100 as \"docs.hydrolix.io\",\n  countIf(startsWith(host,'try')) / count() * 100 as \"try.hydrolix.io\"\n  FROM __PROJECT_NAME__.__TABLE_NAME__  \n  WHERE time_start \u003E= toDateTime(1616503826)\n  GROUP BY t\n  ORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Request Distribution by Origin Host",
+                "type": "grafana-piechart-panel",
+                "valueName": "total"
+            },
+            {
+                "aliasColors": {},
+                "breakPoint": "75%",
+                "cacheTimeout": null,
+                "combine": {
+                    "label": "Others",
+                    "threshold": ".01"
+                },
+                "datasource": "Hydrolix",
+                "description": "1 AS t, /* fake timestamp value */ for proper bucketing. Reference https://grafana.com/grafana/plugins/vertamedia-clickhouse-datasource/ for more information.",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fontSize": "100%",
+                "format": "short",
+                "gridPos": {
+                    "h": 8,
+                    "w": 10,
+                    "x": 14,
+                    "y": 90
+                },
+                "id": 18,
+                "interval": null,
+                "legend": {
+                    "percentage": true,
+                    "percentageDecimals": 0,
+                    "show": true,
+                    "values": true
+                },
+                "legendType": "Right side",
+                "links": [],
+                "maxDataPoints": null,
+                "nullPointMode": "connected",
+                "pieType": "pie",
+                "pluginVersion": "7.3.6",
+                "strokeWidth": 1,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT 1 AS t, \nrequest_referer AS rf, \ncount() AS reqs\nFROM $table \nWHERE $timeFilter AND host IN ($servers)\nGROUP BY t, rf\nORDER BY reqs DESC\nLIMIT 10",
+                        "rawQuery": "SELECT 1 AS t, \nrequest_referer AS rf, \ncount() AS reqs\nFROM __PROJECT_NAME__.__TABLE_NAME__ \nWHERE time_start \u003E= toDateTime(1616529551) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY t, rf\nORDER BY reqs DESC\nLIMIT 10",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Top Request Referrers (Selected Server: $servers)",
+                "transformations": [],
+                "type": "grafana-piechart-panel",
+                "valueName": "total"
+            },
+            {
+                "aliasColors": {},
+                "bars": true,
+                "cacheTimeout": null,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": "Hydrolix",
+                "description": "Bucketed by day. Limited to Top 10. Time window pinned at 24 hours with 1 mins scrap time.",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {},
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fill": 1,
+                "fillGradient": 0,
+                "gridPos": {
+                    "h": 7,
+                    "w": 24,
+                    "x": 0,
+                    "y": 98
+                },
+                "hiddenSeries": false,
+                "id": 20,
+                "interval": "1m",
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": false,
+                    "current": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": true,
+                    "show": true,
+                    "total": true,
+                    "values": true
+                },
+                "lines": false,
+                "linewidth": 1,
+                "links": [],
+                "maxDataPoints": null,
+                "nullPointMode": "null",
+                "options": {
+                    "alertThreshold": true
+                },
+                "percentage": false,
+                "pluginVersion": "7.4.3",
+                "pointradius": 2,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT \ntoDate($dateTimeCol) AS day, \ngeo_country_code AS country, \nsum(request= 'GET') AS requests\nFROM $table\nWHERE $timeFilter AND host IN ($servers)\nGROUP BY day, country\nORDER BY requests DESC\nLIMIT 10\n\n",
+                        "rawQuery": "SELECT \ntoDate(time_start) AS day, \ngeo_country_code AS country, \nsum(request= 'GET') AS requests\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616466408) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY day, country\nORDER BY requests DESC\nLIMIT 10",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "thresholds": [],
+                "timeFrom": "24h",
+                "timeRegions": [],
+                "timeShift": null,
+                "title": "Daily Top 10 - Requests by Country (Selected Server: $servers)",
+                "tooltip": {
+                    "shared": false,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "series",
+                    "name": null,
+                    "show": true,
+                    "values": [
+                        "total"
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "$$hashKey": "object:943",
+                        "format": "short",
+                        "label": "# of Requests",
+                        "logBase": 2,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    },
+                    {
+                        "$$hashKey": "object:944",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "cacheTimeout": null,
+                "datasource": "Hydrolix",
+                "description": "",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-text",
+                            "filterable": true
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "gridPos": {
+                    "h": 12,
+                    "w": 24,
+                    "x": 0,
+                    "y": 105
+                },
+                "id": 52,
+                "interval": null,
+                "links": [],
+                "options": {
+                    "showHeader": true
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT toDate($dateTimeCol) as day, \ngeo_city AS city, \ngeo_country_code AS country, \ncount() as count\nFROM $table\nWHERE $timeFilter AND city != '(null)' AND host IN ($servers)\nGROUP BY day, city, country\nORDER BY count DESC\nLIMIT 10\n\n",
+                        "rawQuery": "SELECT toDate(time_start) as day, \ngeo_city AS city, \ngeo_country_code AS country, \ncount() as count\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1615948872) AND city != '(null)' AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY day, city, country\nORDER BY count DESC\nLIMIT 10",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Daily Top 10 - Requests by Geolocation (Selected Server: $servers)",
+                "type": "table"
+            },
+            {
+                "aliasColors": {},
+                "bars": true,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": null,
+                "description": "Leverages $columns macro. Based on uniq(client_ip).",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {}
+                    },
+                    "overrides": []
+                },
+                "fill": 1,
+                "fillGradient": 0,
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 117
+                },
+                "hiddenSeries": false,
+                "id": 60,
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": false,
+                    "current": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": true,
+                    "show": true,
+                    "total": true,
+                    "values": true
+                },
+                "lines": false,
+                "linewidth": 1,
+                "nullPointMode": "null",
+                "options": {
+                    "alertThreshold": true
+                },
+                "percentage": false,
+                "pluginVersion": "7.4.3",
+                "pointradius": 2,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "$columns(\n    host,\n    uniq(client_ip) unique_clients)\nFROM $table\n",
+                        "rawQuery": "SELECT t, groupArray((host, unique_clients)) AS groupArr FROM ( SELECT (intDiv(toUInt32(time_start), 20) * 20) * 1000 AS t, host, uniq(client_ip) unique_clients FROM __PROJECT_NAME__.__TABLE_NAME__ WHERE time_start \u003E= toDateTime(1616579484) GROUP BY t, host ORDER BY t, host) GROUP BY t ORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "thresholds": [],
+                "timeFrom": null,
+                "timeRegions": [],
+                "timeShift": null,
+                "title": "Unique Visitors by Origin Host",
+                "tooltip": {
+                    "shared": false,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "series",
+                    "name": null,
+                    "show": true,
+                    "values": [
+                        "total"
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "$$hashKey": "object:129",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    },
+                    {
+                        "$$hashKey": "object:130",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "aliasColors": {},
+                "bars": true,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": null,
+                "description": "Alternative panel for displaying total GET requests by country. Leverages $column macro.",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {}
+                    },
+                    "overrides": []
+                },
+                "fill": 1,
+                "fillGradient": 0,
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 117
+                },
+                "hiddenSeries": false,
+                "id": 58,
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": false,
+                    "current": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": true,
+                    "show": true,
+                    "total": true,
+                    "values": true
+                },
+                "lines": false,
+                "linewidth": 1,
+                "nullPointMode": "null",
+                "options": {
+                    "alertThreshold": true
+                },
+                "percentage": false,
+                "pluginVersion": "7.4.3",
+                "pointradius": 2,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "$columns(\n    geo_country_code,\n    sum(request = 'GET') total_req)\nFROM $table\nWHERE host IN ($servers)\n",
+                        "rawQuery": "SELECT t, groupArray((geo_country_code, total_req)) AS groupArr FROM ( SELECT (intDiv(toUInt32(time_start), 30) * 30) * 1000 AS t, geo_country_code, sum(request = 'GET') total_req FROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616558324) AND host IN ('docs.hydrolix.io','try.hydrolix.io') GROUP BY t, geo_country_code ORDER BY t, geo_country_code) GROUP BY t ORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "thresholds": [],
+                "timeFrom": null,
+                "timeRegions": [],
+                "timeShift": null,
+                "title": "Requests by Country (Selected Server: $servers)",
+                "tooltip": {
+                    "shared": false,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "series",
+                    "name": null,
+                    "show": true,
+                    "values": [
+                        "total"
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "$$hashKey": "object:129",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 2,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    },
+                    {
+                        "$$hashKey": "object:130",
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "aliasColors": {},
+                "breakPoint": "50%",
+                "cacheTimeout": null,
+                "combine": {
+                    "label": "Others",
+                    "threshold": ".01"
+                },
+                "datasource": "Hydrolix",
+                "fieldConfig": {
+                    "defaults": {
+                        "custom": {},
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": []
+                        }
+                    },
+                    "overrides": []
+                },
+                "fontSize": "80%",
+                "format": "short",
+                "gridPos": {
+                    "h": 9,
+                    "w": 24,
+                    "x": 0,
+                    "y": 125
+                },
+                "id": 10,
+                "interval": null,
+                "legend": {
+                    "percentage": true,
+                    "show": true,
+                    "sort": "total",
+                    "sortDesc": true,
+                    "values": true
+                },
+                "legendType": "Right side",
+                "links": [],
+                "nullPointMode": "connected",
+                "pieType": "pie",
+                "pluginVersion": "7.3.6",
+                "strokeWidth": 1,
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "time_series",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n$dateTimeCol AS t, \nrequest_user_agent AS ua, \ncount() \nFROM $table\nWHERE $timeFilter AND host IN ($servers)\nGROUP BY t, ua\nORDER BY t\n\n",
+                        "rawQuery": "SELECT\ntime_start AS t, \nrequest_user_agent AS ua, \ncount() \nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1616375827) AND host IN ('docs.hydrolix.io','try.hydrolix.io')\nGROUP BY t, ua\nORDER BY t",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Top User Agents",
+                "transformations": [],
+                "type": "grafana-piechart-panel",
+                "valueName": "total"
+            },
+            {
+                "datasource": "Hydrolix",
+                "description": "Excludes HTTP GET and POST requests",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "align": null,
+                            "displayMode": "color-text",
+                            "filterable": true,
+                            "width": 0
+                        },
+                        "mappings": [],
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "request_user_agent"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 508
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "request"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 84
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "url"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 271
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "t"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 157
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "client_ip"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 101
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "host"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 130
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "request_referer"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.width",
+                                    "value": 194
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "t"
+                            },
+                            "properties": [
+                                {
+                                    "id": "displayName",
+                                    "value": "time"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 134
+                },
+                "id": 12,
+                "options": {
+                    "showHeader": true,
+                    "sortBy": []
+                },
+                "pluginVersion": "7.4.3",
+                "targets": [
+                    {
+                        "database": "__PROJECT_NAME__",
+                        "dateColDataType": "",
+                        "dateLoading": false,
+                        "dateTimeColDataType": "time_start",
+                        "dateTimeType": "DATETIME",
+                        "datetimeLoading": false,
+                        "extrapolate": true,
+                        "format": "table",
+                        "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+                        "intervalFactor": 1,
+                        "query": "SELECT\n$dateTimeCol AS t, request, host, url, client_ip, request_user_agent, request_referer\nFROM $table\nWHERE $timeFilter AND (request != 'GET' AND request != 'POST') \nGROUP BY t, request, host, url, client_ip, request_user_agent, request_referer\nORDER BY t\nLIMIT 25\n",
+                        "rawQuery": "SELECT\ntime_start AS t, request, host, url, client_ip, request_user_agent, request_referer\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE time_start \u003E= toDateTime(1608783187) AND (request != 'GET' AND request != 'POST') \nGROUP BY t, request, host, url, client_ip, request_user_agent, request_referer\nORDER BY t\nLIMIT 25",
+                        "refId": "A",
+                        "round": "0s",
+                        "skip_comments": true,
+                        "table": "__TABLE_NAME__",
+                        "tableLoading": false
+                    }
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Unusual Request Activity",
+                "type": "table"
+            }
+        ],
+        "refresh": false,
+        "schemaVersion": 27,
+        "style": "dark",
+        "tags": [],
+        "templating": {
+            "list": [
+                {
+                    "allValue": null,
+                    "current": {
+                        "selected": false,
+                        "text": "All",
+                        "value": "$__all"
+                    },
+                    "datasource": "Hydrolix",
+                    "definition": "SELECT host FROM __PROJECT_NAME__.__TABLE_NAME__",
+                    "description": "Origin host list to be used in filtering various panels",
+                    "error": null,
+                    "hide": 0,
+                    "includeAll": true,
+                    "label": "Origin Host",
+                    "multi": false,
+                    "name": "servers",
+                    "options": [],
+                    "query": "SELECT host FROM __PROJECT_NAME__.__TABLE_NAME__",
+                    "refresh": 2,
+                    "regex": "",
+                    "skipUrlSync": false,
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                }
+            ]
+        },
+        "time": {
+            "from": "now-9d",
+            "to": "now"
+        },
+        "timepicker": {},
+        "timezone": "",
+        "title": "Fastly Composite Dashboard for Hydrolix",
+        "uid": "__DASHBOARD_UUID__",
+        "version": 7
+    }
+}
