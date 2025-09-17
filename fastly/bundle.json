@@ -21,14 +21,14 @@
       }
     ],
     "ui": {
-      "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
+      "primary_url": "https://docs.hydrolix.io/docs/fastly",
       "method": {
         "full_title": "Http-Streaming",
-        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png" 
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png" 
       },
       "source": {
         "full_title": "Fastly",
-        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/fastly.png"
       },
       "data_category": "cdn"
     },
