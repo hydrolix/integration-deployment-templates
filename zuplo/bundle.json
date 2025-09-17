@@ -26,11 +26,11 @@
       "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
       "method": {
         "full_title": "Http-Streaming",
-        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/http.png" 
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png" 
       },
       "source": {
         "full_title": "Zuplo",
-        "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/zuplo.png"
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
       },
       "data_category": "security"
     },
