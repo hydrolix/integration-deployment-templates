@@ -16,6 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Docker inside container
+        run: |
+          apt-get update
+          apt-get install -y docker.io docker-compose-plugin
+
+      - name: Verify Docker works
+        run: |
+          docker --version
+          docker compose version
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
