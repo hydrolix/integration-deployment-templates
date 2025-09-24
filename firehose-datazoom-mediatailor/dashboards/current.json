@@ -437,7 +437,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  (CAST(SUM(assumeNotNull(event.type) = 'playback_complete') AS DOUBLE) / CAST(SUM(assumeNotNull(event.type) = 'playback_start') AS DOUBLE)) * 100 AS Ad_Completion_Rate\nFROM\n __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n\t\t\t\tAND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\tAND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\n  AND video.media_type = 'ad'\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Completion Rate; du=${__user.login}'",
+			"rawSql": "SELECT (CAST(SUM(assumeNotNull(mt_log_event_type) = 'FILLED_AVAIL') AS DOUBLE) / CAST(SUM(assumeNotNull(mt_log_event_type) = 'MAKING_ADS_REQUEST') AS DOUBLE)) * 100 AS Ad_Completion_Rate FROM  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name) AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city) AND (mt_log_avail_num_ads > 0 OR length(mt_log_avail_creative_ads) > 2)",
                         "refId": "A"
                     }
                 ],
@@ -774,7 +774,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT \nCOUNT(CASE WHEN ((event.type) LIKE 'ad_impression') THEN 1 ELSE NULL END) AS \"DZ Ad Impressions\"\n\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\n\nWHERE $__timeFilter(event.timestamp)\n\t\t\t\tAND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name)\n\t\t\t\tAND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Ad Impressions; du=${__user.login}'",
+			"rawSql":"SELECT (CAST(SUM(assumeNotNull(mt_log_event_type) = 'FILLED_AVAIL') AS DOUBLE) / CAST(SUM(assumeNotNull(mt_log_event_type) = 'MAKING_ADS_REQUEST') AS DOUBLE)) * 100 AS Ad_Completion_Rate FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND $__conditionalAll(device.os_name IN (${os_name:sqlstring}), $os_name) AND $__conditionalAll(geo_location.city IN (${city:sqlstring}), $city) AND (mt_log_avail_num_ads > 0 OR length(mt_log_avail_creative_ads) > 2) SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Completion Rate; du=${__user.login}'",
                         "refId": "A"
                     },
                     {
@@ -1181,8 +1181,8 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  source_sessionId AS \"Session ID\",\n  count() AS \"Event Count\"\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n    $__timeFilter(${timestamp})\n    AND source_sessionId IS NOT NULL\nGROUP BY\n  source_sessionId\nORDER BY \"Event Count\" DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Count of Session IDs; du=${__user.login}'",
-                        "refId": "A"
+			"rawSql": "SELECT mt_log_session_id AS `Session ID`, count() AS `Event Count` FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND mt_log_session_id IS NOT NULL GROUP BY mt_log_session_id ORDER BY `Event Count` DESC SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Count of Session IDs; du=${__user.login}'",
+		         "refId": "A"
                     }
                 ],
                 "title": "Count of Events per Session ID",
@@ -1288,7 +1288,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  geo_location.city AS City\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY City\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by City; du=${__user.login}'",
+			"rawSql": "SELECT count(DISTINCT mt_log_session_id) AS Viewers, 'Unknown' AS City FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND (mt_log_session_id = ${session_id:sqlstring} OR ${session_id:sqlstring} = '') AND mt_log_session_id IS NOT NULL GROUP BY City ORDER BY Viewers DESC SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by City; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
@@ -1395,7 +1395,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  page.site_domain AS Domain\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY Domain\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Domain; du=${__user.login}'",
+			"rawSql": "SELECT count(DISTINCT mt_log_session_id) AS Viewers, 'Unknown' AS Domain FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND (mt_log_session_id = ${session_id:sqlstring} OR ${session_id:sqlstring} = '') AND mt_log_session_id IS NOT NULL GROUP BY Domain ORDER BY Viewers DESC SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Domain; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
@@ -1502,7 +1502,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  device.os_name AS \"Device OS\"\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY \"Device OS\"\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Device OS; du=${__user.login}'",
+			"rawSql": "SELECT count(DISTINCT mt_log_session_id) AS Viewers FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND (mt_log_session_id = ${session_id:sqlstring} OR ${session_id:sqlstring} = '') AND mt_log_session_id IS NOT NULL SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Device OS; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
@@ -1609,7 +1609,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\r\n  count(DISTINCT source_sessionId) AS Viewers,\r\n  player.player_name AS \"Player Name\"\r\nFROM\r\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\r\nWHERE\r\n  $__timeFilter(event.timestamp)\r\n  AND (source_sessionId = ${session_id:sqlstring} OR ${session_id:sqlstring} = '')\r\nGROUP BY \"Player Name\"\r\nORDER BY Viewers DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Player Name; du=${__user.login}'",
+			"rawSql": "SELECT count(DISTINCT mt_log_session_id) AS Viewers FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND (mt_log_session_id = ${session_id:sqlstring} OR ${session_id:sqlstring} = '') AND mt_log_session_id IS NOT NULL SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Distinct Sessions by Player Name; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
@@ -1701,7 +1701,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  geo_location.country AS Country,\n  geo_location.city AS City,\n  device.device_type AS \"Device Type\",\n  device.os_name AS OS\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND source_sessionId = '${session_id}'\nGROUP BY \n  source_sessionId,\n  device.device_type,\n  device.os_name,\n  geo_location.country,\n  geo_location.city",
+			"rawSql": "SELECT 'Unknown' AS Country, 'Unknown' AS City, 'Unknown' AS `Device Type`, 'Unknown' AS OS FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE $__timeFilter(event.timestamp) AND mt_log_session_id = '${session_id}' AND mt_log_session_id IS NOT NULL GROUP BY mt_log_session_id, Country, City, `Device Type`, OS",
                         "refId": "A"
                     }
                 ],
@@ -1851,7 +1851,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  event.timestamp AS record_timestamp,\n  \"video.media_type\",\n  event.type,\n  NULL AS mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${session_id:sqlstring} != ''\n  AND source_sessionId = ${session_id:sqlstring}\n  AND $__timeFilter(${timestamp})\n\nUNION ALL\n\nSELECT\n  ${timestamp} AS record_timestamp,\n  NULL AS \"video.media_type\",\n  NULL AS event_type,\n  mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${session_id:sqlstring} != ''\n  AND mt_log_session_id = ${session_id:sqlstring}\n  AND $__timeFilter(${timestamp})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Session; du=${__user.login}'",
+			"rawSql": "SELECT event.timestamp AS record_timestamp, NULL AS `video.media_type`, NULL AS `event.type`, mt_log_event_type FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE ${session_id:sqlstring} != '' AND mt_log_session_id = ${session_id:sqlstring} AND $__timeFilter(event.timestamp) SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Session; du=${__user.login}'",
                         "refId": "B"
                     }
                 ],
@@ -2106,7 +2106,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  ${timestamp} AS event.timestamp,\n  mt_log_event_type\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  ${request_id:sqlstring} != ''\n  AND mt_log_session_id = ${session_id:sqlstring}\n  AND (mt_log_request_id = ${request_id:sqlstring} OR ${request_id:sqlstring} = '')\n  AND $__timeFilter(${timestamp})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Request; du=${__user.login}'",
+			"rawSql": "SELECT event.timestamp AS `event.timestamp`, mt_log_event_type FROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__ WHERE ${request_id:sqlstring} != '' AND mt_log_session_id = ${session_id:sqlstring} AND (mt_log_request_id = ${request_id:sqlstring} OR ${request_id:sqlstring} = '') AND $__timeFilter(event.timestamp) SETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Events in Request; du=${__user.login}'",
                         "refId": "B"
                     }
                 ],
@@ -2284,13 +2284,13 @@
                         "text": "All",
                         "value": "$__all"
                     },
-                    "definition": "SELECT DISTINCT device.os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "definition": "SELECT DISTINCT 'Unknown' as device_os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
                     "hide": 2,
                     "includeAll": true,
                     "multi": true,
                     "name": "os_name",
                     "options": [],
-                    "query": "SELECT DISTINCT device.os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "query": "SELECT DISTINCT  'Unknown' as device_os_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
                     "refresh": 2,
                     "regex": "",
                     "type": "query"
@@ -2300,13 +2300,13 @@
                         "text": "All",
                         "value": "$__all"
                     },
-                    "definition": "SELECT DISTINCT geo_location.city\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "definition": "SELECT DISTINCT 'Unknown' AS city_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
                     "hide": 2,
                     "includeAll": true,
                     "multi": true,
                     "name": "city",
                     "options": [],
-                    "query": "SELECT DISTINCT geo_location.city\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
+                    "query": "SELECT DISTINCT 'Unknown' AS city_name\nFROM __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE $__timeFilter(event.timestamp)",
                     "refresh": 2,
                     "regex": "",
                     "type": "query"
