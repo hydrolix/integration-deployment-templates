@@ -8,7 +8,7 @@ on:
 
 jobs:
   bundle-validator:
-    runs-on: lke
+    runs-on: ubuntu-latest
     container:
       image: rust:latest
     environment: bundle-validator-env
@@ -48,7 +48,7 @@ jobs:
   regression-tests:
     needs: bundle-validator
     if: needs.bundle-validator.outputs.validation-passed == 'true'
-    runs-on: lke
+    runs-on: ubuntu-latest
     container:
       image: rust:latest
     environment: regression-tests-env
