@@ -45,28 +45,6 @@ jobs:
           BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
           BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
 
-  regression-tests:
-    needs: bundle-validator
-    if: needs.bundle-validator.outputs.validation-passed == 'true'
-    runs-on: ubuntu-latest
-    container:
-      image: rust:latest
-    environment: regression-tests-env
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache Cargo dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Run regression tests
         run: cargo run -- --local
         
