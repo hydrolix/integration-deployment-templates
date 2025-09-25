@@ -7,7 +7,7 @@
     "dashboard": {
       "path": "dashboards/current.json",
       "project_var": "__PROJECT_NAME__",
-      "sha256": "637e789333d792ebb09ee84d228dc94681abda2cb029f016d7dbaa5fb3479f25"
+      "sha256": "70087efc3e8dcc78d7cae0e618a95ddcb5854df0e1738d98ee43c44ba1cd9f11"
     },
     "tables": [
       {

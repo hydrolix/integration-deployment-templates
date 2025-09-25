@@ -66,10 +66,14 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         e => {
             let raw_event = format!("{:?}", e.clone());
             if bad_datasource_regex.is_match(&raw_event) {
-                *datasource_error_count_clone.lock().unwrap() += 1;
+                if let Ok(mut count) = datasource_error_count_clone.lock() {
+                    *count += 1;
+                }
             }
             if nodata_regex.is_match(&raw_event) {
-                *nodata_error_count_clone.lock().unwrap() += 1;
+                if let Ok(mut count) = nodata_error_count_clone.lock() {
+                    *count += 1;
+                }
             }
         }
     }))
@@ -99,8 +103,9 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
-    // Navigate to the domain first
-    let url = format!("http://{GRAFANA_LOCATION}/d/{grafana_dashboard_id}");
+    // Navigate to the domain first going back two weeks to test the time-range collar
+    let url = format!("http://{GRAFANA_LOCATION}/d/{grafana_dashboard_id}?from=now-14d&to=now");
+
     let _x = match tab.navigate_to(&url) {
         Ok(v) => v,
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
@@ -111,22 +116,35 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     }
 
-    // Wait for page to load completely (Grafana needs to pull the data)
-    sleep(Duration::from_secs(30)).await;
+    // Wait much longer for all panels to load and make their queries
+    println!("Waiting 120 seconds for all panels to load and query data...");
+    sleep(Duration::from_secs(120)).await;
 
-    let datasource_error_count = *datasource_error_count.lock().unwrap();
-    let nodata_error_count = *nodata_error_count.lock().unwrap();
+    // Reset counters at the start of each iteration
+    if let Ok(mut count) = datasource_error_count.lock() {
+        *count = 0;
+    }
+    if let Ok(mut count) = nodata_error_count.lock() {
+        *count = 0;
+    }
 
-    Ok((datasource_error_count, nodata_error_count))
+    // Read the counts safely
+    let datasource_count = datasource_error_count
+        .lock()
+        .map(|count| *count)
+        .unwrap_or(0);
+    let nodata_count = nodata_error_count.lock().map(|count| *count).unwrap_or(0);
 
-    /*
-    let png_data = tab
-        .capture_screenshot(Page::CaptureScreenshotFormatOption::Png, None, None, true)
-        .unwrap();
+    println!(
+        "Datasource errors: {}, NoData errors: {}",
+        datasource_count, nodata_count
+    );
 
-    // Save to file
-    fs::write("screenshot.png", png_data).unwrap();
-    */
+    if datasource_count == 0 && nodata_count == 0 {
+        println!("Success! No errors detected.");
+    }
+
+    return Ok((datasource_count, nodata_count));
 }
 
 async fn get_grafana_session_cookie() -> Result<(String, String), String> {

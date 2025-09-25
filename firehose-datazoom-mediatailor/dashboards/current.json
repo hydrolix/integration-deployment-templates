@@ -195,7 +195,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  sum(length(JSONExtractArrayRaw(coalesce(mt_log_vast_response_errors, ''))))\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND mt_log_vast_response_errors IS NOT NULL\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ADS Vast Response Errors; du=${__user.login}'",
+                        "rawSql": "SELECT\n  sum(length(JSONExtractArrayRaw(coalesce(mt_log_vast_response_errors, ''))))\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n AND mt_log_vast_response_errors IS NOT NULL\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ADS Vast Response Errors; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
@@ -353,7 +353,7 @@
                         },
                         "pluginVersion": "4.0.6",
                         "queryType": "table",
-                        "rawSql": "SELECT\n  count(mt_log_error_message) AS error_count\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp)\n  AND transform_name = 'transcode_logs'\n  AND mt_log_error_message != ''\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Transcode Errors; du=${__user.login}'",
+                        "rawSql": "SELECT\n  count(mt_log_error_message) AS error_count\nFROM\n  __PROJECT_NAME__.__MEDIATAILOR_COMBINED_TABLE__\nWHERE\n  $__timeFilter(event.timestamp) \n  AND transform_name = 'transcode_logs'\n  AND mt_log_error_message != ''\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Transcode Errors; du=${__user.login}'",
                         "refId": "A"
                     }
                 ],
