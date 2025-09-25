@@ -86,9 +86,9 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
                         "enabled": false
                     },
                     "default_query_options": {
-                        "hdx_query_max_timerange_sec": 129600,
-                        "hdx_query_max_result_rows": 1000000,
-                        "hdx_query_max_execution_time": 120
+                        "hdx_query_max_timerange_sec": 2592000,
+                        "hdx_query_max_result_rows": 5000000,
+                        "hdx_query_max_execution_time": 180
                     },
                 }
         })

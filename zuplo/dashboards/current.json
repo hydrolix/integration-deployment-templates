@@ -278,11 +278,11 @@
                 "editorType": "sql",
                 "format": 1,
                 "queryType": "table",
-                "rawSql": "SELECT toDate(timestamp) AS date, count(*) AS daily_requests FROM ${table} WHERE timestamp >= toDateTime(now() - INTERVAL 14 DAY) AND timestamp <= toDateTime(now()) GROUP BY date ORDER BY date ASC",
+                "rawSql": "SELECT toDate(timestamp) AS date, count(*) AS daily_requests FROM ${table} WHERE timestamp >= toDateTime(now() - INTERVAL 1 DAY) AND timestamp <= toDateTime(now()) GROUP BY date ORDER BY date ASC",
                 "refId": "A"
               }
             ],
-            "title": "Requests Per Day (Fixed 14 Days)",
+            "title": "Requests Per Day (Fixed 1 Day)",
             "transparent": true,
             "type": "barchart"
           }
