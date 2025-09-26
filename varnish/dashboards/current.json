@@ -1,15 +1,5 @@
 {
   "dashboard": {
-    "__inputs": [
-      {
-        "name": "DS_HYDROLIX_CLUSTER",
-        "label": "Hydrolix Cluster",
-        "description": "",
-        "type": "datasource",
-        "pluginId": "hydrolix-hydrolix-datasource",
-        "pluginName": "Hydrolix"
-      }
-    ],
     "__elements": {
       "model": {
         "datasource": {
@@ -69,7 +59,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX_CLUSTER}"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -123,11 +113,11 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n  user_agent as \"User Agent\",\n  COUNT(*) as \"Requests\",\n  AVG(response_time) as \"Avg Response Time (ms)\",\n  MAX(timestamp) as \"Last Seen\"\nFROM varnish_test.varnish_logs\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY user_agent\nORDER BY \"Requests\" DESC\nLIMIT 50",
+            "rawSql": "SELECT \n  user_agent as \"User Agent\",\n  COUNT(*) as \"Requests\",\n  AVG(response_time) as \"Avg Response Time (ms)\",\n  MAX(timestamp) as \"Last Seen\"\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY user_agent\nORDER BY \"Requests\" DESC\nLIMIT 50",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX_CLUSTER}"
+              "uid": "__DATASOURCE__"
             }
           }
         ],
@@ -137,7 +127,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX_CLUSTER}"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -192,11 +182,11 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n  client_ip as \"Client IP\",\n  COUNT(*) as \"Requests\",\n  AVG(response_time) as \"Avg Response Time\",\n  MAX(timestamp) as \"Last Seen\"\nFROM varnish_test.varnish_logs\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY client_ip\nORDER BY \"Requests\" DESC\nLIMIT 50",
+            "rawSql": "SELECT \n  client_ip as \"Client IP\",\n  COUNT(*) as \"Requests\",\n  AVG(response_time) as \"Avg Response Time\",\n  MAX(timestamp) as \"Last Seen\"\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY client_ip\nORDER BY \"Requests\" DESC\nLIMIT 50",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX_CLUSTER}"
+              "uid": "__DATASOURCE__"
             }
           }
         ],
@@ -206,7 +196,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX_CLUSTER}"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -287,11 +277,11 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  AVG(response_time) as avg_response_time_ms\nFROM varnish_test.varnish_logs\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY time\nORDER BY time",
+            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  AVG(response_time) as avg_response_time_ms\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY time\nORDER BY time",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX_CLUSTER}"
+              "uid": "__DATASOURCE__"
             }
           }
         ],
@@ -301,7 +291,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX_CLUSTER}"
+          "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
           "defaults": {
@@ -383,10 +373,10 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX_CLUSTER}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  COUNT(*) as requests\nFROM varnish_test.varnish_logs\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY time\nORDER BY time",
+            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  COUNT(*) as requests\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE timestamp >= toDateTime($__from / 1000) \n  AND timestamp <= toDateTime($__to / 1000)\nGROUP BY time\nORDER BY time",
             "refId": "A"
           }
         ],
