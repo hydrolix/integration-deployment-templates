@@ -1,7 +1,7 @@
 {
   "name": "firehose-medialive",
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-medialive",
-  "beta": true,
+  "beta": false,
   "method": "firehose",
   "source": "medialive",
   "dashboard": {
