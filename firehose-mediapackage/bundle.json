@@ -2,7 +2,7 @@
   "name": "firehose-mediapackage",
   "method": "firehose",
   "source": "mediapackage",
-  "beta": true,
+  "beta": false,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-mediapackage",
   "dashboard": {
     "path": "dashboards/current.json",
