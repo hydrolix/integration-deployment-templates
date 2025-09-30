@@ -14,6 +14,7 @@ This document describes all valid fields and their validation rules.
 | `beta` | `boolean` | ✅ | Whether this is a beta release |
 | `base_url` | `string` | ✅ | HTTPS URL to the repository base path |
 | `dashboard` | `Dashboard` | ✅ | Dashboard configuration |
+| `other_dashboards` | `Dashboard[]` | ❌ | Optional array of dashboard configurations |
 | `tables` | `Table[]` | ✅ | Array of table definitions |
 | `ui` | `Ui` | ✅ | User interface configuration |
 | `metadata` | `Metadata` | ✅ | Bundle metadata |
