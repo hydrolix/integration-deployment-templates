@@ -7,6 +7,7 @@ pub struct Bundle {
     #[serde(deserialize_with = "deserialize_https_url")]
     pub base_url: String,
     pub dashboard: Dashboard,
+    pub other_dashboards: Option<Vec<Dashboard>>,
     #[serde(deserialize_with = "deserialize_valid_method")]
     pub method: String,
     pub method_overrides: Option<MethodOverrides>,
