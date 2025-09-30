@@ -1,0 +1,50 @@
+{
+  "name": "2_dash_http_streaming-zuplo",
+  "source": "zuplo",
+  "method": "http_streaming",
+  "beta": true,
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/2-dashboards-zuplo",
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "70087efc3e8dcc78d7cae0e618a95ddcb5854df0e1738d98ee43c44ba1cd9f11"
+  },
+  "other_dashboards": [
+    {
+      "path": "dashboards/current.json",
+      "project_var": "__PROJECT_NAME__",
+      "sha256": "70087efc3e8dcc78d7cae0e618a95ddcb5854df0e1738d98ee43c44ba1cd9f11"
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "zuplo2dash",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "method": {
+      "full_title": "Http-Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "source": {
+      "full_title": "2DashZuplo",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
+    },
+    "data_category": "security"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "jgoodson@hydrolix.io",
+    "description": "Zuplo",
+    "channel_type": "AWS"
+  }
+}
