@@ -1,0 +1,282 @@
+{
+  "name": "stripe_transform",
+  "description": "",
+  "created": "2025-09-29T21:36:33.796148Z",
+  "modified": "2025-09-30T15:08:35.844160Z",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT\n* \nFROM {STREAM}",
+    "null_values": [],
+    "sample_data":
+    {
+      "data": "{\"object\":{\"id\":\"ch_3SD4cXRcW6E2jWmk0KgeO479\",\"amount\":2000,\"currency\":\"usd\",\"status\":\"succeeded\"}}",
+      "amount": 2000,
+      "status": "succeeded",
+      "currency": "usd",
+      "customer": null,
+      "event_id": "evt_1Q2R3S4T5U6V7W8X9Y0Z",
+      "livemode": false,
+      "object_id": "ch_3SD4cXRcW6E2jWmk0KgeO479",
+      "timestamp": "2025-09-30T14:32:15+0000",
+      "event_type": "charge.succeeded",
+      "object_type": "charge",
+      "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xU0NpU2tSY1c2RTJqV21r",
+      "payment_method": "pm_1SD4cXRcW6E2jWmk5WU6TuLC"
+    },
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05-0700",
+          "resolution": "s",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "event_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "event_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "object_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "livemode",
+        "datatype": {
+          "type": "bool",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "object_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "amount",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "currency",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "customer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "payment_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "receipt_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "data",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}

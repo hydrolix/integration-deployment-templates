@@ -1,0 +1,40 @@
+{
+    "name": "http_streaming-stripe",
+    "source": "stripe",
+    "method": "http_streaming",
+    "beta": true,
+    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/stripe",
+    "dashboard": {
+      "path": "dashboards/current.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    "tables": [
+      {
+        "dashboard_var": "__TABLE_NAME__",
+        "name": "stripe",
+        "transforms": [
+          {
+            "path": "transformations/current.json"
+          }
+        ]
+      }
+    ],
+    "ui": {
+      "primary_url": "https://docs.hydrolix.io/docs/stripe-integration",
+      "method": {
+        "full_title": "Http-Streaming",
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png" 
+      },
+      "source": {
+        "full_title": "Stripe",
+        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
+      },
+      "data_category": "security"
+    },
+    "metadata": {
+      "version": "1.0.0",
+      "maintainer": "kevin.borkman@hydrolix.io",
+      "description": "Stripe",
+      "channel_type": "AWS"
+    }
+  }

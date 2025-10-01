@@ -1,0 +1,459 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.1.1"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 5,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.1.1",
+        "targets": [
+          {
+            "format": 1,
+            "rawSql": "SELECT \n  payment_method,\n  count() as count\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE $__timeFilter(timestamp)\n  AND payment_method IS NOT NULL\nGROUP BY payment_method\nORDER BY count DESC\nLIMIT 10",
+            "refId": "A"
+          }
+        ],
+        "title": "Payment Methods Distribution",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.1.1",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  count() as events\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time",
+            "refId": "A"
+          }
+        ],
+        "title": "Event Volume Over Time",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.1.1",
+        "targets": [
+          {
+            "format": 1,
+            "rawSql": "SELECT \n  toStartOfMinute(timestamp) as time,\n  event_type,\n  count() as count\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE $__timeFilter(timestamp)\nGROUP BY time, event_type\nORDER BY time",
+            "refId": "A"
+          }
+        ],
+        "title": "Event Types Breakdown",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 3,
+        "options": {
+          "displayLabels": [],
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.1.1",
+        "targets": [
+          {
+            "format": 1,
+            "rawSql": "SELECT \n  event_type as name,\n  count() as value\nFROM __PROJECT_NAME__.__TABLE_NAME__  \nGROUP BY event_type",
+            "refId": "A"
+          }
+        ],
+        "title": "Success vs Failure",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "includeByName": {},
+              "indexByName": {},
+              "orderByMode": "manual",
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.1.1",
+        "targets": [
+          {
+            "format": 1,
+            "rawSql": "SELECT \n  sum(amount) / 100 as total_revenue_usd\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE $__timeFilter(timestamp)\n  AND status = 'succeeded'\n  AND amount IS NOT NULL",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Revenue",
+        "type": "stat"
+      }
+    ],
+    "preload": false,
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-12h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Stripe",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 12
+  }
+}

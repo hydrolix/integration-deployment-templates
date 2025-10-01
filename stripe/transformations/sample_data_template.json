@@ -1,0 +1,15 @@
+{
+        "data": "{\"object\":{\"id\":\"ch_3SD4cXRcW6E2jWmk0KgeO479\",\"amount\":2000,\"currency\":\"usd\",\"status\":\"succeeded\"}}",
+        "amount": 2000,
+        "status": "succeeded",
+        "currency": "usd",
+        "customer": null,
+        "event_id": "evt_1Q2R3S4T5U6V7W8X9Y0Z",
+        "livemode": false,
+        "object_id": "ch_3SD4cXRcW6E2jWmk0KgeO479",
+        "timestamp": "2025-09-30T14:32:15+0000",
+        "event_type": "charge.succeeded",
+        "object_type": "charge",
+        "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xU0NpU2tSY1c2RTJqV21r",
+        "payment_method": "pm_1SD4cXRcW6E2jWmk5WU6TuLC"
+      }
