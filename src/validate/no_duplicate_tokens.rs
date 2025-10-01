@@ -2,13 +2,15 @@ use std::collections::HashSet;
 
 use crate::bundle_struct::Bundle;
 
+const MIN_TABLE_NAME: usize = 3;
+
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
     let mut tables: HashSet<String> = HashSet::new();
 
     // Check every table name...
     for t in &bundle.tables {
         // Validate table name starts with a letter
-        if t.name.is_empty() || t.name.len() > 3 {
+        if t.name.is_empty() || t.name.len() < MIN_TABLE_NAME {
             return Err(format!(
                 "ERROR: {}.{} Missing or truncated table name '{:?}'",
                 file!(),
