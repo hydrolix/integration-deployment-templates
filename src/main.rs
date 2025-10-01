@@ -18,12 +18,12 @@ use crate::bundle_struct::Bundle;
 use crate::output_struct::Output;
 
 lazy_static! {
-    static ref BUNDLE_TESTING_CLUSTER: String = std::env::var("BUNDLE_TESTING_CLUSTER")
-        .expect("BUNDLE_TESTING_CLUSTER environment variable must be set");
-    static ref BUNDLE_TESTING_USERNAME: String = std::env::var("BUNDLE_TESTING_USERNAME")
-        .expect("BUNDLE_TESTING_USERNAME environment variable must be set");
-    static ref BUNDLE_TESTING_PASSWORD: String = std::env::var("BUNDLE_TESTING_PASSWORD")
-        .expect("BUNDLE_TESTING_PASSWORD environment variable must be set");
+    static ref BUNDLE_TESTING_CLUSTER: String =
+        std::env::var("BUNDLE_TESTING_CLUSTER").unwrap_or_else(|_| "".to_string());
+    static ref BUNDLE_TESTING_USERNAME: String =
+        std::env::var("BUNDLE_TESTING_USERNAME").unwrap_or_else(|_| "".to_string());
+    static ref BUNDLE_TESTING_PASSWORD: String =
+        std::env::var("BUNDLE_TESTING_PASSWORD").unwrap_or_else(|_| "".to_string());
     static ref IS_LOCAL: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--local".to_string())

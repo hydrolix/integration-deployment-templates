@@ -210,11 +210,12 @@ fn get_transformation_type(transform_json: &Value) -> String {
 
 fn get_sample_data_as_json(transform_json: &Value) -> Value {
     let sample_data = &transform_json["settings"]["sample_data"];
-    if sample_data.is_object() && !sample_data.as_object().unwrap().is_empty() {
-        sample_data.clone()
-    } else {
-        Value::Null
+    if let Some(obj) = sample_data.as_object() {
+        if !obj.is_empty() {
+            return sample_data.clone();
+        }
     }
+    Value::Null
 }
 
 #[allow(dead_code)]
