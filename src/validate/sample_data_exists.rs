@@ -32,16 +32,13 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             let sample_data = &transform_json["settings"]["sample_data"];
 
             // Check if it's a non-empty object
-            if sample_data.is_object() && !sample_data.as_object().unwrap().is_empty() {
+            if sample_data.is_object() && sample_data.as_object().is_some() {
                 continue;
             }
 
             // Check if it's a non-empty string
-            if sample_data.is_string() {
-                let str_value = sample_data.as_str().unwrap();
-                if !str_value.trim().is_empty() {
-                    continue;
-                }
+            if sample_data.as_str().is_some() {
+                continue;
             }
 
             return Err(format!(

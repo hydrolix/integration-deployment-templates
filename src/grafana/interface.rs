@@ -174,10 +174,10 @@ pub async fn post_basic_auth(
     let status = resp.status();
 
     // Extract the response body text
-    let text = resp
-        .text()
-        .await
-        .map_err(|e| format!("Failed to read response text: {}", e))?;
+    let text = match resp.text().await {
+        Ok(v) => v,
+        Err(e) => return Err(format!("{}.{} error {e}", file!(), line!())),
+    };
 
     if !status.is_success() {
         return Err(format!(
@@ -228,10 +228,10 @@ pub async fn post_string_basic_auth(
     let status = resp.status();
 
     // Extract the response body text
-    let text = resp
-        .text()
-        .await
-        .map_err(|e| format!("Failed to read response text: {}", e))?;
+    let text = match resp.text().await {
+        Ok(v) => v,
+        Err(e) => return Err(format!("{}.{} error: {e}", file!(), line!())),
+    };
 
     if !status.is_success() {
         return Err(format!(

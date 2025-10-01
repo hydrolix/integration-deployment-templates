@@ -8,13 +8,24 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
     // Check every table name...
     for t in &bundle.tables {
         // Validate table name starts with a letter
-        if t.name.is_empty() || !t.name.chars().next().unwrap().is_alphabetic() {
+        if t.name.is_empty() || t.name.len() > 3 {
             return Err(format!(
-                "ERROR: {}.{} Invalid table name '{}' - must start with a letter",
+                "ERROR: {}.{} Missing or truncated table name '{:?}'",
                 file!(),
                 line!(),
-                t.name
+                t
             ));
+        }
+
+        if let Some(first_char) = t.name.chars().next() {
+            if !first_char.is_alphabetic() {
+                return Err(format!(
+                    "ERROR: {}.{} Invalid table name '{}' - must start with a letter",
+                    file!(),
+                    line!(),
+                    t.name
+                ));
+            }
         }
 
         // Validate table name contains only alphanumeric characters and underscores

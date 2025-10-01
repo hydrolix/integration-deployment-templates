@@ -62,7 +62,7 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     let nodata_error_count_clone = Arc::clone(&nodata_error_count);
 
     #[allow(clippy::match_single_binding)]
-    tab.add_event_listener(Arc::new(move |event: &Event| match event {
+    match tab.add_event_listener(Arc::new(move |event: &Event| match event {
         e => {
             let raw_event = format!("{:?}", e.clone());
             if bad_datasource_regex.is_match(&raw_event) {
@@ -76,8 +76,10 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
                 }
             }
         }
-    }))
-    .unwrap();
+    })) {
+        Ok(_) => (),
+        Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
+    }
 
     let cookie = Network::CookieParam {
         name: cookie_name.to_string(),
@@ -144,16 +146,19 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         println!("Success! No errors detected.");
     }
 
-    return Ok((datasource_count, nodata_count));
+    Ok((datasource_count, nodata_count))
 }
 
 async fn get_grafana_session_cookie() -> Result<(String, String), String> {
-    let client = reqwest::Client::builder()
+    let client = match reqwest::Client::builder()
         .redirect(reqwest::redirect::Policy::none()) // Important: disable redirects
         .build()
-        .unwrap();
+    {
+        Ok(v) => v,
+        Err(e) => return Err(format!("{}.{} error: {e}", file!(), line!())),
+    };
 
-    let response = client
+    let response = match client
         .post(format!("http://{GRAFANA_LOCATION}/login"))
         .header(header::CONTENT_TYPE, "application/json")
         .json(&serde_json::json!({
@@ -162,7 +167,10 @@ async fn get_grafana_session_cookie() -> Result<(String, String), String> {
         }))
         .send()
         .await
-        .unwrap();
+    {
+        Ok(v) => v,
+        Err(e) => return Err(format!("{}.{} error: {e}", file!(), line!())),
+    };
 
     let cookie = match response
         .headers()
@@ -183,7 +191,18 @@ async fn get_grafana_session_cookie() -> Result<(String, String), String> {
     };
 
     // Parse cookie name and value
-    let cookie_parts: Vec<&str> = cookie.split(';').next().unwrap().split('=').collect();
+    let cookie_first = match cookie.split(';').next() {
+        Some(v) => v,
+        None => {
+            return Err(format!(
+                "ERROR: {}.{} Invalid cookie format - empty cookie",
+                file!(),
+                line!()
+            ))
+        }
+    };
+
+    let cookie_parts: Vec<&str> = cookie_first.split('=').collect();
     if cookie_parts.len() != 2 {
         return Err(format!(
             "ERROR: {}.{} Invalid cookie format",

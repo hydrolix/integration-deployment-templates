@@ -155,7 +155,10 @@ fn deserialize_https_url<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     // Validate URL format
     match Url::parse(&s) {
@@ -175,7 +178,10 @@ fn deserialize_url_path<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     if s.starts_with("/") || s.contains("..") {
         return Err(de::Error::custom(
@@ -197,7 +203,10 @@ fn deserialize_macro_name<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     // Must be at least 5 characters: "__X__"
     if s.len() < 5 {
@@ -251,7 +260,10 @@ fn deserialize_ends_in_json<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     match s.ends_with(".json") {
         true => Ok(s),
@@ -264,7 +276,10 @@ fn deserialize_valid_method<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     match s.as_str() {
         // Convert String to &str for matching
@@ -278,7 +293,10 @@ fn deserialize_valid_source<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     if s.chars()
         .any(|c| !c.is_alphanumeric() && c != '-' && c != '_')
@@ -297,7 +315,10 @@ fn deserialize_valid_channel_type<'de, D>(deserializer: D) -> Result<String, D::
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     match s.as_str() {
         "AWS" | "Azure" | "GCP" | "3rdParty" | "Internal" => Ok(s),
@@ -313,7 +334,10 @@ fn deserialize_valid_data_categories<'de, D>(deserializer: D) -> Result<String, 
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     match s.as_str() {
         // Convert String to &str for matching
@@ -330,7 +354,11 @@ fn deserialize_optional_sha256<'de, D>(deserializer: D) -> Result<Option<String>
 where
     D: de::Deserializer<'de>,
 {
-    let opt = Option::<String>::deserialize(deserializer)?;
+    let opt = match Option::<String>::deserialize(deserializer) {
+        Ok(Some(v)) => Some(v),
+        Ok(None) => None,
+        Err(e) => return Err(e),
+    };
 
     match opt {
         Some(s) => {
@@ -354,7 +382,10 @@ fn deserialize_valid_name<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: de::Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
+    let s = match String::deserialize(deserializer) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     match s.as_str() {
         s_str
@@ -378,7 +409,11 @@ fn deserialize_optional_url_path<'de, D>(deserializer: D) -> Result<Option<Strin
 where
     D: de::Deserializer<'de>,
 {
-    let opt = Option::<String>::deserialize(deserializer)?;
+    let opt = match Option::<String>::deserialize(deserializer) {
+        Ok(Some(v)) => Some(v),
+        Ok(None) => None,
+        Err(e) => return Err(e),
+    };
 
     match opt {
         Some(s) => {
