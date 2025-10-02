@@ -17,6 +17,7 @@ pub struct Bundle {
     pub source: String,
     pub beta: bool,
     pub tables: Vec<Table>,
+    pub summary_tables: Option<Vec<SummaryTable>>,
     pub ui: Ui,
     pub metadata: Metadata,
     #[serde(default)]
@@ -47,6 +48,24 @@ pub struct Table {
     pub dashboard_var: String,
     pub name: String,
     pub transforms: Vec<Transform>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct SummarySqlFile {
+    #[serde(deserialize_with = "deserialize_url_path")]
+    pub path: String,
+    #[serde(default, deserialize_with = "deserialize_optional_sha256")]
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct SummaryTable {
+    pub name: String,
+    #[serde(deserialize_with = "deserialize_macro_name")]
+    pub dashboard_var: String,
+    pub sql: SummarySqlFile,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -235,10 +254,11 @@ where
     for ch in inner.chars() {
         match ch {
             'A'..='Z' => continue, // Uppercase letters are allowed
+            '1'..='9' => continue, // Uppercase letters are allowed
             '_' => continue,       // Single underscores are allowed
             _ => {
                 return Err(de::Error::custom(format!(
-                    "{s} Must be upper-case __VARIABLE_NAME__"
+                    "{s} Must be upper-case or a numeral __VARIABLE_NAME__"
                 )));
             }
         }
