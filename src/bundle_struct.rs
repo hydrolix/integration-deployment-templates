@@ -65,6 +65,8 @@ pub struct SummaryTable {
     pub name: String,
     #[serde(deserialize_with = "deserialize_macro_name")]
     pub dashboard_var: String,
+    #[serde(deserialize_with = "deserialize_macro_name")]
+    pub source_table: String,
     pub sql: SummarySqlFile,
 }
 
@@ -208,9 +210,12 @@ where
         ));
     }
 
-    if !s.to_lowercase().ends_with(".json") && !s.to_lowercase().ends_with(".tsv") {
+    if !s.to_lowercase().ends_with(".json")
+        && !s.to_lowercase().ends_with(".tsv")
+        && !s.to_lowercase().ends_with(".sql")
+    {
         return Err(de::Error::custom(
-            "Path must end in .json or .tsv".to_string(),
+            "Path must end in .json or .tsv or .sql".to_string(),
         ));
     }
 

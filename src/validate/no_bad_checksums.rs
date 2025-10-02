@@ -29,6 +29,20 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
     }
 
+    if let Some(summary_tables) = &bundle.summary_tables {
+        for s in summary_tables {
+            let full_path = format!("{base}/{}", s.sql.path);
+            match check_checksum(&full_path, s.sql.sha256.as_deref()).await {
+                Ok(_) => (),
+                Err(e) => {
+                    return Err(format!(
+                        "Failed summary table checksum: path={full_path} error={e}"
+                    ))
+                }
+            }
+        }
+    }
+
     Ok(())
 }
 
