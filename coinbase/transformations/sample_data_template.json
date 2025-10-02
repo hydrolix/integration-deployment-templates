@@ -1,0 +1,14 @@
+{
+  "host": "mac.local",
+  "level": "info",
+  "price": "67234.56",
+  "status": "success",
+  "service": "coinbase-api",
+  "currency": "BTC-USD",
+  "endpoint": "get_spot_price",
+  "timestamp": "2025-10-01T18:45:23+0000",
+  "environment": "development",
+  "status_code": 200,
+  "base_currency": "BTC",
+  "response_time_ms": 234.56
+}
