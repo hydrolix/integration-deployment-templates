@@ -60,6 +60,8 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 
 #[tokio::main]
 async fn main() {
+    let mut bundles_checked = 0;
+
     let bundle_list = find_bundle_files();
 
     let mut final_bundle_list: Vec<Bundle> = vec![];
@@ -87,6 +89,8 @@ async fn main() {
         let base_dir = file_path.replace("./", "").replace("/bundle.json", "");
         println!("Testing {}", bundle.name);
 
+        bundles_checked += 1;
+
         match validate_bundle(&base_dir, &bundle).await {
             Ok(_) => (),
             Err(e) => {
@@ -97,6 +101,11 @@ async fn main() {
 
         println!("Bundle={:?}", bundle);
         final_bundle_list.push(bundle.clone());
+    }
+
+    if bundles_checked == 0 {
+        eprintln!("ERROR: No bundles were checked");
+        std::process::exit(1);
     }
 
     println!("Final check on all of the bundles...");

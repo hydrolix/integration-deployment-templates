@@ -46,7 +46,7 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
         || !name.to_lowercase().contains(&method.to_lowercase())
     {
         return Err(format!(
-            "ERROR: {}.{} Name {name} must include both source and method",
+            "ERROR: {}.{} Name '{name}' must include '{source}' and '{method}'",
             file!(),
             line!()
         ));
