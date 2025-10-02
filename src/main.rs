@@ -65,6 +65,7 @@ async fn main() {
     let bundle_list = find_bundle_files();
 
     let mut final_bundle_list: Vec<Bundle> = vec![];
+    let mut all_bundle_list: Vec<Bundle> = vec![];
 
     for b in &bundle_list {
         let path = PathBuf::from(b);
@@ -80,6 +81,9 @@ async fn main() {
                 std::process::exit(1);
             }
         };
+
+        // We need this to check for global duplicates at the end.
+        all_bundle_list.push(bundle.clone());
 
         if !MATCH_ONLY.is_empty() && !bundle.name.contains(&*MATCH_ONLY) {
             println!("Ignoring {}", bundle.name);
@@ -104,12 +108,12 @@ async fn main() {
     }
 
     if bundles_checked == 0 {
-        eprintln!("ERROR: No bundles were checked");
+        eprintln!("ERROR: No bundles were checked - nothing matched the filter.");
         std::process::exit(1);
     }
 
-    println!("Final check on all of the bundles...");
-    match validate::no_global_duplicates::run(&final_bundle_list) {
+    println!("Final check on all of the bundles for duplicated tokens...");
+    match validate::no_global_duplicates::run(&all_bundle_list) {
         Ok(_) => (),
         Err(e) => {
             eprintln!("ERROR: Failed bundle validation: {e}");
@@ -117,7 +121,7 @@ async fn main() {
         }
     }
 
-    println!("Success");
+    println!("SUCCESS");
     std::process::exit(0);
 }
 

@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use crate::bundle_struct::Bundle;
 
@@ -37,24 +37,35 @@ pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
         }
     }
 
-    // Checking for duplicated table names
-    {
-        let mut tokens: HashSet<String> = HashSet::new();
-        for b in bundles {
-            for t in &b.tables {
-                if tokens.contains(&t.name) {
-                    return Err(format!(
-                        "ERROR: {}.{} Duplicated-Table-Name url={} error={}",
-                        file!(),
-                        line!(),
-                        b.base_url,
-                        t.name
-                    ));
-                }
-                tokens.insert(t.name.clone());
+    // Checking for duplicated names
+    let mut tokens: HashMap<String, usize> = HashMap::new();
+    for b in bundles {
+        *tokens.entry(b.name.clone()).or_insert(0) += 1;
+
+        for t in &b.tables {
+            *tokens.entry(t.name.clone()).or_insert(0) += 1;
+        }
+
+        if let Some(summary_tables) = &b.summary_tables {
+            for t in summary_tables {
+                *tokens.entry(t.name.clone()).or_insert(0) += 1;
             }
         }
+        *tokens.entry(b.ui.source.full_title.clone()).or_insert(0) += 1;
+        *tokens.entry(b.base_url.clone()).or_insert(0) += 1;
     }
 
+    // Check for duplicates
+    for (name, count) in &tokens {
+        if *count > 1 {
+            return Err(format!(
+                "ERROR: {}.{} Duplicated-Name count={} table={}",
+                file!(),
+                line!(),
+                count,
+                name
+            ));
+        }
+    }
     Ok(())
 }
