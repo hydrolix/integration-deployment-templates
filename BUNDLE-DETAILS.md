@@ -8,13 +8,15 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Bundle identifier. Must contain both `source` and `method` values |
-| `source` | `string` | ✅ | Data source type. See [Valid Sources](#valid-sources) |
+| `name` | `string` | ✅ | Bundle identifier. Must contain only alphanumeric characters, underscores, and dashes |
+| `source` | `string` | ✅ | Data source type. Must contain only alphanumeric characters, dashes, and underscores |
 | `method` | `string` | ✅ | Integration method. See [Valid Methods](#valid-methods) |
 | `beta` | `boolean` | ✅ | Whether this is a beta release |
 | `base_url` | `string` | ✅ | HTTPS URL to the repository base path |
 | `dashboard` | `Dashboard` | ✅ | Dashboard configuration |
+| `other_dashboards` | `Dashboard[]` | ❌ | Optional additional dashboard configurations |
 | `tables` | `Table[]` | ✅ | Array of table definitions |
+| `summary_tables` | `SummaryTable[]` | ❌ | Optional array of summary table definitions |
 | `ui` | `Ui` | ✅ | User interface configuration |
 | `metadata` | `Metadata` | ✅ | Bundle metadata |
 | `method_overrides` | `MethodOverrides` | ❌ | Optional method-specific overrides |
@@ -22,17 +24,18 @@ This document describes all valid fields and their validation rules.
 
 ### Validation Rules for Root Object
 - `base_url` must start with `https://` or `file://`
-- `name` must contain both the `source` and `method` values as substrings
+- `name` must contain only alphanumeric characters, underscores, and dashes
+- `source` must contain only alphanumeric characters, dashes, and underscores
 - No duplicate table names across all tables
-- No duplicate `dashboard_var` values across all tables
+- No duplicate `dashboard_var` values across all tables and summary tables
 
 ## Dashboard Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | ✅ | Relative path to dashboard JSON file |
+| `path` | `string` | ✅ | Relative path to dashboard JSON or TSV file |
 | `project_var` | `string` | ✅ | Variable placeholder for project name |
-| `sha256` | `string` | ❌ | Optional SHA256 of dashboard contents |
+| `sha256` | `string` | ❌ | Optional SHA256 hash of dashboard contents (64 hex characters) |
 
 ### Validation Rules for Dashboard
 - `path` cannot start with `/`
@@ -53,17 +56,48 @@ This document describes all valid fields and their validation rules.
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
 - `name` must be unique across all tables in the bundle
 
+## SummaryTable Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | ✅ | Summary table identifier |
+| `dashboard_var` | `string` | ✅ | Variable placeholder for summary table name in dashboard |
+| `source_table` | `string` | ✅ | Variable placeholder for source table reference |
+| `sql` | `SummarySqlFile` | ✅ | SQL file configuration for summary table |
+
+### Validation Rules for SummaryTable
+- `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
+- `source_table` must follow macro format: `__VARIABLE_NAME__`
+- `name` must be unique across all summary tables in the bundle
+
+## SummarySqlFile Object
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `path` | `string` | ✅ | Relative path to SQL file |
+| `sha256` | `string` | ❌ | Optional SHA256 hash of SQL file contents (64 hex characters) |
+
+### Validation Rules for SummarySqlFile
+- Path cannot start with `/`
+- Path cannot contain `..`
+- Path must end with `.sql`
+- Use `openssl dgst -sha256 <file_name>` to generate the sha256
+
 ## Transform Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `path` | `string` | ✅ | Relative path to transformation JSON |
-| `sha256` | `string` | ❌ | Optional SHA256 of transformation contents |
+| `sha256` | `string` | ❌ | Optional SHA256 hash of transformation contents (64 hex characters) |
+| `sample` | `string` | ❌ | Optional relative path to sample data file |
 
 ### Validation Rules for Transform
-- Path cannot start with `/`
-- Path cannot contain `..`
-- Path must end with `.json`
+- `path` cannot start with `/`
+- `path` cannot contain `..`
+- `path` must end with `.json`
+- `sample` cannot start with `/`
+- `sample` cannot contain `..`
+- `sample` must end with `.json` or `.tsv`
 - Use `openssl dgst -sha256 <file_name>` to generate the sha256
 
 ## Ui Object
@@ -112,7 +146,7 @@ This document describes all valid fields and their validation rules.
 | `stream_prefix` | `string` | ❌  | Stream name prefix |
 
 ### Validation Rules for MethodOverrides
-- `region` must be exactly `"us-east-1"`
+- No specific validation constraints beyond basic string format
 
 ## Dependencies Object (Optional)
 
@@ -133,8 +167,8 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ❌  | Plugin identifier |
-| `version` | `string` | ❌  | Plugin version requirement |
+| `name` | `string` | ✅  | Plugin identifier |
+| `version` | `string` | ✅  | Plugin version requirement |
 
 ### HydrolixDependencies Object
 
@@ -148,43 +182,30 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ❌  | Dictionary identifier |
-| `source` | `string` | ❌  | HTTPS URL to dictionary source |
+| `name` | `string` | ✅  | Dictionary identifier |
+| `source` | `string` | ✅  | HTTPS URL to dictionary source |
 
 ### Function Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ❌  | Function name |
-| `definition` | `string` | ❌  | Function SQL definition |
+| `name` | `string` | ✅  | Function name |
+| `definition` | `string` | ✅  | Function SQL definition |
 
 ### DataSource Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ❌  | Data source name |
-| `type` | `string` | ❌  | Data source type |
-| `url` | `string` | ❌  | Data source connection URL |
-| `access` | `string` | ❌  | Data access mode |
+| `name` | `string` | ✅  | Data source name |
+| `type` | `string` | ✅  | Data source type |
+| `url` | `string` | ✅  | Data source connection URL |
+| `access` | `string` | ✅  | Data access mode |
 
 ### Validation Rules for Dependencies
-- All URLs in `dependencies.hydrolix.required_dictionaries[].source` must start with `https://`
+- All URLs in `dependencies.hydrolix.required_dictionaries[].source` must start with `https://` or `file://`
 - `dependencies.grafana.plugins[].name` must be valid plugin identifiers
 - `dependencies.grafana.version` must follow semantic version range format
 - `dependencies.hydrolix.cluster_version` must follow semantic version range format
-
-## Valid Sources
-
-The `source` field must be one of:
-- `"waf"` - Web Application Firewall
-- `"cloudtrail"` - AWS CloudTrail
-- `"vpc"` - Virtual Private Cloud
-- `"alb"` - Application Load Balancer
-- `"cloudfront"` - Amazon CloudFront
-- `"medialive"` - AWS Elemental MediaLive
-- `"mediatailor"` - AWS Elemental MediaTailor
-- `"mediapackage"` - AWS Elemental MediaPackage
-- `"zuplo"` - Zuplo API Gateway
 
 ## Valid Methods
 
@@ -204,47 +225,42 @@ Several fields use macro variable format for template substitution:
 
 **Rules**:
 - Must start and end with double underscores (`__`)
-- Inner content must be uppercase letters and single underscores only
+- Inner content must be uppercase letters, numerals (1-9), and single underscores only
 - No consecutive underscores within the variable name
 - Minimum 5 characters total (e.g., `__X__`)
+- Inner content cannot be empty
 
 **Examples**:
 - ✅ `__PROJECT_NAME__`
 - ✅ `__TABLE_NAME__`
 - ✅ `__DATA_SOURCE__`
+- ✅ `__TABLE1__`
 - ❌ `_PROJECT_` (single underscores)
 - ❌ `__project_name__` (lowercase)
 - ❌ `__PROJECT__NAME__` (consecutive underscores)
+- ❌ `____` (empty inner content)
 
 ## URL Validation
 
 HTTPS URLs must:
 - Start with `https://` or `file://`
 - Be valid URLs according to URL parsing standards
-- Be accessible (return successful HTTP response)
 
 Path fields must:
 - Not start with `/`
 - Not contain `..` (directory traversal)
-- End with `.json` or `.tsv`
+- End with appropriate extension:
+  - `.json` or `.tsv` for dashboards and samples
+  - `.json` for transformations
+  - `.sql` for summary table SQL files
 
-## Consistency Validation
+## SHA256 Hash Format
 
-Additional validation rules ensure consistency across the bundle:
+SHA256 hash fields must:
+- Be exactly 64 characters long
+- Contain only hexadecimal characters (0-9, a-f, A-F)
 
-1. **Method Title Consistency**: The `ui.method.full_title` should contain expected titles based on the method:
-   - `firehose`: "Amazon Data Firehose", "AWS Firehose", or "Kinesis Data Firehose"
-   - `s3`: "Amazon S3" or "AWS S3"
-   - `kinesis`: "Amazon Kinesis" or "AWS Kinesis"
-
-2. **WAF Source Rule**: If `source` is `"waf"`, the `ui.source.full_title` must contain "WAF" (case-insensitive)
-
-3. **Transformation Validation**: All transformation files referenced in `transforms[].path` must:
-   - Be valid JSON
-   - Contain a non-empty `name` field
-   - If they have a subtype, it must be `"firehose"`
-
-## Example Bundle with Dependencies
+## Example Bundle with Summary Tables and Dependencies
 
 ```json
 {
@@ -258,6 +274,12 @@ Additional validation rules ensure consistency across the bundle:
     "project_var": "__PROJECT_NAME__",
     "sha256": "65d22b569bb986a28e98246637bd41dad5ecf56220965d2cc3491577a160138b"
   },
+  "other_dashboards": [
+    {
+      "path": "dashboards/alternate.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
@@ -265,9 +287,21 @@ Additional validation rules ensure consistency across the bundle:
       "transforms": [
         {
           "path": "transformations/current.json",
-          "sha256": "88cb72324adb0c77e657a883552f086bc014985f0c4738ea84ad976a403dc3ac"
+          "sha256": "88cb72324adb0c77e657a883552f086bc014985f0c4738ea84ad976a403dc3ac",
+          "sample": "samples/cloudfront_sample.json"
         }
       ]
+    }
+  ],
+  "summary_tables": [
+    {
+      "name": "cloudfront_hourly_summary",
+      "dashboard_var": "__SUMMARY_TABLE__",
+      "source_table": "__TABLE_NAME__",
+      "sql": {
+        "path": "sql/hourly_summary.sql",
+        "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890"
+      }
     }
   ],
   "ui": {
@@ -316,4 +350,3 @@ Additional validation rules ensure consistency across the bundle:
   }
 }
 ```
-
