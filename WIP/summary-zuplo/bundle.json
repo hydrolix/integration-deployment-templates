@@ -1,0 +1,63 @@
+{
+  "name": "summary_http_streaming_zuplo",
+  "source": "zuplo",
+  "method": "http_streaming",
+  "beta": true,
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/summary-zuplo",
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "70087efc3e8dcc78d7cae0e618a95ddcb5854df0e1738d98ee43c44ba1cd9f11"
+  },
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "testing_zuplo",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "summary_tables": [
+    {
+      "name": "zuplo_summary_1_minute",
+      "source_table": "__TABLE_NAME__",
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "sql": {
+        "path": "summaries/1_minute.sql",
+        "sha256": "ca96a871fc8aaa5c831b1483040049c378b8c039615e0182bdcdb7b04ba0a00e"
+      }
+    },
+     {
+      "name": "zuplo_summary_1_hour",
+         "source_table": "__TABLE_NAME__",
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "sql": {
+        "path": "summaries/1_hour.sql",
+        "sha256": "3c8a49e689d8d6f928b09c1236d4e232aebd01fcbcaaa1baa98d2b904ddb7b7e"
+      }
+    }
+  ],
+  "ui": {
+    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "method": {
+      "full_title": "Http-Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "source": {
+      "full_title": "SummaryZuplo",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
+    },
+    "data_category": "security"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "jgoodson@hydrolix.io",
+    "description": "Zuplo",
+    "channel_type": "AWS"
+  }
+}
