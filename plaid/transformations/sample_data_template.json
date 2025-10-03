@@ -1,0 +1,12 @@
+{
+  "data": "{\"webhook_type\":\"TRANSACTIONS\",\"webhook_code\":\"DEFAULT_UPDATE\",...}",
+  "item_id": "item_abc123xyz",
+  "timestamp": "2025-10-03T14:30:45-0400",
+  "error_code": null,
+  "environment": "sandbox",
+  "webhook_code": "DEFAULT_UPDATE",
+  "webhook_type": "TRANSACTIONS",
+  "error_message": null,
+  "new_transactions": 5,
+  "removed_transactions": 0
+}

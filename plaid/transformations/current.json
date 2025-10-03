@@ -1,0 +1,196 @@
+{
+  "name": "plaid_transform",
+  "description": "",
+  "created": "2025-10-03T15:01:38.335203460+00:00",
+  "modified": "2025-10-03T15:01:38.335203460+00:00",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT\n* \nFROM {STREAM}",
+    "null_values": [],
+    "sample_data": {
+      "data": "{\"webhook_type\":\"TRANSACTIONS\",\"webhook_code\":\"DEFAULT_UPDATE\",...}",
+      "item_id": "item_abc123xyz",
+      "timestamp": "2025-10-03T14:30:45-0400",
+      "error_code": null,
+      "environment": "sandbox",
+      "webhook_code": "DEFAULT_UPDATE",
+      "webhook_type": "TRANSACTIONS",
+      "error_message": null,
+      "new_transactions": 5,
+      "removed_transactions": 0
+    },
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "2006-01-02T15:04:05-0700",
+          "resolution": "s",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "webhook_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "webhook_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "item_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "environment",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "error_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "error_message",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "new_transactions",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "removed_transactions",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "ignore": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "data",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "none",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "depth": 10,
+        "active": true,
+        "map_flattening_strategy": {
+          "left": ".",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "[",
+          "right": "]"
+        }
+      }
+    }
+  },
+  "type": "json"
+}
