@@ -1,10 +1,12 @@
-use serde_json::Value;
-use tokio::fs;
-
 use crate::bundle_struct::Bundle;
+use serde_json::Value;
+use std::collections::HashSet;
+use tokio::fs;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     for table in &bundle.tables {
+        let mut transform_names: HashSet<String> = HashSet::new();
+
         for transform in &table.transforms {
             let full_path = format!("{base}/{}", transform.path);
 
@@ -33,33 +35,43 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             };
 
             // Check for non-empty name field
-            match transform_json.get("name") {
+            let this_name = match transform_json.get("name") {
                 Some(name_value) => match name_value.as_str() {
                     Some(name_str) => {
                         if name_str.trim().is_empty() {
                             return Err(format!(
-                                    "ERROR: {}.{} Transform file has empty 'name' field: path={full_path}",
-                                    file!(),
-                                    line!()
-                                ));
+                    "ERROR: {}.{} Transform file has empty 'name' field: path={full_path}",
+                    file!(),
+                    line!()
+                ));
                         }
+                        name_str // Return the string if valid
                     }
                     None => {
                         return Err(format!(
-                                "ERROR: {}.{} Transform file 'name' field is not a string: path={full_path}",
-                                file!(),
-                                line!()
-                            ));
+                "ERROR: {}.{} Transform file 'name' field is not a string: path={full_path}",
+                file!(),
+                line!()
+            ));
                     }
                 },
                 None => {
                     return Err(format!(
-                        "ERROR: {}.{} Transform file missing required 'name' field: path={full_path}",
-                        file!(),
-                        line!()
-                    ));
+            "ERROR: {}.{} Transform file missing required 'name' field: path={full_path}",
+            file!(),
+            line!()
+        ));
                 }
+            };
+
+            if transform_names.contains(this_name) {
+                return Err(format!(
+                    "ERROR: {}.{} Duplicated transform name '{this_name}' path={full_path}",
+                    file!(),
+                    line!()
+                ));
             }
+            transform_names.insert(this_name.to_string());
 
             // Check subtype if present
             if let Some(subtype_value) = transform_json.get("subtype") {
