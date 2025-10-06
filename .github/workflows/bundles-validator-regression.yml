@@ -1,0 +1,84 @@
+name: Regression Test
+
+on:
+  push:
+    branches:
+      - regression-workflow
+  workflow_dispatch:
+
+jobs:
+  integration-test:
+    runs-on: lke
+    container:
+      image: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decode and Set Environment Variables
+        run: |
+          # Decode base64 secrets and set as environment variables
+          echo "BUNDLE_TESTING_CLUSTER=$(echo '${{ secrets.BUNDLE_TESTING_CLUSTER }}' | base64 -d)" >> $GITHUB_ENV
+          echo "BUNDLE_TESTING_USERNAME=$(echo '${{ secrets.BUNDLE_TESTING_USERNAME }}' | base64 -d)" >> $GITHUB_ENV
+          echo "BUNDLE_TESTING_PASSWORD=$(echo '${{ secrets.BUNDLE_TESTING_PASSWORD }}' | base64 -d)" >> $GITHUB_ENV
+
+      - name: Setup Docker
+        run: |
+          docker --version
+          docker compose version
+          
+          # Ensure Docker daemon is running
+          sudo systemctl status docker || sudo systemctl start docker
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Install Chrome/Chromium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          
+          chromium-browser --version
+          chromedriver --version
+          
+          echo "CHROME_BIN=/usr/bin/chromium-browser" >> $GITHUB_ENV
+          echo "CHROMEDRIVER_BIN=/usr/bin/chromedriver" >> $GITHUB_ENV
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Run Integration Tests
+        env:
+          RUST_BACKTRACE: 1
+        run: |
+          # Your code will handle Docker/Grafana setup
+          cargo run -- --local
+
+      - name: Cleanup Docker containers
+        if: always()
+        run: |
+          docker ps -a
+          docker compose down || true
+          docker container prune -f || true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            test-results/
+            screenshots/
+          if-no-files-found: ignore
