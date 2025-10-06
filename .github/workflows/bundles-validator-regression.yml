@@ -61,7 +61,7 @@ jobs:
         env:
           RUST_BACKTRACE: 1
         run: |
-          # Your code will handle Docker/Grafana setup
+          #regression test
           cargo run -- --local
 
       - name: Cleanup Docker containers

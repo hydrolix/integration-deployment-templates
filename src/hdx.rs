@@ -334,7 +334,7 @@ pub async fn insert_into_table(
         // Check if this is a retryable error
         let is_retryable = match status.as_u16() {
             // Client errors that shouldn't be retried
-            400..=499 if status != 408 && status != 429 => false,
+            400..=499 if status != 408 && status != 429 => true,
             // Server errors and rate limiting - retryable
             500..=599 | 408 | 429 => true,
             // Other status codes - retryable
