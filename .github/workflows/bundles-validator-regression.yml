@@ -61,6 +61,8 @@ jobs:
         env:
           RUST_BACKTRACE: 1
         run: |
+          docker network create test-network 2>/dev/null || true
+          
           #regression test
           cargo run -- --local
 
