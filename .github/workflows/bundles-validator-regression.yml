@@ -8,9 +8,7 @@ on:
 
 jobs:
   integration-test:
-    runs-on: lke
-    container:
-      image: ubuntu-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
