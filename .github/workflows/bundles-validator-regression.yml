@@ -37,7 +37,6 @@ jobs:
 
       - name: Install Chrome/Chromium
         run: |
-          sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
           
           chromium-browser --version
@@ -83,6 +82,7 @@ jobs:
       - name: Run Integration Tests
         env:
           RUST_BACKTRACE: 1
+          CHROME_NO_SANDBOX: 1
         run: |
           cargo run -- --local
 
