@@ -56,33 +56,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Debug Docker Environment
+      - name: Clean up any existing containers
         run: |
-          echo "=== System Info ==="
-          uname -a
-          echo -e "\n=== Docker Info ==="
-          docker info --format '{{json .}}' | jq '{ServerVersion, OSType, Architecture}'
+          docker ps -q | xargs -r docker stop
+          docker ps -aq | xargs -r docker rm
           
-          echo -e "\n=== Current Containers ==="
-          docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
-          
-          echo -e "\n=== Current Images ==="
-          docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
-          
-          echo -e "\n=== Port Availability Check ==="
-          for port in 3000 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 9000 9222; do
-            if lsof -i:$port > /dev/null 2>&1; then
-              echo "Port $port: IN USE"
-              lsof -i:$port
-            else
-              echo "Port $port: Available"
-            fi
-          done
+          echo "=== Remaining containers ==="
+          docker ps -a
 
       - name: Run Integration Tests
         env:
           RUST_BACKTRACE: 1
-          CHROME_NO_SANDBOX: 1
+          CHROME_DEBUG_PORT: 9222
         run: |
           cargo run -- --local
 
@@ -97,3 +82,10 @@ jobs:
             echo "--- Logs for $container ---"
             docker logs $container --tail 50
           done
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Clean up containers
+          docker ps -q | xargs -r docker stop
+          docker ps -aq | xargs -r docker rm
