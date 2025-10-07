@@ -56,32 +56,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Clean up any existing containers
-        run: |
-          docker stop $(docker ps -q) 2>/dev/null || true
-          docker rm $(docker ps -aq) 2>/dev/null || true
-          
-          sudo pkill -f chrome || true
-          sudo pkill -f chromium || true
-          
-          echo "=== Remaining containers ==="
-          docker ps -a
-
-      - name: Debug Port Check Before Tests
-        run: |
-          echo "=== Checking ports before test ==="
-          netstat -tuln | grep -E ':(8[0-9]{3}|9000)' || echo "No ports in 8000-9000 range are in use"
-          
-          echo -e "\n=== Checking specific ports with lsof ==="
-          for port in 8000 8080 9000 9222; do
-            if sudo lsof -i:$port > /dev/null 2>&1; then
-              echo "Port $port: IN USE by:"
-              sudo lsof -i:$port
-            else
-              echo "Port $port: Available"
-            fi
-          done
-
       - name: Run Integration Tests
         env:
           RUST_BACKTRACE: 1
@@ -94,18 +68,6 @@ jobs:
           fi
           
           cargo run -- --local
-
-      - name: Post-test Docker Debug
-        if: always()
-        run: |
-          echo "=== Final Docker Status ==="
-          docker ps -a
-          
-          echo -e "\n=== Container Logs ==="
-          for container in $(docker ps -a --format "{{.Names}}"); do
-            echo "--- Logs for $container ---"
-            docker logs $container --tail 50
-          done
 
       - name: Cleanup
         if: always()
