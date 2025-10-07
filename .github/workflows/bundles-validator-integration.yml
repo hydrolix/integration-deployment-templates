@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - regression-workflow
-  workflow_dispatch:
 
 jobs:
   smoke-test:
