@@ -1,4 +1,4 @@
-name: Regression Test
+name: Integration Test
 
 on:
   push:
@@ -7,19 +7,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  smoke-test:
+    uses: ./.github/workflows/bundle-validator.yml
+
   integration-test:
     runs-on: ubuntu-latest
+    needs: smoke-test
+    environment: bundle-validator-env
     timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Decode and Set Environment Variables
-        run: |
-          # Decode base64 secrets and set as environment variables
-          echo "BUNDLE_TESTING_CLUSTER=$(echo '${{ secrets.BUNDLE_TESTING_CLUSTER }}' | base64 -d)" >> $GITHUB_ENV
-          echo "BUNDLE_TESTING_USERNAME=$(echo '${{ secrets.BUNDLE_TESTING_USERNAME }}' | base64 -d)" >> $GITHUB_ENV
-          echo "BUNDLE_TESTING_PASSWORD=$(echo '${{ secrets.BUNDLE_TESTING_PASSWORD }}' | base64 -d)" >> $GITHUB_ENV
 
       - name: Setup Docker
         run: |
@@ -61,12 +59,10 @@ jobs:
           RUST_BACKTRACE: 1
           RUST_LOG: debug
           CHROME_DEBUG_PORT: 9222
-        run: |
-          if sudo lsof -i:9222 > /dev/null 2>&1; then
-            echo "WARNING: Port 9222 is in use, letting Rust find alternative"
-            unset CHROME_DEBUG_PORT
-          fi
-          
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+        run: |          
           cargo run -- --local
 
       - name: Cleanup
