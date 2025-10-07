@@ -58,17 +58,41 @@ jobs:
 
       - name: Clean up any existing containers
         run: |
-          docker ps -q | xargs -r docker stop
-          docker ps -aq | xargs -r docker rm
+          docker stop $(docker ps -q) 2>/dev/null || true
+          docker rm $(docker ps -aq) 2>/dev/null || true
+          
+          sudo pkill -f chrome || true
+          sudo pkill -f chromium || true
           
           echo "=== Remaining containers ==="
           docker ps -a
 
+      - name: Debug Port Check Before Tests
+        run: |
+          echo "=== Checking ports before test ==="
+          netstat -tuln | grep -E ':(8[0-9]{3}|9000)' || echo "No ports in 8000-9000 range are in use"
+          
+          echo -e "\n=== Checking specific ports with lsof ==="
+          for port in 8000 8080 9000 9222; do
+            if sudo lsof -i:$port > /dev/null 2>&1; then
+              echo "Port $port: IN USE by:"
+              sudo lsof -i:$port
+            else
+              echo "Port $port: Available"
+            fi
+          done
+
       - name: Run Integration Tests
         env:
           RUST_BACKTRACE: 1
+          RUST_LOG: debug
           CHROME_DEBUG_PORT: 9222
         run: |
+          if sudo lsof -i:9222 > /dev/null 2>&1; then
+            echo "WARNING: Port 9222 is in use, letting Rust find alternative"
+            unset CHROME_DEBUG_PORT
+          fi
+          
           cargo run -- --local
 
       - name: Post-test Docker Debug
@@ -86,6 +110,10 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          # Clean up containers
-          docker ps -q | xargs -r docker stop
-          docker ps -aq | xargs -r docker rm
+          docker stop $(docker ps -q) 2>/dev/null || true
+          sleep 2
+          docker rm $(docker ps -aq) 2>/dev/null || true
+          
+          # Kill any remaining chrome processes
+          sudo pkill -9 -f chrome 2>/dev/null || true
+          sudo pkill -9 -f chromium 2>/dev/null || true
