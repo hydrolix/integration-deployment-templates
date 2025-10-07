@@ -1,4 +1,3 @@
-use std::net::TcpListener;
 use headless_chrome::protocol::cdp::types::Event;
 use headless_chrome::protocol::cdp::Network;
 use headless_chrome::{Browser, LaunchOptionsBuilder};
@@ -18,47 +17,9 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
     };
 
-    // Get an available port for Chrome debugging
-    fn get_debug_port() -> Result<u16, String> {
-        if let Ok(port_str) = std::env::var("CHROME_DEBUG_PORT") {
-            if let Ok(port) = port_str.parse::<u16>() {
-                // Verify the port is actually available
-                if TcpListener::bind(("127.0.0.1", port)).is_ok() {
-                    println!("Using CHROME_DEBUG_PORT from environment: {}", port);
-                    return Ok(port);
-                } else {
-                    println!("WARNING: CHROME_DEBUG_PORT {} is not available, searching for alternative", port);
-                }
-            }
-        }
-
-        println!("Searching for available port in range 8000-9000...");
-        for port in 8000..=9000 {
-            if TcpListener::bind(("127.0.0.1", port)).is_ok() {
-                println!("Found available port: {}", port);
-                return Ok(port);
-            }
-        }
-
-        println!("WARNING: No ports available in 8000-9000, trying 9001-9999...");
-        for port in 9001..=9999 {
-            if TcpListener::bind(("127.0.0.1", port)).is_ok() {
-                println!("Using fallback port: {}", port);
-                return Ok(port);
-            }
-        }
-
-        Err("There are no available ports between 8000 and 9999 for debugging".to_string())
-    }
-
-    let debug_port = match get_debug_port() {
-        Ok(port) => port,
-        Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
-    };
-
     let launch_options = match LaunchOptionsBuilder::default()
         .window_size(Some((1920, 4080))) // Set to 1920x1080 (Full HD)
-        .port(Some(debug_port))
+        .headless(true)
         .sandbox(false)
         .build()
     {
