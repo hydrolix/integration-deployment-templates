@@ -53,6 +53,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
+      - name: Clean and rebuild
+        run: |
+          # Remove old build artifacts to ensure fresh build
+          cargo clean
+          
+          # Build in release mode
+          cargo build --release
+          
+          echo "Build completed successfully"
+
       - name: Run Integration Tests
         env:
           RUST_BACKTRACE: 1
@@ -61,8 +71,8 @@ jobs:
           BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
           BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
           BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
-        run: |          
-          cargo run -- --local
+        run: |
+          ./target/release/bundle-validator --local
 
       - name: Cleanup
         if: always()
