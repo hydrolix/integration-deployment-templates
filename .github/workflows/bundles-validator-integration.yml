@@ -75,9 +75,6 @@ jobs:
           RUST_BACKTRACE: 1
           RUST_LOG: debug
           CHROME_DEBUG_PORT: 9222
-          BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
-          BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
-          BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
         run: |
           ./target/release/bundle-validator --local
 
