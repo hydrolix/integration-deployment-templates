@@ -72,6 +72,9 @@ jobs:
 
       - name: Run Integration Tests
         env:
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.TEST_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.TEST_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           RUST_BACKTRACE: 1
           RUST_LOG: debug
           CHROME_DEBUG_PORT: 9222

@@ -42,8 +42,8 @@ jobs:
     - name: Run bundle-validator
       run: ./target/release/bundle-validator
       env:
-        BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
-        BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
-        BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+        BUNDLE_TESTING_CLUSTER: ${{ secrets.TEST_CLUSTER }}
+        BUNDLE_TESTING_USERNAME: ${{ secrets.TEST_USERNAME }}
+        BUNDLE_TESTING_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         
         
