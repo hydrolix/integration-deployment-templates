@@ -12,18 +12,18 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     needs: smoke-test
-#    environment: bundle-validator-env
+    environment: bundle-validator-env
     timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Decode and Set Environment Variables
-        run: |
-          # Decode base64 secrets and set as environment variables
-          echo "BUNDLE_TESTING_CLUSTER=$(echo '${{ secrets.BUNDLE_TESTING_CLUSTER }}' | base64 -d)" >> $GITHUB_ENV
-          echo "BUNDLE_TESTING_USERNAME=$(echo '${{ secrets.BUNDLE_TESTING_USERNAME }}' | base64 -d)" >> $GITHUB_ENV
-          echo "BUNDLE_TESTING_PASSWORD=$(echo '${{ secrets.BUNDLE_TESTING_PASSWORD }}' | base64 -d)" >> $GITHUB_ENV
+#      - name: Decode and Set Environment Variables
+#        run: |
+#          # Decode base64 secrets and set as environment variables
+#          echo "BUNDLE_TESTING_CLUSTER=$(echo '${{ secrets.BUNDLE_TESTING_CLUSTER }}' | base64 -d)" >> $GITHUB_ENV
+#          echo "BUNDLE_TESTING_USERNAME=$(echo '${{ secrets.BUNDLE_TESTING_USERNAME }}' | base64 -d)" >> $GITHUB_ENV
+#          echo "BUNDLE_TESTING_PASSWORD=$(echo '${{ secrets.BUNDLE_TESTING_PASSWORD }}' | base64 -d)" >> $GITHUB_ENV
 
       - name: Setup Docker
         run: |
