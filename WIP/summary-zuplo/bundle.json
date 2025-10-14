@@ -1,9 +1,9 @@
 {
-  "name": "summary_http_streaming_zuplo",
+  "name": "summary-zuplo",
   "source": "zuplo",
   "method": "http_streaming",
   "beta": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/summary-zuplo",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/WIP/summary-zuplo",
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__",
