@@ -170,6 +170,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("No sample data: error={e}")),
     }
 
+    match validate::summary_table::run(bundle) {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Bad summary table: error={e}")),
+    }
+
     if *IS_LOCAL_DASHBOARD_ONLY {
         // Kill the previous container if it exists
         _ = grafana::container::kill().await;
