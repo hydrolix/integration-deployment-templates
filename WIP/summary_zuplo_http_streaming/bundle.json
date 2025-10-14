@@ -1,9 +1,9 @@
 {
-  "name": "summary-zuplo",
+  "name": "summary_zuplo_http_streaming",
   "source": "zuplo",
   "method": "http_streaming",
   "beta": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/WIP/summary-zuplo",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/WIP/summary_zuplo_http_streaming",
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__",
@@ -32,9 +32,9 @@
         "sha256": "ca96a871fc8aaa5c831b1483040049c378b8c039615e0182bdcdb7b04ba0a00e"
       }
     },
-     {
+    {
       "name": "zuplo_summary_1_hour",
-         "source_table": "__TABLE_NAME__",
+      "source_table": "__TABLE_NAME__",
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "sql": {
         "path": "summaries/1_hour.sql",

@@ -8,6 +8,14 @@ clean:
 	cargo clean
 	docker system prune -a -f
 	
+super-clean:
+    @echo "Performing super-clean..."
+    rm -rf Cargo.lock
+    rm -rf ~/.cargo/registry
+    rm -rf ~/.cargo/git
+    rm -rf target
+    docker system prune -a -f
+
 quick:
 	cargo run
 

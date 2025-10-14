@@ -147,7 +147,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
     match validate::naming_is_valid::run(bundle).await {
         Ok(_) => (),
-        Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
+        Err(e) => return Err(format!("Found bad naming: error={e}")),
     }
 
     match validate::no_bad_checksums::run(base, bundle).await {
