@@ -12,7 +12,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "testing_zuplo",
+      "name": "http_streaming_zuplo_table",
       "transforms": [
         {
           "path": "transformations/current.json",
@@ -24,21 +24,19 @@
   ],
   "summary_tables": [
     {
-      "name": "zuplo_summary_1_minute",
-      "source_table": "__TABLE_NAME__",
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "summary_zuplo_1_minute",
+      "parent_table_name": "http_streaming_zuplo_table",
       "sql": {
-        "path": "summaries/1_minute.sql",
-        "sha256": "ca96a871fc8aaa5c831b1483040049c378b8c039615e0182bdcdb7b04ba0a00e"
+        "path": "summaries/1_minute.sql"
       }
     },
     {
-      "name": "zuplo_summary_1_hour",
-      "source_table": "__TABLE_NAME__",
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "summary_zuplo_1_hour",
+      "parent_table_name": "http_streaming_zuplo_table",
       "sql": {
-        "path": "summaries/1_hour.sql",
-        "sha256": "3c8a49e689d8d6f928b09c1236d4e232aebd01fcbcaaa1baa98d2b904ddb7b7e"
+        "path": "summaries/1_hour.sql"
       }
     }
   ],

@@ -45,12 +45,6 @@ pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
         for t in &b.tables {
             *tokens.entry(t.name.clone()).or_insert(0) += 1;
         }
-
-        if let Some(summary_tables) = &b.summary_tables {
-            for t in summary_tables {
-                *tokens.entry(t.name.clone()).or_insert(0) += 1;
-            }
-        }
         *tokens.entry(b.ui.source.full_title.clone()).or_insert(0) += 1;
         *tokens.entry(b.base_url.clone()).or_insert(0) += 1;
     }
