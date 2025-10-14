@@ -9,12 +9,12 @@ clean:
 	docker system prune -a -f
 	
 super-clean:
-    @echo "Performing super-clean..."
-    rm -rf Cargo.lock
-    rm -rf ~/.cargo/registry
-    rm -rf ~/.cargo/git
-    rm -rf target
-    docker system prune -a -f
+	@echo "Performing super-clean..."
+	rm -rf Cargo.lock
+	rm -rf ~/.cargo/registry
+	rm -rf ~/.cargo/git
+	rm -rf target
+	docker system prune -a -f
 
 quick:
 	cargo run
@@ -35,12 +35,12 @@ coding-standards:
 
 	@echo "\n=== Checking Clippy ==="
 	cargo clippy -- \
-  		-W clippy::unwrap_used \
-  		-W clippy::expect_used \
-  		-W clippy::panic \
-  		-W clippy::todo \
-  		-W clippy::unimplemented \
-  		-W clippy::unreachable \
+		-W clippy::unwrap_used \
+		-W clippy::expect_used \
+		-W clippy::panic \
+		-W clippy::todo \
+		-W clippy::unimplemented \
+		-W clippy::unreachable \
 		-A clippy::question_mark
 	
 	@echo "\n=== Checking for ? operator usage ==="
@@ -50,5 +50,3 @@ coding-standards:
 	else \
 		echo "✅ No ? operator found"; \
 	fi
-
-
