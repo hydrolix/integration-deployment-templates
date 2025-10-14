@@ -24,6 +24,10 @@ lazy_static! {
         std::env::var("BUNDLE_TESTING_USERNAME").unwrap_or_else(|_| "".to_string());
     static ref BUNDLE_TESTING_PASSWORD: String =
         std::env::var("BUNDLE_TESTING_PASSWORD").unwrap_or_else(|_| "".to_string());
+    static ref SCAN_WIP: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--wip".to_string())
+    };
     static ref IS_LOCAL: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--local".to_string())
@@ -86,7 +90,7 @@ async fn main() {
         all_bundle_list.push(bundle.clone());
 
         if !MATCH_ONLY.is_empty() && !bundle.name.contains(&*MATCH_ONLY) {
-            println!("Ignoring {}", bundle.name);
+            println!("Ignoring {} {}", bundle.name, *MATCH_ONLY);
             continue;
         }
 
@@ -233,9 +237,15 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     Ok(())
 }
 
+// Update find_bundle_files to handle WIP location
 fn find_bundle_files() -> Vec<std::path::PathBuf> {
-    WalkDir::new(".")
-        .max_depth(2) // Only search current directory
+    let pwd = std::env::current_dir().expect("Failed to get current directory");
+    println!("Current directory: {}", pwd.display());
+
+    let search_path = if *SCAN_WIP { "./WIP" } else { "." };
+
+    WalkDir::new(search_path)
+        .max_depth(2)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_name() == "bundle.json")
