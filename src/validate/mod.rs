@@ -4,6 +4,6 @@ pub mod no_bad_checksums;
 pub mod no_duplicate_tokens;
 pub mod no_global_duplicates;
 pub mod sample_data_exists;
+pub mod summary_table;
 pub mod transforms_are_valid;
 pub mod valid_base_url;
-pub mod summary_table;
