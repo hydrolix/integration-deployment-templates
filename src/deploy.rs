@@ -66,29 +66,26 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     dashboard_data = dashboard_data.replace("__DASHBOARD_UUID__", &format!("{}", Uuid::new_v4()));
 
     for t in &bundle.tables {
-        let table_name = hdx::create_table_name();
+        println!("Replacing {} with {}", t.dashboard_var, t.name);
 
-        println!("Replacing {} with {}", t.dashboard_var, table_name);
+        dashboard_data = dashboard_data.replace(&t.dashboard_var, &t.name);
 
-        dashboard_data = dashboard_data.replace(&t.dashboard_var, &table_name);
-
-        let table_uuid = match hdx::create_table(&bearer_token, &table_name).await {
+        let table_uuid = match hdx::create_table(&bearer_token, &t.name).await {
             Ok(v) => v,
             Err(e) => {
                 return Err(format!(
-                    "ERROR: {}.{} Failed to create table {table_name}: {e}",
+                    "ERROR: {}.{} Failed to create table {}: {e}",
                     file!(),
-                    line!()
+                    line!(),
+                    t.name
                 ));
             }
         };
 
         let mut output_table: OutputTable = OutputTable {
-            table_name: table_name.to_string(),
+            table_name: t.name.to_string(),
             ..Default::default()
         };
-        //let mut output_table: OutputTable = OutputTable::default();
-        //output_table.table_name = table_name.to_string();
 
         println!("Sleeping for 30 seconds to let table get ready for transformations...");
         sleep(Duration::from_secs(30)).await;
@@ -118,7 +115,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
                 }
             };
 
-            let full_table_name = format!("{}.{}", project_name, table_name);
+            let full_table_name = format!("{}.{}", project_name, t.name);
 
             let transformation_name = match hdx::add_transform_to_table(
                 &bearer_token,
@@ -170,6 +167,42 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
             });
 
             output.tables.push(output_table.clone());
+        }
+    }
+
+    if let Some(summary_tables) = &bundle.summary_tables {
+        for s in summary_tables {
+            let full_path = format!("{base}/{}", s.sql.path);
+
+            let mut sql = match fs::read_to_string(&full_path).await {
+                Ok(v) => v,
+                Err(e) => {
+                    return Err(format!(
+                        "ERROR: {}.{} Failed to read file_path={full_path}: error={e}",
+                        file!(),
+                        line!()
+                    ));
+                }
+            };
+
+            sql = sql.replace("__PROJECT_NAME__", &project_name);
+            sql = sql.replace("__TABLE_NAME__", &s.parent_table_name);
+
+            match hdx::create_summary_table(&bearer_token, &s.name, &sql).await {
+                Ok(_) => (),
+                Err(e) => {
+                    return Err(format!(
+                        "ERROR: {}.{} Failed to create table {}: {e}",
+                        file!(),
+                        line!(),
+                        s.name
+                    ));
+                }
+            }
+
+            let full_table_name = format!("{}.{}", project_name, s.name);
+            println!("Replacing {} with {}", s.dashboard_var, full_table_name);
+            dashboard_data = dashboard_data.replace(&s.dashboard_var, &full_table_name);
         }
     }
 

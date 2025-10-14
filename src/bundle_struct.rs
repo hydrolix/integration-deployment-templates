@@ -63,10 +63,9 @@ pub struct SummarySqlFile {
 #[serde(deny_unknown_fields)]
 pub struct SummaryTable {
     pub name: String,
+    pub parent_table_name: String,
     #[serde(deserialize_with = "deserialize_macro_name")]
     pub dashboard_var: String,
-    #[serde(deserialize_with = "deserialize_macro_name")]
-    pub source_table: String,
     pub sql: SummarySqlFile,
 }
 

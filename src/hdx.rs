@@ -71,6 +71,83 @@ pub async fn get_auth_token() -> Result<String, String> {
     }
 }
 
+/*
+{
+    "name": "my.summarytable",
+    "description": "Minute-by-minute summary of parent table",
+    "type": "summary",
+    "settings": {
+        "merge": {
+            "enabled": true
+        },
+        "summary": {
+            "enabled": true,
+            "sql": "SELECT toStartOfMinute(timestamp) AS minute,
+sum(cost) AS sum_cost, avg(tax) AS avg_tax, quantile(0.95)(distance)
+AS distance_p95 FROM project.parent_table GROUP BY minute SETTINGS
+hdx_primary_key='minute'"
+        }
+    }
+}
+
+*/
+
+pub async fn create_summary_table(
+    bearer_token: &str,
+    table_name: &str,
+    sql: &str,
+) -> Result<String, String> {
+    let payload = json!({
+        "name": table_name,
+         "type": "summary",
+        "settings": {
+            "summary": {
+                "enabled": true,
+                "sql": sql
+            }
+        }
+    });
+
+    eprintln!("payload={:?}", payload);
+
+    let url = format!(
+        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        *BUNDLE_TESTING_CLUSTER
+    );
+
+    // Send the POST request
+    let response = match CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json, text/plain, */*")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .json(&payload)
+        .send()
+        .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ))
+        }
+    };
+
+    // Check if the request was successful
+    if !response.status().is_success() {
+        return Err(format!(
+            "ERROR: {}.{} url={url} {}",
+            file!(),
+            line!(),
+            response.status()
+        ));
+    }
+    return Ok(table_name.to_string());
+}
+
 pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String, String> {
     // Prepare the JSON payload
 
@@ -430,6 +507,7 @@ pub async fn insert_csv_into_table(
 */
 
 // Generate valid HDX table name alphanumeric-only table name from UUID (hdx tables must start with alpha)
+#[allow(dead_code)]
 pub fn create_table_name() -> String {
     let ending = Uuid::new_v4()
         .to_string()
