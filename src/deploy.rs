@@ -206,6 +206,63 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
         }
     }
 
+    // One more round of pushing data into the the source tables...
+    for t in &bundle.tables {
+        let full_table_name = format!("{}.{}", project_name, t.name);
+
+        for tt in &t.transforms {
+            let full_path = format!("{base}/{}", tt.path);
+
+            let content = match fs::read_to_string(&full_path).await {
+                Ok(v) => v,
+                Err(e) => {
+                    return Err(format!(
+                        "ERROR: {}.{} Failed to read file_path={full_path}: error={e}",
+                        file!(),
+                        line!()
+                    ));
+                }
+            };
+
+            let transform_json = match serde_json::from_str(&content) {
+                Ok(v) => v,
+                Err(e) => {
+                    return Err(format!(
+                        "ERROR: {}.{} Failed to read file_path={full_path}: error={e}",
+                        file!(),
+                        line!()
+                    ));
+                }
+            };
+
+            let transform_name = get_transformation_name(&transform_json);
+
+            let sample_data = get_sample_data_as_json(&transform_json);
+            if !sample_data.is_null() {
+                println!("Sleeping for 30 seconds to let table get ready for data...");
+                sleep(Duration::from_secs(30)).await;
+
+                match hdx::insert_into_table(
+                    &bearer_token,
+                    &full_table_name,
+                    &transform_name,
+                    &sample_data,
+                )
+                .await
+                {
+                    Ok(_) => (),
+                    Err(e) => {
+                        return Err(format!(
+                            "ERROR: {}.{} Failed to send data to HDX {full_table_name}: {e}",
+                            file!(),
+                            line!()
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
     // All of the tables are now built and have data
     // Build Grafana dashboard and return its id so we can check it out
 
