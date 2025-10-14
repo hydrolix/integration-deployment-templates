@@ -244,9 +244,6 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
 // Update find_bundle_files to handle WIP location
 fn find_bundle_files() -> Vec<std::path::PathBuf> {
-    let pwd = std::env::current_dir().expect("Failed to get current directory");
-    println!("Current directory: {}", pwd.display());
-
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
 
     WalkDir::new(search_path)

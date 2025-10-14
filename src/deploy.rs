@@ -293,13 +293,11 @@ async fn read_transform_file(base: &str, relative_path: &str) -> Result<Value, S
 
     match serde_json::from_str(&content) {
         Ok(v) => Ok(v),
-        Err(e) => {
-            return Err(format!(
-                "ERROR: {}.{} Failed to parse JSON path={path}: {e}",
-                file!(),
-                line!()
-            ));
-        }
+        Err(e) => Err(format!(
+            "ERROR: {}.{} Failed to parse JSON path={path}: {e}",
+            file!(),
+            line!()
+        )),
     }
 }
 
@@ -315,15 +313,13 @@ async fn add_transformation(
 
     match hdx::add_transform_to_table(bearer_token, table_uuid, transform_json).await {
         Ok(v) => Ok(v),
-        Err(e) => {
-            return Err(format!(
-                "ERROR: {}.{} Failed to add transformation path={} table={}: {e}",
-                file!(),
-                line!(),
-                transform_path,
-                full_table_name
-            ));
-        }
+        Err(e) => Err(format!(
+            "ERROR: {}.{} Failed to add transformation path={} table={}: {e}",
+            file!(),
+            line!(),
+            transform_path,
+            full_table_name
+        )),
     }
 }
 
@@ -347,14 +343,12 @@ async fn insert_sample_data_if_present(
     match hdx::insert_into_table(bearer_token, &full_table_name, transform_name, &sample_data).await
     {
         Ok(_) => Ok(()),
-        Err(e) => {
-            return Err(format!(
-                "ERROR: {}.{} Failed to insert data into {}: {e}",
-                file!(),
-                line!(),
-                full_table_name
-            ));
-        }
+        Err(e) => Err(format!(
+            "ERROR: {}.{} Failed to insert data into {}: {e}",
+            file!(),
+            line!(),
+            full_table_name
+        )),
     }
 }
 

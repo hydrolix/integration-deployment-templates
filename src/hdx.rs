@@ -145,7 +145,7 @@ pub async fn create_summary_table(
             response.status()
         ));
     }
-    return Ok(table_name.to_string());
+    Ok(table_name.to_string())
 }
 
 pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String, String> {

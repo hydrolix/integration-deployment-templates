@@ -28,7 +28,8 @@
       "name": "summary_zuplo_1_minute",
       "parent_table_name": "http_streaming_zuplo_table",
       "sql": {
-        "path": "summaries/1_minute.sql"
+        "path": "summaries/1_minute.sql",
+        "sha256": "ba9b5be55b078c6bfef252949f7bd479ac008e64e1036ba1ff6142a1065c1a0b"
       }
     },
     {
@@ -36,7 +37,8 @@
       "name": "summary_zuplo_1_hour",
       "parent_table_name": "http_streaming_zuplo_table",
       "sql": {
-        "path": "summaries/1_hour.sql"
+        "path": "summaries/1_hour.sql",
+        "sha256": "0289a7e790909a3b0c2a3425aa4087edadc760bb138a0e8ee7838b258b59d146"
       }
     }
   ],
