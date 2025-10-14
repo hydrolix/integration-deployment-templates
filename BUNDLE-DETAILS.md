@@ -62,13 +62,14 @@ This document describes all valid fields and their validation rules.
 |-------|------|----------|-------------|
 | `name` | `string` | ✅ | Summary table identifier |
 | `dashboard_var` | `string` | ✅ | Variable placeholder for summary table name in dashboard |
-| `source_table` | `string` | ✅ | Variable placeholder for source table reference |
+| `parent_table_name` | `string` | ✅ | Name of the parent table to aggregate from |
 | `sql` | `SummarySqlFile` | ✅ | SQL file configuration for summary table |
 
 ### Validation Rules for SummaryTable
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
-- `source_table` must follow macro format: `__VARIABLE_NAME__`
+- `dashboard_var` must be unique across all summary tables in the bundle
 - `name` must be unique across all summary tables in the bundle
+- `parent_table_name` must reference a valid table name from the bundle's `tables` array
 
 ## SummarySqlFile Object
 
@@ -261,7 +262,6 @@ SHA256 hash fields must:
 - Contain only hexadecimal characters (0-9, a-f, A-F)
 
 ## Example Bundle with Summary Tables and Dependencies
-
 ```json
 {
   "name": "kinesis-cloudfront",
@@ -296,11 +296,20 @@ SHA256 hash fields must:
   "summary_tables": [
     {
       "name": "cloudfront_hourly_summary",
-      "dashboard_var": "__SUMMARY_TABLE__",
-      "source_table": "__TABLE_NAME__",
+      "dashboard_var": "__SUMMARY_TABLE_HOURLY__",
+      "parent_table_name": "cloudfront_kinesis",
       "sql": {
         "path": "sql/hourly_summary.sql",
         "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890"
+      }
+    },
+    {
+      "name": "cloudfront_daily_summary",
+      "dashboard_var": "__SUMMARY_TABLE_DAILY__",
+      "parent_table_name": "cloudfront_kinesis",
+      "sql": {
+        "path": "sql/daily_summary.sql",
+        "sha256": "b2c3d4e5f67890123456789012345678901234567890123456789012345678901"
       }
     }
   ],
