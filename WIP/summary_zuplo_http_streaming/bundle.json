@@ -26,7 +26,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "summary_zuplo_1_minute",
-      "parent_table_name": "http_streaming_zuplo_table",
+      "parent_table_name": "xhttp_streaming_zuplo_table",
       "sql": {
         "path": "summaries/1_minute.sql"
       }
