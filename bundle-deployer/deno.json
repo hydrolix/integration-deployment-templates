@@ -1,0 +1,16 @@
+{
+  "tasks": {
+    "start": "deno run --allow-all src/main.ts",
+    "check": "deno check src/main.ts",
+    "test": "deno test --allow-all"
+  },
+  "imports": {
+    "@std/fs": "jsr:@std/fs@^1.0.0",
+    "@std/path": "jsr:@std/path@^1.0.0",
+    "puppeteer": "npm:puppeteer@^21.0.0"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window"]
+  }
+}

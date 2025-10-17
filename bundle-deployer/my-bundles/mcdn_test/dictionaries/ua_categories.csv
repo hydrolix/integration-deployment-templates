@@ -1,0 +1,6 @@
+user_agent,ua_category,is_bot
+iPhone,mobile,0
+Android,mobile,0
+Windows,desktop,0
+Googlebot,bot,1
+Chrome,desktop,0

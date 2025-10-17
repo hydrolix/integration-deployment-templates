@@ -1,0 +1,76 @@
+{
+  "name": "http_streaming_mcdn_test",
+  "source": "mcdn",
+  "method": "http_streaming",
+  "beta": true,
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/mcdn_test",
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_functions": [
+        {
+          "name": "reference_breadcrumbs",
+          "description": "Breadcrumbs extraction",
+          "sql": "(breadcrumbs, mainregex, valuextract) -> nullIf(extract(extract(decodeURLComponent(assumeNotNull(breadcrumbs)), mainregex), valuextract),'')"
+        }
+      ],
+      "required_dictionaries": [
+        {
+          "name": "reference_ua_cat_dict",
+          "source": "dictionaries/ua_categories.csv"
+        }
+      ]
+    }
+  },
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "mcdn_test",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "mcdn_summary_min",
+      "parent_table_name": "mcdn_test",
+      "sql": {
+        "path": "summaries/mcdn_summary_min.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "mcdn_summary_hour",
+      "parent_table_name": "mcdn_test",
+      "sql": {
+        "path": "summaries/mcdn_summary_hour.sql"
+      }
+    }
+  ],
+  "ui": {
+    "primary_url": "https://docs.hydrolix.io/docs/mcdn_test-integration",
+    "method": {
+      "full_title": "Http-Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "source": {
+      "full_title": "MCDN TEST",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/mcdn.png"
+    },
+    "data_category": "security"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "kevin.borkman@hydrolix.io",
+    "description": "MCDN Test",
+    "channel_type": "AWS"
+  }
+}
