@@ -4,6 +4,7 @@ export interface Bundle {
   base_url: string;
   dashboard: Dashboard;
   other_dashboards?: Dashboard[];
+  alert_rules?: AlertRules;
   method: string;
   method_overrides?: MethodOverrides;
   name: string;
@@ -19,6 +20,11 @@ export interface Bundle {
 export interface Dashboard {
   path: string;
   project_var: string;
+  sha256?: string;
+}
+
+export interface AlertRules {
+  path: string;
   sha256?: string;
 }
 
@@ -146,6 +152,10 @@ export function validateBundle(bundle: Bundle): void {
     bundle.other_dashboards.forEach(dash => validateDashboard(dash));
   }
   
+  if (bundle.alert_rules) {
+    validateAlertRules(bundle.alert_rules);
+  }
+  
   bundle.tables.forEach(table => {
     validateMacroName(table.dashboard_var);
     table.transforms.forEach(transform => {
@@ -180,6 +190,11 @@ export function validateBundle(bundle: Bundle): void {
 function validateDashboard(dashboard: Dashboard): void {
   validateUrlPath(dashboard.path);
   if (dashboard.sha256) validateSha256(dashboard.sha256);
+}
+
+function validateAlertRules(alertRules: AlertRules): void {
+  validateUrlPath(alertRules.path);
+  if (alertRules.sha256) validateSha256(alertRules.sha256);
 }
 
 function validateHttpsUrl(url: string, fieldName: string): void {

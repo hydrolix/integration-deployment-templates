@@ -1,4 +1,4 @@
-// Dashboard-only deployment (no table/data creation)
+// Dashboard-only deployment (no table/data creation) with alert rules support
 
 import type { Bundle, Output } from "./types/bundle.ts";
 import * as grafana from "./grafana/interface.ts";
@@ -43,6 +43,12 @@ export async function run(
   const dashboardId = await grafana.createDashboard(dashboardData);
   
   output.dashboard_id = dashboardId;
+  
+  // Create alert rules if present
+  if (bundle.alert_rules) {
+    await createAlertRules(base, bundle, projectName, datalink, dashboardId);
+  }
+  
   return dashboardId;
 }
 
@@ -61,4 +67,42 @@ async function loadDashboardTemplate(
   dashboard = dashboard.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
   
   return dashboard;
+}
+
+async function createAlertRules(
+  base: string,
+  bundle: Bundle,
+  projectName: string,
+  datalink: string,
+  dashboardId: string
+): Promise<void> {
+  if (!bundle.alert_rules) {
+    return;
+  }
+  
+  console.log("Loading and processing alert rules...");
+  
+  const alertRulesPath = `${base}/${bundle.alert_rules.path}`;
+  let alertRulesContent = await Deno.readTextFile(alertRulesPath);
+  
+  // Replace template variables
+  alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
+  alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
+  alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
+  
+  // Replace table variables with full table names
+  for (const table of bundle.tables) {
+    const fullTableName = `${projectName}.${table.name}`;
+    alertRulesContent = alertRulesContent.replace(new RegExp(table.dashboard_var, 'g'), fullTableName);
+  }
+  
+  // Replace summary table variables if present
+  if (bundle.summary_tables) {
+    for (const summary of bundle.summary_tables) {
+      const fullTableName = `${projectName}.${summary.name}`;
+      alertRulesContent = alertRulesContent.replace(new RegExp(summary.dashboard_var, 'g'), fullTableName);
+    }
+  }
+  
+  await grafana.createAlertRules(alertRulesContent);
 }

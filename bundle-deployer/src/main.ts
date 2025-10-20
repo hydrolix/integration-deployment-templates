@@ -1,4 +1,4 @@
-// Main entry point for bundle validator
+// Main entry point for bundle validator with alert rules support
 
 import { walk } from "@std/fs";
 import type { Bundle, Output } from "./types/bundle.ts";
@@ -14,6 +14,7 @@ import * as naming_is_valid from "./validation/naming_is_valid.ts";
 import * as no_duplicate_tokens from "./validation/no_duplicate_tokens.ts";
 import * as valid_base_url from "./validation/valid_base_url.ts";
 import * as dashboard_is_valid from "./validation/dashboard_is_valid.ts";
+import * as alert_rules_are_valid from "./validation/alert_rules_are_valid.ts";
 import * as no_bad_checksums from "./validation/no_bad_checksums.ts";
 import * as sample_data_exists from "./validation/sample_data_exists.ts";
 import * as transforms_are_valid from "./validation/transforms_are_valid.ts";
@@ -102,6 +103,7 @@ async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
   await no_bad_checksums.run(base, bundle);
   await transforms_are_valid.run(base, bundle);
   await dashboard_is_valid.run(base, bundle);
+  await alert_rules_are_valid.run(base, bundle);
   await sample_data_exists.run(base, bundle);
   summary_table.run(bundle);
   

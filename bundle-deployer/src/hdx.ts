@@ -546,7 +546,9 @@ export async function insertIntoTable(
   transformName: string,
   sampleData: unknown
 ): Promise<void> {
-  const payload = [sampleData];
+  // Handle both object and array formats
+  const payload = Array.isArray(sampleData) ? sampleData : [sampleData];
+  
   const url = `https://${BUNDLE_TESTING_CLUSTER}/ingest/event`;
   
   const maxRetries = 20;

@@ -33,6 +33,23 @@ interface SecureJsonData {
   password: string;
 }
 
+interface AlertRulesFile {
+  apiVersion: number;
+  groups: Array<{
+    orgId?: number;
+    name: string;
+    folder: string;
+    interval: string;
+    rules: Array<{
+      uid: string;
+      title: string;
+      condition: string;
+      data: unknown[];
+      [key: string]: unknown;
+    }>;
+  }>;
+}
+
 export async function createDatalink(projectName: string): Promise<string> {
   const datasourceRequest: CreateDataSourceRequest = {
     name: "Bundle Testing",
@@ -95,6 +112,149 @@ export async function createDashboard(dashboardData: string): Promise<string> {
   }
   
   return uid;
+}
+
+export async function createAlertRules(alertRulesJson: string): Promise<void> {
+  const alertRules = JSON.parse(alertRulesJson) as AlertRulesFile;
+  
+  console.log(`Creating ${alertRules.groups.length} alert rule group(s)...`);
+  
+  // Create folders and individual rules
+  for (const group of alertRules.groups) {
+    // First, ensure the folder exists
+    const folderUid = await ensureFolderExists(group.folder);
+    
+    // Create each rule individually using the alert-rules endpoint
+    await createRulesIndividually(folderUid, group);
+  }
+  
+  console.log("✓ Successfully created all alert rules");
+}
+
+async function ensureFolderExists(folderTitle: string): Promise<string> {
+  // Check if folder already exists
+  const searchUrl = `http://${GRAFANA_LOCATION}/api/folders`;
+  
+  const searchResponse = await fetch(searchUrl, {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Basic ' + btoa('admin:admin'),
+    },
+  });
+  
+  if (searchResponse.ok) {
+    const folders = await searchResponse.json() as Array<{ uid: string; title: string }>;
+    const existingFolder = folders.find(f => f.title === folderTitle);
+    
+    if (existingFolder) {
+      console.log(`  ✓ Folder "${folderTitle}" already exists (uid: ${existingFolder.uid})`);
+      return existingFolder.uid;
+    }
+  }
+  
+  // Create new folder
+  console.log(`  Creating folder "${folderTitle}"...`);
+  
+  const createUrl = `http://${GRAFANA_LOCATION}/api/folders`;
+  
+  const payload = {
+    title: folderTitle,
+  };
+  
+  const response = await fetch(createUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + btoa('admin:admin'),
+    },
+    body: JSON.stringify(payload),
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to create folder "${folderTitle}": ${errorText}`);
+  }
+  
+  const result = await response.json();
+  const uid = result?.uid;
+  
+  if (!uid) {
+    throw new Error(`Could not find folder UID in response for "${folderTitle}"`);
+  }
+  
+  console.log(`  ✓ Created folder "${folderTitle}" (uid: ${uid})`);
+  return uid;
+}
+
+async function createRulesIndividually(
+  folderUid: string,
+  group: AlertRulesFile['groups'][0]
+): Promise<void> {
+  console.log(`  Creating rule group "${group.name}" with ${group.rules.length} rule(s)...`);
+  
+  const url = `http://${GRAFANA_LOCATION}/api/v1/provisioning/alert-rules`;
+  
+  // Create each rule individually
+  for (const rule of group.rules) {
+    console.log(`    Creating rule "${rule.title}"...`);
+    
+    // Clean the rule - remove UI-only fields
+    const { notification_settings, isPaused, templating, ...cleanRule } = rule as any;
+    
+    // Clean up data queries
+    if (cleanRule.data && Array.isArray(cleanRule.data)) {
+      cleanRule.data = cleanRule.data.map((query: any) => {
+        if (query.model) {
+          const { 
+            meta, 
+            pluginVersion, 
+            format, 
+            editorType,
+            builderOptions,
+            ...cleanModel 
+          } = query.model;
+          query.model = cleanModel;
+        }
+        return query;
+      });
+    }
+    
+    // Clean up annotations
+    if (cleanRule.annotations) {
+      const { __dashboardUid__, __panelId__, ...cleanAnnotations } = cleanRule.annotations;
+      cleanRule.annotations = cleanAnnotations;
+    }
+    
+    // Format payload for individual rule creation
+    const payload = {
+      folderUID: folderUid,
+      ruleGroup: group.name,
+      ...cleanRule,
+    };
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa('admin:admin'),
+        'X-Disable-Provenance': 'true',
+      },
+      body: JSON.stringify(payload),
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`    ERROR: Response status ${response.status}`);
+      console.error(`    ERROR: Response body: ${errorText}`);
+      console.error(`    ERROR: Payload sent: ${JSON.stringify(payload, null, 2)}`);
+      throw new Error(`Failed to create alert rule "${rule.title}": ${errorText}`);
+    }
+    
+    const result = await response.json();
+    console.log(`    ✓ Created rule "${rule.title}" (id: ${result.id})`);
+  }
+  
+  console.log(`  ✓ Created rule group "${group.name}"`);
 }
 
 async function postBasicAuth(

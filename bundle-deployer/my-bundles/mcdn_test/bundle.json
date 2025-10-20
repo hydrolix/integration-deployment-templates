@@ -5,9 +5,22 @@
   "beta": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/mcdn_test",
   "dashboard": {
-    "path": "dashboards/current.json",
+    "path": "dashboards/CDN Dashboard Default-1760472897943.json",
     "project_var": "__PROJECT_NAME__"
   },
+  "alert_rules": {
+    "path": "dashboards/alert-rules-1760476335448.json"
+  },
+  "other_dashboards": [
+    {
+      "path": "dashboards/CDN Global View-1760635433621.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/Raw Logs-1760472918020.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
   "dependencies": {
     "hydrolix": {
       "required_functions": [
@@ -15,6 +28,16 @@
           "name": "reference_breadcrumbs",
           "description": "Breadcrumbs extraction",
           "sql": "(breadcrumbs, mainregex, valuextract) -> nullIf(extract(extract(decodeURLComponent(assumeNotNull(breadcrumbs)), mainregex), valuextract),'')"
+        },
+        {
+          "name": "reference_city_name",
+          "description": "City Name",
+          "sql": "(ip) -> dictGetString('akamai_geoip_city_locations_en', 'city_name', akamai_geoname_id(assumeNotNull(ip)))"
+        },
+        {
+          "name": "reference_country_iso_code",
+          "description": "Country ISO Code",
+          "sql": "(ip) -> dictGetString('akamai_geoip_city_locations_en', 'country_iso_code', akamai_geoname_id(assumeNotNull(ip)))"
         }
       ],
       "required_dictionaries": [
@@ -31,8 +54,22 @@
       "name": "mcdn_test",
       "transforms": [
         {
-          "path": "transformations/current.json",
-          "sample": "transformations/sample_data_template.json"
+          "path": "transformations/mcdn_akamai_ds2.json"
+        },
+        {
+          "path": "transformations/mcdn_cloudflare.json"
+        },
+        {
+          "path": "transformations/mcdn_cloudfront_firehose.json"
+        },
+        {
+          "path": "transformations/mcdn_cloudfront_lsalv1.json"
+        },
+        {
+          "path": "transformations/mcdn_fastly.json"
+        },
+        {
+          "path": "transformations/mcdn_tencent.json"
         }
       ]
     }

@@ -1,0 +1,109 @@
+{
+  "apiVersion": 1,
+  "groups": [
+    {
+      "orgId": 10,
+      "name": "min",
+      "folder": "Solutions",
+      "interval": "1m",
+      "rules": [
+        {
+          "uid": "aezyuv33y86bka",
+          "title": "Email Alert",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "table",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "__DATASOURCE__",
+              "model": {
+                "datasource": {
+                  "type": "grafana-clickhouse-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "editorType": "sql",
+                "format": 1,
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "meta": {
+                  "builderOptions": {
+                    "columns": [],
+                    "database": "",
+                    "limit": 1000,
+                    "mode": "list",
+                    "queryType": "table",
+                    "table": ""
+                  }
+                },
+                "pluginVersion": "4.0.6",
+                "queryType": "table",
+                "rawSql": "SELECT \n    countMergeIf(`count()`,response_status_code >= '400') *100 / cnt_all AS error_rate\nFROM \n    __PROJECT_NAME__.mcdn_summary_min\nWHERE \n    $__timeFilter(timestamp)\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; error_rate alarm; du=${__user.login}'",
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "params": [15],
+                      "type": "gt"
+                    },
+                    "operator": {
+                      "type": "and"
+                    },
+                    "query": {
+                      "params": ["C"]
+                    },
+                    "reducer": {
+                      "params": [],
+                      "type": "last"
+                    },
+                    "type": "query"
+                  }
+                ],
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "dashboardUid": "__DASHBOARD_UUID__",
+          "panelId": 95,
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "for": "1m",
+          "annotations": {
+            "__dashboardUid__": "__DASHBOARD_UUID__",
+            "__panelId__": "95",
+            "summary": "summary: Error rate exceeded 15%\ndescription: Error rate is {{ $values.A.Value }}%\ndashboard: https://your-grafana-url/d/__DASHBOARD_UUID__/cdn-dashboard-default\npanel: https://your-grafana-url/d/__DASHBOARD_UUID__/cdn-dashboard-default?viewPanel=95"
+          },
+          "labels": {
+            "solutions": "mcdn",
+            "version": "v1.0"
+          },
+          "isPaused": false,
+          "notification_settings": {
+            "receiver": "Test - mCDN Alert"
+          }
+        }
+      ]
+    }
+  ]
+}

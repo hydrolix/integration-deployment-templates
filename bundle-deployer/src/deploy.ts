@@ -1,4 +1,4 @@
-// Main deployment orchestration
+// Main deployment orchestration with alert rules support
 
 import type { Bundle, Output, OutputTable, OutputTransformation } from "./types/bundle.ts";
 import { getErrorMessage } from "./utils/error.ts";
@@ -26,8 +26,8 @@ export async function run(
       try {
         await hdx.createFunctions(bearerToken, bundle.dependencies.hydrolix.required_functions);
       } catch (e) {
-        console.warn(`⚠ WARNING: Failed to create functions: ${getErrorMessage(e)}`);
-        console.warn(`⚠ Continuing anyway - transforms may be invalid until functions are added`);
+        console.warn(`⚠️  WARNING: Failed to create functions: ${getErrorMessage(e)}`);
+        console.warn(`⚠️  Continuing anyway - transforms may be invalid until functions are added`);
       }
     }
     
@@ -37,8 +37,8 @@ export async function run(
           // Pass base directory so we can read local files
           await hdx.createDictionary(bearerToken, dict, base);
         } catch (e) {
-          console.warn(`⚠ WARNING: Failed to create dictionary ${dict.name}: ${getErrorMessage(e)}`);
-          console.warn(`⚠ Continuing anyway - transforms may be invalid until dictionary is added`);
+          console.warn(`⚠️  WARNING: Failed to create dictionary ${dict.name}: ${getErrorMessage(e)}`);
+          console.warn(`⚠️  Continuing anyway - transforms may be invalid until dictionary is added`);
         }
       }
     }
@@ -83,6 +83,12 @@ export async function run(
   const dashboardId = await grafana.createDashboard(dashboardData);
   
   output.dashboard_id = dashboardId;
+  
+  // Create alert rules if present
+  if (bundle.alert_rules) {
+    await createAlertRules(base, bundle, projectName, datalink, dashboardId);
+  }
+  
   return dashboardId;
 }
 
@@ -254,8 +260,8 @@ async function insertSampleDataIfPresent(
     await hdx.insertIntoTable(bearerToken, fullTableName, transformName, sampleData);
     console.log(`✓ Successfully inserted sample data into ${fullTableName}`);
   } catch (e) {
-    console.warn(`⚠ WARNING: Failed to insert data into ${fullTableName}: ${getErrorMessage(e)}`);
-    console.warn(`⚠ Continuing with deployment anyway - dashboard will be created without data`);
+    console.warn(`⚠️  WARNING: Failed to insert data into ${fullTableName}: ${getErrorMessage(e)}`);
+    console.warn(`⚠️  Continuing with deployment anyway - dashboard will be created without data`);
     // Don't throw - allow deployment to continue
   }
 }
@@ -344,4 +350,42 @@ function replaceFunctionNames(transformJson: unknown, projectName: string): unkn
       sql_transform: updatedSql,
     },
   };
+}
+
+async function createAlertRules(
+  base: string,
+  bundle: Bundle,
+  projectName: string,
+  datalink: string,
+  dashboardId: string
+): Promise<void> {
+  if (!bundle.alert_rules) {
+    return;
+  }
+  
+  console.log("Loading and processing alert rules...");
+  
+  const alertRulesPath = `${base}/${bundle.alert_rules.path}`;
+  let alertRulesContent = await Deno.readTextFile(alertRulesPath);
+  
+  // Replace template variables
+  alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
+  alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
+  alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
+  
+  // Replace table variables with full table names
+  for (const table of bundle.tables) {
+    const fullTableName = `${projectName}.${table.name}`;
+    alertRulesContent = alertRulesContent.replace(new RegExp(table.dashboard_var, 'g'), fullTableName);
+  }
+  
+  // Replace summary table variables if present
+  if (bundle.summary_tables) {
+    for (const summary of bundle.summary_tables) {
+      const fullTableName = `${projectName}.${summary.name}`;
+      alertRulesContent = alertRulesContent.replace(new RegExp(summary.dashboard_var, 'g'), fullTableName);
+    }
+  }
+  
+  await grafana.createAlertRules(alertRulesContent);
 }
