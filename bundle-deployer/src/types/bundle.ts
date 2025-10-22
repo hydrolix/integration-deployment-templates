@@ -105,7 +105,7 @@ export interface Dictionary {
 
 export interface Function {
   name: string;
-  definition: string;
+  sql: string;
 }
 
 export interface DataSource {

@@ -56,7 +56,7 @@ export async function run(
   // Create base tables and transformations
   for (const table of bundle.tables) {
     dashboardData = dashboardData.replace(table.dashboard_var, table.name);
-    await processTable(base, bearerToken, projectName, table, output);
+    await processTable(base, bearerToken, projectName, table, output, bundle);
   }
   
   // Create summary tables if present
@@ -114,7 +114,8 @@ async function processTable(
   bearerToken: string,
   projectName: string,
   table: { name: string; dashboard_var: string; transforms: Array<{ path: string; sha256?: string; sample?: string }> },
-  output: Output
+  output: Output,
+  bundle: Bundle
 ): Promise<void> {
   console.log(`Creating table: ${table.name}`);
   
@@ -132,7 +133,7 @@ async function processTable(
     let transformJson = await readTransformFile(base, transform.path);
     
     // IMPORTANT: Replace function names with project-prefixed versions
-    transformJson = replaceFunctionNames(transformJson, projectName);
+    transformJson = replaceFunctionNames(transformJson, projectName, bundle);
     
     const transformName = await addTransformation(
       bearerToken,
@@ -189,7 +190,7 @@ async function seedTablesWithData(
       let transformJson = await readTransformFile(base, transform.path);
       
       // Apply function name replacements
-      transformJson = replaceFunctionNames(transformJson, projectName);
+      transformJson = replaceFunctionNames(transformJson, projectName, bundle);
       
       const transformName = getTransformationName(transformJson);
       
@@ -300,9 +301,7 @@ function getTransformationName(transformJson: unknown): string {
   return typeof name === 'string' ? name : '';
 }
 
-function replaceFunctionNames(transformJson: unknown, projectName: string): unknown {
-  // Get the list of declared functions from the bundle
-  // We'll need to pass this from the bundle, but for now we'll scan the SQL
+function replaceFunctionNames(transformJson: unknown, projectName: string, bundle: Bundle): unknown {
   const data = transformJson as Record<string, unknown>;
   const settings = data.settings as Record<string, unknown> | undefined;
   const sqlTransform = settings?.sql_transform;
@@ -313,33 +312,34 @@ function replaceFunctionNames(transformJson: unknown, projectName: string): unkn
   
   let updatedSql = sqlTransform;
   
-  // Replace custom function calls with project-prefixed versions
-  const functionPattern = /\b(\w+_(?:breadcrumbs|extract|parse|lookup|transform))\s*\(/gi;
-  const functionMatches = [...sqlTransform.matchAll(functionPattern)];
-  
-  for (const match of functionMatches) {
-    const originalName = match[1];
-    const prefixedName = `${projectName}_${originalName}`;
-    
-    console.log(`  Replacing function: ${originalName} → ${prefixedName}`);
-    
-    const regex = new RegExp(`\\b${originalName}\\s*\\(`, 'g');
-    updatedSql = updatedSql.replace(regex, `${prefixedName}(`);
+  // Replace custom function calls using the actual function list from bundle
+  if (bundle.dependencies?.hydrolix?.required_functions) {
+    for (const fn of bundle.dependencies.hydrolix.required_functions) {
+      const originalName = fn.name;
+      const prefixedName = `${projectName}_${originalName}`;
+      
+      // Check if this function is used in the SQL
+      const regex = new RegExp(`\\b${originalName}\\s*\\(`, 'g');
+      if (regex.test(updatedSql)) {
+        console.log(`  Replacing function: ${originalName} → ${prefixedName}`);
+        updatedSql = updatedSql.replace(regex, `${prefixedName}(`);
+      }
+    }
   }
   
   // Replace dictionary names in dictGet() calls with project-prefixed versions
-  const dictGetPattern = /dictGet\s*\(\s*'([^']+)'/gi;
-  const dictMatches = [...sqlTransform.matchAll(dictGetPattern)];
-  
-  for (const match of dictMatches) {
-    const originalDictName = match[1];
-    const prefixedDictName = `${projectName}_${originalDictName}`;
-    
-    console.log(`  Replacing dictionary: ${originalDictName} → ${prefixedDictName}`);
-    
-    // Replace the dictionary name in dictGet calls
-    const regex = new RegExp(`dictGet\\s*\\(\\s*'${originalDictName}'`, 'gi');
-    updatedSql = updatedSql.replace(regex, `dictGet('${prefixedDictName}'`);
+  if (bundle.dependencies?.hydrolix?.required_dictionaries) {
+    for (const dict of bundle.dependencies.hydrolix.required_dictionaries) {
+      const originalDictName = dict.name;
+      const prefixedDictName = `${projectName}_${originalDictName}`;
+      
+      // Check for dictGet calls with this dictionary
+      const regex = new RegExp(`dictGet\\s*\\(\\s*'${originalDictName}'`, 'gi');
+      if (regex.test(updatedSql)) {
+        console.log(`  Replacing dictionary: ${originalDictName} → ${prefixedDictName}`);
+        updatedSql = updatedSql.replace(regex, `dictGet('${prefixedDictName}'`);
+      }
+    }
   }
   
   // Return updated transform JSON

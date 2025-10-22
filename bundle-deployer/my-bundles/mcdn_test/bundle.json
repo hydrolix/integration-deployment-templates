@@ -30,6 +30,11 @@
           "sql": "(breadcrumbs, mainregex, valuextract) -> nullIf(extract(extract(decodeURLComponent(assumeNotNull(breadcrumbs)), mainregex), valuextract),'')"
         },
         {
+          "name": "akamai_geoname_id",
+          "description": "Get geoname ID from IP",
+          "sql": "(ip) -> dictGet('akamai_geoip_city_blocks_ipv4', 'geoname_id', ip)"
+        },
+        {
           "name": "reference_city_name",
           "description": "City Name",
           "sql": "(ip) -> dictGetString('akamai_geoip_city_locations_en', 'city_name', akamai_geoname_id(assumeNotNull(ip)))"
@@ -43,7 +48,23 @@
       "required_dictionaries": [
         {
           "name": "reference_ua_cat_dict",
-          "source": "dictionaries/ua_categories.csv"
+          "source": "dictionaries/user_agent_regex_dict.yaml"
+        },
+        {
+          "name": "akamai_geoip_city_locations_en",
+          "source": "dictionaries/geoip_city_locations_en.json"
+        },
+        {
+          "name": "akamai_geoip_city_blocks_ipv4",
+          "source": "dictionaries/geoip_city_blocks_ipv4.json"
+        },
+        {
+          "name": "reference_geoip_asn_blocks_ipv4",
+          "source": "dictionaries/geoip_asn_blocks_ipv4.json"
+        },
+        {
+          "name": "reference_geoip_asn_blocks_ipv6",
+          "source": "dictionaries/geoip_asn_blocks_ipv6.json"
         }
       ]
     }

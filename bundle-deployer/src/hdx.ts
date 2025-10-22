@@ -1,4 +1,4 @@
-// Hydrolix API client - Complete implementation
+// Hydrolix API client - Complete implementation with YAML/Regexp dictionary support
 
 import { getErrorMessage } from "./utils/error.ts";
 
@@ -115,36 +115,58 @@ export async function createFunctions(
     return;
   }
   
-  const url = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/functions/bulk_function/`;
+  console.log(`Creating ${functionsToCreate.length} new function(s)...`);
   
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), HTTP_TIMEOUT);
+  // Create functions one at a time (not bulk) to avoid batch failures
+  let successCount = 0;
+  let failCount = 0;
   
-  try {
-    console.log(`Creating ${functionsToCreate.length} new function(s)...`);
+  for (const fn of functionsToCreate) {
+    const prefixedName = `${PROJ_NAME}_${fn.name}`;
+    const url = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/functions/`;
     
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${bearerToken}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(functionsToCreate),
-      signal: controller.signal,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), HTTP_TIMEOUT);
     
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    try {
+      console.log(`  Creating function ${prefixedName}...`);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          ...fn,
+          name: prefixedName,
+        }),
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn(`  ⚠️  Failed to create ${fn.name}: ${errorText}`);
+        failCount++;
+      } else {
+        console.log(`  ✓ Created function ${fn.name}`);
+        successCount++;
+      }
+    } catch (e) {
+      clearTimeout(timeoutId);
+      console.warn(`  ⚠️  Failed to create ${fn.name}: ${getErrorMessage(e)}`);
+      failCount++;
     }
-    
-    console.log(`✓ Successfully created ${functionsToCreate.length} function(s)`);
-  } catch (e) {
-    clearTimeout(timeoutId);
-    throw new Error(`Failed to create functions at ${url}: ${getErrorMessage(e)}`);
+  }
+  
+  if (successCount > 0) {
+    console.log(`✓ Successfully created ${successCount} function(s)`);
+  }
+  if (failCount > 0) {
+    console.warn(`⚠️  Failed to create ${failCount} function(s)`);
   }
 }
 
@@ -187,44 +209,78 @@ export async function createDictionary(
     // Continue to create if we can't check
   }
   
-  let fileContent: string;
+  // Determine file type
+  const isYaml = dictionary.source.toLowerCase().endsWith('.yaml') || dictionary.source.toLowerCase().endsWith('.yml');
+  const isJsonDefinition = dictionary.source.toLowerCase().endsWith('.json');
+  const isUrl = dictionary.source.startsWith('http://') || dictionary.source.startsWith('https://');
   
-  // Determine if source is a URL or local path
-  if (dictionary.source.startsWith('http://') || dictionary.source.startsWith('https://')) {
-    // It's a URL - fetch it
-    let sourceUrl = dictionary.source;
-    
-    // Replace __CLUSTER__ template variable
-    if (sourceUrl.includes("__CLUSTER__")) {
-      sourceUrl = sourceUrl.replace("__CLUSTER__", `https://${BUNDLE_TESTING_CLUSTER}`);
-    }
-    
-    console.log(`Fetching dictionary file from ${sourceUrl}...`);
-    const fileResponse = await fetch(sourceUrl);
-    
-    if (!fileResponse.ok) {
-      throw new Error(`Failed to fetch dictionary file: ${fileResponse.statusText}`);
-    }
-    
-    fileContent = await fileResponse.text();
-  } else {
-    // It's a local path - read from bundle directory
+  // If not a URL, check if local file exists
+  if (!isUrl) {
     if (!baseDir) {
-      throw new Error(`Cannot read local dictionary file without base directory`);
+      console.warn(`  ⚠️ Dictionary ${dictionary.name} not found on cluster and no base directory provided`);
+      console.warn(`  ⚠️ Expected to be pre-loaded by infrastructure team - skipping`);
+      return;
     }
     
     const filePath = `${baseDir}/${dictionary.source}`;
+    try {
+      await Deno.stat(filePath);
+    } catch {
+      console.warn(`  ⚠️ Dictionary ${dictionary.name} not found on cluster`);
+      console.warn(`  ⚠️ Local file not found: ${filePath}`);
+      console.warn(`  ⚠️ Expected to be pre-loaded by infrastructure team - skipping`);
+      return;
+    }
+  }
+  
+  // Load file content
+  let fileContent: string;
+  if (isUrl) {
+    let sourceUrl = dictionary.source;
+    if (sourceUrl.includes("__CLUSTER__")) {
+      sourceUrl = sourceUrl.replace("__CLUSTER__", `https://${BUNDLE_TESTING_CLUSTER}`);
+    }
+    console.log(`Fetching dictionary file from ${sourceUrl}...`);
+    const fileResponse = await fetch(sourceUrl);
+    if (!fileResponse.ok) {
+      throw new Error(`Failed to fetch dictionary file: ${fileResponse.statusText}`);
+    }
+    fileContent = await fileResponse.text();
+  } else {
+    const filePath = `${baseDir}/${dictionary.source}`;
     console.log(`Reading local dictionary file from ${filePath}...`);
-    
     fileContent = await Deno.readTextFile(filePath);
   }
   
-  const fileName = `${dictionary.name}.csv`;
+  // Handle JSON dictionary definitions (pre-configured payloads)
+  if (isJsonDefinition) {
+    await createDictionaryFromDefinition(bearerToken, dictionary.name, fileContent);
+    return;
+  }
   
-  // Check if file already uploaded - if so, we need to handle it
+  // Handle YAML and CSV files (need upload + definition)
+  const fileName = dictionary.source.split('/').pop() || `${dictionary.name}.${isYaml ? 'yaml' : 'csv'}`;
+  
+  // Upload file
+  await uploadDictionaryFile(bearerToken, fileName, fileContent, isYaml);
+  
+  // Create dictionary definition
+  if (isYaml) {
+    await createRegexpDictionary(bearerToken, dictionary.name, fileName, fileContent);
+  } else {
+    await createCsvDictionary(bearerToken, dictionary.name, fileName, fileContent);
+  }
+}
+
+async function uploadDictionaryFile(
+  bearerToken: string,
+  fileName: string,
+  fileContent: string,
+  isYaml: boolean
+): Promise<void> {
   const filesUrl = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/dictionaries/files/`;
   
-  let fileExists = false;
+  // Check if file already exists
   try {
     const filesListResponse = await fetch(filesUrl, {
       headers: { 'Authorization': `Bearer ${bearerToken}` },
@@ -232,18 +288,15 @@ export async function createDictionary(
     
     if (filesListResponse.ok) {
       const existingFiles = await filesListResponse.json();
-      console.log(`  Found ${Array.isArray(existingFiles) ? existingFiles.length : 0} existing dictionary file(s)`);
       
-      // Handle both string array and object array formats
       if (Array.isArray(existingFiles)) {
-        fileExists = existingFiles.some((f: any) => 
+        const fileExists = existingFiles.some((f: any) => 
           typeof f === 'string' ? f === fileName : f.name === fileName
         );
         
         if (fileExists) {
-          console.log(`  ⚠ File ${fileName} already exists on server`);
-          console.log(`  ⚠ Skipping upload (API doesn't provide UUID for deletion)`);
-          console.log(`  → Manually delete the file in Hydrolix UI if you need to update it`);
+          console.log(`  ✓ Dictionary file ${fileName} already on server (skipping upload)`);
+          return;
         }
       }
     }
@@ -251,48 +304,86 @@ export async function createDictionary(
     console.warn(`  ⚠ Could not check for existing files: ${getErrorMessage(e)}`);
   }
   
-  // Only upload if file doesn't already exist
-  if (fileExists) {
-    console.log(`  ✓ Dictionary file ${fileName} already on server (skipping upload)`);
-  } else {
-    // Upload the file
-    const formData = new FormData();
-    formData.append('file', new Blob([fileContent], { type: 'text/csv' }), fileName);
-    formData.append('name', fileName);
-    
-    const controller1 = new AbortController();
-    const timeoutId1 = setTimeout(() => controller1.abort(), HTTP_TIMEOUT);
-    
-    try {
-      const uploadResponse = await fetch(filesUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${bearerToken}`,
-        },
-        body: formData,
-        signal: controller1.signal,
-      });
-      
-      clearTimeout(timeoutId1);
-      
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(`Failed to upload dictionary file: ${errorText}`);
-      }
-      
-      console.log(`✓ Uploaded dictionary file ${fileName}`);
-    } catch (e) {
-      clearTimeout(timeoutId1);
-      throw new Error(`Failed to upload dictionary file: ${getErrorMessage(e)}`);
-    }
-  }
+  // Upload the file
+  const mimeType = isYaml ? 'application/x-yaml' : 'text/csv';
+  const formData = new FormData();
+  formData.append('file', new Blob([fileContent], { type: mimeType }), fileName);
+  formData.append('name', fileName);
   
-  // Now create the dictionary definition
+  try {
+    const uploadResponse = await fetch(filesUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+      },
+      body: formData,
+    });
+    
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Failed to upload dictionary file: ${errorText}`);
+    }
+    
+    console.log(`✓ Uploaded dictionary file ${fileName}`);
+  } catch (e) {
+    throw new Error(`Failed to upload dictionary file: ${getErrorMessage(e)}`);
+  }
+}
+
+async function createDictionaryFromDefinition(
+  bearerToken: string,
+  dictName: string,
+  jsonContent: string
+): Promise<void> {
+  console.log(`Creating dictionary from pre-configured definition...`);
+  
+  const definition = JSON.parse(jsonContent);
+  
+  // Override the name with project prefix
+  definition.name = `${PROJ_NAME}_${dictName}`;
+  
+  const dictUrl = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/dictionaries/`;
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTP_TIMEOUT);
+  
+  try {
+    const dictResponse = await fetch(dictUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(definition),
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!dictResponse.ok) {
+      const errorText = await dictResponse.text();
+      throw new Error(`Failed to create dictionary from definition: ${errorText}`);
+    }
+    
+    console.log(`✓ Successfully created dictionary ${dictName} from definition`);
+  } catch (e) {
+    clearTimeout(timeoutId);
+    throw new Error(`Failed to create dictionary from definition: ${getErrorMessage(e)}`);
+  }
+}
+
+async function createCsvDictionary(
+  bearerToken: string,
+  dictName: string,
+  fileName: string,
+  fileContent: string
+): Promise<void> {
   // Parse CSV to auto-detect columns
   const lines = fileContent.trim().split('\n');
   const headers = lines[0].split(',').map(h => h.trim());
   
-  console.log(`Dictionary columns: ${headers.join(', ')}`);
+  console.log(`CSV dictionary columns: ${headers.join(', ')}`);
   
   // Build output columns based on CSV headers
   const outputColumns = headers.map(header => ({
@@ -306,7 +397,7 @@ export async function createDictionary(
   
   // Use first column as primary key by default
   const dictPayload = {
-    name: dictionary.name,
+    name: dictName,
     settings: {
       filename: fileName,
       layout: "complex_key_hashed",
@@ -317,10 +408,10 @@ export async function createDictionary(
     },
   };
   
-  console.log(`Creating dictionary definition...`);
+  console.log(`Creating CSV dictionary definition...`);
   
-  const controller2 = new AbortController();
-  const timeoutId2 = setTimeout(() => controller2.abort(), HTTP_TIMEOUT);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTP_TIMEOUT);
   
   try {
     const dictResponse = await fetch(dictUrl, {
@@ -331,20 +422,112 @@ export async function createDictionary(
         'Accept': 'application/json',
       },
       body: JSON.stringify(dictPayload),
-      signal: controller2.signal,
+      signal: controller.signal,
     });
     
-    clearTimeout(timeoutId2);
+    clearTimeout(timeoutId);
     
     if (!dictResponse.ok) {
       const errorText = await dictResponse.text();
-      throw new Error(`Failed to create dictionary: ${errorText}`);
+      throw new Error(`Failed to create CSV dictionary: ${errorText}`);
     }
     
-    console.log(`✓ Successfully created dictionary ${dictionary.name}`);
+    console.log(`✓ Successfully created CSV dictionary ${dictName}`);
   } catch (e) {
-    clearTimeout(timeoutId2);
-    throw new Error(`Failed to create dictionary: ${getErrorMessage(e)}`);
+    clearTimeout(timeoutId);
+    throw new Error(`Failed to create CSV dictionary: ${getErrorMessage(e)}`);
+  }
+}
+
+async function createRegexpDictionary(
+  bearerToken: string,
+  dictName: string,
+  fileName: string,
+  fileContent: string
+): Promise<void> {
+  // Parse YAML to extract attribute columns
+  const lines = fileContent.trim().split('\n');
+  const attributes = new Set<string>();
+  
+  // Extract all unique keys from YAML
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('-') || trimmed.startsWith('#')) continue;
+    if (trimmed.includes(':')) {
+      const colonIndex = trimmed.indexOf(':');
+      const key = trimmed.substring(0, colonIndex).trim();
+      if (key && !key.startsWith('#')) {
+        attributes.add(key);
+      }
+    }
+  }
+  
+  // Remove 'regexp' - it's the primary key
+  attributes.delete('regexp');
+  
+  console.log(`Regexp dictionary attributes: regexp (primary key), ${Array.from(attributes).join(', ')}`);
+  
+  // Build output columns: regexp + all attributes
+  const outputColumns = [
+    {
+      name: "regexp",
+      datatype: {
+        type: "string",
+        denullify: true,
+      },
+    },
+    ...Array.from(attributes).map(attr => ({
+      name: attr,
+      datatype: {
+        type: "string",
+        denullify: true,
+      },
+    })),
+  ];
+  
+  const dictUrl = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/dictionaries/`;
+  
+  const dictPayload = {
+    name: dictName,
+    settings: {
+      filename: fileName,
+      layout: "regexp_tree",
+      lifetime_seconds: 5,
+      format: "Regexp",
+      output_columns: outputColumns,
+      primary_key: ["regexp"],
+      dictionary_load_level: ["ALL"],
+    },
+  };
+  
+  console.log(`Creating Regexp dictionary definition...`);
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTP_TIMEOUT);
+  
+  try {
+    const dictResponse = await fetch(dictUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(dictPayload),
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!dictResponse.ok) {
+      const errorText = await dictResponse.text();
+      throw new Error(`Failed to create regexp dictionary: ${errorText}`);
+    }
+    
+    console.log(`✓ Successfully created Regexp dictionary ${dictName}`);
+  } catch (e) {
+    clearTimeout(timeoutId);
+    throw new Error(`Failed to create regexp dictionary: ${getErrorMessage(e)}`);
   }
 }
 
