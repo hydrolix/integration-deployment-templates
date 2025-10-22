@@ -112,12 +112,24 @@ async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
   
   if (IS_LOCAL_DASHBOARD_ONLY) {
     // Kill previous container if it exists
+    console.log("!!!!! LOCAL DASHBOARD ONLY WORKING");
     await grafana.kill().catch(() => {});
     
     await grafana.start();
     
     const dashboardId = await deployOnlyDashboard.run(base, bundle, output);
     console.log(`Dashboard_id=${dashboardId}`);
+    
+    console.log("Checking the Grafana dashboard with headless Chrome");
+    const [datasourceErrorCount, nodataErrorCount] = await headless.run(dashboardId);
+    
+    console.log(`Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`);
+    
+    if (datasourceErrorCount > 0 || nodataErrorCount > 0) {
+      throw new Error(
+        `Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`
+      );
+    }
   }
   
   if (IS_LOCAL) {

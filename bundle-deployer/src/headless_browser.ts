@@ -25,11 +25,13 @@ export async function run(grafanaDashboardId: string): Promise<[number, number]>
     let datasourceErrorCount = 0;
     
     const badDatasourceRegex = /Datasource \w+ was not found/;
+    const fourHundredRegex = /400 \w+/;
     
     // Listen to console messages for datasource errors
     page.on('console', (msg: { text: () => string }) => {
       const text = msg.text();
-      if (badDatasourceRegex.test(text)) {
+      console.log("****" + text);
+      if (text.includes('400')) {
         datasourceErrorCount++;
         console.log(`ERROR: Datasource not found - ${text}`);
       }
@@ -47,11 +49,11 @@ export async function run(grafanaDashboardId: string): Promise<[number, number]>
     });
     
     // Navigate to dashboard (2 weeks time range)
-    const url = `http://${GRAFANA_LOCATION}/d/${grafanaDashboardId}?from=now-14d&to=now`;
-    
+    const url = `http://${GRAFANA_LOCATION}/d/${grafanaDashboardId}/cdn-dashboard-default`;
+    console.log(url);
     await page.goto(url, {
       waitUntil: 'networkidle2',
-      timeout: 30000,
+      timeout: 120000,
     });
     
     console.log("Page navigation completed");
