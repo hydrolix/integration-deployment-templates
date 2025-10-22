@@ -51,6 +51,8 @@ interface AlertRulesFile {
 }
 
 export async function createDatalink(projectName: string): Promise<string> {
+  console.log(`Creating Grafana datasource for project ${projectName}...`); 
+
   const datasourceRequest: CreateDataSourceRequest = {
     name: "Bundle Testing",
     type: "grafana-clickhouse-datasource",
@@ -86,6 +88,8 @@ export async function createDatalink(projectName: string): Promise<string> {
   if (!uid) {
     throw new Error("Failed to create Grafana Datalink - no UID in response");
   }
+
+  console.log(`✓ Created Grafana datasource with UID: ${uid}`);
   
   // Wait a bit for Grafana to settle
   await new Promise(resolve => setTimeout(resolve, 2000));

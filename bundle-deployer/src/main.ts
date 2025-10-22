@@ -130,9 +130,7 @@ async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
         `Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`
       );
     }
-  }
-  
-  if (IS_LOCAL) {
+  } else if (IS_LOCAL) {
     // Kill previous container if it exists
     await grafana.kill().catch(() => {});
     

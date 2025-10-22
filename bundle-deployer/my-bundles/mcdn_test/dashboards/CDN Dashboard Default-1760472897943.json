@@ -29,7 +29,7 @@
       },
       {
         "type": "datasource",
-        "id": "hydrolix-hydrolix-datasource",
+        "id": "grafana-clickhouse-datasource",
         "name": "Hydrolix",
         "version": "0.6.0"
       },
@@ -108,7 +108,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -161,7 +161,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -187,7 +187,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -245,7 +245,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -271,7 +271,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -329,7 +329,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -355,7 +355,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -405,7 +405,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -431,7 +431,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "value from the last sum(response_total_bytes) / second",
@@ -481,7 +481,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -507,7 +507,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -557,7 +557,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -583,7 +583,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -633,7 +633,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -659,7 +659,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -709,7 +709,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -735,7 +735,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "5 Minute Peak",
@@ -785,7 +785,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -811,7 +811,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -861,7 +861,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -887,7 +887,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -973,7 +973,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1007,7 +1007,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1077,7 +1077,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1103,7 +1103,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1176,7 +1176,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1202,7 +1202,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1266,7 +1266,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1292,7 +1292,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1383,7 +1383,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1409,7 +1409,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1518,7 +1518,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1544,7 +1544,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1647,7 +1647,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1673,7 +1673,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -1873,7 +1873,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -1899,7 +1899,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -1985,7 +1985,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2011,7 +2011,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2084,7 +2084,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2110,7 +2110,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2192,7 +2192,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2218,7 +2218,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2300,7 +2300,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2326,7 +2326,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2408,7 +2408,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2434,7 +2434,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2516,7 +2516,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2542,7 +2542,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2624,7 +2624,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2650,7 +2650,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "description": "",
@@ -2850,7 +2850,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -2876,7 +2876,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -2988,7 +2988,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3027,7 +3027,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3112,7 +3112,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3138,7 +3138,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3224,7 +3224,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3250,7 +3250,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3332,7 +3332,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3366,7 +3366,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3452,7 +3452,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3479,7 +3479,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3594,7 +3594,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3621,7 +3621,7 @@
       },
       {
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
+          "type": "grafana-clickhouse-datasource",
           "uid": "__DATASOURCE__"
         },
         "fieldConfig": {
@@ -3731,7 +3731,7 @@
         "targets": [
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
+              "type": "grafana-clickhouse-datasource",
               "uid": "__DATASOURCE__"
             },
             "editorType": "sql",
@@ -3850,7 +3850,7 @@
         {
           "baseFilters": [],
           "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
+            "type": "grafana-clickhouse-datasource",
             "uid": "__DATASOURCE__"
           },
           "filters": [
