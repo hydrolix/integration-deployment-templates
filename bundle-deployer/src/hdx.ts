@@ -8,8 +8,11 @@ const BUNDLE_TESTING_PASSWORD = Deno.env.get("BUNDLE_TESTING_PASSWORD") || "";
 const FOR_MARKETPLACE = Deno.args.includes("--marketplace");
 
 // These are static but not secret
-const ORG_UUID = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const PROJ_UUID = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const ORG_UUID_OLD = "b646d78a-5fb2-4d5f-afef-b705bf185174";
+const PROJ_UUID_OLD = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+
+const ORG_UUID = "a3583b75-5042-44a0-8198-54fca9f2f187";
+const PROJ_UUID = "fcd20095-8458-49c1-9506-5951a614f49b";
 const PROJ_NAME = "sample_project";
 
 const HTTP_TIMEOUT = 120000; // 120 seconds in milliseconds
