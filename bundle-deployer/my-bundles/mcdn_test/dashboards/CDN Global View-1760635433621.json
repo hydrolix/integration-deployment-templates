@@ -1443,12 +1443,12 @@
             "links": [
               {
                 "title": "View ${__data.fields.hdx_cdn} CDN panel",
-                "url": "/d/__DATASOURCE__/cdn-dashboard-default?${__all_variables}&${__url_time_range}&var-filter=ua_category|=|${__data.fields.ua_category}"
+                "url": "/d/__DATASOURCE__/cdn-dashboard-default?${__all_variables}&${__url_time_range}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
               },
               {
                 "targetBlank": true,
                 "title": "Filter to RAW logs",
-                "url": "/d/__DATASOURCE__/raw-logs?${__all_variables}&${__url_time_range}&var-filter=ua_category|=|${__data.fields.ua_category}"
+                "url": "/d/__DATASOURCE__/raw-logs?${__all_variables}&${__url_time_range}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
               }
             ],
             "mappings": []
@@ -1516,7 +1516,7 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n    ua_category,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY ua_category\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
+            "rawSql": "SELECT \n    user_agent_category,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY user_agent_category\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
