@@ -22,7 +22,7 @@
               "datasourceUid": "__DATASOURCE__",
               "model": {
                 "datasource": {
-                  "type": "grafana-clickhouse-datasource",
+                  "type": "hydrolix-hydrolix-datasource",
                   "uid": "__DATASOURCE__"
                 },
                 "editorType": "sql",

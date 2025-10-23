@@ -19,7 +19,7 @@ export async function run(
 ): Promise<string> {
   const bearerToken = await hdx.getAuthToken();
   const projectName = hdx.createProjectName();
-  
+
   // Create functions and dictionaries BEFORE creating tables/transforms
   if (bundle.dependencies?.hydrolix) {
     if (bundle.dependencies.hydrolix.required_functions) {
@@ -30,7 +30,7 @@ export async function run(
         console.warn(`⚠️  Continuing anyway - transforms may be invalid until functions are added`);
       }
     }
-    
+
     if (bundle.dependencies.hydrolix.required_dictionaries) {
       for (const dict of bundle.dependencies.hydrolix.required_dictionaries) {
         try {
@@ -43,22 +43,22 @@ export async function run(
       }
     }
   }
-  
+
   const datalink = await grafana.createDatalink(projectName);
-  
+
   output.cluster_domain = BUNDLE_TESTING_CLUSTER;
   output.project_name = projectName;
   output.grafana_domain = `${GRAFANA_LOCATION}/`;
   output.datalink = datalink;
-  
+
   let dashboardData = await loadDashboardTemplate(base, bundle, projectName, datalink);
-  
+
   // Create base tables and transformations
   for (const table of bundle.tables) {
     dashboardData = dashboardData.replace(table.dashboard_var, table.name);
     await processTable(base, bearerToken, projectName, table, output, bundle);
   }
-  
+
   // Create summary tables if present
   if (bundle.summary_tables) {
     for (const summary of bundle.summary_tables) {
@@ -72,23 +72,59 @@ export async function run(
       // Update dashboardData with the replacement
       const fullTableName = `${projectName}.${summary.name}`;
       console.log(`Replacing ${summary.dashboard_var} with ${fullTableName}`);
-      dashboardData = dashboardData.replace(summary.dashboard_var, fullTableName);
+      dashboardData = dashboardData.replace(summary.dashboard_var, summary.name);
     }
   }
-  
+
   // Second pass: insert data into base tables to populate summaries
   await seedTablesWithData(base, bearerToken, projectName, bundle);
-  
+
   // Create Grafana dashboard
   const dashboardId = await grafana.createDashboard(dashboardData);
-  
+
   output.dashboard_id = dashboardId;
-  
+
+  // Create other dashboards if present
+  if (bundle.other_dashboards) {
+    for (const otherDash of bundle.other_dashboards) {
+      console.log(`Creating additional dashboard: ${otherDash.path}`);
+
+      let otherDashboardData = await Deno.readTextFile(`${base}/${otherDash.path}`);
+
+      // Replace template variables
+      otherDashboardData = otherDashboardData.replace(/__PROJECT_NAME__/g, projectName);
+      otherDashboardData = otherDashboardData.replace(/__DATASOURCE__/g, datalink);
+      otherDashboardData = otherDashboardData.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+
+      if (bundle.summary_tables && bundle.summary_tables.length > 0) {
+        otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_MIN\}?/g, `${projectName}.${bundle.summary_tables[0].name}`);
+      }
+      if (bundle.summary_tables && bundle.summary_tables.length > 1) {
+        otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_HOUR\}?/g, `${projectName}.${bundle.summary_tables[1].name}`);
+      }
+
+      // Replace table variables
+      for (const table of bundle.tables) {
+        otherDashboardData = otherDashboardData.replace(new RegExp(table.dashboard_var, 'g'), table.name);
+      }
+
+      // Replace summary table variables
+      if (bundle.summary_tables) {
+        for (const summary of bundle.summary_tables) {
+          otherDashboardData = otherDashboardData.replace(new RegExp(summary.dashboard_var, 'g'), summary.name);  // ← Just the name!
+        }
+      }
+
+      await grafana.createDashboard(otherDashboardData);
+      console.log(`✓ Created dashboard: ${otherDash.path}`);
+    }
+  }
+
   // Create alert rules if present
   if (bundle.alert_rules) {
     await createAlertRules(base, bundle, projectName, datalink, dashboardId);
   }
-  
+
   return dashboardId;
 }
 
@@ -99,13 +135,20 @@ async function loadDashboardTemplate(
   datalink: string
 ): Promise<string> {
   const path = `${base}/${bundle.dashboard.path}`;
-  
+
   let dashboard = await Deno.readTextFile(path);
-  
+
   dashboard = dashboard.replace(/__PROJECT_NAME__/g, projectName);
   dashboard = dashboard.replace(/__DATASOURCE__/g, datalink);
   dashboard = dashboard.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
-  
+
+  if (bundle.summary_tables && bundle.summary_tables.length > 0) {
+    dashboard = dashboard.replace(/\$\{?VAR_SUMMARY_MIN\}?/g, `${projectName}.${bundle.summary_tables[0].name}`);
+  }
+  if (bundle.summary_tables && bundle.summary_tables.length > 1) {
+    dashboard = dashboard.replace(/\$\{?VAR_SUMMARY_HOUR\}?/g, `${projectName}.${bundle.summary_tables[1].name}`);
+  }
+
   return dashboard;
 }
 
@@ -118,23 +161,23 @@ async function processTable(
   bundle: Bundle
 ): Promise<void> {
   console.log(`Creating table: ${table.name}`);
-  
+
   const tableUuid = await hdx.createTable(bearerToken, table.name);
-  
+
   console.log("Waiting for table to be ready...");
   await new Promise(resolve => setTimeout(resolve, TABLE_READY_DELAY_SECS * 1000));
-  
+
   const outputTable: OutputTable = {
     table_name: table.name,
     transforms: [],
   };
-  
+
   for (const transform of table.transforms) {
     let transformJson = await readTransformFile(base, transform.path);
-    
+
     // IMPORTANT: Replace function names with project-prefixed versions
     transformJson = replaceFunctionNames(transformJson, projectName, bundle);
-    
+
     const transformName = await addTransformation(
       bearerToken,
       tableUuid,
@@ -143,7 +186,7 @@ async function processTable(
       projectName,
       transform.path
     );
-    
+
     await insertSampleDataIfPresent(
       bearerToken,
       projectName,
@@ -151,14 +194,14 @@ async function processTable(
       transformName,
       transformJson
     );
-    
+
     outputTable.transforms.push({
       name: transformName,
       data_type: getTransformationType(transformJson),
       data_sub_type: getTransformationSubtype(transformJson),
     });
   }
-  
+
   output.tables.push(outputTable);
 }
 
@@ -170,12 +213,12 @@ async function createSummaryTable(
   dashboardData: string
 ): Promise<void> {
   const path = `${base}/${summary.sql.path}`;
-  
+
   let sql = await Deno.readTextFile(path);
-  
+
   sql = sql.replace(/__PROJECT_NAME__/g, projectName);
   sql = sql.replace(/__TABLE_NAME__/g, summary.parent_table_name);
-  
+
   await hdx.createSummaryTable(bearerToken, summary.name, sql);
 }
 
@@ -188,12 +231,12 @@ async function seedTablesWithData(
   for (const table of bundle.tables) {
     for (const transform of table.transforms) {
       let transformJson = await readTransformFile(base, transform.path);
-      
+
       // Apply function name replacements
       transformJson = replaceFunctionNames(transformJson, projectName, bundle);
-      
+
       const transformName = getTransformationName(transformJson);
-      
+
       await insertSampleDataIfPresent(
         bearerToken,
         projectName,
@@ -207,7 +250,7 @@ async function seedTablesWithData(
 
 async function readTransformFile(base: string, relativePath: string): Promise<unknown> {
   const path = `${base}/${relativePath}`;
-  
+
   try {
     const content = await Deno.readTextFile(path);
     return JSON.parse(content);
@@ -225,7 +268,7 @@ async function addTransformation(
   transformPath: string
 ): Promise<string> {
   const fullTableName = `${projectName}.${tableName}`;
-  
+
   try {
     return await hdx.addTransformToTable(bearerToken, tableUuid, transformJson);
   } catch (e) {
@@ -243,20 +286,20 @@ async function insertSampleDataIfPresent(
   transformJson: unknown
 ): Promise<void> {
   const sampleData = getSampleDataAsJson(transformJson);
-  
+
   if (!sampleData) {
     console.log(`ℹ No sample data found for transform ${transformName}, skipping insertion`);
     return;
   }
-  
+
   console.log(`Found sample data for transform ${transformName}, preparing to insert...`);
   console.log("Waiting for table to be ready for data...");
   await new Promise(resolve => setTimeout(resolve, DATA_READY_DELAY_SECS * 1000));
-  
+
   const fullTableName = `${projectName}.${tableName}`;
-  
+
   console.log(`Inserting sample data into ${fullTableName} with transform ${transformName}...`);
-  
+
   try {
     await hdx.insertIntoTable(bearerToken, fullTableName, transformName, sampleData);
     console.log(`✓ Successfully inserted sample data into ${fullTableName}`);
@@ -286,12 +329,12 @@ function getSampleDataAsJson(transformJson: unknown): unknown | null {
   const data = transformJson as Record<string, unknown>;
   const settings = data.settings as Record<string, unknown> | undefined;
   const sampleData = settings?.sample_data;
-  
+
   // Check if it's a non-empty object
   if (sampleData && typeof sampleData === 'object' && Object.keys(sampleData).length > 0) {
     return sampleData;
   }
-  
+
   return null;
 }
 
@@ -305,19 +348,19 @@ function replaceFunctionNames(transformJson: unknown, projectName: string, bundl
   const data = transformJson as Record<string, unknown>;
   const settings = data.settings as Record<string, unknown> | undefined;
   const sqlTransform = settings?.sql_transform;
-  
+
   if (!sqlTransform || typeof sqlTransform !== 'string') {
     return transformJson;
   }
-  
+
   let updatedSql = sqlTransform;
-  
+
   // Replace custom function calls using the actual function list from bundle
   if (bundle.dependencies?.hydrolix?.required_functions) {
     for (const fn of bundle.dependencies.hydrolix.required_functions) {
       const originalName = fn.name;
       const prefixedName = `${projectName}_${originalName}`;
-      
+
       // Check if this function is used in the SQL
       const regex = new RegExp(`\\b${originalName}\\s*\\(`, 'g');
       if (regex.test(updatedSql)) {
@@ -326,13 +369,13 @@ function replaceFunctionNames(transformJson: unknown, projectName: string, bundl
       }
     }
   }
-  
+
   // Replace dictionary names in dictGet() calls with project-prefixed versions
   if (bundle.dependencies?.hydrolix?.required_dictionaries) {
     for (const dict of bundle.dependencies.hydrolix.required_dictionaries) {
       const originalDictName = dict.name;
       const prefixedDictName = `${projectName}_${originalDictName}`;
-      
+
       // Check for dictGet calls with this dictionary
       const regex = new RegExp(`dictGet\\s*\\(\\s*'${originalDictName}'`, 'gi');
       if (regex.test(updatedSql)) {
@@ -341,7 +384,7 @@ function replaceFunctionNames(transformJson: unknown, projectName: string, bundl
       }
     }
   }
-  
+
   // Return updated transform JSON
   return {
     ...data,
@@ -362,23 +405,23 @@ async function createAlertRules(
   if (!bundle.alert_rules) {
     return;
   }
-  
+
   console.log("Loading and processing alert rules...");
-  
+
   const alertRulesPath = `${base}/${bundle.alert_rules.path}`;
   let alertRulesContent = await Deno.readTextFile(alertRulesPath);
-  
+
   // Replace template variables
   alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
   alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
   alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
-  
+
   // Replace table variables with full table names
   for (const table of bundle.tables) {
     const fullTableName = `${projectName}.${table.name}`;
     alertRulesContent = alertRulesContent.replace(new RegExp(table.dashboard_var, 'g'), fullTableName);
   }
-  
+
   // Replace summary table variables if present
   if (bundle.summary_tables) {
     for (const summary of bundle.summary_tables) {
@@ -386,6 +429,6 @@ async function createAlertRules(
       alertRulesContent = alertRulesContent.replace(new RegExp(summary.dashboard_var, 'g'), fullTableName);
     }
   }
-  
+
   await grafana.createAlertRules(alertRulesContent);
 }

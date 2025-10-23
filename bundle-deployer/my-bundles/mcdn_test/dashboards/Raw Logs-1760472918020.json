@@ -3,7 +3,7 @@
     "__elements": {
       "model": {
         "datasource": {
-          "type": "grafana-clickhouse-datasource",
+          "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         }
       }
@@ -107,7 +107,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} > now() - INTERVAL 15 MINUTE\nAND $__adHocFilter() \nORDER BY ${timestamp} DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
+            "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} > now() - INTERVAL 15 MINUTE\nAND TRUE \nORDER BY ${timestamp} DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
             "refId": "A"
           }
         ],

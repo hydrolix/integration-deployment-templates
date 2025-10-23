@@ -44,6 +44,43 @@ export async function run(
   
   output.dashboard_id = dashboardId;
   
+  // Create other dashboards if present
+  if (bundle.other_dashboards) {
+    for (const otherDash of bundle.other_dashboards) {
+      console.log(`Creating additional dashboard: ${otherDash.path}`);
+
+      let otherDashboardData = await Deno.readTextFile(`${base}/${otherDash.path}`);
+
+      // Replace template variables
+      otherDashboardData = otherDashboardData.replace(/__PROJECT_NAME__/g, projectName);
+      otherDashboardData = otherDashboardData.replace(/__DATASOURCE__/g, datalink);
+      otherDashboardData = otherDashboardData.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+
+      // Replace VAR_SUMMARY variables
+      if (bundle.summary_tables && bundle.summary_tables.length > 0) {
+        otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_MIN\}?/g, `${projectName}.${bundle.summary_tables[0].name}`);
+      }
+      if (bundle.summary_tables && bundle.summary_tables.length > 1) {
+        otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_HOUR\}?/g, `${projectName}.${bundle.summary_tables[1].name}`);
+      }
+
+      // Replace table variables
+      for (const table of bundle.tables) {
+        otherDashboardData = otherDashboardData.replace(new RegExp(table.dashboard_var, 'g'), table.name);
+      }
+
+      // Replace summary table variables
+      if (bundle.summary_tables) {
+        for (const summary of bundle.summary_tables) {
+          otherDashboardData = otherDashboardData.replace(new RegExp(summary.dashboard_var, 'g'), summary.name);
+        }
+      }
+
+      await grafana.createDashboard(otherDashboardData);
+      console.log(`✓ Created dashboard: ${otherDash.path}`);
+    }
+  }
+  
   // Create alert rules if present
   if (bundle.alert_rules) {
     await createAlertRules(base, bundle, projectName, datalink, dashboardId);

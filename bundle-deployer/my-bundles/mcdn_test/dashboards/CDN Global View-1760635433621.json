@@ -3,7 +3,7 @@
     "__elements": {
       "model": {
         "datasource": {
-          "type": "grafana-clickhouse-datasource",
+          "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         }
       }
@@ -234,7 +234,7 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT  \r\n    ${item_formatted_for_display} as item,\r\n    ${item_formatted_for_filter} as filter_item, \r\n    cnt_all as count,\r\n    countMergeIf(\r\n        `count()`,\r\n        response_status_code >= '400'\r\n        AND response_status_code < '600'\r\n    ) as errorcount,\r\n    errorcount / cnt_all AS error_ratio\r\nFROM ${table}\r\nWHERE $__timeFilter(timestamp)\r\n    AND $__adHocFilter() \r\nGROUP BY item, filter_item\r\nORDER BY count DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Treemap; du=${__user.login}'",
+            "rawSql": "SELECT  \r\n    ${item_formatted_for_display} as item,\r\n    ${item_formatted_for_filter} as filter_item, \r\n    cnt_all as count,\r\n    countMergeIf(\r\n        `count()`,\r\n        response_status_code >= '400'\r\n        AND response_status_code < '600'\r\n    ) as errorcount,\r\n    errorcount / cnt_all AS error_ratio\r\nFROM ${table}\r\nWHERE $__timeFilter(timestamp)\r\n    AND TRUE \r\nGROUP BY item, filter_item\r\nORDER BY count DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Treemap; du=${__user.login}'",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
@@ -330,7 +330,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT\n    (SUM(cache_hit) / (SUM(cache_hit) + SUM(cache_miss))) AS total,\n    hdx_cdn\nFROM \n(\n    SELECT \n        countMergeIf(`count()`,cache_was_cached = 1) AS cache_hit,\n        countMergeIf(`count()`,cache_was_cached = 0) AS cache_miss,\n        hdx_cdn\n    FROM \n        ${table}\n    WHERE \n        $__timeFilter(timestamp)\n        AND $__adHocFilter()\n        GROUP BY \n            hdx_cdn\n)\nGROUP BY \n    hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Cache Hit Total %; du=${__user.login}'",
+            "rawSql": "SELECT\n    (SUM(cache_hit) / (SUM(cache_hit) + SUM(cache_miss))) AS total,\n    hdx_cdn\nFROM \n(\n    SELECT \n        countMergeIf(`count()`,cache_was_cached = 1) AS cache_hit,\n        countMergeIf(`count()`,cache_was_cached = 0) AS cache_miss,\n        hdx_cdn\n    FROM \n        ${table}\n    WHERE \n        $__timeFilter(timestamp)\n        AND TRUE\n        GROUP BY \n            hdx_cdn\n)\nGROUP BY \n    hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Cache Hit Total %; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -418,7 +418,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp as time,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    timestamp, hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp as time,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY \n    timestamp, hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -581,7 +581,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n  timestamp,\n  response_total_bytes*8/${seconds} AS TotalThroughput\nFROM\n  ${table}\nWHERE\n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY timestamp\nORDER BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Edge Traffic; du=${__user.login}'",
+            "rawSql": "SELECT\n  timestamp,\n  response_total_bytes*8/${seconds} AS TotalThroughput\nFROM\n  ${table}\nWHERE\n  $__timeFilter(timestamp)\n  AND TRUE\nGROUP BY timestamp\nORDER BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Edge Traffic; du=${__user.login}'",
             "refId": "a"
           }
         ],
@@ -810,7 +810,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    response_total_bytes*8/${seconds} AS Throughput,\n    hdx_cdn AS CDN\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY \n    time, CDN \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    response_total_bytes*8/${seconds} AS Throughput,\n    hdx_cdn AS CDN\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\nGROUP BY \n    time, CDN \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
             "refId": "1 Minute"
           }
         ],
@@ -1047,7 +1047,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    response_total_bytes*8/${seconds} AS Throughput,\n    hdx_cdn AS CDN\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY \n    time, CDN \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    response_total_bytes*8/${seconds} AS Throughput,\n    hdx_cdn AS CDN\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\nGROUP BY \n    time, CDN \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
             "refId": "1 Minute"
           }
         ],
@@ -1172,7 +1172,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    countMergeIf(`count()`,response_status_code >= '400' AND response_status_code < '500') AS \"4xx\", \n    countMergeIf(`count()`,response_status_code >= '500' AND response_status_code < '600') AS \"5xx\",\n    hdx_cdn\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY time, hdx_cdn\nORDER BY time, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    countMergeIf(`count()`,response_status_code >= '400' AND response_status_code < '500') AS \"4xx\", \n    countMergeIf(`count()`,response_status_code >= '500' AND response_status_code < '600') AS \"5xx\",\n    hdx_cdn\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY time, hdx_cdn\nORDER BY time, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -1304,7 +1304,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS Total\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS Total\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY \n    time, CDN\nORDER BY \n    time\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -1412,7 +1412,7 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n    hdx_cdn,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY hdx_cdn\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
+            "rawSql": "SELECT \n    hdx_cdn,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY hdx_cdn\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
@@ -1516,7 +1516,7 @@
         "targets": [
           {
             "format": 1,
-            "rawSql": "SELECT \n    ua_category,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY ua_category\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
+            "rawSql": "SELECT \n    ua_category,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY ua_category\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; asd; du=${__user.login}'",
             "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
@@ -1629,7 +1629,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '399' AND response_status_code < '500') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '399' AND response_status_code < '500') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -1744,7 +1744,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '499' AND response_status_code < '600') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '499' AND response_status_code < '600') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -1865,7 +1865,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    timestamp AS time,\n    quantiles_response_ttfb_ms[2] AS TTFB,\n    hdx_cdn AS CDN\nFROM\n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY\n    time, hdx_cdn\nORDER BY\n    time asc\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Manifest Latency by CDN (p95/p99); du=${__user.login}'",
+            "rawSql": "SELECT\n    timestamp AS time,\n    quantiles_response_ttfb_ms[2] AS TTFB,\n    hdx_cdn AS CDN\nFROM\n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\nGROUP BY\n    time, hdx_cdn\nORDER BY\n    time asc\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Manifest Latency by CDN (p95/p99); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -2017,7 +2017,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    request_host AS Host,\n    client_country_iso_code AS Country,\n    SUM(Total) AS Total\nFROM (\n    SELECT \n        request_host,\n        client_country_iso_code,\n        cnt_all AS Total,\n        hdx_cdn as CDN\n    FROM ${table}\n    WHERE $__timeFilter(timestamp)\n      AND notEmpty(request_host)\n      AND $__adHocFilter()\n    GROUP BY hdx_cdn, request_host, client_country_iso_code\n)\nGROUP BY Host, Country\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
+            "rawSql": "SELECT \n    request_host AS Host,\n    client_country_iso_code AS Country,\n    SUM(Total) AS Total\nFROM (\n    SELECT \n        request_host,\n        client_country_iso_code,\n        cnt_all AS Total,\n        hdx_cdn as CDN\n    FROM ${table}\n    WHERE $__timeFilter(timestamp)\n      AND notEmpty(request_host)\n      AND TRUE\n    GROUP BY hdx_cdn, request_host, client_country_iso_code\n)\nGROUP BY Host, Country\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2122,7 +2122,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    edge_pop AS POP,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS \"2xx\",\n    countMergeIf(`count()`,response_status_code >= '300'AND response_status_code < '400') AS \"3xx\",\n    countMergeIf(`count()`,response_status_code >= '400'AND response_status_code < '500') AS \"4xx\",\n    countMergeIf(`count()`,response_status_code >= '500'AND response_status_code < '600') AS \"5xx\",\n    cnt_all AS Total\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY \n    edge_pop\nORDER BY \n    edge_pop\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
+            "rawSql": "SELECT \n    edge_pop AS POP,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS \"2xx\",\n    countMergeIf(`count()`,response_status_code >= '300'AND response_status_code < '400') AS \"3xx\",\n    countMergeIf(`count()`,response_status_code >= '400'AND response_status_code < '500') AS \"4xx\",\n    countMergeIf(`count()`,response_status_code >= '500'AND response_status_code < '600') AS \"5xx\",\n    cnt_all AS Total\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\nGROUP BY \n    edge_pop\nORDER BY \n    edge_pop\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
             "refId": "A"
           }
         ],
