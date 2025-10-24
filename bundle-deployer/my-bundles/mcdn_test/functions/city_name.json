@@ -1,0 +1,5 @@
+{
+    "description": "City Name",
+    "name": "city_name",
+    "sql": "(ip) -> dictGetString (\n  '__PROJECT_NAME___geoip_city_locations_en',\n  'city_name',\n  __PROJECT_NAME___geoname_id (assumeNotNull (ip))\n)"
+}

@@ -1,4 +1,5 @@
 // Main deployment orchestration with alert rules support
+// COMPLETE FILE - Replace your entire deploy.ts with this
 
 import type { Bundle, Output, OutputTable, OutputTransformation } from "./types/bundle.ts";
 import { getErrorMessage } from "./utils/error.ts";
@@ -22,22 +23,29 @@ export async function run(
 
   // Create functions and dictionaries BEFORE creating tables/transforms
   if (bundle.dependencies?.hydrolix) {
+    // Process functions
     if (bundle.dependencies.hydrolix.required_functions) {
-      try {
-        await hdx.createFunctions(bearerToken, bundle.dependencies.hydrolix.required_functions);
-      } catch (e) {
-        console.warn(`⚠️  WARNING: Failed to create functions: ${getErrorMessage(e)}`);
-        console.warn(`⚠️  Continuing anyway - transforms may be invalid until functions are added`);
+      console.log(`\nProcessing ${bundle.dependencies.hydrolix.required_functions.length} required function(s)...`);
+      
+      for (const functionName of bundle.dependencies.hydrolix.required_functions) {
+        try {
+          await hdx.checkAndCreateFunction(bearerToken, functionName, base);
+        } catch (e) {
+          console.warn(`⚠️  WARNING: Failed to create function ${functionName}: ${getErrorMessage(e)}`);
+          console.warn(`⚠️  Continuing anyway - transforms may be invalid until function is added`);
+        }
       }
     }
 
+    // Process dictionaries
     if (bundle.dependencies.hydrolix.required_dictionaries) {
-      for (const dict of bundle.dependencies.hydrolix.required_dictionaries) {
+      console.log(`\nProcessing ${bundle.dependencies.hydrolix.required_dictionaries.length} required dictionar(y/ies)...`);
+      
+      for (const dictionaryName of bundle.dependencies.hydrolix.required_dictionaries) {
         try {
-          // Pass base directory so we can read local files
-          await hdx.createDictionary(bearerToken, dict, base);
+          await hdx.checkAndCreateDictionary(bearerToken, dictionaryName, base);
         } catch (e) {
-          console.warn(`⚠️  WARNING: Failed to create dictionary ${dict.name}: ${getErrorMessage(e)}`);
+          console.warn(`⚠️  WARNING: Failed to create dictionary ${dictionaryName}: ${getErrorMessage(e)}`);
           console.warn(`⚠️  Continuing anyway - transforms may be invalid until dictionary is added`);
         }
       }
@@ -69,7 +77,6 @@ export async function run(
         summary,
         dashboardData
       );
-      // Update dashboardData with the replacement
       const fullTableName = `${projectName}.${summary.name}`;
       console.log(`Replacing ${summary.dashboard_var} with ${fullTableName}`);
       dashboardData = dashboardData.replace(summary.dashboard_var, summary.name);
@@ -91,7 +98,6 @@ export async function run(
 
       let otherDashboardData = await Deno.readTextFile(`${base}/${otherDash.path}`);
 
-      // Replace template variables
       otherDashboardData = otherDashboardData.replace(/__PROJECT_NAME__/g, projectName);
       otherDashboardData = otherDashboardData.replace(/__DATASOURCE__/g, datalink);
       otherDashboardData = otherDashboardData.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
@@ -103,15 +109,13 @@ export async function run(
         otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_HOUR\}?/g, `${projectName}.${bundle.summary_tables[1].name}`);
       }
 
-      // Replace table variables
       for (const table of bundle.tables) {
         otherDashboardData = otherDashboardData.replace(new RegExp(table.dashboard_var, 'g'), table.name);
       }
 
-      // Replace summary table variables
       if (bundle.summary_tables) {
         for (const summary of bundle.summary_tables) {
-          otherDashboardData = otherDashboardData.replace(new RegExp(summary.dashboard_var, 'g'), summary.name);  // ← Just the name!
+          otherDashboardData = otherDashboardData.replace(new RegExp(summary.dashboard_var, 'g'), summary.name);
         }
       }
 
@@ -175,7 +179,7 @@ async function processTable(
   for (const transform of table.transforms) {
     let transformJson = await readTransformFile(base, transform.path);
 
-    // IMPORTANT: Replace function names with project-prefixed versions
+    // Replace __PROJECT_NAME__ in transform SQL
     transformJson = replaceFunctionNames(transformJson, projectName, bundle);
 
     const transformName = await addTransformation(
@@ -232,7 +236,7 @@ async function seedTablesWithData(
     for (const transform of table.transforms) {
       let transformJson = await readTransformFile(base, transform.path);
 
-      // Apply function name replacements
+      // Replace __PROJECT_NAME__ in transform SQL
       transformJson = replaceFunctionNames(transformJson, projectName, bundle);
 
       const transformName = getTransformationName(transformJson);
@@ -306,11 +310,9 @@ async function insertSampleDataIfPresent(
   } catch (e) {
     console.warn(`⚠️  WARNING: Failed to insert data into ${fullTableName}: ${getErrorMessage(e)}`);
     console.warn(`⚠️  Continuing with deployment anyway - dashboard will be created without data`);
-    // Don't throw - allow deployment to continue
   }
 }
 
-// Helper functions
 function getTransformationSubtype(transformJson: unknown): string {
   const data = transformJson as Record<string, unknown>;
   const settings = data.settings as Record<string, unknown> | undefined;
@@ -330,7 +332,6 @@ function getSampleDataAsJson(transformJson: unknown): unknown | null {
   const settings = data.settings as Record<string, unknown> | undefined;
   const sampleData = settings?.sample_data;
 
-  // Check if it's a non-empty object
   if (sampleData && typeof sampleData === 'object' && Object.keys(sampleData).length > 0) {
     return sampleData;
   }
@@ -353,39 +354,9 @@ function replaceFunctionNames(transformJson: unknown, projectName: string, bundl
     return transformJson;
   }
 
-  let updatedSql = sqlTransform;
+  // Simply replace __PROJECT_NAME__ macro with actual project name
+  const updatedSql = sqlTransform.replace(/__PROJECT_NAME__/g, projectName);
 
-  // Replace custom function calls using the actual function list from bundle
-  if (bundle.dependencies?.hydrolix?.required_functions) {
-    for (const fn of bundle.dependencies.hydrolix.required_functions) {
-      const originalName = fn.name;
-      const prefixedName = `${projectName}_${originalName}`;
-
-      // Check if this function is used in the SQL
-      const regex = new RegExp(`\\b${originalName}\\s*\\(`, 'g');
-      if (regex.test(updatedSql)) {
-        console.log(`  Replacing function: ${originalName} → ${prefixedName}`);
-        updatedSql = updatedSql.replace(regex, `${prefixedName}(`);
-      }
-    }
-  }
-
-  // Replace dictionary names in dictGet() calls with project-prefixed versions
-  if (bundle.dependencies?.hydrolix?.required_dictionaries) {
-    for (const dict of bundle.dependencies.hydrolix.required_dictionaries) {
-      const originalDictName = dict.name;
-      const prefixedDictName = `${projectName}_${originalDictName}`;
-
-      // Check for dictGet calls with this dictionary
-      const regex = new RegExp(`dictGet\\s*\\(\\s*'${originalDictName}'`, 'gi');
-      if (regex.test(updatedSql)) {
-        console.log(`  Replacing dictionary: ${originalDictName} → ${prefixedDictName}`);
-        updatedSql = updatedSql.replace(regex, `dictGet('${prefixedDictName}'`);
-      }
-    }
-  }
-
-  // Return updated transform JSON
   return {
     ...data,
     settings: {
@@ -411,18 +382,15 @@ async function createAlertRules(
   const alertRulesPath = `${base}/${bundle.alert_rules.path}`;
   let alertRulesContent = await Deno.readTextFile(alertRulesPath);
 
-  // Replace template variables
   alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
   alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
   alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
 
-  // Replace table variables with full table names
   for (const table of bundle.tables) {
     const fullTableName = `${projectName}.${table.name}`;
     alertRulesContent = alertRulesContent.replace(new RegExp(table.dashboard_var, 'g'), fullTableName);
   }
 
-  // Replace summary table variables if present
   if (bundle.summary_tables) {
     for (const summary of bundle.summary_tables) {
       const fullTableName = `${projectName}.${summary.name}`;

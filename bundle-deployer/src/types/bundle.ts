@@ -1,4 +1,4 @@
-// Bundle data structures
+// Bundle data structures - Updated for file-based functions/dictionaries
 
 export interface Bundle {
   base_url: string;
@@ -94,18 +94,8 @@ export interface GrafanaPlugin {
 
 export interface HydrolixDependencies {
   cluster_version?: string;
-  required_dictionaries?: Dictionary[];
-  required_functions?: Function[];
-}
-
-export interface Dictionary {
-  name: string;
-  source: string;
-}
-
-export interface Function {
-  name: string;
-  sql: string;
+  required_dictionaries?: string[];  
+  required_functions?: string[];     
 }
 
 export interface DataSource {
@@ -176,15 +166,7 @@ export function validateBundle(bundle: Bundle): void {
   validateHttpsUrl(bundle.ui.method.icon_url, "ui.method.icon_url");
   validateHttpsUrl(bundle.ui.source.icon_url, "ui.source.icon_url");
   
-  if (bundle.dependencies?.hydrolix?.required_dictionaries) {
-    bundle.dependencies.hydrolix.required_dictionaries.forEach(dict => {
-      // Dictionaries can be local paths OR URLs, so don't validate as strict HTTPS
-      // Just check it's not empty
-      if (!dict.source || dict.source.trim().length === 0) {
-        throw new Error(`dictionary.${dict.name}.source cannot be empty`);
-      }
-    });
-  }
+  // Dependencies are now just strings - no validation needed on structure
 }
 
 function validateDashboard(dashboard: Dashboard): void {
