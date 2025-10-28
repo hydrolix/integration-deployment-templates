@@ -21,12 +21,17 @@ interface CreateDataSourceRequest {
 
 interface JsonData {
   default_database: string;
-  port: string;
-  server: string;
+  host: string;
+  port: number;
+  protocol: string;
   query_timeout: string;
   secure: boolean;
   timeout: string;
   username: string;
+  defaultRound?: string;
+  adhocVariableName?: string;
+  useDefaultPort?: boolean;
+  useDefaultDatabase?: boolean;
 }
 
 interface SecureJsonData {
@@ -55,16 +60,21 @@ export async function createDatalink(projectName: string): Promise<string> {
 
   const datasourceRequest: CreateDataSourceRequest = {
     name: "Bundle Testing",
-    type: "grafana-clickhouse-datasource",
+    type: "hydrolix-hydrolix-datasource",
     access: "proxy",
     jsonData: {
       default_database: projectName,
-      port: HDX_DATABASE_PORT,
-      server: BUNDLE_TESTING_CLUSTER,
+      host: BUNDLE_TESTING_CLUSTER,
+      port: 9440,
+      useDefaultPort: true,  // ← Add this
+      protocol: "native",
       query_timeout: "600",
       secure: true,
       timeout: "10",
       username: BUNDLE_TESTING_USERNAME,
+      defaultRound: "1m",
+      adhocVariableName: "table",
+      useDefaultDatabase: true,
     },
     secureJsonData: {
       password: BUNDLE_TESTING_PASSWORD,

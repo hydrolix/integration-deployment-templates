@@ -178,7 +178,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  hdx_cdn as cdn, \n  count(*) AS Total\nFROM ${table} \nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  hdx_cdn as cdn, \n  count(*) AS Total\nFROM ${table} \nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -262,7 +262,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    (SUM(cache_hit) / (SUM(cache_hit) + SUM(cache_miss))) AS total\nFROM \n(\n    SELECT \n        countMergeIf(`count()`, cache_was_cached = 1) AS cache_hit,\n        countMergeIf(`count()`, cache_was_cached = 0) as cache_miss\n    FROM \n        ${table}\n    WHERE \n        $__timeFilter(timestamp)\n        AND TRUE\n        AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n)\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Cache Hit Total %; du=${__user.login}'",
+            "rawSql": "SELECT\n    (SUM(cache_hit) / (SUM(cache_hit) + SUM(cache_miss))) AS total\nFROM \n(\n    SELECT \n        countMergeIf(`count()`, cache_was_cached = 1) AS cache_hit,\n        countMergeIf(`count()`, cache_was_cached = 0) as cache_miss\n    FROM \n        ${table}\n    WHERE \n        $__timeFilter(timestamp)\n        AND $__adHocFilter()\n        AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n)\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Cache Hit Total %; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -346,7 +346,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  sum(cache_was_cached) / cnt_all AS cache_hit_rate,\n  timestamp AS time,\n  hdx_cdn\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  sum(cache_was_cached) / cnt_all AS cache_hit_rate,\n  timestamp AS time,\n  hdx_cdn\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -422,7 +422,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp AS time,\n    (CASE WHEN cache_was_cached = 1 THEN response_total_bytes ELSE 0 END * 8) /${seconds} AS cache_throughput_bps,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn, cache_was_cached\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp AS time,\n    (CASE WHEN cache_was_cached = 1 THEN response_total_bytes ELSE 0 END * 8) /${seconds} AS cache_throughput_bps,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn, cache_was_cached\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -498,7 +498,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp AS theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp AS theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -574,7 +574,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp as theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp as theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -650,7 +650,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp as theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp as theMinute\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY theMinute\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -726,7 +726,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp, \n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp, \n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -802,7 +802,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    hdx_cdn,\n    timestamp\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    hdx_cdn,\n    timestamp\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -878,7 +878,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp, \n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    response_total_bytes AS theBytes,\n    timestamp, \n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -990,7 +990,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n  toString(response_status_code) as HTTP_Status_Code,\n  COUNT(*) as http\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n  HTTP_Status_Code, time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n  toString(response_status_code) as HTTP_Status_Code,\n  COUNT(*) as http\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n  HTTP_Status_Code, time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1094,7 +1094,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    toString(client_asn),\n    response_total_bytes AS Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n    AND notEmpty(client_asn)\nGROUP BY\n    client_asn\nORDER BY\n    Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT\n    toString(client_asn),\n    response_total_bytes AS Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n    AND notEmpty(client_asn)\nGROUP BY\n    client_asn\nORDER BY\n    Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1193,7 +1193,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  client_asn,\n  COUNT(*) as Total\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_asn\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  client_asn,\n  COUNT(*) as Total\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_asn\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1283,7 +1283,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  client_country_iso_code,\n  (response_total_bytes * 8) / (60 * 1000000) AS throughput_mbps\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code\nORDER BY throughput_mbps DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  client_country_iso_code,\n  (response_total_bytes * 8) / (60 * 1000000) AS throughput_mbps\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code\nORDER BY throughput_mbps DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1400,7 +1400,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  client_country_iso_code,\n  COUNT(*) as Total\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  client_country_iso_code,\n  COUNT(*) as Total\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1535,7 +1535,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    toString(client_asn) as ASN,\n    response_status_code as Status,\n    COUNT(*) as Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n    AND notEmpty(client_asn)\n    AND response_status_code > '399'\nGROUP BY ASN, response_status_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT\n    toString(client_asn) as ASN,\n    response_status_code as Status,\n    COUNT(*) as Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\n    AND notEmpty(client_asn)\n    AND response_status_code > '399'\nGROUP BY ASN, response_status_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1664,7 +1664,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    request_host as Host,\n    response_status_code as Status,\n    COUNT(*) as Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND TRUE\n    AND response_status_code > '399'\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY response_status_code, Host\nORDER BY Total DESC",
+            "rawSql": "SELECT\n    request_host as Host,\n    response_status_code as Status,\n    COUNT(*) as Total\nFROM\n   ${table}\nWHERE \n    $__timeFilter(timestamp) \n    AND $__adHocFilter()\n    AND response_status_code > '399'\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY response_status_code, Host\nORDER BY Total DESC",
             "refId": "A"
           }
         ],
@@ -1890,7 +1890,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n    response_total_bytes AS Average,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    time, hdx_cdn\nORDER BY \n    time    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
+            "rawSql": "SELECT \n    toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n    response_total_bytes AS Average,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    time, hdx_cdn\nORDER BY \n    time    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Akamai Current Traffic; du=${__user.login}'",
             "refId": "1 Minute"
           }
         ],
@@ -2002,7 +2002,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n  hdx_cdn,\n  response_total_bytes as Bytes\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n  hdx_cdn,\n  response_total_bytes as Bytes\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time, hdx_cdn\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2101,7 +2101,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  client_country_iso_code,\n  COUNT(*) as Total,\n  hdx_cdn\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code, hdx_cdn\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  client_country_iso_code,\n  COUNT(*) as Total,\n  hdx_cdn\nFROM ${table}\nWHERE \n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY client_country_iso_code, hdx_cdn\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2209,7 +2209,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp AS time,\n    response_ttfb_ms AS avg_ttfb_ms,\n    ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n    ${quantiles_response_ttfb_95} AS p95_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp AS time,\n    response_ttfb_ms AS avg_ttfb_ms,\n    ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n    ${quantiles_response_ttfb_95} AS p95_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2317,7 +2317,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n  ${quantiles_response_ttfb_95} AS p95_ttfb_ms,\n  response_ttfb_ms AS avg_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n  ${quantiles_response_ttfb_95} AS p95_ttfb_ms,\n  response_ttfb_ms AS avg_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2425,7 +2425,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_response_ttlb_50} AS p50_ttlb_ms,\n  ${quantiles_response_ttlb_95} AS p95_ttlb_ms,\n  response_ttlb_ms AS avg_ttlb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_response_ttlb_50} AS p50_ttlb_ms,\n  ${quantiles_response_ttlb_95} AS p95_ttlb_ms,\n  response_ttlb_ms AS avg_ttlb_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2533,7 +2533,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_origin_ttfb_50} AS p50_origin_ms,\n  ${quantiles_origin_ttfb_95} AS p95_origin_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_origin_ttfb_50} AS p50_origin_ms,\n  ${quantiles_origin_ttfb_95} AS p95_origin_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2641,7 +2641,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_origin_ttlb_50} AS p50_origin_ms,\n  ${quantiles_origin_ttlb_95} AS p95_origin_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  timestamp AS time,\n  ${quantiles_origin_ttlb_50} AS p50_origin_ms,\n  ${quantiles_origin_ttlb_95} AS p95_origin_ms\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2867,7 +2867,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n    (100.0 * countMergeIf(`count()`, response_status_code >= '200' AND response_status_code < '300')) / COUNT(*) AS \"2xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '300' AND response_status_code < '400')) / COUNT(*) AS \"3xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '400' AND response_status_code < '500')) / COUNT(*) AS \"4xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '500' AND response_status_code < '600')) / COUNT(*) AS \"5xx_Percent\"\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND TRUE\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    time\nORDER BY \n    time    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Status Code Percentages; du=${__user.login}'",
+            "rawSql": "SELECT \n    toStartOfInterval(timestamp, INTERVAL 1 MINUTE) AS time,\n    (100.0 * countMergeIf(`count()`, response_status_code >= '200' AND response_status_code < '300')) / COUNT(*) AS \"2xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '300' AND response_status_code < '400')) / COUNT(*) AS \"3xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '400' AND response_status_code < '500')) / COUNT(*) AS \"4xx_Percent\",\n    (100.0 * countMergeIf(`count()`, response_status_code >= '500' AND response_status_code < '600')) / COUNT(*) AS \"5xx_Percent\"\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    time\nORDER BY \n    time    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Status Code Percentages; du=${__user.login}'",
             "refId": "1 Minute"
           }
         ],
@@ -3005,7 +3005,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    client_country_iso_code AS Country,\n    COUNT(*) AS Total\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY Country\nORDER BY Total DESC\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n    client_country_iso_code AS Country,\n    COUNT(*) AS Total\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY Country\nORDER BY Total DESC\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -3129,7 +3129,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '199' and response_status_code < '300') AS Total\nFROM \n    ${table}\nWHERE \n      $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '199' and response_status_code < '300') AS Total\nFROM \n    ${table}\nWHERE \n      $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "CDN"
           }
         ],
@@ -3241,7 +3241,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '399' and response_status_code < '500') AS Total\nFROM \n    ${table}\nWHERE \n      $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '399' and response_status_code < '500') AS Total\nFROM \n    ${table}\nWHERE \n      $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "CDN"
           }
         ],
@@ -3349,7 +3349,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '499' and response_status_code < '600') as Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
+            "rawSql": "SELECT \n    timestamp,\n    countMergeIf(`count()`, response_status_code > '499' and response_status_code < '600') as Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY \n    timestamp\nORDER BY \n    timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count (US Only); du=${__user.login}'",
             "refId": "Akamai"
           }
         ],
@@ -3470,7 +3470,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n    timestamp,\n    ${quantiles_response_ttfb_50} AS Median\nFROM\n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY\n    timestamp\nORDER BY\n    timestamp asc\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Manifest Latency by CDN (p95/p99); du=${__user.login}'",
+            "rawSql": "SELECT\n    timestamp,\n    ${quantiles_response_ttfb_50} AS Median\nFROM\n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY\n    timestamp\nORDER BY\n    timestamp asc\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Manifest Latency by CDN (p95/p99); du=${__user.login}'",
             "refId": "CDN"
           }
         ],
@@ -3612,7 +3612,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT\n  timestamp,\n  response_total_bytes AS TotalThroughput\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND TRUE\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp\nORDER BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Edge Traffic; du=${__user.login}'",
+            "rawSql": "SELECT\n  timestamp,\n  response_total_bytes AS TotalThroughput\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\n  AND IF(position('${filter:raw}', 'hdx_cdn') = 0 OR length(trim('${filter:raw}')) = 0, hdx_cdn = '${cdn_default}', 1=1)\nGROUP BY timestamp\nORDER BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Edge Traffic; du=${__user.login}'",
             "refId": "a"
           }
         ],
@@ -3748,7 +3748,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n    request_host AS Host,\n    client_country_iso_code AS Country,\n    count() AS Total\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND notEmpty(request_host)\n  AND TRUE\nGROUP BY request_host, client_country_iso_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
+            "rawSql": "SELECT \n    request_host AS Host,\n    client_country_iso_code AS Country,\n    count() AS Total\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND notEmpty(request_host)\n  AND $__adHocFilter()\nGROUP BY request_host, client_country_iso_code\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
             "refId": "A"
           }
         ],

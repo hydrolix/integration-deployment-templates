@@ -23,20 +23,7 @@
   ],
   "dependencies": {
     "hydrolix": {
-      "required_functions": [
-        "breadcrumbs",
-        "geoname_id",
-        "city_name",
-        "country_iso_code"
-      ],
-      "required_dictionaries": [
-        "ua_cat_dict",
-        "geoip_city_locations_en",
-        "geoip_city_blocks_ipv4",
-        "geoip_city_blocks_ipv6",
-        "geoip_asn_blocks_ipv4",
-        "geoip_asn_blocks_ipv6"
-      ]
+
     }
   },
   "tables": [

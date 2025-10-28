@@ -19,6 +19,127 @@ const PROJ_NAME = "sample_project";
 const HTTP_TIMEOUT = 120000; // 
 
 // ============================================================================
+// ZIP EXTRACTION
+// ============================================================================
+
+export async function ensureZipExtracted(
+  baseDir: string,
+  zipFileName: string,
+  targetFolder: string
+): Promise<void> {
+  const zipPath = `${baseDir}/${targetFolder}/${zipFileName}`;
+  const extractDir = `${baseDir}/${targetFolder}/.extracted`;
+  
+  // Check if zip exists
+  try {
+    await Deno.stat(zipPath);
+  } catch {
+    // No zip file - that's okay, might have local files
+    return;
+  }
+  
+  // Check if already extracted
+  try {
+    await Deno.stat(extractDir);
+    console.log(`  ✓ ${zipFileName} already extracted`);
+    return;
+  } catch {
+    // Need to extract
+  }
+  
+  console.log(`  Extracting ${zipFileName}...`);
+  
+  try {
+    // Create extraction directory
+    await Deno.mkdir(extractDir, { recursive: true });
+    
+    // Use -j flag to flatten directory structure (strip paths)
+    const process = new Deno.Command("unzip", {
+      args: ["-j", "-q", "-o", zipPath, "-d", extractDir],
+    });
+    
+    const { success, stderr } = await process.output();
+    
+    if (!success) {
+      const errorText = new TextDecoder().decode(stderr);
+      throw new Error(`Unzip failed: ${errorText}`);
+    }
+    
+    console.log(`  ✓ Extracted ${zipFileName} to .extracted/`);
+  } catch (e) {
+    throw new Error(`Failed to extract ${zipFileName}: ${getErrorMessage(e)}`);
+  }
+}
+
+export async function discoverDictionaries(baseDir: string): Promise<string[]> {
+  const discovered: string[] = [];
+  
+  // Check .extracted/ (flattened) and root dictionaries/
+  const possibleDirs = [
+    `${baseDir}/dictionaries/.extracted`,
+    `${baseDir}/dictionaries`
+  ];
+  
+  for (const dir of possibleDirs) {
+    try {
+      await Deno.stat(dir);
+      console.log(`  Scanning for dictionaries in ${dir.split('/').slice(-2).join('/')}...`);
+      
+      for await (const entry of Deno.readDir(dir)) {
+        if (entry.isFile && entry.name.endsWith('.json')) {
+          const baseName = entry.name.replace('.json', '');
+          
+          // Skip if already found (avoid duplicates)
+          if (discovered.includes(baseName)) {
+            continue;
+          }
+          
+          // Check if matching data file exists
+          const possibleExtensions = ['csv', 'yaml', 'yml', 'tsv'];
+          for (const ext of possibleExtensions) {
+            try {
+              await Deno.stat(`${dir}/${baseName}.${ext}`);
+              discovered.push(baseName);
+              console.log(`    Found: ${baseName} (.json + .${ext})`);
+              break;
+            } catch {
+              // Try next extension
+            }
+          }
+        }
+      }
+    } catch {
+      // Directory doesn't exist, try next
+    }
+  }
+  
+  return discovered;
+}
+
+export async function discoverFunctions(baseDir: string): Promise<string[]> {
+  const discovered: string[] = [];
+  const functionsDir = `${baseDir}/functions`;
+  
+  try {
+    await Deno.stat(functionsDir);
+  } catch {
+    return [];
+  }
+  
+  console.log("  Scanning for functions in functions/...");
+  
+  for await (const entry of Deno.readDir(functionsDir)) {
+    if (entry.isFile && entry.name.endsWith('.json')) {
+      const functionName = entry.name.replace('.json', '');
+      discovered.push(functionName);
+      console.log(`    Found: ${functionName}`);
+    }
+  }
+  
+  return discovered;
+}
+
+// ============================================================================
 // AUTH
 // ============================================================================
 
@@ -103,6 +224,7 @@ export async function checkAndCreateFunction(
     console.warn(`  ⚠️  Could not check for existing function: ${getErrorMessage(e)}`);
   }
   
+  // Look for function file
   const functionFilePath = `${baseDir}/functions/${functionName}.json`;
   
   try {
@@ -166,6 +288,47 @@ export async function checkAndCreateFunction(
 // DICTIONARIES
 // ============================================================================
 
+async function findDictionaryFiles(
+  baseDir: string,
+  dictionaryName: string
+): Promise<{ jsonPath: string; dataPath: string } | null> {
+  // Try root first (for overrides), then .extracted/ (flattened)
+  const searchPaths = [
+    `${baseDir}/dictionaries`,
+    `${baseDir}/dictionaries/.extracted`
+  ];
+  
+  for (const dir of searchPaths) {
+    const jsonPath = `${dir}/${dictionaryName}.json`;
+    
+    try {
+      await Deno.stat(jsonPath);
+      
+      // Found JSON, now find data file
+      const possibleExtensions = ['csv', 'yaml', 'yml', 'tsv'];
+      for (const ext of possibleExtensions) {
+        const dataPath = `${dir}/${dictionaryName}.${ext}`;
+        try {
+          await Deno.stat(dataPath);
+          return { jsonPath, dataPath };
+        } catch {
+          // Try next extension
+        }
+      }
+      
+      // Found JSON but no data file
+      throw new Error(`Found ${jsonPath} but no matching data file`);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('no matching data file')) {
+        throw e;
+      }
+      // JSON not found in this directory, try next
+    }
+  }
+  
+  return null;
+}
+
 export async function checkAndCreateDictionary(
   bearerToken: string,
   dictionaryName: string,
@@ -202,49 +365,31 @@ export async function checkAndCreateDictionary(
     console.warn(`  ⚠️  Could not check for existing dictionary: ${getErrorMessage(e)}`);
   }
   
-  const jsonFilePath = `${baseDir}/dictionaries/${dictionaryName}.json`;
+  // Find dictionary files (checks .extracted/ then root)
+  const files = await findDictionaryFiles(baseDir, dictionaryName);
   
-  try {
-    await Deno.stat(jsonFilePath);
-  } catch {
-    console.warn(`  ⚠️  WARNING: Dictionary ${dictionaryName} not found on cluster and no local file: ${jsonFilePath}`);
+  if (!files) {
+    console.warn(`  ⚠️  WARNING: Dictionary ${dictionaryName} not found in .extracted/ or dictionaries/`);
     console.warn(`  ⚠️  Transforms may fail if they reference this dictionary`);
     return;
   }
   
+  console.log(`  Found files: ${files.jsonPath} + ${files.dataPath}`);
+  
+  // Read dictionary definition
   let dictDef;
   try {
-    const content = await Deno.readTextFile(jsonFilePath);
+    const content = await Deno.readTextFile(files.jsonPath);
     dictDef = JSON.parse(content);
   } catch (e) {
-    throw new Error(`Failed to read dictionary definition ${jsonFilePath}: ${getErrorMessage(e)}`);
+    throw new Error(`Failed to read dictionary definition ${files.jsonPath}: ${getErrorMessage(e)}`);
   }
   
-  const possibleExtensions = ['csv', 'yaml', 'yml', 'tsv'];
-  let dataFilePath = '';
-  let dataFileContent = '';
+  // Read data file
+  const dataFileContent = await Deno.readTextFile(files.dataPath);
+  const fileName = files.dataPath.split('/').pop()!;
   
-  for (const ext of possibleExtensions) {
-    const path = `${baseDir}/dictionaries/${dictionaryName}.${ext}`;
-    try {
-      await Deno.stat(path);
-      dataFilePath = path;
-      dataFileContent = await Deno.readTextFile(path);
-      console.log(`  Found data file: dictionaries/${dictionaryName}.${ext}`);
-      break;
-    } catch {
-      // Try next
-    }
-  }
-  
-  if (!dataFilePath) {
-    throw new Error(
-      `Dictionary ${dictionaryName} has definition file but no data file ` +
-      `(checked: ${possibleExtensions.map(e => `.${e}`).join(', ')})`
-    );
-  }
-  
-  const fileName = dataFilePath.split('/').pop()!;
+  // Upload and create
   await uploadDictionaryFile(bearerToken, fileName, dataFileContent);
   await createDictionaryDefinition(bearerToken, dictionaryName, dictDef);
   
@@ -258,6 +403,9 @@ async function uploadDictionaryFile(
 ): Promise<void> {
   const filesUrl = `https://${BUNDLE_TESTING_CLUSTER}/config/v1/orgs/${ORG_UUID}/projects/${PROJ_UUID}/dictionaries/files/`;
   
+  // Strip extension for the name (Hydrolix references without extension)
+  const baseFileName = fileName.replace(/\.(csv|yaml|yml|tsv)$/i, '');
+  
   try {
     const filesListResponse = await fetch(filesUrl, {
       headers: { 'Authorization': `Bearer ${bearerToken}` },
@@ -267,9 +415,11 @@ async function uploadDictionaryFile(
       const existingFiles = await filesListResponse.json();
       
       if (Array.isArray(existingFiles)) {
-        const fileExists = existingFiles.some((f: any) => 
-          typeof f === 'string' ? f === fileName : f.name === fileName
-        );
+        // Check for file with or without extension
+        const fileExists = existingFiles.some((f: any) => {
+          const name = typeof f === 'string' ? f : f.name;
+          return name === baseFileName || name === fileName;
+        });
         
         if (fileExists) {
           console.log(`  ✓ Dictionary file already uploaded: ${fileName}`);
@@ -286,10 +436,10 @@ async function uploadDictionaryFile(
   
   const formData = new FormData();
   formData.append('file', new Blob([fileContent], { type: mimeType }), fileName);
-  formData.append('name', fileName);
+  formData.append('name', baseFileName);  // ← Upload WITHOUT extension
   
   try {
-    console.log(`  Uploading dictionary file: ${fileName}...`);
+    console.log(`  Uploading dictionary file: ${fileName} (as ${baseFileName})...`);
     
     const uploadResponse = await fetch(filesUrl, {
       method: 'POST',
@@ -304,7 +454,7 @@ async function uploadDictionaryFile(
       throw new Error(`Failed to upload: ${errorText}`);
     }
     
-    console.log(`  ✓ Uploaded dictionary file: ${fileName}`);
+    console.log(`  ✓ Uploaded dictionary file: ${baseFileName}`);
   } catch (e) {
     throw new Error(`Failed to upload dictionary file: ${getErrorMessage(e)}`);
   }

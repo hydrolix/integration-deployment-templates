@@ -4,7 +4,7 @@
     "settings": {
         "is_default": true,
         "rate_limit": null,
-        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nresponse_time_to_first_byte_sec * 1000 AS response_time_to_first_byte_ms,\nresponse_time_to_last_byte_sec * 1000 AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('__PROJECT_NAME___geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('__PROJECT_NAME___geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n __PROJECT_NAME___city_name(client_ip) as client_city,\n __PROJECT_NAME___country_iso_code(client_ip) as client_country_iso_code,\ndictGet('__PROJECT_NAME___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('__PROJECT_NAME___ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
+        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nresponse_time_to_first_byte_sec * 1000 AS response_time_to_first_byte_ms,\nresponse_time_to_last_byte_sec * 1000 AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('reference_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('reference_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n reference_city_name(client_ip) as client_city,\n reference_country_iso_code(client_ip) as client_country_iso_code,\ndictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
         "null_values": [
             "-",
             "(null)",
@@ -119,8 +119,8 @@
             {
                 "name": "response_time_to_first_byte_sec",
                 "datatype": {
-                    "type": "uint64",
-                    "index": true,
+                    "type": "double",
+                    "index": false,
                     "format": null,
                     "resolution": null,
                     "default": null,
@@ -149,8 +149,8 @@
             {
                 "name": "response_time_to_last_byte_sec",
                 "datatype": {
-                    "type": "uint64",
-                    "index": true,
+                    "type": "double",
+                    "index": false,
                     "format": null,
                     "resolution": null,
                     "default": null,

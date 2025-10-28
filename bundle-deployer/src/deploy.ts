@@ -23,31 +23,74 @@ export async function run(
 
   // Create functions and dictionaries BEFORE creating tables/transforms
   if (bundle.dependencies?.hydrolix) {
-    // Process functions
-    if (bundle.dependencies.hydrolix.required_functions) {
-      console.log(`\nProcessing ${bundle.dependencies.hydrolix.required_functions.length} required function(s)...`);
-      
-      for (const functionName of bundle.dependencies.hydrolix.required_functions) {
-        try {
-          await hdx.checkAndCreateFunction(bearerToken, functionName, base);
-        } catch (e) {
-          console.warn(`⚠️  WARNING: Failed to create function ${functionName}: ${getErrorMessage(e)}`);
-          console.warn(`⚠️  Continuing anyway - transforms may be invalid until function is added`);
-        }
+    // ========================================================================
+    // FUNCTIONS - Explicit or Auto-Discover
+    // ========================================================================
+    const explicitFunctions = bundle.dependencies.hydrolix.required_functions;
+    let functionsToCreate: string[] = [];
+
+    if (explicitFunctions && explicitFunctions.length > 0) {
+      // EXPLICIT MODE
+      console.log(`\nProcessing ${explicitFunctions.length} explicitly declared function(s)...`);
+      functionsToCreate = explicitFunctions;
+    } else {
+      // AUTO-DISCOVER MODE
+      console.log(`\nNo functions listed - auto-discovering from functions/ directory...`);
+      functionsToCreate = await hdx.discoverFunctions(base);
+
+      if (functionsToCreate.length > 0) {
+        console.log(`  Auto-discovered ${functionsToCreate.length} function(s)`);
+      } else {
+        console.log(`  No functions found to auto-discover`);
       }
     }
 
-    // Process dictionaries
-    if (bundle.dependencies.hydrolix.required_dictionaries) {
-      console.log(`\nProcessing ${bundle.dependencies.hydrolix.required_dictionaries.length} required dictionar(y/ies)...`);
-      
-      for (const dictionaryName of bundle.dependencies.hydrolix.required_dictionaries) {
-        try {
-          await hdx.checkAndCreateDictionary(bearerToken, dictionaryName, base);
-        } catch (e) {
-          console.warn(`⚠️  WARNING: Failed to create dictionary ${dictionaryName}: ${getErrorMessage(e)}`);
-          console.warn(`⚠️  Continuing anyway - transforms may be invalid until dictionary is added`);
-        }
+    // Create functions (same code for both modes)
+    for (const functionName of functionsToCreate) {
+      try {
+        await hdx.checkAndCreateFunction(bearerToken, functionName, base);
+      } catch (e) {
+        console.warn(`⚠️  WARNING: Failed to create function ${functionName}: ${getErrorMessage(e)}`);
+        console.warn(`⚠️  Continuing anyway - transforms may be invalid until function is added`);
+      }
+    }
+
+    // ========================================================================
+    // DICTIONARIES - Explicit or Auto-Discover
+    // ========================================================================
+    const explicitDictionaries = bundle.dependencies.hydrolix.required_dictionaries;
+    let dictionariesToCreate: string[] = [];
+
+    // First, extract zip if it exists
+    try {
+      await hdx.ensureZipExtracted(base, "dictionaries.zip", "dictionaries");
+    } catch (e) {
+      console.warn(`⚠️  Could not extract dictionaries.zip: ${getErrorMessage(e)}`);
+    }
+
+    if (explicitDictionaries && explicitDictionaries.length > 0) {
+      // EXPLICIT MODE
+      console.log(`\nProcessing ${explicitDictionaries.length} explicitly declared dictionar(y/ies)...`);
+      dictionariesToCreate = explicitDictionaries;
+    } else {
+      // AUTO-DISCOVER MODE
+      console.log(`\nNo dictionaries listed - auto-discovering from zip and local files...`);
+      dictionariesToCreate = await hdx.discoverDictionaries(base);
+
+      if (dictionariesToCreate.length > 0) {
+        console.log(`  Auto-discovered ${dictionariesToCreate.length} dictionar(y/ies)`);
+      } else {
+        console.log(`  No dictionaries found to auto-discover`);
+      }
+    }
+
+    // Create dictionaries (same code for both modes)
+    for (const dictionaryName of dictionariesToCreate) {
+      try {
+        await hdx.checkAndCreateDictionary(bearerToken, dictionaryName, base);
+      } catch (e) {
+        console.warn(`⚠️  WARNING: Failed to create dictionary ${dictionaryName}: ${getErrorMessage(e)}`);
+        console.warn(`⚠️  Continuing anyway - transforms may be invalid until dictionary is added`);
       }
     }
   }
