@@ -66,7 +66,7 @@ export async function createDatalink(projectName: string): Promise<string> {
       default_database: projectName,
       host: BUNDLE_TESTING_CLUSTER,
       port: 9440,
-      useDefaultPort: true,  // ← Add this
+      useDefaultPort: true,
       protocol: "native",
       query_timeout: "600",
       secure: true,

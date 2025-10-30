@@ -32,6 +32,9 @@
       "name": "mcdn_test",
       "transforms": [
         {
+          "path": "transformations/mcdn_cloudfront_lsalv1.json"
+        },
+        {
           "path": "transformations/mcdn_akamai_ds2.json"
         },
         {
@@ -39,9 +42,6 @@
         },
         {
           "path": "transformations/mcdn_cloudfront_firehose.json"
-        },
-        {
-          "path": "transformations/mcdn_cloudfront_lsalv1.json"
         },
         {
           "path": "transformations/mcdn_fastly.json"

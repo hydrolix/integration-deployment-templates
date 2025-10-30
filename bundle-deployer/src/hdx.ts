@@ -733,14 +733,21 @@ export async function addTransformToTable(
         return transformName;
       }
       
+      // Get error details
+      const errorBody = await response.text();
+      console.error(`\n❌ Transform validation failed (attempt ${attempt}/${maxRetries}):`);
+      console.error(`   Status: ${response.status}`);
+      console.error(`   Error: ${errorBody}`);
+      
       if (response.status >= 500 && attempt <= maxRetries) {
         const delay = calculateBackoff(attempt, baseDelay, maxDelay);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
       
+      // On 400 errors, don't retry - it won't help
       throw new Error(
-        `Hydrolix add transform failed, status: ${response.status} (attempt ${attempt})`
+        `Hydrolix add transform failed, status: ${response.status}, error: ${errorBody}`
       );
       
     } catch (e) {
