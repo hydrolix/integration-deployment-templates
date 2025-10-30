@@ -8,4 +8,5 @@ Cargo.lock
 .env.local
 .DS_Store
 
-
+# Auto-extracted dictionary and function files
+**/.extracted/
