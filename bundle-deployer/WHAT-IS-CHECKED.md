@@ -43,9 +43,9 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 
 **Failure Examples**:
 ```
-âŒ Invalid my_bundle base_url should be this: 'https://...'
-âŒ Base URL points to wrong repository
-âŒ Base URL uses incorrect branch name
+❌ Invalid my_bundle base_url should be this: 'https://...'
+❌ Base URL points to wrong repository
+❌ Base URL uses incorrect branch name
 ```
 
 ---
@@ -80,11 +80,11 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 
 **Failure Examples**:
 ```
-âŒ docs.method.full_title 'Simple S3' does not match method 'firehose'
-âŒ Source title should contain 'WAF' when source is 'waf'
-âŒ Name 'simple' must include 'cloudfront' and 'kinesis'
-âŒ Version 1.0 should follow semantic versioning format (e.g., 1.0.0)
-âŒ Maintainer should be a valid email address
+❌ docs.method.full_title 'Simple S3' does not match method 'firehose'
+❌ Source title should contain 'WAF' when source is 'waf'
+❌ Name 'simple' must include 'cloudfront' and 'kinesis'
+❌ Version 1.0 should follow semantic versioning format (e.g., 1.0.0)
+❌ Maintainer should be a valid email address
 ```
 
 ---
@@ -108,11 +108,11 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 
 **Failure Examples**:
 ```
-âŒ Duplicate table name mcdn_test
-âŒ Missing or truncated table name '{}'
-âŒ Invalid table name '123table' - must start with a letter
-âŒ Invalid table name 'table-name' - only letters, digits, and underscores allowed
-âŒ Duplicate database_var __TABLE_NAME__
+❌ Duplicate table name mcdn_test
+❌ Missing or truncated table name '{}'
+❌ Invalid table name '123table' - must start with a letter
+❌ Invalid table name 'table-name' - only letters, digits, and underscores allowed
+❌ Duplicate database_var __TABLE_NAME__
 ```
 
 ---
@@ -141,8 +141,8 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ SHA256 abc123...def456 does not match for local file transformations/mcdn_akamai.json
-âŒ Cannot read file for checksum calculation
+❌ SHA256 abc123...def456 does not match for local file transformations/mcdn_akamai.json
+❌ Cannot read file for checksum calculation
 ```
 
 **Note**: Checksums are optional. If not provided, no validation is performed.
@@ -162,12 +162,12 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ Transform file is not valid JSON: path=transformations/mcdn_akamai.json error=Unexpected token
-âŒ Transform file missing required 'name' field: path=...
-âŒ Transform file 'name' field is not a string: path=...
-âŒ Transform file has empty 'name' field: path=...
-âŒ Duplicated transform name 'mcdn_akamai' path=...
-âŒ Transform file has invalid subtype 'custom', must be 'firehose': path=...
+❌ Transform file is not valid JSON: path=transformations/mcdn_akamai.json error=Unexpected token
+❌ Transform file missing required 'name' field: path=...
+❌ Transform file 'name' field is not a string: path=...
+❌ Transform file has empty 'name' field: path=...
+❌ Duplicated transform name 'mcdn_akamai' path=...
+❌ Transform file has invalid subtype 'custom', must be 'firehose': path=...
 ```
 
 ---
@@ -185,9 +185,9 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ No Sample data in transformation full_path=transformations/mcdn_akamai.json
-âŒ Sample data is empty object: {}
-âŒ Sample data is empty string
+❌ No Sample data in transformation full_path=transformations/mcdn_akamai.json
+❌ Sample data is empty object: {}
+❌ Sample data is empty string
 ```
 
 ---
@@ -217,10 +217,10 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ Dashboard must have __DATASOURCE__ full_path=dashboards/CDN Dashboard.json
-âŒ Invalid JSON full_path=dashboards/CDN Dashboard.json error=Unexpected token
-âŒ Invalid dashboard - top element must be dashboard. full_path=...
-âŒ Invalid dashboard - cannot have Id set. full_path=...
+❌ Dashboard must have __DATASOURCE__ full_path=dashboards/CDN Dashboard.json
+❌ Invalid JSON full_path=dashboards/CDN Dashboard.json error=Unexpected token
+❌ Invalid dashboard - top element must be dashboard. full_path=...
+❌ Invalid dashboard - cannot have Id set. full_path=...
 ```
 
 ---
@@ -241,11 +241,11 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ alert_rules.apiVersion is required
-âŒ alert_rules.groups must be an array
-âŒ Group 0: name is required
-âŒ Group alerts (0): rules must contain at least one rule
-âŒ Group alerts, Rule 0: uid is required
+❌ alert_rules.apiVersion is required
+❌ alert_rules.groups must be an array
+❌ Group 0: name is required
+❌ Group alerts (0): rules must contain at least one rule
+❌ Group alerts, Rule 0: uid is required
 ```
 
 **Note**: Alert rules are optional. If not defined in bundle, validation is skipped.
@@ -263,8 +263,8 @@ async function generateSha256(input: string): Promise<string> {
 
 **Failure Examples**:
 ```
-âŒ Duplicated-Summary-Dashboard-Var bundle=mcdn_test summary_table=mcdn_summary_min dashboard_var=__SUMMARY_TABLE_1__
-âŒ Invalid-Parent-Table-Reference bundle=mcdn_test summary_table=mcdn_summary_min parent_table_name=nonexistent_table
+❌ Duplicated-Summary-Dashboard-Var bundle=mcdn_test summary_table=mcdn_summary_min dashboard_var=__SUMMARY_TABLE_1__
+❌ Invalid-Parent-Table-Reference bundle=mcdn_test summary_table=mcdn_summary_min parent_table_name=nonexistent_table
 ```
 
 **Note**: Summary tables are optional. If not defined, validation is skipped.
@@ -295,10 +295,10 @@ async function generateSha256(input: string): Promise<string> {
 
 **Warning Examples**:
 ```
-âš ï¸  WARNING: Function 'city_name' declared but no file: functions/city_name.json
-âš ï¸  WARNING: Dictionary 'ua_cat_dict' has definition but no data file
-âš ï¸  WARNING: Transform uses dictionary 'geoip_dict' but it's not declared in dependencies
-âš ï¸  INFO: Function 'unused_func' is declared but not used in any transforms
+⚠️  WARNING: Function 'city_name' declared but no file: functions/city_name.json
+⚠️  WARNING: Dictionary 'ua_cat_dict' has definition but no data file
+⚠️  WARNING: Transform uses dictionary 'geoip_dict' but it's not declared in dependencies
+⚠️  INFO: Function 'unused_func' is declared but not used in any transforms
 ```
 
 **Note**: This validation produces warnings only, does not fail the build.
@@ -336,9 +336,9 @@ export function run(bundles: Bundle[]): void {
 
 **Failure Examples**:
 ```
-âŒ Duplicated-Bundle-Name url=https://... error=mcdn_test
-âŒ Duplicated-UI-Source-Name url=https://... error=MCDN TEST
-âŒ Duplicated-Name count=2 table=mcdn_test
+❌ Duplicated-Bundle-Name url=https://... error=mcdn_test
+❌ Duplicated-UI-Source-Name url=https://... error=MCDN TEST
+❌ Duplicated-Name count=2 table=mcdn_test
 ```
 
 ---
@@ -367,7 +367,7 @@ const process = new Deno.Command("unzip", {
 **Output**:
 ```
   Extracting dictionaries.zip...
-  âœ" Extracted dictionaries.zip to .extracted/
+  ✓ Extracted dictionaries.zip to .extracted/
 ```
 
 ---
@@ -427,7 +427,7 @@ const process = new Deno.Command("unzip", {
 ```
 Checking function: city_name...
   Creating function city_name (will become sample_project_city_name)...
-  âœ" Created function city_name
+  ✓ Created function city_name
 ```
 
 **Failure Handling**:
@@ -473,10 +473,10 @@ formData.append('name', baseFileName);  // No extension
 Checking dictionary: ua_cat_dict...
   Found files: dictionaries/ua_cat_dict.json + dictionaries/ua_cat_dict.yaml
   Uploading dictionary file: ua_cat_dict.yaml (as ua_cat_dict)...
-  âœ" Uploaded dictionary file: ua_cat_dict
+  ✓ Uploaded dictionary file: ua_cat_dict
   Creating dictionary definition: ua_cat_dict (will become sample_project_ua_cat_dict)...
-  âœ" Created dictionary definition
-  âœ" Created dictionary ua_cat_dict
+  ✓ Created dictionary definition
+  ✓ Created dictionary ua_cat_dict
 ```
 
 **Failure Handling**:
@@ -547,13 +547,13 @@ FROM {STREAM}
 
 **Output**:
 ```
-  âœ" Transform validation successful
-  âœ" Transform deployed: mcdn_akamai_ds2
+  ✓ Transform validation successful
+  ✓ Transform deployed: mcdn_akamai_ds2
 ```
 
 **Failure Examples**:
 ```
-âŒ Transform validation failed (attempt 1/5):
+❌ Transform validation failed (attempt 1/5):
    Status: 400
    Error: Unknown function sample_project_city_name
 ```
@@ -583,7 +583,7 @@ FROM {STREAM}
 Found sample data for transform mcdn_akamai_ds2, preparing to insert...
 Waiting for table to be ready for data...
 Inserting sample data into sample_project.mcdn_test with transform mcdn_akamai_ds2...
-âœ" Successfully inserted sample data into sample_project.mcdn_test
+✓ Successfully inserted sample data into sample_project.mcdn_test
 ```
 
 **Failure Handling**:
@@ -622,7 +622,7 @@ GROUP BY minute
 
 **Output**:
 ```
-âœ" Created summary table: mcdn_summary_min
+✓ Created summary table: mcdn_summary_min
 ```
 
 ---
@@ -661,7 +661,7 @@ GROUP BY minute
 **Output**:
 ```
 Creating Grafana datasource for project sample_project...
-âœ" Created Grafana datasource with UID: abc123def456
+✓ Created Grafana datasource with UID: abc123def456
 ```
 
 ---
@@ -692,9 +692,9 @@ __SUMMARY_TABLE_NAME_1__ → "mcdn_summary_min"
 
 **Output**:
 ```
-âœ" Created primary dashboard (UID: xyz789)
+✓ Created primary dashboard (UID: xyz789)
 Creating additional dashboard: dashboards/Raw Logs.json
-âœ" Created dashboard: dashboards/Raw Logs.json
+✓ Created dashboard: dashboards/Raw Logs.json
 ```
 
 ---
@@ -742,20 +742,20 @@ const { notification_settings, isPaused, templating, ...cleanRule } = rule;
 ```
 Creating 2 alert rule group(s)...
   Creating folder "CDN Alerts"...
-  âœ" Created folder "CDN Alerts" (uid: folder123)
+  ✓ Created folder "CDN Alerts" (uid: folder123)
   Creating rule group "Traffic Monitoring" with 3 rule(s)...
     Creating rule "High Error Rate"...
-    âœ" Created rule "High Error Rate" (id: 1)
+    ✓ Created rule "High Error Rate" (id: 1)
     Creating rule "Low Traffic"...
-    âœ" Created rule "Low Traffic" (id: 2)
-  âœ" Created rule group "Traffic Monitoring"
-âœ" Successfully created all alert rules
+    ✓ Created rule "Low Traffic" (id: 2)
+  ✓ Created rule group "Traffic Monitoring"
+✓ Successfully created all alert rules
 ```
 
 **Failure Examples**:
 ```
-âŒ Failed to create alert rule "High Error Rate": Invalid query expression
-âŒ Failed to create folder "CDN Alerts": Folder already exists
+❌ Failed to create alert rule "High Error Rate": Invalid query expression
+❌ Failed to create folder "CDN Alerts": Folder already exists
 ```
 
 ---
@@ -863,26 +863,26 @@ ERROR: Dashboard Errors=2
 
 **Output - Success**:
 ```
-âœ" All required dependencies exist on cluster
-âœ" All required local files present
+✓ All required dependencies exist on cluster
+✓ All required local files present
 ```
 
 **Output - Failure**:
 ```
-âŒ Missing functions on cluster:
+❌ Missing functions on cluster:
    - city_name (expected as: sample_project_city_name)
 
-âŒ Missing dictionaries on cluster:
+❌ Missing dictionaries on cluster:
    - ua_cat_dict (expected as: sample_project_ua_cat_dict)
 
-âš ï¸  Missing local definition files:
+⚠️  Missing local definition files:
    - functions/city_name.json
    - dictionaries/ua_cat_dict.json
 
-ðŸ"‹ In production mode:
-   â€¢ Resources must exist on cluster before deployment
-   â€¢ Either create them manually or run without --production flag first
-   â€¢ Local files should be included for documentation and validation
+📋 In production mode:
+   • Resources must exist on cluster before deployment
+   • Either create them manually or run without --production flag first
+   • Local files should be included for documentation and validation
 ```
 
 **Use Case**: Validate bundle is ready for production deployment where resources already exist.
@@ -901,16 +901,16 @@ All validation errors include:
 
 **Examples**:
 ```
-âŒ Transform file is not valid JSON: 
+❌ Transform file is not valid JSON: 
    path=transformations/mcdn_akamai.json 
    error=Unexpected token at line 45
    
-âŒ SHA256 abc123...def does not match for local file 
+❌ SHA256 abc123...def does not match for local file 
    path=transformations/mcdn_akamai.json
    expected=abc123...
    actual=def456...
    
-âŒ Dashboard must have __DATASOURCE__ 
+❌ Dashboard must have __DATASOURCE__ 
    full_path=dashboards/CDN Dashboard.json
 ```
 

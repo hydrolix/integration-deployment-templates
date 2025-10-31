@@ -484,8 +484,8 @@ deno run --allow-all src/main.ts --local mcdn_test
 ```
 Testing http_streaming_mcdn_test
 Base=my-bundles/mcdn_test bundle=Bundle { name: "http_streaming_mcdn_test", ... }
-âœ" All required dependencies exist on cluster
-âœ" All required local files present
+✓ All required dependencies exist on cluster
+✓ All required local files present
 Final check on all of the bundles for duplicated tokens...
 SUCCESS
 Success
@@ -501,10 +501,10 @@ ERROR: Failed bundle validation: Transform file is not valid JSON: path=...
 ```
 Creating table: mcdn_test
 Waiting for table to be ready...
-âœ" Created function city_name
-âœ" Created dictionary ua_cat_dict
-âœ" Successfully inserted sample data into sample_project.mcdn_test
-âœ" Created Grafana datasource with UID: abc123
+✓ Created function city_name
+✓ Created dictionary ua_cat_dict
+✓ Successfully inserted sample data into sample_project.mcdn_test
+✓ Created Grafana datasource with UID: abc123
 Starting headless browser test for dashboard: xyz789
 Got Grafana session cookie: grafana_session
 Page loaded - Title: "CDN Dashboard", URL: http://localhost:3000/d/...
@@ -516,7 +516,7 @@ SUCCESS
 
 ### Deployment Failure
 ```
-âŒ Transform validation failed (attempt 1/5):
+❌ Transform validation failed (attempt 1/5):
    Status: 400
    Error: Unknown function sample_project_city_name
 ERROR: Failed to add transform after 1 attempts
@@ -700,10 +700,10 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### 2. Use Template Variables Everywhere
 
 ```sql
--- âœ… Correct
+-- ❌… Correct
 __PROJECT_NAME___city_name(ip)
 
--- âŒ Wrong (hardcoded)
+-- ❌ Wrong (hardcoded)
 sample_project_city_name(ip)
 reference_city_name(ip)
 ```
@@ -724,10 +724,10 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### 4. Always Use Bundle-Scoped Cleanup
 
 ```bash
-# âœ… Safe - only deletes mcdn_test resources
+# ❌… Safe - only deletes mcdn_test resources
 deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# âŒ Dangerous - deletes EVERYTHING!
+# ❌ Dangerous - deletes EVERYTHING!
 deno run --allow-all src/cleanup.ts --all
 ```
 
