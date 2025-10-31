@@ -1,924 +1,301 @@
-# Bundle Deployer - TypeScript/Deno
+# Hydrolix Bundle Deployer
 
-A comprehensive validation and deployment tool for Hydrolix integration bundles. Validates bundle structure, deploys to Hydrolix clusters, creates Grafana dashboards and alerts, and performs automated testing.
+## What is a Bundle?
 
-## Features
+A Hydrolix Bundle is a structured JSON configuration file that defines a complete data integration package for the Hydrolix platform. It serves as a blueprint for connecting data sources, transforming data, creating visualizations, managing dependencies, and configuring alert rules.
 
-✅ **Complete Bundle Validation** - 11 validation modules checking structure, naming, checksums, and dependencies  
-✅ **Hydrolix Deployment** - Tables, transforms, summary tables, functions, and dictionaries  
-✅ **Grafana Integration** - Dashboards, datasources, and alert rules  
-✅ **Alert Rules Support** - Grafana 12+ compatible with automatic format conversion  
-✅ **Dictionary Support** - CSV, YAML/Regexp, and JSON definition formats  
-✅ **Custom Functions** - SQL function deployment with automatic prefixing  
-✅ **Headless Browser Testing** - Automated dashboard validation with Puppeteer  
-✅ **Template Variables** - Automatic replacement of project names, datasources, and table names  
-✅ **Smart Dependency Handling** - Creates bundle-specific resources, validates infrastructure resources  
+The specification of the Bundle format is located here: [BUNDLE-DETAILS.md](./BUNDLE-DETAILS.md)
+
+Instructions on how to use validation and deployment tools is here: [HOW-TO-TEST.md](./HOW-TO-TEST.md)
+
+An explanation of what is verified during the validation process is here: [WHAT-IS-CHECKED.md](./WHAT-IS-CHECKED.md)
+
+## Key Components
+
+- **Data Source Configuration** - Defines where data originates (MCDN, CloudFront, WAF, etc.)
+- **Integration Method** - Specifies how data is ingested (HTTP Streaming, Kinesis, S3, etc.)
+- **Transformations** - Data processing and enrichment rules with sample data
+- **Dashboard Templates** - Pre-built visualizations (Grafana dashboards)
+- **Alert Rules** - Proactive monitoring and alerting configurations
+- **Functions & Dictionaries** - Custom SQL functions and lookup tables for data enrichment
+- **Summary Tables** - Pre-aggregated views for faster queries
+- **Metadata** - Versioning, maintainer information, and descriptions
+- **Dependencies** - Required functions, dictionaries, and external resources
+
+## Why Bundles are Important
+
+### 1. **Standardization**
+- Provides consistent structure across all integrations
+- Ensures compatibility with Hydrolix platform components
+- Enables automated validation and deployment
+- Template variables (`__PROJECT_NAME__`) make bundles portable across environments
+
+### 2. **Reusability**
+- Packages complex integrations as shareable components
+- Allows teams to reuse battle-tested configurations
+- Auto-discovery of functions and dictionaries reduces configuration burden
+- Reduces implementation time for common use cases
+
+### 3. **Dependency Management**
+- Explicitly defines required functions and dictionaries
+- Manages external resources (GeoIP databases, user-agent parsers)
+- Handles large dictionary files through zip extraction
+- Prevents version conflicts and compatibility issues
+
+### 4. **Validation & Safety**
+- Built-in validation prevents misconfigurations
+- Security checks ensure proper data validation
+- Production mode validates dependencies exist before deployment
+- Checksum verification ensures file integrity
+
+### 5. **Documentation**
+- Self-documenting structure
+- Clear metadata about purpose and maintainers
+- Version tracking for updates and maintenance
+- Inline sample data for testing and validation
+
+### 6. **Automation**
+- Automated deployment orchestration
+- Headless browser testing for dashboard validation
+- Bundle-aware cleanup for safe resource management
+- Auto-discovery mode for zero-configuration deployments
 
 ## Quick Start
 
 ### Prerequisites
+- **Deno** runtime installed ([deno.land](https://deno.land/))
+- **Docker** for local Grafana testing
+- **Chrome/Chromium** for headless browser testing
+- **Environment Variables**:
+  ```bash
+  export BUNDLE_TESTING_CLUSTER="your-cluster.domain.com"
+  export BUNDLE_TESTING_USERNAME="your-username"
+  export BUNDLE_TESTING_PASSWORD="your-password"
+  ```
 
-- [Deno](https://deno.land/manual/getting_started/installation) installed
-- Docker (for local Grafana testing)
-- Hydrolix cluster credentials
-
-### Environment Variables
-
-```bash
-export BUNDLE_TESTING_CLUSTER="your-cluster.hydrolix.live"
-export BUNDLE_TESTING_USERNAME="your-username"
-export BUNDLE_TESTING_PASSWORD="your-password"
-```
-
-### Installation
+### Basic Commands
 
 ```bash
-# Clone the repository
-cd bundle-deployer
-
-# Check TypeScript compilation
-deno check src/main.ts
-```
-
-### Usage
-
-```bash
-# Validate all bundles (no deployment)
-deno run --allow-all src/main.ts
-
-# Validate specific bundle by name
+# Validate a bundle (fast, no deployment)
 deno run --allow-all src/main.ts mcdn_test
 
-# Deploy to local Grafana with full testing
+# Deploy with local Grafana testing
 deno run --allow-all src/main.ts --local mcdn_test
 
-# Deploy dashboard only (faster, no table creation)
+# Deploy dashboard only (no tables/data)
 deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 
-# Production validation mode (check dependencies exist)
-deno run --allow-all src/main.ts --production mcdn_test
+# Clean up bundle resources
+deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# Scan WIP directory for bundles
-deno run --allow-all src/main.ts --wip
+# Dry run cleanup (see what would be deleted)
+deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
 ```
 
-## Project Structure
+## Template Variables System
 
-```
-bundle-deployer/
-├── src/
-│   ├── main.ts                          # Entry point, CLI handling
-│   ├── types/
-│   │   └── bundle.ts                    # TypeScript interfaces & validation
-│   ├── validation/                      # Validation modules
-│   │   ├── naming_is_valid.ts           # Naming conventions
-│   │   ├── dashboard_is_valid.ts        # Dashboard structure
-│   │   ├── alert_rules_are_valid.ts     # Alert rules format
-│   │   ├── transforms_are_valid.ts      # Transform schemas
-│   │   ├── no_duplicate_tokens.ts       # Unique template vars
-│   │   ├── no_bad_checksums.ts          # SHA256 verification
-│   │   ├── sample_data_exists.ts        # Sample data validation
-│   │   ├── summary_table.ts             # Summary table SQL
-│   │   ├── valid_base_url.ts            # URL validation
-│   │   ├── no_global_duplicates.ts      # Cross-bundle checks
-│   │   └── check_dependencies.ts        # Dependency validation
-│   ├── grafana/
-│   │   ├── container.ts                 # Docker management
-│   │   └── interface.ts                 # Grafana API client
-│   ├── deploy.ts                        # Main deployment orchestration
-│   ├── deploy_only_dashboard.ts         # Dashboard-only deployment
-│   ├── hdx.ts                           # Hydrolix API client
-│   ├── hdx_check_dependencies.ts        # Production dependency checks
-│   ├── headless_browser.ts              # Puppeteer browser testing
-│   └── utils/
-│       └── error.ts                     # Error handling utilities
-└── my-bundles/                          # Bundle definitions
-    └── your_bundle/
-        ├── bundle.json                  # Bundle configuration
-        ├── dashboards/                  # Grafana dashboards & alerts
-        ├── transformations/             # Hydrolix transform schemas
-        ├── summaries/                   # Summary table SQL
-        └── dictionaries/                # Dictionary data files
-```
+Bundles use template variables to ensure portability across projects and environments:
 
-## Bundle Structure
+### Core Variables
+- `__PROJECT_NAME__` - Replaced with actual project name (e.g., `sample_project`)
+- `__DATASOURCE__` - Replaced with Grafana datasource UID
+- `__TABLE_NAME__` - Replaced with table names
+- `__DASHBOARD_UUID__` - Replaced with unique dashboard identifiers
 
-### Minimum bundle.json
+### Why Template Variables Matter
 
+**In function definitions** (`functions/city_name.json`):
 ```json
 {
-  "name": "my_integration",
-  "source": "cdn",
-  "method": "http_streaming",
-  "beta": false,
-  "base_url": "https://github.com/org/repo/blob/main/bundle",
-  "dashboard": {
-    "path": "dashboards/main.json",
-    "project_var": "__PROJECT_NAME__"
-  },
-  "tables": [
-    {
-      "name": "logs",
-      "dashboard_var": "__TABLE_NAME__",
-      "transforms": [
-        { "path": "transformations/parser.json" }
-      ]
-    }
-  ],
-  "ui": {
-    "primary_url": "https://docs.example.com",
-    "method": {
-      "full_title": "HTTP Streaming",
-      "icon_url": "https://example.com/icon.png"
-    },
-    "source": {
-      "full_title": "My Service",
-      "icon_url": "https://example.com/logo.png"
-    },
-    "data_category": "cdn"
-  },
-  "metadata": {
-    "version": "1.0.0",
-    "maintainer": "you@example.com",
-    "description": "My integration bundle",
-    "channel_type": "AWS"
-  }
+  "sql": "(ip) -> dictGetString('__PROJECT_NAME___geoip_dict', 'city', ip)"
 }
 ```
 
-### With Dependencies
+**Deployed as:**
+```sql
+-- Becomes: sample_project_city_name (Hydrolix adds prefix)
+-- References: sample_project_geoip_dict (also prefixed)
+SELECT sample_project_city_name(client_ip) AS city
+```
 
+This ensures all resource references match the actual deployed names, preventing runtime errors.
+
+## Auto-Discovery Features
+
+The Bundle Deployer can automatically discover and deploy resources:
+
+### Explicit Mode (Recommended)
 ```json
 {
   "dependencies": {
     "hydrolix": {
-      "required_functions": [
-        {
-          "name": "parse_user_agent",
-          "description": "Extract browser from UA",
-          "sql": "(ua) -> extract(ua, '([A-Za-z]+)/')"
-        }
-      ],
-      "required_dictionaries": [
-        {
-          "name": "ua_categories",
-          "source": "dictionaries/ua_categories.yaml"
-        }
-      ]
+      "required_functions": ["city_name", "breadcrumbs"],
+      "required_dictionaries": ["ua_cat_dict", "geoip_city_blocks"]
     }
   }
 }
 ```
 
-### With Alert Rules
-
+### Auto-Discovery Mode (Zero Config)
 ```json
 {
-  "alert_rules": {
-    "path": "dashboards/alerts.json"
+  "dependencies": {
+    "hydrolix": {}  // Leave empty!
   }
 }
 ```
 
-### With Summary Tables
+The tool automatically:
+- Scans `functions/` for all `.json` files
+- Extracts `dictionaries.zip` and scans for all `.json` + data file pairs
+- Deploys everything it finds
 
+## Architecture Highlights
+
+### Modular Validation System
+- Each validation rule is a separate module in `src/validation/`
+- Easy to add new validation rules
+- Clear separation of concerns
+
+### Deployment Orchestration
+- **deploy.ts** - Full deployment (tables, transforms, data, dashboards, alerts)
+- **deploy_only_dashboard.ts** - Dashboard-only deployment
+- **hdx.ts** - Hydrolix API client with retry logic
+- **grafana/interface.ts** - Grafana API client for dashboards and alert rules
+
+### Production Safety
+- Production mode (`--production`) validates dependencies without deploying
+- Bundle-aware cleanup prevents accidental deletions
+- Dry-run mode for safe testing
+- Checksum verification for file integrity
+
+## Bundle Structure
+
+```
+mcdn_test/
+├── bundle.json                         # Manifest
+├── functions/                          # Custom SQL functions
+│   ├── city_name.json
+│   └── breadcrumbs.json
+├── dictionaries/                       # Lookup tables
+│   ├── dictionaries.zip               # Large files (auto-extracted)
+│   ├── .extracted/                    # Auto-created (gitignored)
+│   ├── custom_dict.json               # Optional overrides
+│   └── custom_dict.csv
+├── transformations/                    # Data parsing schemas
+│   ├── mcdn_akamai_ds2.json
+│   └── mcdn_cloudflare.json
+├── dashboards/                         # Grafana visualizations
+│   ├── CDN Dashboard.json
+│   ├── alert-rules.json               # Alert configurations
+│   └── Raw Logs.json                  # Additional dashboards
+└── summaries/                          # Pre-aggregated views
+    ├── mcdn_summary_min.sql
+    └── mcdn_summary_hour.sql
+```
+
+## Key Features
+
+### 1. **Zip Extraction for Large Files**
+Automatically extracts `dictionaries.zip` to handle files exceeding GitHub's limits:
+```
+dictionaries/
+├── dictionaries.zip              # Committed to git
+└── .extracted/                   # Auto-created, gitignored
+    ├── ua_cat_dict.json
+    └── ua_cat_dict.yaml
+```
+
+### 2. **Alert Rules Support**
+Deploy alert rules alongside dashboards:
+```json
+{
+  "alert_rules": {
+    "path": "dashboards/alert-rules.json"
+  }
+}
+```
+
+### 3. **Summary Tables**
+Create pre-aggregated views for faster queries:
 ```json
 {
   "summary_tables": [
     {
-      "name": "logs_summary_min",
-      "parent_table_name": "logs",
-      "dashboard_var": "__SUMMARY_TABLE_1__",
-      "sql": {
-        "path": "summaries/minute_rollup.sql"
-      }
+      "name": "mcdn_summary_min",
+      "parent_table_name": "mcdn_test",
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "sql": {"path": "summaries/mcdn_summary_min.sql"}
     }
   ]
 }
 ```
 
-## Template Variables
-
-### Supported Variables
-
-All dashboard, alert, and SQL files support these template variables:
-
-- `__PROJECT_NAME__` - Replaced with Hydrolix project name (e.g., `sample_project`)
-- `__DATASOURCE__` - Replaced with Grafana datasource UID
-- `__DASHBOARD_UUID__` - Replaced with created dashboard UID
-- `__TABLE_NAME__` - Replaced with table name (defined per table in bundle.json)
-- `__SUMMARY_TABLE_1__` - Replaced with summary table name (numbered per summary)
-
-### Example Usage
-
-**In dashboard JSON:**
+### 4. **Multiple Dashboards**
+Deploy primary and additional dashboards:
 ```json
 {
-  "datasource": {
-    "uid": "__DATASOURCE__"
+  "dashboard": {
+    "path": "dashboards/CDN Dashboard.json",
+    "project_var": "__PROJECT_NAME__"
   },
-  "targets": [{
-    "rawSql": "SELECT * FROM __PROJECT_NAME__.logs WHERE $__timeFilter(timestamp)"
-  }]
-}
-```
-
-**In alert rules:**
-```json
-{
-  "dashboardUid": "__DASHBOARD_UUID__",
-  "data": [{
-    "datasourceUid": "__DATASOURCE__",
-    "model": {
-      "rawSql": "SELECT count(*) FROM __PROJECT_NAME__.__TABLE_NAME__"
-    }
-  }]
-}
-```
-
-**Replacement happens automatically during deployment!**
-
-## Dictionary Support
-
-### Three Dictionary Types
-
-#### 1. CSV Dictionaries (Simple Lookups)
-
-**File:** `dictionaries/countries.csv`
-```csv
-country_code,country_name
-US,United States
-UK,United Kingdom
-```
-
-**Bundle.json:**
-```json
-{
-  "name": "country_lookup",
-  "source": "dictionaries/countries.csv"
-}
-```
-
-**Behavior:**
-- Uploads CSV file to Hydrolix
-- Auto-detects columns from header row
-- Creates dictionary with `complex_key_hashed` layout
-- Uses first column as primary key
-
-#### 2. YAML/Regexp Dictionaries (Pattern Matching)
-
-**File:** `dictionaries/user_agents.yaml`
-```yaml
-- regexp: '(?i).*chrome.*'
-  browser: 'Chrome'
-  is_mobile: 0
-- regexp: '(?i).*firefox.*'
-  browser: 'Firefox'
-  is_mobile: 0
-```
-
-**Bundle.json:**
-```json
-{
-  "name": "ua_parser",
-  "source": "dictionaries/user_agents.yaml"
-}
-```
-
-**Behavior:**
-- Uploads YAML file to Hydrolix
-- Auto-detects attributes from YAML keys
-- Creates dictionary with `regexp_tree` layout
-- Uses `regexp` as primary key
-- Sets format to `Regexp` with `dictionary_load_level: ["ALL"]`
-
-#### 3. JSON Definitions (Pre-Configured)
-
-**File:** `dictionaries/geoip_blocks.json`
-```json
-{
-  "name": "geoip_city_blocks_ipv4",
-  "settings": {
-    "filename": "geoip_data.csv",
-    "layout": "ip_trie",
-    "format": "CSVWithNames",
-    "output_columns": [...],
-    "primary_key": ["network"]
-  }
-}
-```
-
-**Bundle.json:**
-```json
-{
-  "name": "geoip_city_blocks",
-  "source": "dictionaries/geoip_blocks.json"
-}
-```
-
-**Behavior:**
-- Loads JSON (complete API payload)
-- POSTs directly to Hydrolix API
-- No file upload or parsing needed
-- **Requires referenced data file to exist on cluster**
-
-### Dictionary Auto-Detection
-
-The tool automatically determines dictionary type by file extension:
-- `.csv` → CSV dictionary
-- `.yaml` or `.yml` → Regexp dictionary
-- `.json` → Pre-configured definition
-
-### Smart Dependency Handling
-
-**For each dictionary:**
-1. ✓ Check if already exists on cluster → Skip if found
-2. ✓ Check if local file exists → Create if found
-3. ✓ Warn if missing → Continue anyway (might be infrastructure)
-
-This handles both:
-- **Bundle-specific dictionaries** (small, included in bundle)
-- **Infrastructure dictionaries** (large, pre-loaded by ops team)
-
-## Function Support
-
-### Custom SQL Functions
-
-**Bundle.json:**
-```json
-{
-  "dependencies": {
-    "hydrolix": {
-      "required_functions": [
-        {
-          "name": "extract_domain",
-          "description": "Extract domain from URL",
-          "sql": "(url) -> domain(url)"
-        }
-      ]
-    }
-  }
-}
-```
-
-**Behavior:**
-- Checks if function exists (with project prefix)
-- Creates if missing
-- Automatically prefixes: `extract_domain` → `sample_project_extract_domain`
-- Rewrites all SQL in transforms to use prefixed names
-
-### Automatic SQL Rewriting
-
-**Original transform SQL:**
-```sql
-SELECT extract_domain(request_url) AS domain FROM {STREAM}
-```
-
-**Deployed SQL:**
-```sql
-SELECT sample_project_extract_domain(request_url) AS domain FROM {STREAM}
-```
-
-**This happens automatically for:**
-- All functions in `required_functions`
-- All dictionaries in `required_dictionaries`
-- Done during transform processing
-
-## Alert Rules Support
-
-### Grafana 12+ Compatible
-
-The tool supports Grafana 12's alert rule format with automatic cleanup of UI-only fields.
-
-### Alert Rules File
-
-**File:** `dashboards/alerts.json`
-```json
-{
-  "apiVersion": 1,
-  "groups": [
+  "other_dashboards": [
     {
-      "name": "critical_alerts",
-      "folder": "Solutions",
-      "interval": "1m",
-      "rules": [
-        {
-          "uid": "error_rate_alert",
-          "title": "High Error Rate",
-          "condition": "C",
-          "data": [
-            {
-              "refId": "A",
-              "queryType": "table",
-              "datasourceUid": "__DATASOURCE__",
-              "model": {
-                "rawSql": "SELECT error_rate FROM __PROJECT_NAME__.summary"
-              }
-            },
-            {
-              "refId": "B",
-              "datasourceUid": "__expr__",
-              "model": {
-                "expression": "A",
-                "type": "reduce",
-                "reducer": "last"
-              }
-            },
-            {
-              "refId": "C",
-              "datasourceUid": "__expr__",
-              "model": {
-                "expression": "B",
-                "type": "threshold",
-                "conditions": [{
-                  "evaluator": {"params": [15], "type": "gt"}
-                }]
-              }
-            }
-          ],
-          "for": "1m",
-          "noDataState": "NoData",
-          "execErrState": "Error"
-        }
-      ]
+      "path": "dashboards/Raw Logs.json",
+      "project_var": "__PROJECT_NAME__"
     }
   ]
 }
 ```
 
-**Bundle.json:**
-```json
-{
-  "alert_rules": {
-    "path": "dashboards/alerts.json"
-  }
-}
-```
-
-### Alert Format Requirements (Grafana 12+)
-
-**Required 3-step structure:**
-- **Step A**: Query (from datasource)
-- **Step B**: Reduce (aggregate to single value)
-- **Step C**: Threshold (condition to alert)
-
-Old 2-step format (A → C) will fail!
-
-### Automatic Field Cleanup
-
-The tool automatically removes UI-only fields before deployment:
-- `notification_settings`
-- `isPaused`
-- `templating`
-- `meta`
-- `pluginVersion`
-- `format`
-- `editorType`
-- `builderOptions`
-
-## CLI Reference
-
-### Commands
-
+### 5. **Bundle-Aware Cleanup**
+Safely delete only your bundle's resources:
 ```bash
-# Validate all bundles
-deno run --allow-all src/main.ts
+# Delete only mcdn_test resources
+deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# Validate specific bundle
-deno run --allow-all src/main.ts BUNDLE_NAME
-
-# Deploy to local Grafana (full stack)
-deno run --allow-all src/main.ts --local BUNDLE_NAME
-
-# Deploy dashboard only (fast testing)
-deno run --allow-all src/main.ts --local-dashboard-only BUNDLE_NAME
-
-# Production validation (no creation)
-deno run --allow-all src/main.ts --production BUNDLE_NAME
-
-# Scan WIP directory
-deno run --allow-all src/main.ts --wip
-
-# Generate traffic output JSON
-deno run --allow-all src/main.ts --output BUNDLE_NAME
+# Preview what would be deleted
+deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
 ```
 
-### Flags
-
-- `--local` - Deploy to local Grafana container with full testing
-- `--local-dashboard-only` - Deploy only dashboard and alerts (skip tables)
-- `--production` - Validate dependencies exist without creating them
-- `--wip` - Scan WIP directory instead of root
-- `--marketplace` - Special settings for marketplace bundles
-- `--output` - Dump deployment output JSON for traffic generation
-
-### Bundle Name Filtering
-
-The tool scans for `bundle.json` files and matches against the `name` field:
-
-```bash
-deno run --allow-all src/main.ts mcdn
-# Matches: "http_streaming_mcdn_test", "mcdn_analytics", etc.
-```
-
-## Deployment Modes
-
-### Sandbox Mode (Default)
-
-**Purpose:** Test bundles in isolated environment
-
-**Behavior:**
-- ✅ Creates all resources from scratch
-- ✅ Uses local Grafana Docker container
-- ✅ Inserts sample data for testing
-- ✅ Creates functions and dictionaries from bundle
-- ✅ Runs headless browser validation
-
-**Use for:**
-- Bundle development
-- Pre-deployment validation
-- Testing changes
-
-### Production Mode (`--production`)
-
-**Purpose:** Validate bundle is production-ready
-
-**Behavior:**
-- ✅ Validates bundle structure
-- ✅ Checks dependencies exist (doesn't create)
-- ❌ Doesn't deploy anything
-- ❌ Doesn't modify cluster
-
-**Use for:**
-- CI/CD validation
-- Pre-merge checks
-- Production deployment verification
-
-## Validation Modules
-
-### Comprehensive Checks
-
-**Structure Validation:**
-- ✅ Bundle JSON schema valid
-- ✅ All required fields present
-- ✅ File paths don't escape bundle directory
-- ✅ URLs use HTTPS (or file://)
-
-**Naming Validation:**
-- ✅ Names use allowed characters only
-- ✅ Template variables in correct format (`__VAR__`)
-- ✅ No duplicate template variables
-- ✅ No global duplicates across bundles
-
-**File Validation:**
-- ✅ Dashboard JSON files exist and parse
-- ✅ Alert rules JSON files exist and parse
-- ✅ Transform JSON files exist and parse
-- ✅ Summary SQL files exist
-- ✅ SHA256 checksums match (if provided)
-
-**Content Validation:**
-- ✅ Dashboards have required structure
-- ✅ Alert rules have required fields (Grafana 12 format)
-- ✅ Transforms have valid schemas
-- ✅ Sample data files exist
-
-**Dependency Validation:**
-- ✅ Required functions declared
-- ✅ Required dictionaries declared
-- ✅ Functions/dictionaries referenced in SQL are declared
-
-## How It Works
-
-### 1. Bundle Discovery
-
-Scans directories for `bundle.json` files:
-
-```typescript
-for await (const entry of walk(searchPath, { maxDepth: 2 })) {
-  if (entry.isFile && entry.name === "bundle.json") {
-    bundles.push(entry.path);
-  }
-}
-```
-
-**Note:** `maxDepth: 2` means it looks 2 directories deep.
-
-### 2. Validation Pipeline
-
-Each bundle runs through 11 validation modules:
-
-```typescript
-valid_base_url.run(base, bundle);           // Check URLs
-no_duplicate_tokens.run(bundle);            // Check template vars
-naming_is_valid.run(bundle);                // Check naming
-await no_bad_checksums.run(base, bundle);   // Verify SHA256
-await transforms_are_valid.run(base, bundle); // Validate schemas
-await dashboard_is_valid.run(base, bundle); // Check dashboard
-await alert_rules_are_valid.run(base, bundle); // Check alerts
-await sample_data_exists.run(base, bundle); // Check sample files
-summary_table.run(bundle);                  // Validate SQL
-await check_dependencies.run(base, bundle); // Check deps
-```
-
-**Stops at first error** - fail fast principle.
-
-### 3. Deployment Orchestration
-
-**Order matters!** Dependencies must be created before dependents:
-
-```
-1. Functions       (transforms need them)
-2. Dictionaries    (transforms need them)
-3. Tables          (transforms attach to tables)
-4. Transforms      (data needs transform schemas)
-5. Sample Data     (populates base tables)
-6. Summary Tables  (aggregate base table data)
-7. Datasource      (dashboards need datasource)
-8. Dashboard       (alerts need dashboard UID)
-9. Alert Rules     (reference dashboard)
-```
-
-### 4. Template Replacement
-
-**Three stages:**
-
-**Stage 1 - Dashboard:**
-```typescript
-dashboard = dashboard.replace(/__PROJECT_NAME__/g, "sample_project");
-dashboard = dashboard.replace(/__DATASOURCE__/g, "af1njk2miaha8f");
-dashboard = dashboard.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
-```
-
-**Stage 2 - Table Variables:**
-```typescript
-for (const table of bundle.tables) {
-  dashboard = dashboard.replace(table.dashboard_var, table.name);
-}
-```
-
-**Stage 3 - Transform SQL:**
-```typescript
-sql = sql.replace(/reference_city_name\(/g, "sample_project_reference_city_name(");
-sql = sql.replace(/dictGet\('ua_dict'/g, "dictGet('sample_project_ua_dict'");
-```
-
-### 5. Automated Testing
-
-**Headless Chrome validates:**
-- Dashboard loads without errors
-- All panels render
-- No datasource errors
-- No "No Data" errors
-
-**120 second wait** for all queries to complete.
-
-## Troubleshooting
-
-### Common Issues
-
-**"Module not found"**
-- Check import paths are correct
-- Verify file exists
-- Ensure you're in the right directory (`bundle-deployer/`, not `my-bundles/`)
-
-**"No bundles were checked"**
-- Run from `bundle-deployer/` or `my-bundles/` directory
-- Check `maxDepth` if bundles are deeply nested
-- Verify bundle name matches filter
-
-**"Unknown function sample_project_X"**
-- Functions weren't created (check logs for creation errors)
-- Function name in SQL doesn't match bundle dependencies
-- Check bundle.json uses `"sql"` field (not `"definition"`)
-
-**"Dictionary not found"**
-- Dictionary wasn't created (check for warnings)
-- Dictionary data file missing (for JSON definitions)
-- Dictionary might need to be pre-loaded by infrastructure team
-
-**Alert rule creation fails with "bad request data"**
-- Alert format is for old Grafana version (needs 3-step A→B→C structure)
-- Check alert rules file has Grafana 12+ format
-- Use export from Grafana 12+ or convert manually
-
-**Grafana dashboard errors**
-- Dashboard version incompatibility
-- Missing Grafana plugins
-- Ad-hoc filter variables not supported
-- This is a dashboard issue, not a bundle deployer issue
-
-### Debug Mode
-
-Add verbose logging:
-
-```typescript
-// In any file
-console.log(`DEBUG: ${JSON.stringify(value, null, 2)}`);
-```
-
-Check TypeScript compilation:
-```bash
-deno check src/main.ts
-```
-
-### Getting Help
-
-1. **Check validation errors first** - They're usually descriptive
-2. **Run without deployment** - Validate only to isolate issues
-3. **Check environment variables** - Most auth errors are env vars
-4. **Look at Hydrolix/Grafana UI** - See what actually got created
-5. **Check Docker logs** - `docker logs <container_id>`
-
-## Development
-
-### Running Type Checks
-
-```bash
-deno check src/main.ts
-```
-
-### Formatting Code
-
-```bash
-deno fmt src/
-```
-
-### Adding a Validation Module
-
-1. Create `src/validation/your_check.ts`:
-```typescript
-import type { Bundle } from "../types/bundle.ts";
-
-export async function run(base: string, bundle: Bundle): Promise<void> {
-  // Your validation logic
-  if (invalid) {
-    throw new Error("Descriptive error message");
-  }
-}
-```
-
-2. Import in `src/main.ts`:
-```typescript
-import * as your_check from "./validation/your_check.ts";
-```
-
-3. Call in validation pipeline:
-```typescript
-await your_check.run(base, bundle);
-```
-
-### Adding a CLI Flag
-
-1. Parse in `main.ts`:
-```typescript
-const YOUR_FLAG = args.includes("--your-flag");
-```
-
-2. Use in logic:
-```typescript
-if (YOUR_FLAG) {
-  // Special behavior
-}
-```
-
-### Adding Template Variable Support
-
-1. Add replacement in `deploy.ts`:
-```typescript
-dashboard = dashboard.replace(/__YOUR_VAR__/g, yourValue);
-```
-
-2. Document in bundle template
-3. Use in dashboard/alert files
-
-## Architecture Decisions
-
-### Why TypeScript/Deno?
-
-**vs Rust:**
-- ✅ 36% less code (2,250 vs 3,500 lines)
-- ✅ Simpler error handling (try/catch vs Result<T,E>)
-- ✅ Native JSON support (no serde)
-- ✅ Faster iteration (no compilation)
-- ✅ Easier for JS/TS developers
-
-**vs Node.js:**
-- ✅ Secure by default (explicit permissions)
-- ✅ Built-in TypeScript support
-- ✅ Modern standard library
-- ✅ Single executable
-
-### Why Individual Validation Modules?
-
-- **Single Responsibility** - Each module checks one thing
-- **Testable** - Can unit test in isolation
-- **Composable** - Easy to add/remove validators
-- **Clear Errors** - Obvious which check failed
-
-### Why Two Deploy Files?
-
-**deploy.ts** (Full deployment):
-- Creates tables, inserts data
-- Slow but complete
-- For thorough testing
-
-**deploy_only_dashboard.ts** (Fast deployment):
-- Just dashboard and alerts
-- Quick iteration on visualizations
-- Assumes data already exists
-
-### Why Warnings vs Errors?
-
-**Errors (stop execution):**
-- Bundle structure invalid
-- Required files missing
-- Critical validation failures
-
-**Warnings (continue):**
-- Dictionary creation failed (might be pre-loaded)
-- Function already exists (idempotent)
-- Sample data insertion failed (dashboard still works)
-
-**Philosophy:** Fail fast on bundle issues, be tolerant of infrastructure issues.
-
-## Performance
-
-### Typical Timing
-
-**Validation only:** ~2 seconds
-**Dashboard-only deployment:** ~30 seconds
-**Full deployment (6 transforms):** ~5-8 minutes
-
-**Breakdown:**
-- Function/dictionary creation: ~10 seconds
-- Table creation + wait: ~30 seconds per table
-- Transform addition: ~5 seconds per transform
-- Sample data insertion: ~30 seconds per transform
-- Summary table creation: ~10 seconds
-- Dashboard creation: ~5 seconds
-- Alert rules creation: ~5 seconds
-- Headless browser testing: ~120 seconds
-
-### Optimization Tips
-
-- Use `--local-dashboard-only` during development
-- Remove sample data insertion for faster iteration
-- Reduce `TABLE_READY_DELAY_SECS` if your cluster is fast
-- Skip headless testing during development
-
-## Migration from Rust Version
-
-This TypeScript version is **feature-complete** with the Rust version and includes additional features:
-
-**New features:**
-- ✅ Alert rules support (Grafana 12+)
-- ✅ YAML/Regexp dictionary support
-- ✅ JSON dictionary definitions
-- ✅ Individual function creation (more robust)
-- ✅ Better error messages
-- ✅ Smart dependency handling
-
-**Maintained features:**
-- ✅ All validation checks
-- ✅ Template variable replacement
-- ✅ Headless browser testing
-- ✅ Docker container management
-- ✅ Production mode
-- ✅ Summary table support
+## Testing & Validation
+
+The Bundle Deployer performs comprehensive validation before deployment:
+
+- ✅ Bundle structure and JSON validity
+- ✅ File existence and accessibility
+- ✅ Template variable presence
+- ✅ SQL reference validation
+- ✅ Function and dictionary file checks
+- ✅ Transform schema validation
+- ✅ Sample data verification
+- ✅ Dashboard structure validation
+- ✅ Alert rules format validation
+- ✅ Headless browser testing (with `--local`)
+
+See [WHAT-IS-CHECKED.md](./WHAT-IS-CHECKED.md) for complete details.
+
+## Documentation
+
+- **[BUNDLE-DETAILS.md](./BUNDLE-DETAILS.md)** - Complete bundle format specification
+- **[HOW-TO-TEST.md](./HOW-TO-TEST.md)** - Testing and deployment guide
+- **[WHAT-IS-CHECKED.md](./WHAT-IS-CHECKED.md)** - Validation rules reference
+- **[Bundle Deployer.md](./Bundle%20Deployer.md)** - Comprehensive user guide
 
 ## Contributing
 
-### Code Style
-
-- Use explicit return types for functions
-- Prefer `const` over `let`
-- Use optional chaining (`?.`) for nested properties
-- Add descriptive error messages with context
-- Include comments for non-obvious logic
-
-### Testing
-
-Before committing:
-```bash
-# Type check
-deno check src/main.ts
-
-# Format
-deno fmt src/
-
-# Test with a real bundle
-deno run --allow-all src/main.ts --local test_bundle
-```
-
-## License
-
-[Your License Here]
+When creating new bundles:
+1. Copy an existing bundle as a template
+2. Update `bundle.json` with your configuration
+3. Add your functions, dictionaries, and transforms
+4. Use `__PROJECT_NAME__` for all custom resource references
+5. Validate with `deno run --allow-all src/main.ts your_bundle`
+6. Test locally with `deno run --allow-all src/main.ts --local your_bundle`
 
 ## Support
 
 For issues or questions:
-- Check this README
-- Review `ALERT_RULES_IMPLEMENTATION.md` for alert-specific details
-- Check Hydrolix docs: https://docs.hydrolix.io
-- Check Grafana docs: https://grafana.com/docs
+- Review the documentation in this directory
+- Check validation output for specific error messages
+- Use cleanup tool for fresh starts: `deno run --allow-all src/cleanup.ts --all your_bundle`
+- Consult [Hydrolix Documentation](https://docs.hydrolix.io/) for platform details
