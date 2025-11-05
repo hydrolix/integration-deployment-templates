@@ -18,12 +18,18 @@ Set these environment variables before running any commands:
 export BUNDLE_TESTING_CLUSTER="partnersandbox.trafficpeak.live"
 export BUNDLE_TESTING_USERNAME="your-username"
 export BUNDLE_TESTING_PASSWORD="your-password"
+
+# Optional: Override shared project name (defaults to hdx_solutions)
+export SHARED_PROJECT_NAME="hdx_solutions"
 ```
 
 **Note**: These credentials are used to:
 - Authenticate with Hydrolix cluster
 - Create test resources (tables, functions, dictionaries)
 - Deploy and validate bundles
+- Manage shared resources in hdx_solutions project
+
+---
 
 ## Basic Usage
 
@@ -39,8 +45,9 @@ This performs fast validation checks without deploying anything:
 - ✅ JSON syntax validation
 - ✅ Template variable verification
 - ✅ SQL reference validation
-- ✅ Function/dictionary file checks
+- ✅ Function/dictionary file checks (shared and bundle-specific)
 - ✅ No deployment or data creation
+- ℹ️  Plugin validation skipped (requires deployed dashboards)
 
 **Example:**
 ```bash
@@ -59,18 +66,18 @@ deno run --allow-all src/main.ts mcdn_test
 deno run --allow-all src/main.ts --local [bundle_name]
 ```
 
-This performs complete end-to-end testing:
-- ✅ All validation checks (same as above)
-- ✅ Extracts dictionary zips automatically
-- ✅ Creates functions and dictionaries in Hydrolix
-- ✅ Creates tables with transforms
-- ✅ Inserts sample data
-- ✅ Creates summary tables (if defined)
-- ✅ Deploys Grafana datasource
-- ✅ Deploys all dashboards
-- ✅ Creates alert rules (if defined)
-- ✅ Headless Chrome testing (30-second dashboard load)
-- ✅ Error detection (datasource errors, no-data errors)
+This performs complete end-to-end testing including:
+- All validation checks (same as above)
+- Shared resource creation/verification in `hdx_solutions` project
+- Bundle-specific resource creation in bundle's project
+- Table creation with transforms
+- Sample data insertion
+- Summary table creation (if defined)
+- Grafana datasource and dashboard deployment
+- Alert rules creation (if defined)
+- Headless Chrome testing (30-second dashboard load)
+- Grafana plugin detection and validation (all dashboards)
+- Error detection (datasource errors, query errors, missing plugins)
 
 **Example:**
 ```bash
@@ -81,6 +88,20 @@ deno run --allow-all src/main.ts --local mcdn_test
 
 **Time**: ~3-5 minutes (depends on data volume and cluster response time)
 
+**What happens:**
+1. Validates bundle structure
+2. Extracts `dictionaries.zip` if present
+3. Creates/checks `hdx_solutions` project
+4. Creates/checks shared functions and dictionaries
+5. Creates bundle-specific functions and dictionaries
+6. Creates tables and adds transforms
+7. Inserts sample data
+8. Creates summary tables
+9. Starts Grafana container
+10. Deploys dashboards and alert rules
+11. Tests in headless Chrome
+12. Validates Grafana plugins (checks all deployed dashboards)
+
 ---
 
 ### 3. Dashboard-Only Deployment
@@ -90,12 +111,13 @@ deno run --allow-all src/main.ts --local-dashboard-only [bundle_name]
 ```
 
 This deploys dashboards without creating tables or data:
-- ✅ All validation checks
-- ✅ Deploys Grafana datasource
-- ✅ Deploys all dashboards
-- ✅ Creates alert rules (if defined)
-- ✅ Headless Chrome testing
-- ❌ **Does NOT** create tables, functions, dictionaries, or insert data
+- âœ… All validation checks
+- âœ… Grafana container setup
+- âœ… Datasource creation
+- âœ… Dashboard deployment
+- âœ… Alert rules creation (if defined)
+- âœ… Headless Chrome testing
+- âŒ **Does NOT** create tables, functions, dictionaries, or insert data
 
 **Example:**
 ```bash
@@ -114,12 +136,13 @@ deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 deno run --allow-all src/main.ts --production [bundle_name]
 ```
 
-This validates dependencies exist on the target cluster:
-- ✅ All validation checks
-- ✅ Checks functions exist on cluster (with correct project prefix)
-- ✅ Checks dictionaries exist on cluster (with correct project prefix)
-- ✅ Verifies local definition files present
-- ❌ **Does NOT** deploy anything
+This validates dependencies exist on the target cluster without deploying:
+- Checks shared functions exist in hdx_solutions (with `hdx_solutions_` prefix)
+- Checks shared dictionaries exist in hdx_solutions (with `hdx_solutions_` prefix)
+- Checks bundle-specific functions exist on cluster (with project prefix)
+- Checks bundle-specific dictionaries exist on cluster (with project prefix)
+- Verifies local definition files are present
+- **Does NOT** deploy or create anything
 
 **Example:**
 ```bash
@@ -130,30 +153,24 @@ deno run --allow-all src/main.ts --production mcdn_test
 
 **Time**: ~30-60 seconds
 
----
-
-### 5. Filter by Bundle Name
-
-```bash
-deno run --allow-all src/main.ts [bundle_name]
+**Success output:**
+```
+âœ“ All required dependencies exist on cluster
+âœ“ All required local files present
 ```
 
-Test only bundles whose names contain the specified string:
+**Failure output:**
+```
+âŒ Missing functions on cluster (hdx_solutions):
+   - city_name (expected as: hdx_solutions_city_name)
 
-```bash
-# Only test mcdn bundles
-deno run --allow-all src/main.ts mcdn
-
-# Only test cloudfront bundles
-deno run --allow-all src/main.ts cloudfront
-
-# Test all bundles (no filter)
-deno run --allow-all src/main.ts
+âŒ Missing dictionaries on cluster (sample_project):
+   - custom_dict (expected as: sample_project_custom_dict)
 ```
 
 ---
 
-### 6. Generate Deployment Output
+### 5. Generate Deployment Output
 
 ```bash
 deno run --allow-all src/main.ts --output [bundle_name]
@@ -166,70 +183,169 @@ Dumps detailed deployment information in JSON format:
 - Dashboard ID
 - Table names and transform details
 
-**Example:**
-```bash
-deno run --allow-all src/main.ts --output --local mcdn_test
-```
-
 **When to use**: Traffic generation, integration with other tools, debugging deployments.
 
 ---
 
-### 7. Cleanup Bundle Resources
+### 6. Cleanup Bundle Resources
 
 ```bash
-# Delete all resources for a bundle (SAFE - bundle-scoped)
+# Delete all bundle-specific resources (SAFE - shared resources preserved)
 deno run --allow-all src/cleanup.ts --all [bundle_name]
 
-# Delete only functions
+# Delete specific resource types
 deno run --allow-all src/cleanup.ts --functions [bundle_name]
-
-# Delete only dictionaries (definitions, not uploaded files)
 deno run --allow-all src/cleanup.ts --dictionaries [bundle_name]
-
-# Delete only dictionary files (uploaded CSV/YAML files)
 deno run --allow-all src/cleanup.ts --dictionary-files [bundle_name]
-
-# Delete only tables
 deno run --allow-all src/cleanup.ts --tables [bundle_name]
 
-# Dry run (see what would be deleted without deleting)
+# Dry run (preview deletion without executing)
 deno run --allow-all src/cleanup.ts --all [bundle_name] --dry-run
 ```
 
 **Examples:**
 ```bash
-# Safe cleanup - only deletes mcdn_test resources
+# Safe - only deletes mcdn_test bundle-specific resources
 deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# Preview cleanup
+# Preview what would be deleted
 deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
-
-# Cleanup specific resource types
-deno run --allow-all src/cleanup.ts --functions mcdn_test
-deno run --allow-all src/cleanup.ts --dictionaries mcdn_test
 ```
 
-**When to use**: After testing, before redeploying with changes, cleaning up failed deployments.
-
-**⚠️ Warning**: Running cleanup without specifying a bundle name will delete **ALL** resources in the project. Always specify the bundle name!
-
-```bash
-# DANGEROUS - Deletes everything!
-deno run --allow-all src/cleanup.ts --all
-```
+**Important Notes**:
+- Cleanup only removes **bundle-specific** resources from the bundle's project
+- **Shared resources** in `hdx_solutions` are preserved (may be used by other bundles)
+- To delete shared resources, manually remove them in Hydrolix UI
+- Running without bundle name deletes ALL resources in project (dangerous!)
 
 ---
 
 ## Command Line Options
 
-| Flag | Description | Use Case |
-|------|-------------|----------|
-| `--local` | Full deployment with testing | Final validation, production readiness |
-| `--local-dashboard-only` | Dashboard deployment only | Dashboard iteration, visualization testing |
-| `--production` | Validate dependencies exist | Pre-deployment validation, CI/CD |
-| `--output` | Dump deployment info as JSON | Traffic generation, integration, debugging |
-| `[bundle_name]` | Filter by bundle name | Test specific bundles during development |
+| Flag | Description | Time | Use Case |
+|------|-------------|------|----------|
+| `--local` | Full deployment with testing | ~5min | Final validation, production readiness |
+| `--local-dashboard-only` | Dashboard deployment only | ~2min | Dashboard iteration |
+| `--strict-plugins` | Fail if Grafana plugins missing | - | CI/CD, pre-release validation |
+| `--production` | Validate dependencies exist | ~1min | Pre-deployment validation, CI/CD |
+| `--output` | Dump deployment info as JSON | - | Traffic generation, debugging |
+| `[bundle_name]` | Filter by bundle name | - | Test specific bundles |
+
+---
+
+## Shared Resources Testing
+
+### Understanding Resource Projects
+
+The Bundle Deployer manages resources in two separate projects:
+
+**hdx_solutions (Shared Project)**
+- Common functions and dictionaries used across all bundles
+- Resources named: `hdx_solutions_{name}`
+- Examples: `hdx_solutions_city_name`, `hdx_solutions_geoip_city`
+- Created once, shared by all bundles
+- Maintained by shared resources team
+- Project created automatically if it doesn't exist
+
+**sample_project (Bundle Project)** 
+- Bundle-specific resources unique to each bundle
+- Resources named: `{project}_{name}`
+- Examples: `sample_project_custom_parser`, `sample_project_ua_cat_dict`
+- Created per bundle deployment
+- Maintained by bundle owner
+
+### Cross-Project References
+
+Functions and dictionaries can reference resources from any project. A bundle-specific function can call a shared dictionary, and vice versa:
+
+```sql
+-- Bundle-specific function calling shared dictionary (valid!)
+CREATE FUNCTION sample_project_enrich AS
+(ip) -> dictGet('hdx_solutions_geoip_city', 'city_name', ip)
+```
+
+### Testing Scenarios
+
+**Scenario 1: First Deployment (Creates Shared Resources)**
+
+```bash
+# Clean slate - manually delete hdx_solutions in Hydrolix UI if testing fresh
+deno run --allow-all src/cleanup.ts --all mcdn_test
+
+# Deploy - creates hdx_solutions project and all shared resources
+deno run --allow-all src/main.ts --local mcdn_test
+```
+
+**Expected output:**
+```
+ðŸ”— Checking for shared project: hdx_solutions...
+  Creating shared project: hdx_solutions...
+  âœ“ Created shared project (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
+
+ðŸ”— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+Checking shared function: city_name...
+  Creating shared function city_name (will become hdx_solutions_city_name)...
+  âœ“ Created shared function city_name
+Checking shared function: breadcrumbs...
+  Creating shared function breadcrumbs (will become hdx_solutions_breadcrumbs)...
+  âœ“ Created shared function breadcrumbs
+  [continues for all 4 functions]
+
+ðŸ”— Processing 5 EXPLICITLY DECLARED shared dictionar(y/ies) in hdx_solutions...
+Checking shared dictionary: geoip_asn_blocks_ipv4...
+  Found files: dictionaries/.extracted/geoip_asn_blocks_ipv4.json + ...csv
+  Uploading shared dictionary file: geoip_asn_blocks_ipv4.csv...
+  âœ“ Uploaded shared dictionary file
+  Creating shared dictionary definition...
+  âœ“ Created shared dictionary geoip_asn_blocks_ipv4
+  [continues for all 5 dictionaries]
+```
+
+**Scenario 2: Second Deployment (Reuses Shared Resources)**
+
+```bash
+# Deploy again without cleanup
+deno run --allow-all src/main.ts --local mcdn_test
+```
+
+**Expected output:**
+```
+ðŸ”— Checking for shared project: hdx_solutions...
+  âœ“ Shared project exists (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
+
+ðŸ”— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+Checking shared function: city_name...
+  âœ“ Shared function city_name exists (as hdx_solutions_city_name)
+Checking shared function: breadcrumbs...
+  âœ“ Shared function breadcrumbs exists (as hdx_solutions_breadcrumbs)
+  [all show "exists" - no creation]
+
+ðŸ“¦ No bundle-specific functions declared (using 4 shared function(s))
+
+ðŸ“¦ Processing 1 EXPLICITLY DECLARED bundle-specific dictionar(y/ies) in sample_project...
+  [creates bundle-specific resources]
+```
+
+Notice: Shared resources are **reused** (logged as "exists"), not recreated. This is idempotent behavior.
+
+**Scenario 3: Different Bundle Using Same Shared Resources**
+
+```bash
+# Deploy a second bundle that also declares city_name as shared
+deno run --allow-all src/main.ts --local cloudfront_logs
+```
+
+**Expected output:**
+```
+ðŸ”— Checking for shared project: hdx_solutions...
+  âœ“ Shared project exists
+
+ðŸ”— Processing 2 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+  âœ“ Shared function city_name exists (as hdx_solutions_city_name)  â† Reused!
+  âœ“ Shared function country_iso_code exists  â† Reused!
+```
+
+The second bundle reuses shared resources created by the first bundle.
 
 ---
 
@@ -238,158 +354,154 @@ deno run --allow-all src/cleanup.ts --all
 ### Validation Phase (Always Run)
 
 #### Structural Validation
-✅ Bundle JSON structure and required fields  
-✅ URL format validation (`https://` or `file://`)  
-✅ Path validation (no `/`, no `..`, proper extensions)  
-✅ Macro variable format (`__VARIABLE_NAME__`)  
-✅ Enum validation (method, source, channel_type, data_category)  
-✅ SHA256 checksum format (64 hex characters)  
-✅ Bundle name format (alphanumeric, underscores, dashes)
+- âœ… Bundle JSON structure and required fields
+- âœ… URL format validation (`https://` or `file://`)
+- âœ… Path validation (no `/`, no `..`, proper extensions)
+- âœ… Macro variable format (`__VARIABLE_NAME__`)
+- âœ… Enum validation (method, source, channel_type, data_category)
+- âœ… SHA256 checksum format (64 hex characters)
+- âœ… Bundle name format (alphanumeric, underscores, dashes)
+- âœ… Table name validation (â‰¥3 chars, starts with letter, alphanumeric + underscore)
 
 #### Content Validation
-✅ No duplicate table names or dashboard variables  
-✅ Naming consistency (method titles, source names)  
-✅ File existence and accessibility  
-✅ Transform JSON validity and structure  
-✅ Sample data presence in transforms  
-✅ Dashboard JSON structure and template variables  
-✅ Alert rules JSON structure (if present)  
-✅ Summary table SQL files (if present)
+- âœ… No duplicate table names or dashboard variables within bundle
+- âœ… Naming consistency (method titles align with method, source titles unique)
+- âœ… File existence and accessibility for all referenced files
+- âœ… JSON syntax validation for all JSON files
+- âœ… Transform structure (name field, valid JSON)
+- âœ… Sample data presence (non-empty object or string)
+- âœ… Dashboard structure (top-level dashboard object, no hardcoded id)
+- âœ… Alert rules structure (apiVersion, groups, rules with required fields)
+- âœ… Summary table references (parent_table_name must exist)
 
-#### Dependency Validation
-✅ Function files exist for declared functions  
-✅ Dictionary files exist (both `.json` + data file)  
-✅ SQL references match declared dependencies  
-✅ Template variables used correctly (`__PROJECT_NAME__`)
+#### Shared Resources Validation
+- âœ… Declared shared functions have local files (`functions/{name}.json`)
+- âœ… Declared shared dictionaries have both files (`.json` + data file)
+- âœ… Declared bundle-specific functions have local files
+- âœ… Declared bundle-specific dictionaries have both files
+- âœ… SQL references match declared functions/dictionaries
+- âœ… Template variables used correctly (`__SHARED_PROJECT__` vs `__PROJECT_NAME__`)
+- âš ï¸ Warns if declared resources unused in SQL
+- âš ï¸ Warns if SQL uses undeclared resources
 
----
-
-### Deployment Phase (With `--local` or `--local-dashboard-only`)
-
-#### Resource Creation (`--local` only)
-✅ Extract `dictionaries.zip` automatically  
-✅ Auto-discover functions from `functions/` directory  
-✅ Auto-discover dictionaries from extracted files  
-✅ Create functions in Hydrolix (with project prefix)  
-✅ Upload dictionary files (CSV, YAML, etc.)  
-✅ Create dictionary definitions in Hydrolix  
-✅ Create tables in Hydrolix  
-✅ Add transforms to tables  
-✅ Insert sample data into tables  
-✅ Create summary tables (if defined)
-
-#### Grafana Deployment (Both modes)
-✅ Kill existing Grafana container (cleanup)  
-✅ Start fresh Grafana container  
-✅ Wait for Grafana to be ready (health check)  
-✅ Create Hydrolix datasource  
-✅ Deploy primary dashboard  
-✅ Deploy additional dashboards (if defined)  
-✅ Create alert rules (if defined)
-
-#### Browser Testing (Both modes)
-✅ Load dashboard in headless Chrome  
-✅ Wait 30 seconds for all panels to render  
-✅ Detect datasource errors (`Datasource \w+ was not found`)  
-✅ Check for query errors (400 status codes)  
-✅ Verify zero errors for success
+#### Cross-Bundle Validation
+- âœ… No duplicate bundle names globally
+- âœ… No duplicate UI source titles globally
+- âœ… No duplicate table names globally
+- âœ… No duplicate base URLs globally
 
 ---
 
-## Test Execution Flow
+### Deployment Phase (With `--local`)
 
-### Validation-Only Flow
-```
-1. Discovery
-   └── Find bundle.json in my-bundles/[bundle_name]/
+#### Shared Resources Management
+**hdx_solutions Project**:
+- Checks if `hdx_solutions` project exists via API
+- Creates project if missing (first deployment ever)
+- Caches project UUID in memory for subsequent operations
 
-2. Parsing & Structure Validation
-   ├── Parse bundle.json
-   ├── Validate required fields
-   └── Validate field formats
+**Shared Functions**:
+- Lists existing functions in hdx_solutions project
+- Checks if each declared shared function exists (matches by name without prefix)
+- Skips if function exists (logs "âœ“ exists")
+- Creates from local file if missing:
+  - Reads `functions/{name}.json`
+  - Replaces `__SHARED_PROJECT__` and `__PROJECT_NAME__` template variables
+  - POSTs to hdx_solutions functions endpoint
+  - Function deployed as: `hdx_solutions_{name}`
+- **Fails immediately** if declared shared function has no local file
 
-3. File Validation
-   ├── Check all referenced files exist
-   ├── Validate JSON syntax
-   ├── Verify checksums (if provided)
-   └── Check sample data presence
+**Shared Dictionaries**:
+- Lists existing dictionaries in hdx_solutions project
+- Checks if each declared shared dictionary exists (matches by name without prefix)
+- Skips if dictionary exists (logs "âœ“ exists")
+- Creates from local files if missing:
+  - Searches for files in `dictionaries/` then `dictionaries/.extracted/`
+  - Reads definition (`{name}.json`) and data file (`{name}.[csv/yaml/yml/tsv]`)
+  - Uploads data file to hdx_solutions
+  - Creates dictionary definition
+  - Dictionary deployed as: `hdx_solutions_{name}`
+- **Fails immediately** if declared shared dictionary missing files
 
-4. Content Validation
-   ├── Validate dashboard structure
-   ├── Check template variables
-   ├── Validate transforms
-   ├── Check function/dictionary references
-   └── Validate alert rules (if present)
+#### Bundle-Specific Resources
+**Zip Extraction**:
+- Automatically detects and extracts `dictionaries/dictionaries.zip`
+- Extracts to `dictionaries/.extracted/` (gitignored)
+- Flattens directory structure using `-j` flag
+- Skips if already extracted
 
-5. Cross-Bundle Validation
-   ├── Check for duplicate bundle names
-   ├── Check for duplicate UI titles
-   └── Check for duplicate table names
+**Auto-Discovery** (when not declared):
+- **Functions**: Scans `functions/` for all `.json` files
+- **Dictionaries**: Scans `dictionaries/` and `.extracted/` for matching `.json` + data file pairs
+- Only triggers if BOTH `required_*` AND `shared_*` are omitted for that resource type
+- All discovered resources treated as bundle-specific (never shared)
 
-6. Success/Failure Report
-```
+**Resource Creation**:
+- Functions created in bundle's project as `{project}_{name}`
+- Dictionaries uploaded and created in bundle's project as `{project}_{name}`
+- Template variables (`__PROJECT_NAME__`) replaced during creation
+- **Fails immediately** if declared resource missing local files
 
----
+#### Data Pipeline
+**Tables**: Created with 1-day retention, waits 30 seconds for readiness
 
-### Full Deployment Flow (`--local`)
-```
-1. Validation (same as above)
+**Transforms**: 
+- Attached to tables via API
+- SQL transformed with both `__PROJECT_NAME__` and `__SHARED_PROJECT__` replacement
+- Retry logic: up to 5 attempts with exponential backoff (1s â†’ 30s max delay)
+- Validates transform against sample data
 
-2. Dependency Extraction
-   └── Extract dictionaries.zip to .extracted/ (if exists)
+**Sample Data**:
+- Inserted into tables for testing
+- Retry logic: up to 20 attempts with exponential backoff (1s â†’ 60s max delay)
+- Waits 30 seconds for table readiness before insertion
+- **Warns if insertion fails** but continues deployment (dashboard created without data)
 
-3. Auto-Discovery (if dependencies empty)
-   ├── Scan functions/ for .json files
-   └── Scan dictionaries/ and .extracted/ for dictionary pairs
+**Summary Tables**: Created from SQL files with template variable replacement (`__PROJECT_NAME__`, `__SHARED_PROJECT__`, `__TABLE_NAME__`)
 
-4. Hydrolix Resource Creation
-   ├── Create functions (with __PROJECT_NAME__ replacement)
-   ├── Upload dictionary data files
-   ├── Create dictionary definitions
-   ├── Create tables
-   ├── Add transforms to tables
-   ├── Insert sample data (with retry logic)
-   └── Create summary tables (if defined)
+#### Grafana Deployment
+**Container Management**:
+- Kills existing Grafana container
+- Starts fresh container
+- Waits for health check (60-second timeout)
 
-5. Grafana Setup
-   ├── Kill old Grafana container
-   ├── Start new Grafana container
-   ├── Wait for Grafana ready (60s timeout)
-   └── Create Hydrolix datasource
+**Datasource**: Creates Hydrolix datasource pointing to bundle's project
 
-6. Dashboard Deployment
-   ├── Process primary dashboard template
-   ├── Replace template variables
-   ├── Deploy primary dashboard
-   ├── Deploy additional dashboards (if any)
-   └── Create alert rules (if defined)
+**Dashboards**:
+- Loads dashboard JSON and replaces template variables:
+  - `__PROJECT_NAME__` â†’ bundle project name
+  - `__SHARED_PROJECT__` â†’ `hdx_solutions`
+  - `__DATASOURCE__` â†’ datasource UID
+  - `__DASHBOARD_UUID__` â†’ unique ID
+  - Table `dashboard_var` â†’ full table names
+- Deploys primary dashboard
+- Deploys additional dashboards from `other_dashboards` array (if present)
 
-7. Browser Testing
-   ├── Get Grafana session cookie
-   ├── Launch headless Chrome
-   ├── Navigate to dashboard
-   ├── Wait 30 seconds for rendering
-   ├── Monitor console for errors
-   └── Report error counts
+**Alert Rules** (if defined):
+- Creates Grafana folders for rule groups
+- Deploys individual rules via API
+- Removes UI-only fields before submission
+- Replaces same template variables as dashboards
 
-8. Cleanup
-   └── Close browser
-```
+#### Browser Testing
+- Authenticates with Grafana (gets session cookie)
+- Launches headless Chrome
+- Navigates to deployed dashboard
+- Waits 30 seconds for all panels to load and query data
+- Monitors console for errors:
+  - Datasource errors: `Datasource \w+ was not found`
+  - Query errors: `400 \w+`
+- Reports error counts
+- **Deployment fails if any errors detected**
 
----
-
-### Dashboard-Only Flow (`--local-dashboard-only`)
-```
-1. Validation (same as validation-only)
-
-2. Grafana Setup (same as full deployment)
-
-3. Dashboard Deployment (same as full deployment)
-
-4. Browser Testing (same as full deployment)
-
-5. Cleanup (same as full deployment)
-```
+#### Plugin Validation (After Deployment)
+- Queries all deployed dashboards via Grafana API
+- Extracts panel types from dashboard JSON
+- Checks installed plugins via `/api/plugins`
+- Identifies missing external plugins
+- **Default**: Warns about missing plugins but continues
+- **With `--strict-plugins`**: Fails deployment if plugins missing
+- Reports which dashboards and panels need each plugin
 
 ---
 
@@ -398,17 +510,15 @@ deno run --allow-all src/cleanup.ts --all
 ### During Development
 
 ```bash
-# Quick validation check (30 seconds)
+# Quick validation (30 seconds)
 deno run --allow-all src/main.ts mcdn_test
 
-# Dashboard changes only (2 minutes)
+# Dashboard iteration (2 minutes)
 deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 
 # Full end-to-end test (5 minutes)
 deno run --allow-all src/main.ts --local mcdn_test
 ```
-
----
 
 ### Before Committing
 
@@ -416,62 +526,85 @@ deno run --allow-all src/main.ts --local mcdn_test
 # Validate structure
 deno run --allow-all src/main.ts mcdn_test
 
-# Full test if changing transforms/data
+# Full test if changing transforms/data/functions
+deno run --allow-all src/main.ts --local mcdn_test
+
+# Strict validation (fails if plugins missing)
+deno run --allow-all src/main.ts --local --strict-plugins mcdn_test
+```
 deno run --allow-all src/main.ts --local mcdn_test
 ```
-
----
 
 ### Testing All Bundles
 
 ```bash
-# Validate all bundles (fast)
+# Validate all (fast)
 deno run --allow-all src/main.ts
 
-# Full test all bundles (slow)
+# Full test all (slow - use with caution)
 deno run --allow-all src/main.ts --local
 ```
 
----
+### Testing Shared Resources
+
+```bash
+# First bundle - creates shared resources
+deno run --allow-all src/main.ts --local mcdn_test
+
+# Second bundle - reuses shared resources
+deno run --allow-all src/main.ts --local cloudfront_logs
+
+# Verify in Hydrolix UI:
+# - hdx_solutions: shared functions and dictionaries
+# - sample_project: bundle-specific resources only
+```
+
+### Testing Auto-Discovery
+
+```bash
+# Bundle with empty dependencies - auto-discovers everything
+deno run --allow-all src/main.ts --local vendor_bundle
+
+# Expected: All resources created as bundle-specific in sample_project
+```
 
 ### Iterating on Dashboards
 
 ```bash
-# 1. Deploy dashboard
+# Deploy dashboard
 deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 
-# 2. Make changes to dashboard JSON
+# Make changes to dashboard JSON
 
-# 3. Clean up and redeploy
-deno run --allow-all src/cleanup.ts --all mcdn_test
+# Redeploy (Grafana restarts automatically)
 deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 ```
-
----
 
 ### Testing with Fresh Environment
 
 ```bash
-# 1. Clean up old deployment
+# Clean bundle-specific resources
 deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# 2. Deploy fresh
+# Manually delete hdx_solutions in Hydrolix UI (if testing first-time creation)
+
+# Deploy fresh
 deno run --allow-all src/main.ts --local mcdn_test
 ```
-
----
 
 ### Debugging Failed Tests
 
 ```bash
-# 1. Get detailed output
+# Get detailed output
 deno run --allow-all src/main.ts --output --local mcdn_test
 
-# 2. Check specific validation
+# Validate only
 deno run --allow-all src/main.ts mcdn_test
 
-# 3. Clean up and retry
+# Preview cleanup
 deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
+
+# Clean and retry
 deno run --allow-all src/cleanup.ts --all mcdn_test
 deno run --allow-all src/main.ts --local mcdn_test
 ```
@@ -483,51 +616,47 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### Validation Success
 ```
 Testing http_streaming_mcdn_test
-Base=my-bundles/mcdn_test bundle=Bundle { name: "http_streaming_mcdn_test", ... }
-✓ All required dependencies exist on cluster
-✓ All required local files present
-Final check on all of the bundles for duplicated tokens...
+âœ“ All required dependencies exist on cluster
+âœ“ All required local files present
+Final check on all bundles for duplicated tokens...
 SUCCESS
-Success
 ```
 
 ### Validation Failure
 ```
-Testing http_streaming_mcdn_test
-ERROR: Failed bundle validation: Transform file is not valid JSON: path=...
+ERROR: Failed bundle validation: Transform file is not valid JSON: path=transformations/mcdn_akamai.json
 ```
 
-### Deployment Success (`--local`)
+### Deployment Success
 ```
+ðŸ”— Processing 4 shared function(s) in hdx_solutions...
+  âœ“ Shared function city_name exists
+  âœ“ Shared function breadcrumbs exists
+  [...]
+
+ðŸ“¦ No bundle-specific functions declared (using 4 shared function(s))
+
 Creating table: mcdn_test
-Waiting for table to be ready...
-✓ Created function city_name
-✓ Created dictionary ua_cat_dict
-✓ Successfully inserted sample data into sample_project.mcdn_test
-✓ Created Grafana datasource with UID: abc123
-Starting headless browser test for dashboard: xyz789
-Got Grafana session cookie: grafana_session
-Page loaded - Title: "CDN Dashboard", URL: http://localhost:3000/d/...
+âœ“ Successfully inserted sample data
+âœ“ Created Grafana datasource
+Starting headless browser test...
 Datasource errors: 0
-Success! No datasource errors detected.
-Dashboard Errors=0 NoDataErrors=0
 SUCCESS
 ```
 
 ### Deployment Failure
 ```
-❌ Transform validation failed (attempt 1/5):
-   Status: 400
+âŒ Transform validation failed:
    Error: Unknown function sample_project_city_name
-ERROR: Failed to add transform after 1 attempts
+
+ERROR: Failed to add transform
 ```
 
 ### Browser Test Failure
 ```
 ERROR: Datasource not found - Datasource Hydrolix was not found
 Datasource errors: 2
-Dashboard Errors=2 NoDataErrors=0
-ERROR: Dashboard Errors=2 NoDataErrors=0
+Dashboard Errors=2
 ```
 
 ---
@@ -537,37 +666,35 @@ ERROR: Dashboard Errors=2 NoDataErrors=0
 Your bundle must follow this structure:
 
 ```
-my-bundles/
-└── mcdn_test/
-    ├── bundle.json                    # Required: Bundle manifest
-    ├── functions/                      # Optional: Custom SQL functions
-    │   ├── city_name.json
-    │   └── breadcrumbs.json
-    ├── dictionaries/                   # Optional: Lookup tables
-    │   ├── dictionaries.zip           # Large files (auto-extracted)
-    │   ├── .extracted/                # Auto-created (gitignored)
-    │   ├── ua_cat_dict.json
-    │   └── ua_cat_dict.yaml
-    ├── transformations/                # Required: Data schemas
-    │   ├── mcdn_akamai_ds2.json
-    │   └── mcdn_cloudflare.json
-    ├── dashboards/                     # Required: Visualizations
-    │   ├── CDN Dashboard.json         # Primary dashboard
-    │   ├── alert-rules.json           # Optional: Alert rules
-    │   └── Raw Logs.json              # Optional: Additional dashboards
-    └── summaries/                      # Optional: Pre-aggregated views
-        ├── mcdn_summary_min.sql
-        └── mcdn_summary_hour.sql
+my-bundles/mcdn_test/
+â”œâ”€â”€ bundle.json                    # Required: Bundle manifest
+â”œâ”€â”€ functions/                      # Optional: SQL functions
+â”‚   â”œâ”€â”€ city_name.json             # Shared or bundle-specific
+â”‚   â””â”€â”€ breadcrumbs.json
+â”œâ”€â”€ dictionaries/                   # Optional: Lookup tables
+â”‚   â”œâ”€â”€ dictionaries.zip           # Large files (auto-extracted)
+â”‚   â”œâ”€â”€ .extracted/                # Auto-created (gitignored)
+â”‚   â”œâ”€â”€ ua_cat_dict.json           # Definition
+â”‚   â””â”€â”€ ua_cat_dict.yaml           # Data
+â”œâ”€â”€ transformations/                # Required: Data schemas
+â”‚   â”œâ”€â”€ mcdn_akamai.json
+â”‚   â””â”€â”€ mcdn_cloudflare.json
+â”œâ”€â”€ dashboards/                     # Required: Visualizations
+â”‚   â”œâ”€â”€ CDN Dashboard.json
+â”‚   â”œâ”€â”€ alert-rules.json           # Optional
+â”‚   â””â”€â”€ Raw Logs.json              # Optional
+â””â”€â”€ summaries/                      # Optional: Pre-aggregations
+    â””â”€â”€ mcdn_summary_min.sql
 ```
 
 ---
 
 ## Troubleshooting
 
-### Environment Variable Issues
+### Environment Variables
 
 ```bash
-# Check if variables are set
+# Check if set
 echo $BUNDLE_TESTING_CLUSTER
 echo $BUNDLE_TESTING_USERNAME
 echo $BUNDLE_TESTING_PASSWORD
@@ -578,110 +705,130 @@ export BUNDLE_TESTING_USERNAME="your-username"
 export BUNDLE_TESTING_PASSWORD="your-password"
 ```
 
----
-
 ### Docker Issues
 
 ```bash
-# Check Docker is running
+# Check Docker running
 docker ps
 
-# Manual Grafana cleanup
+# Manual Grafana cleanup if needed
 docker ps -a | grep grafana
 docker stop <container-id>
-docker rm <container-id>
-
-# Restart Docker daemon (if needed)
-sudo systemctl restart docker  # Linux
-# or restart Docker Desktop (macOS/Windows)
 ```
-
----
-
-### Bundle Not Found
-
-- Ensure `bundle.json` exists in `my-bundles/[bundle_name]/`
-- Check bundle name matches directory name
-- Verify file permissions (readable)
-
-```bash
-# List available bundles
-ls -la my-bundles/
-```
-
----
 
 ### Browser Testing Failures
 
-**Datasource errors:**
-- Check that datasource was created in Grafana
-- Verify Hydrolix cluster is accessible
-- Confirm credentials are correct
+**Datasource errors:** Verify datasource created, check cluster accessibility, confirm credentials
 
-**Dashboard not loading:**
-- Check Grafana container is running: `docker ps`
-- Verify Grafana is ready: `curl http://localhost:3000/api/health`
-- Review dashboard JSON for template variable issues
+**Dashboard not loading:** Check Grafana running (`docker ps`), review dashboard JSON for template issues
 
-**Chrome issues:**
-- Ensure Chrome/Chromium is installed
-- Try setting `PUPPETEER_EXECUTABLE_PATH` environment variable
-- Check Chrome version compatibility
+**Chrome issues:** Ensure Chrome/Chromium installed, set `PUPPETEER_EXECUTABLE_PATH` if needed
 
----
+### Plugin Validation Issues
+
+**"Missing plugins detected" (Warning):**
+```
+⚠️  WARNING: Missing plugins detected!
+  • marcusolsson-treemap-panel - 1 panel(s) across 1 dashboard(s)
+```
+
+**Solution:** Update `src/grafana/container.ts` to install plugins:
+```typescript
+const cmd = new Deno.Command("docker", {
+  args: [
+    "run", "--rm", "-d", "-p", "3000:3000",
+    "-e", "GF_INSTALL_PLUGINS=marcusolsson-treemap-panel",
+    "javiani/grafana:latest"
+  ],
+});
+```
+
+**Plugin validation fails with `--strict-plugins`:**
+```
+❌ ERROR: Missing required Grafana plugins!
+Plugin validation failed: 1 required plugin(s) missing
+```
+
+**Solution:** Install required plugins before using `--strict-plugins` flag
+
+**Plugin check shows only primary dashboard:**
+- Ensure `deploy.ts` and `deploy_only_dashboard.ts` return array of UIDs
+- Verify all dashboard UIDs passed to `checkDeployedDashboards()`
+
+### Shared Resources Issues
+
+**"Shared function declared but file not found":**
+```
+âŒ Shared function 'city_name' declared but file not found.
+   Expected: my-bundles/mcdn_test/functions/city_name.json
+```
+
+**Solution:** 
+- Add `functions/city_name.json`, OR
+- Remove `city_name` from `shared_functions` in bundle.json, OR
+- Check spelling/capitalization
+
+**"Auto-discovering even though shared declared":**
+```
+ðŸ“¦ AUTO-DISCOVERING bundle-specific functions...
+  Found: city_name  â† Should be shared!
+```
+
+**Cause:** Empty array in bundle.json:
+```json
+"required_functions": [],  // âŒ Triggers auto-discovery
+"shared_functions": ["city_name"]
+```
+
+**Solution:** Remove empty array:
+```json
+// âœ… Just omit required_functions
+"shared_functions": ["city_name"]
+```
+
+**"Functions created in wrong project":**
+```
+âœ“ Created function city_name  // In sample_project, should be hdx_solutions!
+```
+
+**Solution:**
+- Verify `shared_functions` array in bundle.json
+- Ensure no empty `required_functions: []`
+- Check helper functions imported in deploy.ts
+
+**"Duplicate functions in both projects":**
+
+**Solution:**
+1. Delete bundle-specific duplicates:
+   ```bash
+   deno run --allow-all src/cleanup.ts --functions mcdn_test
+   ```
+2. Update bundle.json to declare as shared
+3. Redeploy
 
 ### Function/Dictionary Errors
 
-**"Unknown function sample_project_city_name":**
-- Function wasn't created or failed to create
-- Function SQL has syntax error
-- Function name doesn't match reference
-- Missing `__PROJECT_NAME__` template variable
+**"Unknown function hdx_solutions_city_name":**
+- Missing correct template variable (`__SHARED_PROJECT__` for shared, `__PROJECT_NAME__` for bundle-specific)
+- Function not created or creation failed
 
 **"Dictionary not found":**
-- Dictionary files missing or mismatched names
-- Dictionary wasn't uploaded/created
-- Wrong dictionary name in SQL query
-- Missing project prefix in reference
+- Missing files (need `.json` + data file)
+- Wrong template variable for resource type
 
-**Solution:**
+**Solution:** Clean and retry:
 ```bash
-# Check what was created
-deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
-
-# Clean up and retry
 deno run --allow-all src/cleanup.ts --all mcdn_test
 deno run --allow-all src/main.ts --local mcdn_test
 ```
 
----
+### Transform/Cleanup Errors
 
-### Transform Validation Errors
+**"Columns of type double may not be indexed":** Set `{"type": "double", "index": false}`
 
-**"Columns of type double may not be indexed":**
-```json
-// Fix: Set index to false for double columns
-{"type": "double", "index": false}
-```
+**"Sample data doesn't match schema":** Review column definitions, use proper casting
 
-**"Sample data doesn't match schema":**
-- Review transform column definitions
-- Check sample data types match column types
-- Use proper casting in SQL (e.g., `toUInt64(double_value * 1000)`)
-
----
-
-### Cleanup Issues
-
-**"Failed to delete function/dictionary":**
-- Resource might be in use by a transform
-- Try deleting tables first, then dependencies
-- Use dry-run to see what's blocking deletion
-
-**Accidentally deleted too much:**
-- Always specify bundle name: `--all [bundle_name]`
-- Use `--dry-run` first to preview
-- Keep backups of bundle definitions in git
+**"Failed to delete resource":** May be in use - delete tables first, use `--dry-run` to preview
 
 ---
 
@@ -690,86 +837,140 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### 1. Always Validate Before Deploying
 
 ```bash
-# Fast validation first (30 seconds)
+# Fast validation first
 deno run --allow-all src/main.ts mcdn_test
 
-# Then deploy if validation passes
+# Deploy if passes
 deno run --allow-all src/main.ts --local mcdn_test
 ```
 
-### 2. Use Template Variables Everywhere
+### 2. Use Correct Template Variables
 
 ```sql
--- ❌… Correct
-__PROJECT_NAME___city_name(ip)
+-- âœ… Shared resources
+SELECT __SHARED_PROJECT___city_name(ip) AS city
+FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
 
--- ❌ Wrong (hardcoded)
-sample_project_city_name(ip)
-reference_city_name(ip)
+-- âœ… Bundle-specific resources
+SELECT __PROJECT_NAME___custom_parser(data) AS parsed
+FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
+
+-- âŒ Wrong (hardcoded)
+SELECT sample_project_city_name(ip)
+SELECT reference_city_name(ip)
 ```
 
-### 3. Test Incrementally
+### 3. Declare Shared Resources Explicitly
+
+For resources used by multiple bundles:
+```json
+{
+  "shared_functions": ["city_name", "breadcrumbs"],
+  "shared_dictionaries": ["geoip_city"]
+}
+```
+
+**Benefits**: Clear documentation, proper categorization, no duplicates, easier maintenance
+
+### 4. Don't Use Empty Arrays
+
+```json
+âŒ "required_functions": []  // Disables auto-discovery
+
+âœ… // Omit field entirely to enable auto-discovery
+```
+
+### 5. Test Incrementally
 
 ```bash
-# 1. Validate
+# 1. Validate structure
 deno run --allow-all src/main.ts mcdn_test
 
-# 2. Dashboard only (if just changing visualizations)
+# 2. Dashboard only (for visualization changes)
 deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
 
-# 3. Full test (when changing data/transforms)
+# 3. Full test (for data/transform changes)
 deno run --allow-all src/main.ts --local mcdn_test
 ```
 
-### 4. Always Use Bundle-Scoped Cleanup
+### 6. Use Bundle-Scoped Cleanup
 
 ```bash
-# ❌… Safe - only deletes mcdn_test resources
+# âœ… Safe - only mcdn_test resources
 deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# ❌ Dangerous - deletes EVERYTHING!
+# âŒ Dangerous - deletes EVERYTHING
 deno run --allow-all src/cleanup.ts --all
 ```
 
-### 5. Use Dry-Run for Safety
+### 7. Use Dry-Run for Safety
 
 ```bash
 # Preview before deleting
 deno run --allow-all src/cleanup.ts --all mcdn_test --dry-run
 
-# Then delete if output looks correct
+# Execute if looks correct
 deno run --allow-all src/cleanup.ts --all mcdn_test
 ```
 
-### 6. Commit Often, Test Before Push
+---
 
-```bash
-# Before committing
-deno run --allow-all src/main.ts mcdn_test
+## Resource Declaration Modes
 
-# Before pushing
-deno run --allow-all src/main.ts --local mcdn_test
+### Explicit Mode (Recommended)
+```json
+{
+  "dependencies": {
+    "hydrolix": {
+      "shared_functions": ["city_name"],
+      "shared_dictionaries": ["geoip_city"],
+      "required_dictionaries": ["custom_dict"]
+    }
+  }
+}
 ```
+- Clear documentation, validates files exist, no surprises
+
+### Auto-Discovery Mode (Vendor Bundles)
+```json
+{
+  "dependencies": {"hydrolix": {}}
+}
+```
+- Quick start, zero config
+- All discovered resources treated as bundle-specific
+- No shared resources created
+
+### Hybrid Mode (Best Flexibility)
+```json
+{
+  "dependencies": {
+    "hydrolix": {
+      "shared_functions": ["city_name"]
+      // Omit required_functions to auto-discover bundle-specific
+    }
+  }
+}
+```
+- Shared explicit and validated, bundle-specific auto-discovered
 
 ---
 
 ## Testing Strategy
 
-| Test Level | Command | Speed | Coverage | Use Case |
-|------------|---------|-------|----------|----------|
-| **Validation** | `main.ts [bundle]` | Fast (30s) | Structure & files | Development, CI/CD |
-| **Dashboard Only** | `--local-dashboard-only` | Medium (2min) | Dashboards & alerts | Dashboard iteration |
-| **Full Local** | `--local` | Slow (5min) | End-to-end | Final validation, production readiness |
-| **Production Check** | `--production` | Medium (60s) | Dependency existence | Pre-deployment validation |
+| Test Level | Command | Speed | Coverage |
+|------------|---------|-------|----------|
+| **Validation** | `main.ts [bundle]` | 30s | Structure & files |
+| **Dashboard Only** | `--local-dashboard-only` | 2min | Dashboards & alerts |
+| **Full Local** | `--local` | 5min | End-to-end |
+| **Production Check** | `--production` | 1min | Dependency existence |
 
 ---
 
 ## Exit Codes
 
-- **0**: All tests passed successfully
-- **1**: Test failure (validation error, deployment failure, or browser errors)
-
-The tool exits immediately on the first failure encountered.
+- **0**: Success
+- **1**: Failure (exits on first error)
 
 ---
 
@@ -786,18 +987,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
       - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
       
-      - name: Validate Bundle
+      - name: Validate
         env:
           BUNDLE_TESTING_CLUSTER: ${{ secrets.CLUSTER }}
           BUNDLE_TESTING_USERNAME: ${{ secrets.USERNAME }}
           BUNDLE_TESTING_PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          deno run --allow-all src/main.ts mcdn_test
+        run: deno run --allow-all src/main.ts mcdn_test
+      
+      - name: Production Check
+        env:
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.PROD_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.PROD_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.PROD_PASSWORD }}
+        run: deno run --allow-all src/main.ts --production mcdn_test
 ```
 
 ---
@@ -807,11 +1011,13 @@ jobs:
 **Documentation:**
 - [BUNDLE-DETAILS.md](./BUNDLE-DETAILS.md) - Bundle format specification
 - [WHAT-IS-CHECKED.md](./WHAT-IS-CHECKED.md) - Validation rules
-- [Bundle Deployer.md](./Bundle%20Deployer.md) - Complete user guide
-- [Hydrolix Docs](https://docs.hydrolix.io/) - Platform reference
+- [Bundle Deployer.md](./Bundle%20Deployer.md) - User guide
+- [Hydrolix Docs](https://docs.hydrolix.io/)
 
-**Common Issues:**
-- Review validation output for specific errors
-- Check example bundles in `my-bundles/` for patterns
-- Use cleanup tool for fresh starts
-- Verify environment variables are set correctly
+**For errors:**
+- Read error message and referenced file/line
+- Review validation rules
+- Check example bundles
+- Use cleanup tool with --dry-run
+- Verify resources in correct project
+- Ensure correct template variables

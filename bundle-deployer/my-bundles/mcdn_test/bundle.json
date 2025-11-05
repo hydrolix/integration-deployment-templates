@@ -1,6 +1,6 @@
 {
-  "name": "http_streaming_mcdn_test",
-  "source": "mcdn",
+  "name": "http_streaming_cdn_insights",
+  "source": "cdn_insights",
   "method": "http_streaming",
   "beta": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/mcdn_test",
@@ -23,17 +23,17 @@
   ],
   "dependencies": {
     "hydrolix": {
-
+      "required_functions": [],           
+      "required_dictionaries": ["ua_cat_dict"], 
+      "shared_functions": ["city_name", "breadcrumbs", "country_iso_code", "geoname_id"],  
+      "shared_dictionaries": ["geoip_asn_blocks_ipv4", "geoip_asn_blocks_ipv6", "geoip_city_blocks_ipv4", "geoip_city_blocks_ipv6", "geoip_city_locations_en"] 
     }
   },
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "mcdn_test",
+      "name": "cdn_insights",
       "transforms": [
-        {
-          "path": "transformations/mcdn_cloudfront_lsalv1.json"
-        },
         {
           "path": "transformations/mcdn_akamai_ds2.json"
         },
@@ -42,6 +42,9 @@
         },
         {
           "path": "transformations/mcdn_cloudfront_firehose.json"
+        },
+        {
+          "path": "transformations/mcdn_cloudfront_lsalv1.json"
         },
         {
           "path": "transformations/mcdn_fastly.json"
@@ -55,23 +58,23 @@
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "mcdn_summary_min",
-      "parent_table_name": "mcdn_test",
+      "name": "cdn_summary_min",
+      "parent_table_name": "cdn_insights",
       "sql": {
         "path": "summaries/mcdn_summary_min.sql"
       }
     },
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
-      "name": "mcdn_summary_hour",
-      "parent_table_name": "mcdn_test",
+      "name": "cdn_summary_hour",
+      "parent_table_name": "cdn_insights",
       "sql": {
         "path": "summaries/mcdn_summary_hour.sql"
       }
     }
   ],
   "ui": {
-    "primary_url": "https://docs.hydrolix.io/docs/mcdn_test-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "method": {
       "full_title": "Http-Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"

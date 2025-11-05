@@ -1,11 +1,12 @@
-// Main deployment orchestration with alert rules support
-// COMPLETE FILE - Replace your entire deploy.ts with this
+// Main deployment orchestration with shared resources support
+// COMPLETE FILE - Includes support for hdx_solutions shared project
 
 import type { Bundle, Output, OutputTable, OutputTransformation } from "./types/bundle.ts";
+import { getAllDictionaries, getAllFunctions } from "./types/bundle.ts";
 import { getErrorMessage } from "./utils/error.ts";
 import * as grafana from "./grafana/interface.ts";
 import * as hdx from "./hdx.ts";
-import * as hdxCheck from "./hdx_check_dependencies.ts";
+import * as hdxShared from "./hdx_shared.ts";
 import { GRAFANA_LOCATION } from "./grafana/container.ts";
 
 const BUNDLE_TESTING_CLUSTER = Deno.env.get("BUNDLE_TESTING_CLUSTER") || "";
@@ -17,83 +18,109 @@ export async function run(
   base: string,
   bundle: Bundle,
   output: Output
-): Promise<string> {
+): Promise<string[]> {
   const bearerToken = await hdx.getAuthToken();
   const projectName = hdx.createProjectName();
+  const sharedProjectName = hdxShared.getSharedProjectName();
 
-  // Create functions and dictionaries BEFORE creating tables/transforms
+  // ========================================================================
+  // PHASE 1: SHARED RESOURCES (hdx_solutions project)
+  // ========================================================================
+
   if (bundle.dependencies?.hydrolix) {
-    // ========================================================================
-    // FUNCTIONS - Explicit or Auto-Discover
-    // ========================================================================
-    const explicitFunctions = bundle.dependencies.hydrolix.required_functions;
-    let functionsToCreate: string[] = [];
+    const { bundleSpecific: bundleFuncs, shared: sharedFuncs } = getAllFunctions(bundle);
 
-    if (explicitFunctions && explicitFunctions.length > 0) {
-      // EXPLICIT MODE
-      console.log(`\nProcessing ${explicitFunctions.length} explicitly declared function(s)...`);
-      functionsToCreate = explicitFunctions;
-    } else {
-      // AUTO-DISCOVER MODE
-      console.log(`\nNo functions listed - auto-discovering from functions/ directory...`);
-      functionsToCreate = await hdx.discoverFunctions(base);
+    // Create SHARED functions first (they may be used by bundle-specific ones)
+    if (sharedFuncs && sharedFuncs.length > 0) {
+      console.log(`\n🔗 Processing ${sharedFuncs.length} EXPLICITLY DECLARED shared function(s) in ${sharedProjectName}...`);
 
-      if (functionsToCreate.length > 0) {
-        console.log(`  Auto-discovered ${functionsToCreate.length} function(s)`);
-      } else {
-        console.log(`  No functions found to auto-discover`);
+      for (const functionName of sharedFuncs) {
+        await hdxShared.checkAndCreateSharedFunction(bearerToken, functionName, base);
       }
     }
 
-    // Create functions (same code for both modes)
-    for (const functionName of functionsToCreate) {
-      try {
-        await hdx.checkAndCreateFunction(bearerToken, functionName, base);
-      } catch (e) {
-        console.warn(`⚠️  WARNING: Failed to create function ${functionName}: ${getErrorMessage(e)}`);
-        console.warn(`⚠️  Continuing anyway - transforms may be invalid until function is added`);
-      }
-    }
+    // Create SHARED dictionaries (may be used by functions/transforms)
+    const { bundleSpecific: bundleDicts, shared: sharedDicts } = getAllDictionaries(bundle);
 
-    // ========================================================================
-    // DICTIONARIES - Explicit or Auto-Discover
-    // ========================================================================
-    const explicitDictionaries = bundle.dependencies.hydrolix.required_dictionaries;
-    let dictionariesToCreate: string[] = [];
-
-    // First, extract zip if it exists
+    // Extract zip if it exists (for both shared and bundle-specific)
     try {
       await hdx.ensureZipExtracted(base, "dictionaries.zip", "dictionaries");
     } catch (e) {
       console.warn(`⚠️  Could not extract dictionaries.zip: ${getErrorMessage(e)}`);
     }
 
-    if (explicitDictionaries && explicitDictionaries.length > 0) {
-      // EXPLICIT MODE
-      console.log(`\nProcessing ${explicitDictionaries.length} explicitly declared dictionar(y/ies)...`);
-      dictionariesToCreate = explicitDictionaries;
-    } else {
-      // AUTO-DISCOVER MODE
-      console.log(`\nNo dictionaries listed - auto-discovering from zip and local files...`);
-      dictionariesToCreate = await hdx.discoverDictionaries(base);
+    if (sharedDicts && sharedDicts.length > 0) {
+      console.log(`\n🔗 Processing ${sharedDicts.length} EXPLICITLY DECLARED shared dictionar(y/ies) in ${sharedProjectName}...`);
 
-      if (dictionariesToCreate.length > 0) {
-        console.log(`  Auto-discovered ${dictionariesToCreate.length} dictionar(y/ies)`);
-      } else {
-        console.log(`  No dictionaries found to auto-discover`);
+      for (const dictionaryName of sharedDicts) {
+        await hdxShared.checkAndCreateSharedDictionary(bearerToken, dictionaryName, base);
       }
     }
 
-    // Create dictionaries (same code for both modes)
-    for (const dictionaryName of dictionariesToCreate) {
-      try {
-        await hdx.checkAndCreateDictionary(bearerToken, dictionaryName, base);
-      } catch (e) {
-        console.warn(`⚠️  WARNING: Failed to create dictionary ${dictionaryName}: ${getErrorMessage(e)}`);
-        console.warn(`⚠️  Continuing anyway - transforms may be invalid until dictionary is added`);
+    // ========================================================================
+    // PHASE 2: BUNDLE-SPECIFIC RESOURCES (sample_project)
+    // ========================================================================
+
+    // Determine functions to create
+    let functionsToCreate: string[] = [];
+
+    if (bundleFuncs.length === 0 && sharedFuncs.length === 0) {
+      // AUTO-DISCOVERY MODE: Only if NO functions declared at all
+      console.log(`\n📦 AUTO-DISCOVERING bundle-specific functions in ${projectName}...`);
+      const discovered = await hdx.discoverFunctions(base);
+
+      if (discovered.length > 0) {
+        console.log(`  Found ${discovered.length} function(s) - treating all as bundle-specific`);
+        functionsToCreate = discovered;
+      } else {
+        console.log(`  No functions found`);
       }
+    } else if (bundleFuncs.length === 0) {
+      // No bundle-specific functions declared, but shared functions exist
+      console.log(`\n📦 No bundle-specific functions declared (using ${sharedFuncs.length} shared function(s))`);
+      functionsToCreate = [];
+    } else {
+      // EXPLICIT MODE: Use declared functions only
+      console.log(`\n📦 Processing ${bundleFuncs.length} EXPLICITLY DECLARED bundle-specific function(s) in ${projectName}...`);
+      functionsToCreate = bundleFuncs;
+    }
+
+    for (const functionName of functionsToCreate) {
+      await hdx.checkAndCreateFunction(bearerToken, functionName, base);
+    }
+
+    // Determine dictionaries to create
+    let dictionariesToCreate: string[] = [];
+
+    if (bundleDicts.length === 0 && sharedDicts.length === 0) {
+      // AUTO-DISCOVERY MODE: Only if NO dictionaries declared at all
+      console.log(`\n📦 AUTO-DISCOVERING bundle-specific dictionaries in ${projectName}...`);
+      const discovered = await hdx.discoverDictionaries(base);
+
+      if (discovered.length > 0) {
+        console.log(`  Found ${discovered.length} dictionar(y/ies) - treating all as bundle-specific`);
+        dictionariesToCreate = discovered;
+      } else {
+        console.log(`  No dictionaries found`);
+      }
+    } else if (bundleDicts.length === 0) {
+      // No bundle-specific dictionaries declared, but shared dictionaries exist
+      console.log(`\n📦 No bundle-specific dictionaries declared (using ${sharedDicts.length} shared dictionar(y/ies))`);
+      dictionariesToCreate = [];
+    } else {
+      // EXPLICIT MODE: Use declared dictionaries only
+      console.log(`\n📦 Processing ${bundleDicts.length} EXPLICITLY DECLARED bundle-specific dictionar(y/ies) in ${projectName}...`);
+      dictionariesToCreate = bundleDicts;
+    }
+
+    for (const dictionaryName of dictionariesToCreate) {
+      await hdx.checkAndCreateDictionary(bearerToken, dictionaryName, base);
     }
   }
+
+  // ========================================================================
+  // PHASE 3: TABLES, TRANSFORMS, DASHBOARDS
+  // ========================================================================
 
   const datalink = await grafana.createDatalink(projectName);
 
@@ -133,6 +160,9 @@ export async function run(
   const dashboardId = await grafana.createDashboard(dashboardData);
 
   output.dashboard_id = dashboardId;
+  
+  // Collect all dashboard UIDs
+  const allDashboardUids: string[] = [dashboardId];
 
   // Create other dashboards if present
   if (bundle.other_dashboards) {
@@ -144,6 +174,7 @@ export async function run(
       otherDashboardData = otherDashboardData.replace(/__PROJECT_NAME__/g, projectName);
       otherDashboardData = otherDashboardData.replace(/__DATASOURCE__/g, datalink);
       otherDashboardData = otherDashboardData.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+      otherDashboardData = otherDashboardData.replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
       if (bundle.summary_tables && bundle.summary_tables.length > 0) {
         otherDashboardData = otherDashboardData.replace(/\$\{?VAR_SUMMARY_MIN\}?/g, `${projectName}.${bundle.summary_tables[0].name}`);
@@ -162,8 +193,9 @@ export async function run(
         }
       }
 
-      await grafana.createDashboard(otherDashboardData);
-      console.log(`✓ Created dashboard: ${otherDash.path}`);
+      const otherDashUid = await grafana.createDashboard(otherDashboardData);  // ← Capture UID
+      allDashboardUids.push(otherDashUid);  // ← Add to collection
+      console.log(`✓ Created dashboard: ${otherDash.path} (UID: ${otherDashUid})`);
     }
   }
 
@@ -172,7 +204,7 @@ export async function run(
     await createAlertRules(base, bundle, projectName, datalink, dashboardId);
   }
 
-  return dashboardId;
+  return allDashboardUids;  // ← Return array instead of single UID
 }
 
 async function loadDashboardTemplate(
@@ -182,12 +214,14 @@ async function loadDashboardTemplate(
   datalink: string
 ): Promise<string> {
   const path = `${base}/${bundle.dashboard.path}`;
+  const sharedProjectName = hdxShared.getSharedProjectName();
 
   let dashboard = await Deno.readTextFile(path);
 
   dashboard = dashboard.replace(/__PROJECT_NAME__/g, projectName);
   dashboard = dashboard.replace(/__DATASOURCE__/g, datalink);
   dashboard = dashboard.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+  dashboard = dashboard.replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
   if (bundle.summary_tables && bundle.summary_tables.length > 0) {
     dashboard = dashboard.replace(/\$\{?VAR_SUMMARY_MIN\}?/g, `${projectName}.${bundle.summary_tables[0].name}`);
@@ -222,7 +256,7 @@ async function processTable(
   for (const transform of table.transforms) {
     let transformJson = await readTransformFile(base, transform.path);
 
-    // Replace __PROJECT_NAME__ in transform SQL
+    // Replace template variables in transform SQL
     transformJson = replaceFunctionNames(transformJson, projectName, bundle);
 
     const transformName = await addTransformation(
@@ -260,11 +294,13 @@ async function createSummaryTable(
   dashboardData: string
 ): Promise<void> {
   const path = `${base}/${summary.sql.path}`;
+  const sharedProjectName = hdxShared.getSharedProjectName();
 
   let sql = await Deno.readTextFile(path);
 
   sql = sql.replace(/__PROJECT_NAME__/g, projectName);
   sql = sql.replace(/__TABLE_NAME__/g, summary.parent_table_name);
+  sql = sql.replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
   await hdx.createSummaryTable(bearerToken, summary.name, sql);
 }
@@ -279,7 +315,7 @@ async function seedTablesWithData(
     for (const transform of table.transforms) {
       let transformJson = await readTransformFile(base, transform.path);
 
-      // Replace __PROJECT_NAME__ in transform SQL
+      // Replace template variables
       transformJson = replaceFunctionNames(transformJson, projectName, bundle);
 
       const transformName = getTransformationName(transformJson);
@@ -397,8 +433,12 @@ function replaceFunctionNames(transformJson: unknown, projectName: string, bundl
     return transformJson;
   }
 
-  // Simply replace __PROJECT_NAME__ macro with actual project name
-  const updatedSql = sqlTransform.replace(/__PROJECT_NAME__/g, projectName);
+  const sharedProjectName = hdxShared.getSharedProjectName();
+
+  // Replace both template variables
+  const updatedSql = sqlTransform
+    .replace(/__PROJECT_NAME__/g, projectName)
+    .replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
   return {
     ...data,
@@ -422,12 +462,14 @@ async function createAlertRules(
 
   console.log("Loading and processing alert rules...");
 
+  const sharedProjectName = hdxShared.getSharedProjectName();
   const alertRulesPath = `${base}/${bundle.alert_rules.path}`;
   let alertRulesContent = await Deno.readTextFile(alertRulesPath);
 
   alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
   alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
   alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
+  alertRulesContent = alertRulesContent.replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
   for (const table of bundle.tables) {
     const fullTableName = `${projectName}.${table.name}`;

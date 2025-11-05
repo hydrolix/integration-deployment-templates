@@ -230,9 +230,13 @@ export async function checkAndCreateFunction(
   try {
     await Deno.stat(functionFilePath);
   } catch {
-    console.warn(`  ⚠️  WARNING: Function ${functionName} not found on cluster and no local file: ${functionFilePath}`);
-    console.warn(`  ⚠️  Transforms may fail if they reference this function`);
-    return;
+    throw new Error(
+      `Bundle-specific function '${functionName}' declared but file not found.\n` +
+      `  Expected: ${functionFilePath}\n` +
+      `  Actions:\n` +
+      `    1. Add ${functionName}.json to functions/ folder, OR\n` +
+      `    2. Remove '${functionName}' from required_functions in bundle.json if not needed`
+    );
   }
   
   let functionDef;
@@ -369,9 +373,16 @@ export async function checkAndCreateDictionary(
   const files = await findDictionaryFiles(baseDir, dictionaryName);
   
   if (!files) {
-    console.warn(`  ⚠️  WARNING: Dictionary ${dictionaryName} not found in .extracted/ or dictionaries/`);
-    console.warn(`  ⚠️  Transforms may fail if they reference this dictionary`);
-    return;
+  throw new Error(
+      `Shared dictionary '${dictionaryName}' declared but files not found.\n` +
+      `  Expected:\n` +
+      `    - ${baseDir}/dictionaries/${dictionaryName}.json (definition)\n` +
+      `    - ${baseDir}/dictionaries/${dictionaryName}.[csv/yaml/yml/tsv] (data)\n` +
+      `  Actions:\n` +
+      `    1. Add ${dictionaryName}.json + data file to dictionaries/ folder, OR\n` +
+      `    2. Check if files exist in dictionaries.zip, OR\n` +
+      `    3. Remove '${dictionaryName}' from shared_dictionaries in bundle.json if not needed`
+    );
   }
   
   console.log(`  Found files: ${files.jsonPath} + ${files.dataPath}`);

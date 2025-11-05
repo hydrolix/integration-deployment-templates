@@ -160,16 +160,6 @@ async function deleteDictionaries(bearerToken: string): Promise<void> {
       return;
     }
     
-    // Debug: Show structure
-    if (dictionaries[0]) {
-      console.log(`  Sample item keys: ${Object.keys(dictionaries[0]).join(', ')}`);
-    }
-    
-    // Debug: Show structure
-    if (dictionaries[0]) {
-      console.log(`  Sample dictionary structure: ${JSON.stringify(dictionaries[0], null, 2)}`);
-    }
-    
     console.log(`  Found ${dictionaries.length} dictionar(y/ies)`);
     
     let deleted = 0;

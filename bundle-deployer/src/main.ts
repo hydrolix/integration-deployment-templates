@@ -21,6 +21,7 @@ import * as transforms_are_valid from "./validation/transforms_are_valid.ts";
 import * as summary_table from "./validation/summary_table.ts";
 import * as no_global_duplicates from "./validation/no_global_duplicates.ts";
 import * as check_dependencies from "./validation/check_dependencies.ts";
+import * as grafana_plugins_check from "./grafana/grafana_plugins_check.ts";
 
 // Environment variables and CLI args
 const BUNDLE_TESTING_CLUSTER = Deno.env.get("BUNDLE_TESTING_CLUSTER") || "";
@@ -38,55 +39,55 @@ const MATCH_ONLY = args.find(arg => !arg.startsWith("--")) || "";
 
 async function main() {
   let bundlesChecked = 0;
-  
+
   const bundleList = await findBundleFiles();
-  
+
   const finalBundleList: Bundle[] = [];
   const allBundleList: Bundle[] = [];
-  
+
   for (const bundlePath of bundleList) {
     const bundle = await fileToBundle(bundlePath);
-    
+
     // Track all bundles for global duplicate check
     allBundleList.push(bundle);
-    
+
     // Filter by name if specified
     if (MATCH_ONLY && !bundle.name.includes(MATCH_ONLY)) {
       console.log(`Ignoring ${bundle.name} ${MATCH_ONLY}`);
       continue;
     }
-    
+
     const baseDir = bundlePath.replace("./", "").replace("/bundle.json", "");
     console.log(`Testing ${bundle.name}`);
-    
+
     bundlesChecked++;
-    
+
     try {
       await validateBundleFull(baseDir, bundle);
     } catch (e) {
       console.error(`ERROR: Failed bundle validation: ${getErrorMessage(e)}`);
       Deno.exit(1);
     }
-    
+
     console.log(`Bundle=${JSON.stringify(bundle, null, 2)}`);
     finalBundleList.push(bundle);
   }
-  
+
   if (bundlesChecked === 0) {
     console.error("ERROR: No bundles were checked - nothing matched the filter.");
     Deno.exit(1);
   }
-  
+
   console.log("Final check on all of the bundles for duplicated tokens...");
   no_global_duplicates.run(allBundleList);
-  
+
   console.log("SUCCESS");
   Deno.exit(0);
 }
 
 async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
   console.log(`Base=${base} bundle=${JSON.stringify(bundle, null, 2)}`);
-  
+
   const output: Output = {
     cluster_domain: "",
     project_name: "",
@@ -95,7 +96,7 @@ async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
     dashboard_id: "",
     tables: [],
   };
-  
+
   // Run all validation checks
   valid_base_url.run(base, bundle);
   no_duplicate_tokens.run(bundle);
@@ -106,68 +107,78 @@ async function validateBundleFull(base: string, bundle: Bundle): Promise<void> {
   await alert_rules_are_valid.run(base, bundle);
   await sample_data_exists.run(base, bundle);
   summary_table.run(bundle);
-  
+
   // Check dependencies (warnings only, doesn't fail validation)
   await check_dependencies.run(base, bundle);
-  
+
   if (IS_LOCAL_DASHBOARD_ONLY) {
     // Kill previous container if it exists
     console.log("!!!!! LOCAL DASHBOARD ONLY WORKING");
-    await grafana.kill().catch(() => {});
-    
+    await grafana.kill().catch(() => { });
+
     await grafana.start();
-    
-    const dashboardId = await deployOnlyDashboard.run(base, bundle, output);
-    console.log(`Dashboard_id=${dashboardId}`);
-    
+
+    const dashboardUids = await deployOnlyDashboard.run(base, bundle, output);
+    const primaryDashboardId = dashboardUids[0];
+    console.log(`Dashboard_id=${primaryDashboardId}`);
+    console.log(`Total dashboards deployed: ${dashboardUids.length}`);
+
     console.log("Checking the Grafana dashboard with headless Chrome");
-    const [datasourceErrorCount, nodataErrorCount] = await headless.run(dashboardId);
-    
+    const [datasourceErrorCount, nodataErrorCount] = await headless.run(primaryDashboardId);
+
     console.log(`Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`);
-    
+
     if (datasourceErrorCount > 0 || nodataErrorCount > 0) {
       throw new Error(
         `Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`
       );
     }
+
+    // Check deployed dashboards for plugin usage
+    await grafana_plugins_check.checkDeployedDashboards(dashboardUids);
   } else if (IS_LOCAL) {
     // Kill previous container if it exists
-    await grafana.kill().catch(() => {});
-    
+    await grafana.kill().catch(() => { });
+
     await grafana.start();
-    
-    const dashboardId = await deploy.run(base, bundle, output);
-    console.log(`Dashboard_id=${dashboardId}`);
-    
+
+    const dashboardUids = await deploy.run(base, bundle, output);  // ← Now returns array
+    const primaryDashboardId = dashboardUids[0];  // ← Get primary for headless test
+    console.log(`Dashboard_id=${primaryDashboardId}`);
+    console.log(`Total dashboards deployed: ${dashboardUids.length}`);
+
     console.log("Checking the Grafana dashboard with headless Chrome");
-    const [datasourceErrorCount, nodataErrorCount] = await headless.run(dashboardId);
-    
+    const [datasourceErrorCount, nodataErrorCount] = await headless.run(primaryDashboardId);
+
     console.log(`Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`);
-    
+
     if (datasourceErrorCount > 0 || nodataErrorCount > 0) {
       throw new Error(
         `Dashboard Errors=${datasourceErrorCount} NoDataErrors=${nodataErrorCount}`
       );
     }
+
+    // Check ALL deployed dashboards for plugin usage
+    await grafana_plugins_check.checkDeployedDashboards(dashboardUids);
   }
-  
+
   if (DUMP_OUTPUT) {
     console.log("OUTPUT FOR TRAFFIC GENERATION:\n\n" + JSON.stringify(output, null, 2));
   }
-  
+
   console.log("SUCCESS");
 }
 
 async function findBundleFiles(): Promise<string[]> {
   const searchPath = SCAN_WIP ? "./WIP" : ".";
   const bundles: string[] = [];
-  
+
   for await (const entry of walk(searchPath, { maxDepth: 2 })) {
     if (entry.isFile && entry.name === "bundle.json") {
       bundles.push(entry.path);
     }
   }
-  
+
   return bundles;
 }
 
@@ -175,10 +186,10 @@ async function fileToBundle(filePath: string): Promise<Bundle> {
   try {
     const content = await Deno.readTextFile(filePath);
     const bundle = JSON.parse(content) as Bundle;
-    
+
     // Validate structure
     validateBundle(bundle);
-    
+
     return bundle;
   } catch (e) {
     throw new Error(`Failed to read/parse bundle file ${filePath}: ${getErrorMessage(e)}`);

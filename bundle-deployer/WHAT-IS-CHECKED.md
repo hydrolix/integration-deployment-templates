@@ -8,8 +8,11 @@ The Bundle Deployer performs validation and testing in multiple phases:
 
 1. **Individual Bundle Validation** - Each bundle is validated independently
 2. **Global Cross-Bundle Validation** - All bundles are validated together for conflicts
-3. **Integration Testing** (Optional with `--local`) - Functional testing with live Hydrolix and Grafana
-4. **Browser Testing** (Optional with `--local` or `--local-dashboard-only`) - Headless Chrome validation
+3. **Integration Testing** (with `--local`) - Functional testing with live Hydrolix and Grafana
+4. **Browser Testing** (with `--local` or `--local-dashboard-only`) - Headless Chrome validation
+5. **Plugin Validation** (with `--local` or `--local-dashboard-only`) - Runtime Grafana plugin detection
+
+---
 
 ## Validation Phase (Always Runs)
 
@@ -19,34 +22,14 @@ These checks run for every command, regardless of flags:
 
 **Purpose**: Ensures bundle references the correct GitHub repository location.
 
-**Implementation**:
-```typescript
-export function run(base: string, bundle: Bundle): void {
-  const checkBaseUrl = 
-    `https://github.com/hydrolix/integration-deployment-templates/blob/main/${base}`;
-  
-  if (bundle.base_url !== checkBaseUrl) {
-    throw new Error(`Invalid base_url should be: '${checkBaseUrl}'`);
-  }
-}
-```
-
 **Checks**:
-- ✅ `bundle.base_url` matches expected GitHub URL format
-- ✅ Path includes bundle directory name
-- ✅ Points to main branch
+- âœ… `bundle.base_url` matches expected format
+- âœ… Path includes bundle directory name
+- âœ… Points to main branch
 
-**Expected Format**:
-```
-https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundles/[bundle_name]
-```
+**Expected format**: `https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundles/{bundle_name}`
 
-**Failure Examples**:
-```
-❌ Invalid my_bundle base_url should be this: 'https://...'
-❌ Base URL points to wrong repository
-❌ Base URL uses incorrect branch name
-```
+**Failure example**: `Invalid base_url should be: 'https://github.com/hydrolix/.../my-bundles/mcdn_test'`
 
 ---
 
@@ -55,37 +38,17 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 **Purpose**: Enforces consistent naming conventions across bundle components.
 
 **Checks**:
+- âœ… Method-title consistency (e.g., `firehose` â†’ UI title contains "AWS Firehose")
+- âœ… Source-title consistency (e.g., `waf` source â†’ UI title contains "WAF")
+- âœ… Bundle name includes both source and method (case-insensitive)
+- âœ… Semantic versioning format (X.Y.Z with exactly 2 dots)
+- âœ… Valid maintainer email (contains `@` and `.`)
+- âœ… Non-empty description
 
-#### Method-Title Consistency
-- ✅ `firehose` → UI title contains "Amazon Data Firehose", "AWS Firehose", or "Kinesis Data Firehose"
-- ✅ `s3` → UI title contains "Amazon S3" or "AWS S3"
-- ✅ `kinesis` → UI title contains "Amazon Kinesis" or "AWS Kinesis"
-
-#### Source-Title Consistency
-- ✅ `waf` source → UI title contains "WAF" (case-insensitive)
-
-#### Bundle Name Requirements
-- ✅ Bundle name includes both source and method (case-insensitive)
-- ✅ Only alphanumeric characters, underscores, and dashes
-
-#### Version Format
-- ✅ Semantic versioning format: `X.Y.Z` (e.g., `1.0.0`)
-- ✅ Exactly two dots in version string
-
-#### Maintainer Format
-- ✅ Valid email address (contains `@` and `.`)
-
-#### Description Requirements
-- ✅ Non-empty, non-whitespace description
-
-**Failure Examples**:
-```
-❌ docs.method.full_title 'Simple S3' does not match method 'firehose'
-❌ Source title should contain 'WAF' when source is 'waf'
-❌ Name 'simple' must include 'cloudfront' and 'kinesis'
-❌ Version 1.0 should follow semantic versioning format (e.g., 1.0.0)
-❌ Maintainer should be a valid email address
-```
+**Failure examples**:
+- `docs.method.full_title 'Simple S3' does not match method 'firehose'`
+- `Name 'simple' must include 'cloudfront' and 'kinesis'`
+- `Version 1.0 should follow semantic versioning format`
 
 ---
 
@@ -94,26 +57,14 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 **Purpose**: Prevents naming conflicts within a single bundle.
 
 **Checks**:
+- âœ… No duplicate table names
+- âœ… Table names â‰¥3 characters, start with letter, alphanumeric + underscore only
+- âœ… No duplicate dashboard variables
 
-#### Table Name Validation
-- ✅ No duplicate table names within the bundle
-- ✅ Table names ≥ 3 characters
-- ✅ Table names start with a letter (a-z, A-Z)
-- ✅ Table names contain only alphanumeric characters and underscores
-- ✅ No empty or truncated table names
-
-#### Dashboard Variable Validation
-- ✅ No duplicate `dashboard_var` values within the bundle
-- ✅ Each table has a unique dashboard variable identifier
-
-**Failure Examples**:
-```
-❌ Duplicate table name mcdn_test
-❌ Missing or truncated table name '{}'
-❌ Invalid table name '123table' - must start with a letter
-❌ Invalid table name 'table-name' - only letters, digits, and underscores allowed
-❌ Duplicate database_var __TABLE_NAME__
-```
+**Failure examples**:
+- `Duplicate table name mcdn_test`
+- `Invalid table name '123table' - must start with a letter`
+- `Invalid table name 'table-name' - only letters, digits, and underscores allowed`
 
 ---
 
@@ -122,30 +73,14 @@ https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundle
 **Purpose**: Ensures file integrity through SHA256 checksum verification.
 
 **Checks**:
-- ✅ Dashboard file checksums (if provided)
-- ✅ Transform file checksums (if provided)
-- ✅ Summary table SQL file checksums (if provided)
-- ✅ Computed checksums match declared checksums
-- ✅ File accessibility for checksum computation
+- âœ… Dashboard file checksums (if provided)
+- âœ… Transform file checksums (if provided)
+- âœ… Summary SQL file checksums (if provided)
+- âœ… Computed checksums match declared checksums
 
-**Implementation**:
-```typescript
-async function generateSha256(input: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-```
+**Failure example**: `SHA256 abc123...def does not match for local file transformations/mcdn_akamai.json`
 
-**Failure Examples**:
-```
-❌ SHA256 abc123...def456 does not match for local file transformations/mcdn_akamai.json
-❌ Cannot read file for checksum calculation
-```
-
-**Note**: Checksums are optional. If not provided, no validation is performed.
+**Note**: Checksums are optional. If not provided, validation is skipped.
 
 ---
 
@@ -154,21 +89,16 @@ async function generateSha256(input: string): Promise<string> {
 **Purpose**: Validates all transformation files referenced in the bundle.
 
 **Checks**:
-- ✅ All transform files exist and are readable
-- ✅ Transform files contain valid JSON syntax
-- ✅ Required `name` field exists and is non-empty string
-- ✅ No duplicate transform names within a table
-- ✅ `subtype` field (if present) must be "firehose"
+- âœ… All transform files exist and readable
+- âœ… Valid JSON syntax
+- âœ… Required `name` field (non-empty string)
+- âœ… No duplicate transform names within table
+- âœ… `subtype` must be "firehose" if present
 
-**Failure Examples**:
-```
-❌ Transform file is not valid JSON: path=transformations/mcdn_akamai.json error=Unexpected token
-❌ Transform file missing required 'name' field: path=...
-❌ Transform file 'name' field is not a string: path=...
-❌ Transform file has empty 'name' field: path=...
-❌ Duplicated transform name 'mcdn_akamai' path=...
-❌ Transform file has invalid subtype 'custom', must be 'firehose': path=...
-```
+**Failure examples**:
+- `Transform file is not valid JSON: path=... error=Unexpected token`
+- `Transform file missing required 'name' field`
+- `Duplicated transform name 'mcdn_akamai'`
 
 ---
 
@@ -177,18 +107,10 @@ async function generateSha256(input: string): Promise<string> {
 **Purpose**: Ensures all transforms include sample data for testing.
 
 **Checks**:
-- ✅ Each transform contains `settings.sample_data`
-- ✅ Sample data is either:
-  - Non-empty JSON object
-  - Non-empty string (after trimming)
-- ✅ Sample data has content (not just `{}` or `""`)
+- âœ… Each transform contains `settings.sample_data`
+- âœ… Sample data is non-empty object or string
 
-**Failure Examples**:
-```
-❌ No Sample data in transformation full_path=transformations/mcdn_akamai.json
-❌ Sample data is empty object: {}
-❌ Sample data is empty string
-```
+**Failure example**: `No Sample data in transformation full_path=transformations/mcdn_akamai.json`
 
 ---
 
@@ -197,31 +119,16 @@ async function generateSha256(input: string): Promise<string> {
 **Purpose**: Validates Grafana dashboard files and their template variables.
 
 **Checks**:
+- âœ… File exists, valid JSON
+- âœ… Required template variables: `__DASHBOARD_UUID__`, `__DATASOURCE__`, `__PROJECT_NAME__`, all table `dashboard_var` values
+- âœ… Top-level `dashboard` object exists
+- âœ… No hardcoded `id` field
+- âœ… Validates primary dashboard and `other_dashboards` array
 
-#### Required Template Variables
-- ✅ `__DASHBOARD_UUID__` - Dashboard identifier placeholder
-- ✅ `__DATASOURCE__` - Data source placeholder
-- ✅ `__PROJECT_NAME__` - Project name placeholder
-- ✅ All table `dashboard_var` values from bundle configuration
-- ✅ All summary table `dashboard_var` values (if defined)
-
-#### Dashboard Structure
-- ✅ File exists and is readable
-- ✅ Contains valid JSON
-- ✅ Top-level `dashboard` object exists
-- ✅ No hardcoded `id` field (must use `__DASHBOARD_UUID__`)
-
-**Validation for Multiple Dashboards**:
-- ✅ Primary dashboard (`bundle.dashboard`)
-- ✅ Additional dashboards (`bundle.other_dashboards[]`)
-
-**Failure Examples**:
-```
-❌ Dashboard must have __DATASOURCE__ full_path=dashboards/CDN Dashboard.json
-❌ Invalid JSON full_path=dashboards/CDN Dashboard.json error=Unexpected token
-❌ Invalid dashboard - top element must be dashboard. full_path=...
-❌ Invalid dashboard - cannot have Id set. full_path=...
-```
+**Failure examples**:
+- `Dashboard must have __DATASOURCE__`
+- `Invalid dashboard - top element must be dashboard`
+- `Invalid dashboard - cannot have Id set`
 
 ---
 
@@ -230,25 +137,14 @@ async function generateSha256(input: string): Promise<string> {
 **Purpose**: Validates alert rules file structure (if present).
 
 **Checks**:
-- ✅ Alert rules file exists and is readable (if defined)
-- ✅ Contains valid JSON
-- ✅ Required `apiVersion` field present
-- ✅ `groups` is an array with at least one group
-- ✅ Each group has required fields: `name`, `folder`, `interval`
-- ✅ Each group has `rules` array with at least one rule
-- ✅ Each rule has required fields: `uid`, `title`, `condition`, `data`
-- ✅ Rule `data` is an array
+- âœ… Valid JSON with `apiVersion` field
+- âœ… `groups` array with â‰¥1 group
+- âœ… Each group has: `name`, `folder`, `interval`, `rules` (â‰¥1 rule)
+- âœ… Each rule has: `uid`, `title`, `condition`, `data` (array)
 
-**Failure Examples**:
-```
-❌ alert_rules.apiVersion is required
-❌ alert_rules.groups must be an array
-❌ Group 0: name is required
-❌ Group alerts (0): rules must contain at least one rule
-❌ Group alerts, Rule 0: uid is required
-```
+**Failure example**: `Group alerts, Rule 0: uid is required`
 
-**Note**: Alert rules are optional. If not defined in bundle, validation is skipped.
+**Note**: Alert rules are optional. Validation skipped if not defined.
 
 ---
 
@@ -257,89 +153,54 @@ async function generateSha256(input: string): Promise<string> {
 **Purpose**: Validates summary table references and prevents duplicates.
 
 **Checks**:
-- ✅ Summary table `parent_table_name` references a valid table in the bundle
-- ✅ No duplicate `dashboard_var` values in summary tables
-- ✅ Summary table names are unique
+- âœ… `parent_table_name` references valid table in bundle
+- âœ… No duplicate `dashboard_var` values
+- âœ… Unique summary table names
 
-**Failure Examples**:
-```
-❌ Duplicated-Summary-Dashboard-Var bundle=mcdn_test summary_table=mcdn_summary_min dashboard_var=__SUMMARY_TABLE_1__
-❌ Invalid-Parent-Table-Reference bundle=mcdn_test summary_table=mcdn_summary_min parent_table_name=nonexistent_table
-```
+**Failure example**: `Invalid-Parent-Table-Reference summary_table=mcdn_summary_min parent_table_name=nonexistent`
 
-**Note**: Summary tables are optional. If not defined, validation is skipped.
+**Note**: Summary tables are optional. Validation skipped if not defined.
 
 ---
 
 ### 10. Dependency Validation (`check_dependencies.ts`)
 
-**Purpose**: Validates function and dictionary dependencies.
+**Purpose**: Validates function and dictionary files exist and SQL references match.
 
 **Checks**:
+- âœ… Declared shared/bundle-specific functions have local files (`functions/{name}.json`)
+- âœ… Declared shared/bundle-specific dictionaries have both files (`.json` + data)
+- âœ… SQL references match declared functions (scans for `functionName\s*\(` pattern)
+- âœ… SQL dictionary calls match declarations (scans for `dictGet`, `dictGetString`, `dictGetOrDefault`)
+- âš ï¸ Warns if declared but unused
+- âš ï¸ Warns if used but undeclared
 
-#### Function Files
-- ✅ Local JSON file exists for each declared function (`functions/{name}.json`)
-- ⚠️ Warns if function declared but file missing
+**Warning examples**:
+- `Function 'city_name' declared but no file: functions/city_name.json`
+- `Dictionary 'ua_cat_dict' has definition but no data file`
+- `Transform uses dictionary 'geoip_dict' but not declared`
+- `Function 'unused_func' declared but not used`
 
-#### Dictionary Files
-- ✅ Local JSON definition exists for each declared dictionary (`dictionaries/{name}.json`)
-- ✅ Data file exists for each dictionary (`.csv`, `.yaml`, `.yml`, or `.tsv`)
-- ⚠️ Warns if dictionary declared but files missing
-
-#### SQL Reference Validation
-- ✅ Scans transform SQL for function calls
-- ✅ Matches function calls to declared functions
-- ✅ Scans for dictionary usage (`dictGet`, `dictGetString`, `dictGetOrDefault`)
-- ⚠️ Warns if dictionary used but not declared
-- ⚠️ Warns if declared but never used
-
-**Warning Examples**:
-```
-⚠️  WARNING: Function 'city_name' declared but no file: functions/city_name.json
-⚠️  WARNING: Dictionary 'ua_cat_dict' has definition but no data file
-⚠️  WARNING: Transform uses dictionary 'geoip_dict' but it's not declared in dependencies
-⚠️  INFO: Function 'unused_func' is declared but not used in any transforms
-```
-
-**Note**: This validation produces warnings only, does not fail the build.
+**Note**: Produces warnings only, does not fail validation.
 
 ---
 
 ## Global Cross-Bundle Validation
-
-These checks run after all individual bundles are validated:
 
 ### 11. Global Duplicate Prevention (`no_global_duplicates.ts`)
 
 **Purpose**: Prevents conflicts across all bundles in the repository.
 
 **Checks**:
-- ✅ No duplicate bundle names across all bundles
-- ✅ No duplicate UI source titles across all bundles
-- ✅ No duplicate table names across all bundles
-- ✅ No duplicate base URLs across all bundles
+- âœ… No duplicate bundle names
+- âœ… No duplicate UI source titles
+- âœ… No duplicate table names
+- âœ… No duplicate base URLs
 
-**Implementation**:
-```typescript
-export function run(bundles: Bundle[]): void {
-  const tokens = new Map<string, number>();
-  
-  for (const bundle of bundles) {
-    tokens.set(bundle.name, (tokens.get(bundle.name) || 0) + 1);
-    tokens.set(bundle.ui.source.full_title, (tokens.get(bundle.ui.source.full_title) || 0) + 1);
-    // ... check tables, base_url
-  }
-  
-  // Fail if any token appears more than once
-}
-```
-
-**Failure Examples**:
-```
-❌ Duplicated-Bundle-Name url=https://... error=mcdn_test
-❌ Duplicated-UI-Source-Name url=https://... error=MCDN TEST
-❌ Duplicated-Name count=2 table=mcdn_test
-```
+**Failure examples**:
+- `Duplicated-Bundle-Name error=mcdn_test`
+- `Duplicated-UI-Source-Name error=MCDN TEST`
+- `Duplicated-Name count=2 table=mcdn_test`
 
 ---
 
@@ -347,545 +208,371 @@ export function run(bundles: Bundle[]): void {
 
 These tests run only when deploying locally:
 
-### 12. Zip Extraction (`hdx.ts::ensureZipExtracted`)
+### 12. Shared Resources Management
 
-**Purpose**: Automatically extract dictionary zip files.
+**hdx_solutions Project** (`hdx_shared.ts::ensureSharedProjectExists`):
+- Checks if `hdx_solutions` project exists via API
+- Creates project if missing (first deployment ever)
+- Caches project UUID in memory for subsequent operations
+- Handles paginated API responses (extracts from `results`, `projects`, or `data` arrays)
 
-**Checks**:
-- ✅ Detects `dictionaries.zip` in bundle
-- ✅ Extracts to `.extracted/` directory (gitignored)
-- ✅ Flattens directory structure (uses `-j` flag)
-- ✅ Skips if already extracted
+**Shared Functions** (`hdx_shared.ts::checkAndCreateSharedFunction`):
+- Lists existing functions in hdx_solutions project
+- Checks if function exists by name (API returns name without project prefix)
+- Skips if exists (logs "âœ“ exists")
+- Creates from local file if missing:
+  - Reads `functions/{name}.json`
+  - Replaces `__SHARED_PROJECT__` and `__PROJECT_NAME__` template variables
+  - POSTs to hdx_solutions functions endpoint
+  - Deployed as: `hdx_solutions_{name}`
+- **Fails immediately** if declared shared function has no local file
 
-**Implementation**:
-```typescript
-const process = new Deno.Command("unzip", {
-  args: ["-j", "-q", "-o", zipPath, "-d", extractDir],
-});
+**Shared Dictionaries** (`hdx_shared.ts::checkAndCreateSharedDictionary`):
+- Lists existing dictionaries in hdx_solutions project
+- Checks if dictionary exists by name (API returns name without project prefix)
+- Skips if exists (logs "âœ“ exists")
+- Creates from local files if missing:
+  - Searches `dictionaries/` then `.extracted/` for files
+  - Uploads data file to hdx_solutions
+  - Creates dictionary definition
+  - Deployed as: `hdx_solutions_{name}`
+- **Fails immediately** if declared shared dictionary missing files
+
+**Output example (first deployment)**:
+```
+ðŸ”— Creating shared project: hdx_solutions...
+  âœ“ Created shared project (uuid: xxx)
+
+ðŸ”— Processing 4 shared function(s) in hdx_solutions...
+  Creating shared function city_name...
+  âœ“ Created shared function city_name
 ```
 
-**Output**:
+**Output example (subsequent deployment)**:
 ```
-  Extracting dictionaries.zip...
-  ✓ Extracted dictionaries.zip to .extracted/
+ðŸ”— Checking for shared project: hdx_solutions...
+  âœ“ Shared project exists (uuid: xxx)
+
+ðŸ”— Processing 4 shared function(s) in hdx_solutions...
+  âœ“ Shared function city_name exists (as hdx_solutions_city_name)
 ```
 
 ---
 
-### 13. Auto-Discovery (`hdx.ts::discoverFunctions`, `hdx.ts::discoverDictionaries`)
+### 13. Bundle-Specific Resources
 
-**Purpose**: Automatically discover functions and dictionaries from files.
+**Zip Extraction** (`hdx.ts::ensureZipExtracted`):
+- Detects `dictionaries/dictionaries.zip`
+- Extracts to `.extracted/` directory using `unzip -j` (flattens structure)
+- Skips if already extracted
 
-**Function Discovery**:
-- ✅ Scans `functions/` directory for `.json` files
-- ✅ Returns list of function names (without `.json` extension)
+**Auto-Discovery** (`hdx.ts::discoverFunctions`, `hdx.ts::discoverDictionaries`):
+- **Functions**: Scans `functions/` for `.json` files
+- **Dictionaries**: Scans `dictionaries/` and `.extracted/` for matching `.json` + data file pairs
+- Only triggers if BOTH `required_*` AND `shared_*` omitted for that resource type
+- All discovered resources treated as bundle-specific (never shared)
 
-**Dictionary Discovery**:
-- ✅ Scans `.extracted/` directory (from zip) first
-- ✅ Then scans `dictionaries/` directory (for overrides)
-- ✅ Matches `.json` definition files with data files (`.csv`, `.yaml`, `.yml`, `.tsv`)
-- ✅ Returns list of dictionary names with both files present
-- ✅ Skips duplicates (prioritizes root folder over `.extracted/`)
-
-**Output**:
-```
-  Scanning for functions in functions/...
-    Found: city_name
-    Found: breadcrumbs
-  Scanning for dictionaries in dictionaries/.extracted...
-    Found: ua_cat_dict (.json + .yaml)
-    Found: geoip_city_blocks_ipv4 (.json + .csv)
-```
-
----
-
-### 14. Function Creation (`hdx.ts::checkAndCreateFunction`)
-
-**Purpose**: Creates custom SQL functions in Hydrolix.
-
-**Checks**:
-- ✅ Function doesn't already exist on cluster
-- ✅ Function JSON file exists locally
-- ✅ Function JSON is valid
-- ✅ Replaces `__PROJECT_NAME__` with actual project name
-- ✅ Creates function via API (becomes `{project}_{name}`)
-
-**Template Replacement**:
+**Auto-discovery logic**:
 ```typescript
-// Input: functions/city_name.json
-{
-  "sql": "(ip) -> dictGetString('__PROJECT_NAME___geoip_dict', 'city', ip)"
-}
-
-// Deployed as: sample_project_city_name
-{
-  "sql": "(ip) -> dictGetString('sample_project_geoip_dict', 'city', ip)"
+if (bundleFuncs.length === 0 && sharedFuncs.length === 0) {
+  // Both empty - auto-discover as bundle-specific
+} else if (bundleFuncs.length === 0) {
+  // Bundle empty but shared exists - no bundle-specific
+  functionsToCreate = [];
 }
 ```
 
-**Output**:
+**Bundle-Specific Functions** (`hdx.ts::checkAndCreateFunction`):
+- Checks if exists on cluster
+- Creates from local file if missing
+- Replaces `__PROJECT_NAME__` template variables
+- Deployed as: `{project}_{name}`
+- **Fails if** declared function has no local file
+
+**Bundle-Specific Dictionaries** (`hdx.ts::checkAndCreateDictionary`):
+- Checks if exists on cluster
+- Uploads data file to bundle's project
+- Creates dictionary definition
+- Deployed as: `{project}_{name}`
+- **Fails if** declared dictionary missing files
+
+**Output example**:
 ```
-Checking function: city_name...
-  Creating function city_name (will become sample_project_city_name)...
-  ✓ Created function city_name
-```
-
-**Failure Handling**:
-- ⚠️ Warns if function file missing (continues deployment)
-- ⚠️ Warns if function creation fails (continues deployment)
-
----
-
-### 15. Dictionary Creation (`hdx.ts::checkAndCreateDictionary`)
-
-**Purpose**: Creates lookup dictionaries in Hydrolix.
-
-**Checks**:
-- ✅ Dictionary doesn't already exist on cluster
-- ✅ Dictionary definition (`.json`) exists
-- ✅ Dictionary data file (`.csv`, `.yaml`, `.yml`, `.tsv`) exists
-- ✅ Uploads data file to Hydrolix
-- ✅ Creates dictionary definition (becomes `{project}_{name}`)
-
-**File Search Priority**:
-1. `dictionaries/` (root - for custom overrides)
-2. `dictionaries/.extracted/` (from zip)
-
-**Upload Process**:
-```typescript
-// 1. Upload data file (stripped extension: ua_cat_dict.yaml → ua_cat_dict)
-const formData = new FormData();
-formData.append('file', new Blob([fileContent]), fileName);
-formData.append('name', baseFileName);  // No extension
-
-// 2. Create definition (references uploaded file by base name)
-{
-  "name": "ua_cat_dict",
-  "settings": {
-    "filename": "ua_cat_dict",  // No extension
-    // ...
-  }
-}
-```
-
-**Output**:
-```
-Checking dictionary: ua_cat_dict...
-  Found files: dictionaries/ua_cat_dict.json + dictionaries/ua_cat_dict.yaml
-  Uploading dictionary file: ua_cat_dict.yaml (as ua_cat_dict)...
-  ✓ Uploaded dictionary file: ua_cat_dict
-  Creating dictionary definition: ua_cat_dict (will become sample_project_ua_cat_dict)...
-  ✓ Created dictionary definition
-  ✓ Created dictionary ua_cat_dict
-```
-
-**Failure Handling**:
-- ⚠️ Warns if dictionary files missing (continues deployment)
-- ⚠️ Warns if dictionary creation fails (continues deployment)
-
----
-
-### 16. Table Creation (`hdx.ts::createTable`)
-
-**Purpose**: Creates data tables in Hydrolix.
-
-**Checks**:
-- ✅ Creates table with proper settings
-- ✅ Returns table UUID for transform attachment
-- ✅ Waits 30 seconds for table initialization
-
-**Settings**:
-```typescript
-{
-  name: tableName,
-  description: "testing",
-  settings: {
-    age: {
-      max_age_days: 1,  // Auto-delete after 1 day
-    },
-    merge: {
-      enabled: false,  // No merging for test tables
-    },
-  },
-}
-```
-
-**Output**:
-```
-Creating table: mcdn_test
-Waiting for table to be ready...
+ðŸ“¦ Processing 1 bundle-specific dictionar(y/ies) in sample_project...
+  Uploading dictionary file: ua_cat_dict.yaml...
+  âœ“ Created dictionary ua_cat_dict
 ```
 
 ---
 
-### 17. Transform Deployment (`hdx.ts::addTransformToTable`)
+### 14. Data Pipeline
 
-**Purpose**: Attaches data transformation schemas to tables.
+**Table Creation** (`hdx.ts::createTable`):
+- Creates tables with 1-day retention
+- Waits 30 seconds for table readiness
 
-**Checks**:
-- ✅ Transform JSON is valid
-- ✅ Replaces `__PROJECT_NAME__` in SQL transforms
-- ✅ Adds transform to table via API
-- ✅ Retries up to 5 times on failure (with exponential backoff)
+**Transform Deployment** (`hdx.ts::addTransformToTable`):
+- Replaces `__PROJECT_NAME__` and `__SHARED_PROJECT__` in SQL
+- Adds transforms to tables via API
+- Retry logic: 5 attempts, exponential backoff (1s â†’ 30s)
+- Validates transform against sample data
 
-**Template Replacement**:
-```typescript
-// Input SQL:
-SELECT __PROJECT_NAME___city_name(ip) AS city
-FROM {STREAM}
-
-// Deployed SQL:
-SELECT sample_project_city_name(ip) AS city
-FROM {STREAM}
-```
-
-**Retry Logic**:
-- Attempts: 5 max
-- Base delay: 1 second
-- Max delay: 30 seconds
-- Exponential backoff: `delay = baseDelay * 2^attempt`
-
-**Output**:
-```
-  ✓ Transform validation successful
-  ✓ Transform deployed: mcdn_akamai_ds2
-```
-
-**Failure Examples**:
-```
-❌ Transform validation failed (attempt 1/5):
-   Status: 400
-   Error: Unknown function sample_project_city_name
-```
-
----
-
-### 18. Data Insertion (`hdx.ts::insertIntoTable`)
-
-**Purpose**: Inserts sample data into tables for testing.
-
-**Checks**:
-- ✅ Sample data exists in transform settings
-- ✅ Converts single objects to arrays
-- ✅ Sends data to Hydrolix ingest endpoint
-- ✅ Retries up to 20 times on failure (with exponential backoff)
-- ✅ Waits 30 seconds for table to be ready before inserting
-
-**Retry Logic**:
-- Attempts: 20 max
-- Base delay: 1 second
-- Max delay: 60 seconds
+**Sample Data Insertion** (`hdx.ts::insertIntoTable`):
+- Waits 30 seconds for table readiness
+- Inserts sample data for testing
+- Retry logic: 20 attempts, exponential backoff (1s â†’ 60s)
 - Retryable errors: 5xx, 408, 429
-- Non-retryable errors: 4xx (except 408, 429)
+- **Warns if fails** but continues (dashboard created without data)
 
-**Output**:
-```
-Found sample data for transform mcdn_akamai_ds2, preparing to insert...
-Waiting for table to be ready for data...
-Inserting sample data into sample_project.mcdn_test with transform mcdn_akamai_ds2...
-✓ Successfully inserted sample data into sample_project.mcdn_test
-```
+**Summary Tables** (`hdx.ts::createSummaryTable`):
+- Loads SQL from file
+- Replaces `__PROJECT_NAME__`, `__SHARED_PROJECT__`, `__TABLE_NAME__`
+- Creates summary table via API
 
-**Failure Handling**:
-- ⚠️ Warns if insertion fails (continues deployment)
-- Deployment completes but dashboard may show "No data"
-
----
-
-### 19. Summary Table Creation (`hdx.ts::createSummaryTable`)
-
-**Purpose**: Creates pre-aggregated summary views.
-
-**Checks**:
-- ✅ Summary SQL file exists
-- ✅ SQL file is readable
-- ✅ Replaces `__PROJECT_NAME__` in SQL
-- ✅ Replaces `__TABLE_NAME__` with parent table name
-- ✅ Creates summary table via API
-
-**Template Replacement**:
+**Template replacement example**:
 ```sql
--- Input SQL:
-SELECT 
-  toStartOfMinute(timestamp) AS minute,
-  COUNT(*) AS requests
+-- Input:
+SELECT __SHARED_PROJECT___city_name(ip), COUNT(*) 
 FROM __PROJECT_NAME__.__TABLE_NAME__
-GROUP BY minute
 
--- Deployed SQL:
-SELECT 
-  toStartOfMinute(timestamp) AS minute,
-  COUNT(*) AS requests
+-- Output:
+SELECT hdx_solutions_city_name(ip), COUNT(*) 
 FROM sample_project.mcdn_test
-GROUP BY minute
-```
-
-**Output**:
-```
-✓ Created summary table: mcdn_summary_min
 ```
 
 ---
 
-### 20. Grafana Datasource Creation (`grafana/interface.ts::createDatalink`)
+### 15. Grafana Deployment
 
-**Purpose**: Creates Hydrolix datasource in Grafana.
+**Container Management** (`grafana/container.ts`):
+- Kills existing Grafana container
+- Starts fresh container
+- Waits for health check (60s timeout)
 
-**Checks**:
-- ✅ Creates datasource with proper configuration
-- ✅ Returns datasource UID for dashboard reference
-- ✅ Waits 2 seconds for Grafana to settle
+**Datasource** (`grafana/interface.ts::createDatalink`):
+- Creates Hydrolix datasource pointing to bundle's project
+- Returns datasource UID for dashboard references
 
-**Configuration**:
-```typescript
-{
-  name: "Bundle Testing",
-  type: "hydrolix-hydrolix-datasource",
-  access: "proxy",
-  jsonData: {
-    default_database: projectName,
-    host: BUNDLE_TESTING_CLUSTER,
-    port: 9440,
-    protocol: "native",
-    query_timeout: "600",
-    secure: true,
-    username: BUNDLE_TESTING_USERNAME,
-  },
-  secureJsonData: {
-    password: BUNDLE_TESTING_PASSWORD,
-  },
-  readOnly: true,
-}
+**Dashboards** (`grafana/interface.ts::createDashboard`):
+- Loads dashboard JSON
+- Replaces template variables:
+  - `__PROJECT_NAME__` â†’ bundle project name
+  - `__SHARED_PROJECT__` â†’ `hdx_solutions`
+  - `__DATASOURCE__` â†’ datasource UID
+  - `__DASHBOARD_UUID__` â†’ unique ID
+  - Table/summary table `dashboard_var` â†’ full names
+- Deploys primary dashboard and `other_dashboards` array
+
+**Alert Rules** (`grafana/interface.ts::createAlertRules`):
+- Creates Grafana folders for rule groups
+- Deploys individual rules via API
+- Removes UI-only fields before submission
+- Replaces template variables
+
+**Output example**:
 ```
-
-**Output**:
-```
-Creating Grafana datasource for project sample_project...
-✓ Created Grafana datasource with UID: abc123def456
-```
-
----
-
-### 21. Dashboard Deployment (`grafana/interface.ts::createDashboard`)
-
-**Purpose**: Deploys Grafana dashboards with template variable replacement.
-
-**Checks**:
-- ✅ Dashboard JSON is valid
-- ✅ Replaces all template variables
-- ✅ Imports dashboard to Grafana
-- ✅ Returns dashboard UID
-
-**Template Replacements**:
-```typescript
-// Input:
-__PROJECT_NAME__ → "sample_project"
-__DATASOURCE__ → "abc123def456"
-__DASHBOARD_UUID__ → crypto.randomUUID()
-__TABLE_NAME__ → "mcdn_test"
-__SUMMARY_TABLE_NAME_1__ → "mcdn_summary_min"
-```
-
-**Multiple Dashboard Support**:
-- Primary dashboard: `bundle.dashboard`
-- Additional dashboards: `bundle.other_dashboards[]`
-
-**Output**:
-```
-✓ Created primary dashboard (UID: xyz789)
-Creating additional dashboard: dashboards/Raw Logs.json
-✓ Created dashboard: dashboards/Raw Logs.json
-```
-
----
-
-### 22. Alert Rules Deployment (`grafana/interface.ts::createAlertRules`)
-
-**Purpose**: Deploys alert rules alongside dashboards.
-
-**Checks**:
-- ✅ Alert rules JSON is valid
-- ✅ Creates folders as needed
-- ✅ Replaces template variables
-- ✅ Creates each rule individually via API
-- ✅ Cleans UI-only fields before submission
-
-**Template Replacements**:
-```typescript
-__PROJECT_NAME__ → "sample_project"
-__DATASOURCE__ → "abc123def456"
-__DASHBOARD_UUID__ → dashboard UID
-__TABLE_NAME__ → "mcdn_test"
-```
-
-**Folder Management**:
-```typescript
-// 1. Check if folder exists
-const folders = await fetch('/api/folders');
-
-// 2. Create if missing
-if (!existingFolder) {
-  await fetch('/api/folders', {
-    method: 'POST',
-    body: JSON.stringify({ title: folderTitle }),
-  });
-}
-```
-
-**Rule Cleaning**:
-```typescript
-// Remove UI-only fields before API submission
-const { notification_settings, isPaused, templating, ...cleanRule } = rule;
-```
-
-**Output**:
-```
+âœ“ Created Grafana datasource with UID: abc123
+âœ“ Created primary dashboard (UID: xyz789)
 Creating 2 alert rule group(s)...
-  Creating folder "CDN Alerts"...
-  ✓ Created folder "CDN Alerts" (uid: folder123)
-  Creating rule group "Traffic Monitoring" with 3 rule(s)...
-    Creating rule "High Error Rate"...
-    ✓ Created rule "High Error Rate" (id: 1)
-    Creating rule "Low Traffic"...
-    ✓ Created rule "Low Traffic" (id: 2)
-  ✓ Created rule group "Traffic Monitoring"
-✓ Successfully created all alert rules
-```
-
-**Failure Examples**:
-```
-❌ Failed to create alert rule "High Error Rate": Invalid query expression
-❌ Failed to create folder "CDN Alerts": Folder already exists
+  âœ“ Created folder "CDN Alerts"
+  âœ“ Created rule "High Error Rate"
 ```
 
 ---
 
-## Browser Testing Phase (With `--local` or `--local-dashboard-only`)
+### 16. Browser Testing
 
-These tests run only when testing locally with browser validation:
+**Headless Browser Testing** (`headless_browser.ts`):
+- Authenticates with Grafana (gets session cookie)
+- Launches headless Chrome (Puppeteer)
+- Sets viewport (1920x4080)
+- Navigates to dashboard
+- Monitors console for errors:
+  - Datasource errors: `Datasource \w+ was not found`
+  - Query errors: `400 \w+`
+- Waits 30 seconds for all panels to render
+- Reports error counts
+- **Deployment fails if errors detected**
 
-### 23. Headless Browser Testing (`headless_browser.ts`)
-
-**Purpose**: Validates dashboards load correctly in Grafana using headless Chrome.
-
-**Checks**:
-- ✅ Grafana session authentication works
-- ✅ Dashboard loads without errors
-- ✅ No datasource errors (`Datasource \w+ was not found`)
-- ✅ No 400 query errors in console
-- ✅ 30-second wait for all panels to render
-
-**Implementation**:
-```typescript
-// 1. Get Grafana session cookie
-const { cookieName, cookieValue } = await getGrafanaSessionCookie();
-
-// 2. Launch headless Chrome
-const browser = await puppeteer.launch({
-  headless: "new",
-  args: ['--no-sandbox', '--disable-setuid-sandbox'],
-});
-
-// 3. Set viewport for dashboard rendering
-await page.setViewport({ width: 1920, height: 4080 });
-
-// 4. Monitor console for errors
-page.on('console', (msg) => {
-  const text = msg.text();
-  if (badDatasourceRegex.test(text) || fourHundredRegex.test(text)) {
-    datasourceErrorCount++;
-  }
-});
-
-// 5. Load dashboard
-await page.goto(dashboardUrl, {
-  waitUntil: 'networkidle2',
-  timeout: 120000,
-});
-
-// 6. Wait for all panels to load
-await new Promise(resolve => setTimeout(resolve, 30000));
-```
-
-**Error Detection**:
-- Datasource errors: `/Datasource \w+ was not found/`
-- Query errors: `/400 \w+/`
-
-**Output**:
+**Success output**:
 ```
 Starting headless browser test for dashboard: xyz789
-Got Grafana session cookie: grafana_session
-Dashboard ID=xyz789
-Navigating to: http://localhost:3000/d/xyz789/cdn-dashboard
-Page loaded - Title: "CDN Dashboard", URL: http://localhost:3000/...
-Page navigation completed
-Waiting 30 seconds for all panels to load and query data...
+Page loaded - Title: "CDN Dashboard"
 Datasource errors: 0
-Success! No datasource errors detected.
+Success!
 ```
 
-**Failure Examples**:
+**Failure output**:
 ```
 ERROR: Datasource not found - Datasource Hydrolix was not found
 Datasource errors: 2
-ERROR: Dashboard Errors=2
+Dashboard Errors=2
 ```
 
-**Success Criteria**:
-- ✅ `datasourceErrorCount === 0`
-- ✅ Dashboard loads within 120 seconds
-- ✅ No console errors during 30-second wait
+---
+
+### 17. Grafana Plugin Validation
+
+**Plugin Detection** (`grafana/grafana_plugins_check.ts`):
+- Queries all deployed dashboards via Grafana API (`/api/dashboards/uid/{uid}`)
+- Extracts panel types from live dashboard JSON
+- Queries installed plugins (`/api/plugins`)
+- Identifies external plugins vs built-in panels
+- Compares required plugins against installed plugins
+- Reports missing plugins with installation instructions
+- **Default**: Warns but continues deployment
+- **With `--strict-plugins`**: Fails deployment if plugins missing
+
+**Runs**: Only with `--local` or `--local-dashboard-only` flags
+
+**Success output**:
+```
+🔌 Checking deployed dashboards for plugin usage...
+  ✓ Dashboards only use built-in panels
+```
+
+**Warning output** (default mode):
+```
+⚠️  WARNING: Missing plugins detected!
+
+Missing plugins:
+  • marcusolsson-treemap-panel - 1 panel(s) across 1 dashboard(s)
+    Used in:
+      - "CDN Global View" (1 panel(s))
+
+📋 To fix:
+  Update grafana/container.ts:
+  "-e", "GF_INSTALL_PLUGINS=marcusolsson-treemap-panel"
+```
+
+**Error output** (`--strict-plugins` mode):
+```
+❌ ERROR: Missing required Grafana plugins!
+
+Missing plugins:
+  • marcusolsson-treemap-panel
+
+ERROR: Plugin validation failed: 1 required plugin(s) missing
+[Exit code 1]
+```
+
+**Installed plugins output**:
+```
+✓ Using 1 external plugin(s) (installed):
+  • Treemap Panel (marcusolsson-treemap-panel) - 3 panel(s) across 2 dashboard(s)
+```
 
 ---
 
 ## Production Mode Validation (With `--production` flag)
 
-### 24. Dependency Existence Check (`hdx_check_dependencies.ts`)
+### 18. Dependency Existence Check (`hdx_check_dependencies.ts`)
 
-**Purpose**: Validates dependencies exist on cluster before deployment.
+**Purpose**: Validates dependencies exist on cluster without deploying.
 
 **Checks**:
+- âœ… Lists functions/dictionaries in hdx_solutions (for shared resources)
+- âœ… Lists functions/dictionaries in bundle's project (for bundle-specific resources)
+- âœ… Checks each declared shared function exists (expected: `hdx_solutions_{name}`)
+- âœ… Checks each declared shared dictionary exists (expected: `hdx_solutions_{name}`)
+- âœ… Checks each declared bundle-specific function exists (expected: `{project}_{name}`)
+- âœ… Checks each declared bundle-specific dictionary exists (expected: `{project}_{name}`)
+- âœ… Verifies local files present
+- âŒ **Fails if resource missing on cluster**
+- âš ï¸ **Warns if local file missing**
 
-#### Functions
-- ✅ Lists all functions on cluster
-- ✅ Checks each declared function exists (with project prefix: `{project}_{name}`)
-- ✅ Checks local function file exists
-- ❌ Fails if function missing on cluster
-- ⚠️ Warns if local file missing
-
-#### Dictionaries
-- ✅ Lists all dictionaries on cluster
-- ✅ Checks each declared dictionary exists (with project prefix)
-- ✅ Checks local definition file exists (`.json`)
-- ✅ Checks local data file exists (`.csv`, `.yaml`, `.yml`, `.tsv`)
-- ❌ Fails if dictionary missing on cluster
-- ⚠️ Warns if local files missing
-
-**Output - Success**:
+**Success output**:
 ```
-✓ All required dependencies exist on cluster
-✓ All required local files present
+âœ“ All required dependencies exist on cluster
+âœ“ All required local files present
 ```
 
-**Output - Failure**:
+**Failure output**:
 ```
-❌ Missing functions on cluster:
-   - city_name (expected as: sample_project_city_name)
+âŒ Missing functions on cluster (hdx_solutions):
+   - city_name (expected as: hdx_solutions_city_name)
 
-❌ Missing dictionaries on cluster:
-   - ua_cat_dict (expected as: sample_project_ua_cat_dict)
+âŒ Missing dictionaries on cluster (sample_project):
+   - custom_dict (expected as: sample_project_custom_dict)
 
-⚠️  Missing local definition files:
+âš ï¸  Missing local definition files:
    - functions/city_name.json
-   - dictionaries/ua_cat_dict.json
 
-📋 In production mode:
-   • Resources must exist on cluster before deployment
-   • Either create them manually or run without --production flag first
-   • Local files should be included for documentation and validation
+ðŸ“‹ In production mode:
+   â€¢ Resources must exist on cluster before deployment
+   â€¢ Either create them manually or run without --production flag first
 ```
 
-**Use Case**: Validate bundle is ready for production deployment where resources already exist.
+**Use case**: Validate bundle ready for production where resources already exist.
+
+---
+
+## Shared Resources Validation Details
+
+### Resource Declaration Modes
+
+**Explicit Mode** - Resources explicitly listed:
+```json
+{
+  "shared_functions": ["city_name"],
+  "required_functions": ["custom_parser"]
+}
+```
+- All declared resources validated for local files
+- No auto-discovery
+- Resources created in correct projects
+
+**Auto-Discovery Mode** - No resources declared:
+```json
+{
+  "dependencies": {"hydrolix": {}}
+}
+```
+- Scans filesystem for resources
+- All discovered treated as bundle-specific
+- No shared resources created
+
+**Hybrid Mode** - Shared explicit, bundle auto-discover:
+```json
+{
+  "shared_functions": ["city_name"]
+  // Omit required_functions - auto-discovers bundle-specific
+}
+```
+- Shared resources validated
+- Bundle-specific auto-discovered
+- Mixed creation in both projects
+
+### Empty Array Behavior
+
+**Important**: Empty arrays disable auto-discovery:
+
+```json
+{
+  "required_functions": [],  // "Zero bundle-specific functions"
+  "shared_functions": ["city_name"]
+}
+```
+
+This configuration:
+- âœ… Creates `city_name` in hdx_solutions
+- âŒ Does NOT auto-discover bundle-specific functions
+- To enable auto-discovery, **omit the field entirely**
+
+### Cross-Project Resource References
+
+Functions and dictionaries can reference resources from any project:
+
+```sql
+-- Bundle-specific calling shared (valid!)
+CREATE FUNCTION sample_project_enrich AS
+(ip) -> dictGet('hdx_solutions_geoip_city', 'city_name', ip)
+
+-- Shared calling shared
+CREATE FUNCTION hdx_solutions_country_name AS
+(ip) -> dictGetString('hdx_solutions_geoip_locations', 'country', 
+                      hdx_solutions_geoname_id(ip))
+```
 
 ---
 
@@ -893,56 +580,45 @@ ERROR: Dashboard Errors=2
 
 ### Error Message Format
 
-All validation errors include:
-- ✅ Descriptive error message
-- ✅ File paths (when applicable)
-- ✅ Expected vs actual values
-- ✅ Actionable guidance for resolution
+All errors include:
+- Descriptive message
+- File paths (when applicable)
+- Expected vs actual values
+- Actionable guidance
 
 **Examples**:
 ```
-❌ Transform file is not valid JSON: 
+âŒ Transform file is not valid JSON: 
    path=transformations/mcdn_akamai.json 
    error=Unexpected token at line 45
-   
-❌ SHA256 abc123...def does not match for local file 
-   path=transformations/mcdn_akamai.json
-   expected=abc123...
-   actual=def456...
-   
-❌ Dashboard must have __DATASOURCE__ 
-   full_path=dashboards/CDN Dashboard.json
-```
 
----
+âŒ Shared function 'city_name' declared but file not found.
+   Expected: my-bundles/mcdn_test/functions/city_name.json
+   Actions:
+     1. Add city_name.json to functions/ folder, OR
+     2. Remove 'city_name' from shared_functions in bundle.json
+```
 
 ### Exit Codes
 
-- **0**: All validation and tests passed successfully
-- **1**: Validation failure, deployment failure, or browser test failure
-
-The system exits immediately on the first failure encountered.
-
----
+- **0**: All validation and tests passed
+- **1**: Failure (exits immediately on first error)
 
 ### Warning vs Error
 
 **Errors** (exit code 1):
-- ❌ Missing required files
-- ❌ Invalid JSON syntax
-- ❌ Missing required fields
-- ❌ Duplicate names
-- ❌ Invalid checksums
-- ❌ Browser test failures
+- Missing required files (declared resources without local files)
+- Invalid JSON syntax
+- Missing required fields
+- Duplicate names
+- Invalid checksums
+- Browser test failures
+- Missing dependencies in production mode
 
 **Warnings** (continue execution):
-- ⚠️ Missing function file (dependency declared but not in bundle)
-- ⚠️ Missing dictionary file (dependency declared but not in bundle)
-- ⚠️ Function/dictionary used but not declared
-- ⚠️ Function/dictionary declared but not used
-- ⚠️ Function creation failed (continues deployment)
-- ⚠️ Dictionary creation failed (continues deployment)
-- ⚠️ Data insertion failed (continues deployment)
+- Resource used in SQL but not declared
+- Resource declared but not used
+- Data insertion failed (continues deployment)
 
 ---
 
@@ -950,107 +626,177 @@ The system exits immediately on the first failure encountered.
 
 ```
 1. DISCOVERY
-   └── Find all bundle.json files in my-bundles/
+   â””â”€â”€ Find bundle.json files in my-bundles/
 
-2. PARSING & STRUCTURE VALIDATION
-   ├── Parse bundle.json
-   ├── Validate required fields
-   ├── Validate field formats
-   └── Validate enum values
+2. PARSING & VALIDATION
+   â”œâ”€â”€ Parse JSON, validate structure
+   â”œâ”€â”€ Validate fields, formats, enums
+   â”œâ”€â”€ Check files exist
+   â””â”€â”€ Validate content
 
-3. FILE VALIDATION
-   ├── Check all referenced files exist
-   ├── Validate JSON syntax
-   ├── Verify checksums (if provided)
-   └── Check sample data presence
+3. CROSS-BUNDLE VALIDATION
+   â””â”€â”€ Check for global duplicates
 
-4. CONTENT VALIDATION
-   ├── Validate dashboard structure
-   ├── Check template variables
-   ├── Validate transforms
-   ├── Check function/dictionary references
-   ├── Validate alert rules (if present)
-   └── Validate summary tables (if present)
+4. SHARED RESOURCES (--local only)
+   â”œâ”€â”€ Check/create hdx_solutions project
+   â”œâ”€â”€ Create/verify shared functions
+   â””â”€â”€ Create/verify shared dictionaries
 
-5. CROSS-BUNDLE VALIDATION
-   ├── Check for duplicate bundle names
-   ├── Check for duplicate UI titles
-   └── Check for duplicate table names
+5. BUNDLE RESOURCES (--local only)
+   â”œâ”€â”€ Extract zips
+   â”œâ”€â”€ Auto-discover (if not declared)
+   â”œâ”€â”€ Create bundle-specific functions
+   â””â”€â”€ Create bundle-specific dictionaries
 
-6. INTEGRATION TESTING (--local only)
-   ├── Extract dictionary zips
-   ├── Auto-discover resources
-   ├── Create functions
-   ├── Create dictionaries
-   ├── Create tables
-   ├── Add transforms
-   ├── Insert sample data
-   └── Create summary tables
+6. DATA PIPELINE (--local only)
+   â”œâ”€â”€ Create tables
+   â”œâ”€â”€ Deploy transforms
+   â”œâ”€â”€ Insert sample data
+   â””â”€â”€ Create summary tables
 
-7. GRAFANA DEPLOYMENT (--local or --local-dashboard-only)
-   ├── Kill old Grafana container
-   ├── Start new Grafana container
-   ├── Create datasource
-   ├── Deploy dashboards
-   └── Create alert rules
+7. GRAFANA (--local or --local-dashboard-only)
+   â”œâ”€â”€ Setup container
+   â”œâ”€â”€ Create datasource
+   â”œâ”€â”€ Deploy dashboards
+   â””â”€â”€ Create alert rules
 
-8. BROWSER TESTING (--local or --local-dashboard-only)
-   ├── Launch headless Chrome
-   ├── Navigate to dashboard
-   ├── Monitor for errors
-   └── Report results
-
-9. CLEANUP
-   └── Close browser, report success/failure
+8. BROWSER TESTING
+   â”œâ”€â”€ Launch Chrome
+   â”œâ”€â”€ Load dashboard
+   â”œâ”€â”€ Monitor errors
+   â””â”€â”€ Report results
 ```
 
 ---
 
 ## Validation Module Summary
 
-| Module | Purpose | Failures | Warnings |
-|--------|---------|----------|----------|
-| `valid_base_url` | Base URL format | ❌ | - |
-| `naming_is_valid` | Naming conventions | ❌ | - |
-| `no_duplicate_tokens` | Duplicate names (bundle) | ❌ | - |
-| `no_bad_checksums` | SHA256 integrity | ❌ | - |
-| `transforms_are_valid` | Transform structure | ❌ | - |
-| `sample_data_exists` | Sample data presence | ❌ | - |
-| `dashboard_is_valid` | Dashboard structure | ❌ | - |
-| `alert_rules_are_valid` | Alert rules structure | ❌ | - |
-| `summary_table` | Summary table refs | ❌ | - |
-| `check_dependencies` | Function/dict files | - | ⚠️ |
-| `no_global_duplicates` | Duplicate names (global) | ❌ | - |
+| Module | Purpose | Type |
+|--------|---------|------|
+| `valid_base_url` | Base URL format | Error |
+| `naming_is_valid` | Naming conventions | Error |
+| `no_duplicate_tokens` | Duplicate names (bundle) | Error |
+| `no_bad_checksums` | SHA256 integrity | Error |
+| `transforms_are_valid` | Transform structure | Error |
+| `sample_data_exists` | Sample data presence | Error |
+| `dashboard_is_valid` | Dashboard structure | Error |
+| `alert_rules_are_valid` | Alert rules structure | Error |
+| `summary_table` | Summary table refs | Error |
+| `check_dependencies` | Resource files | Warning |
+| `no_global_duplicates` | Duplicate names (global) | Error |
+
+---
+
+## Shared Resources Deployment Details
+
+### Function Deployment Flow
+
+```
+1. Check if hdx_solutions_city_name exists
+   â”œâ”€ YES â†’ Log "âœ“ exists", skip
+   â””â”€ NO â†’ Continue
+
+2. Read functions/city_name.json
+   â””â”€ FAIL if missing
+
+3. Replace __SHARED_PROJECT__ â†’ hdx_solutions
+
+4. POST to hdx_solutions functions endpoint
+   â””â”€ Creates as: hdx_solutions_city_name
+
+5. Log "âœ“ Created"
+```
+
+### Dictionary Deployment Flow
+
+```
+1. Check if hdx_solutions_geoip_city exists
+   â”œâ”€ YES â†’ Log "âœ“ exists", skip
+   â””â”€ NO â†’ Continue
+
+2. Find files:
+   â”œâ”€ Search dictionaries/geoip_city.json + .csv/.yaml
+   â””â”€ Then .extracted/geoip_city.json + .csv/.yaml
+   â””â”€ FAIL if not found
+
+3. Upload data file to hdx_solutions
+
+4. POST definition to hdx_solutions dictionaries endpoint
+   â””â”€ Creates as: hdx_solutions_geoip_city
+
+5. Log "âœ“ Created"
+```
+
+### Idempotency
+
+Shared resources are idempotent - running deployment multiple times:
+- First run: Creates shared resources
+- Subsequent runs: Reuses existing shared resources (logs "âœ“ exists")
+- Different bundles: Share same resources (no duplication)
 
 ---
 
 ## CI/CD Integration
 
-The validation system is designed for CI/CD pipelines:
-
 ```yaml
 # GitHub Actions Example
 - name: Validate Bundle
   run: deno run --allow-all src/main.ts mcdn_test
-  
-# Exit code 0 = success
-# Exit code 1 = failure (prevents merge)
+
+# Exit code 0 = success, 1 = failure
 ```
 
-**Benefits**:
-- Fast validation (~30 seconds)
-- Clear error messages
-- No deployment required
-- Prevents bad bundles from merging
+**Benefits**: Fast validation (~30s), clear errors, no deployment needed, validates shared resource declarations
 
 ---
 
 ## Getting Help
 
 For validation failures:
-1. Read the error message carefully
-2. Check the referenced file and line number
-3. Review validation rules in this document
-4. Consult example bundles in `my-bundles/`
-5. Use cleanup tool for fresh starts
-6. Review [BUNDLE-DETAILS.md](./BUNDLE-DETAILS.md) for format specification
+1. Read error message and file path
+2. Review validation rules in this document
+3. Check [BUNDLE-DETAILS.md](./BUNDLE-DETAILS.md) for format
+4. Examine example bundles in `my-bundles/`
+5. Verify resources in correct project (hdx_solutions vs bundle project)
+6. Check template variables use correct prefix (`__SHARED_PROJECT__` vs `__PROJECT_NAME__`)
+### 17. Grafana Plugin Validation
+
+**Plugin Detection** (`grafana/grafana_plugins_check.ts`):
+- Queries all deployed dashboards via Grafana API (`/api/dashboards/uid/{uid}`)
+- Extracts panel types from live dashboard JSON  
+- Queries installed plugins (`/api/plugins`)
+- Identifies external plugins vs built-in panels
+- Compares required plugins against installed plugins
+- Reports missing plugins with installation instructions
+- **Default**: Warns but continues deployment
+- **With `--strict-plugins`**: Fails deployment if plugins missing
+
+**Runs**: Only with `--local` or `--local-dashboard-only` flags
+
+**Success output**:
+```
+Plugin check: All dashboards use built-in panels only
+```
+
+**Warning output** (default mode):
+```
+WARNING: Missing plugins detected!
+Missing: marcusolsson-treemap-panel
+Used in: "CDN Global View" dashboard
+Fix: Update grafana/container.ts
+```
+
+**Error output** (`--strict-plugins` mode):
+```
+ERROR: Missing required Grafana plugins!
+Plugin validation failed
+Exit code: 1
+```
+
+**Installed plugins output**:
+```
+Using 1 external plugin (installed):
+Treemap Panel - 3 panels across 2 dashboards
+```
+
+---

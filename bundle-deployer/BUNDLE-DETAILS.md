@@ -8,20 +8,20 @@ This document describes all valid fields and their validation rules for the Type
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Bundle identifier. Must contain only alphanumeric characters, underscores, and dashes |
-| `source` | `string` | ✅ | Data source type. Must contain only alphanumeric characters, dashes, and underscores |
-| `method` | `string` | ✅ | Integration method. See [Valid Methods](#valid-methods) |
-| `beta` | `boolean` | ✅ | Whether this is a beta release |
-| `base_url` | `string` | ✅ | HTTPS URL to the repository base path |
-| `dashboard` | `Dashboard` | ✅ | Primary dashboard configuration |
-| `other_dashboards` | `Dashboard[]` | ❌ | Optional additional dashboard configurations |
-| `alert_rules` | `AlertRules` | ❌ | Optional alert rules configuration |
-| `tables` | `Table[]` | ✅ | Array of table definitions |
-| `summary_tables` | `SummaryTable[]` | ❌ | Optional array of summary table definitions |
-| `ui` | `Ui` | ✅ | User interface configuration |
-| `metadata` | `Metadata` | ✅ | Bundle metadata |
-| `method_overrides` | `MethodOverrides` | ❌ | Optional method-specific overrides |
-| `dependencies` | `Dependencies` | ❌ | Optional dependency requirements |
+| `name` | `string` | âœ… | Bundle identifier. Must contain only alphanumeric characters, underscores, and dashes |
+| `source` | `string` | âœ… | Data source type. Must contain only alphanumeric characters, dashes, and underscores |
+| `method` | `string` | âœ… | Integration method. See [Valid Methods](#valid-methods) |
+| `beta` | `boolean` | âœ… | Whether this is a beta release |
+| `base_url` | `string` | âœ… | HTTPS URL to the repository base path |
+| `dashboard` | `Dashboard` | âœ… | Primary dashboard configuration |
+| `other_dashboards` | `Dashboard[]` | âŒ | Optional additional dashboard configurations |
+| `alert_rules` | `AlertRules` | âŒ | Optional alert rules configuration |
+| `tables` | `Table[]` | âœ… | Array of table definitions |
+| `summary_tables` | `SummaryTable[]` | âŒ | Optional array of summary table definitions |
+| `ui` | `Ui` | âœ… | User interface configuration |
+| `metadata` | `Metadata` | âœ… | Bundle metadata |
+| `method_overrides` | `MethodOverrides` | âŒ | Optional method-specific overrides |
+| `dependencies` | `Dependencies` | âŒ | Optional dependency requirements |
 
 ### Validation Rules for Root Object
 - `base_url` must start with `https://` or `file://`
@@ -40,105 +40,38 @@ Expected format: `https://github.com/hydrolix/integration-deployment-templates/b
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | ✅ | Relative path to dashboard JSON file |
-| `project_var` | `string` | ✅ | Variable placeholder for project name (must be `__PROJECT_NAME__`) |
-| `sha256` | `string` | ❌ | Optional SHA256 hash of dashboard contents (64 hex characters) |
+| `path` | `string` | âœ… | Relative path to dashboard JSON file |
+| `project_var` | `string` | âœ… | Variable placeholder for project name (must be `__PROJECT_NAME__`) |
+| `sha256` | `string` | âŒ | Optional SHA256 hash of dashboard contents (64 hex characters) |
 
 ### Validation Rules for Dashboard
-- `path` cannot start with `/`
-- `path` cannot contain `..`
+- `path` cannot start with `/` or contain `..`
 - `path` must end with `.json`
 - `project_var` must be `__PROJECT_NAME__`
-- Dashboard JSON must contain all required template variables:
-  - `__DASHBOARD_UUID__`
-  - `__DATASOURCE__`
-  - `__PROJECT_NAME__`
+- Dashboard JSON must contain required template variables:
+  - `__DASHBOARD_UUID__`, `__DATASOURCE__`, `__PROJECT_NAME__`
   - All table `dashboard_var` values
   - All summary table `dashboard_var` values (if defined)
 - Dashboard must have top-level `dashboard` object
 - Dashboard must not have hardcoded `id` field
-- Use `openssl dgst -sha256 <file_name>` to generate the sha256
-
-### Required Dashboard Template Variables
-
-All dashboards must include these template variables:
-
-```json
-{
-  "dashboard": {
-    "id": null,  // Must be null
-    "uid": "__DASHBOARD_UUID__",  // Required
-    "title": "My Dashboard",
-    // ...
-  },
-  "datasource": "__DATASOURCE__",  // Required
-  // References to tables using dashboard_var:
-  "table": "__TABLE_NAME__"  // Must match table.dashboard_var
-}
-```
+- Use `openssl dgst -sha256 <file_name>` to generate sha256
 
 ---
 
-## Alert Rules Object
+## AlertRules Object
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | ✅ | Relative path to alert rules JSON file |
-| `sha256` | `string` | ❌ | Optional SHA256 hash of alert rules contents (64 hex characters) |
+| `path` | `string` | âœ… | Relative path to alert rules JSON file |
+| `sha256` | `string` | âŒ | Optional SHA256 hash (64 hex characters) |
 
-### Validation Rules for Alert Rules
-- `path` cannot start with `/`
-- `path` cannot contain `..`
-- `path` must end with `.json`
-- Alert rules JSON must be valid Grafana alert rules format
-- Must contain `apiVersion` field
-- Must contain `groups` array with at least one group
-- Each group must have: `name`, `folder`, `interval`, `rules`
-- Each rule must have: `uid`, `title`, `condition`, `data`
-- Use `openssl dgst -sha256 <file_name>` to generate the sha256
+### Validation Rules for AlertRules
+- Path cannot start with `/` or contain `..`, must end with `.json`
+- Must contain `apiVersion`, `groups` array with â‰¥1 group
+- Each group must have: `name`, `folder`, `interval`, `rules` (â‰¥1 rule)
+- Each rule must have: `uid`, `title`, `condition`, `data` (array)
 
-### Alert Rules Template Variables
-
-Alert rules support the same template variables as dashboards:
-- `__PROJECT_NAME__` - Replaced with project name
-- `__DATASOURCE__` - Replaced with Grafana datasource UID
-- `__DASHBOARD_UUID__` - Replaced with dashboard UID (for linking)
-- Table `dashboard_var` values - Replaced with full table names
-
-### Example Alert Rules Structure
-
-```json
-{
-  "apiVersion": 1,
-  "groups": [
-    {
-      "name": "Traffic Monitoring",
-      "folder": "CDN Alerts",
-      "interval": "5m",
-      "rules": [
-        {
-          "uid": "alert_high_errors",
-          "title": "High Error Rate",
-          "condition": "C",
-          "data": [
-            {
-              "refId": "A",
-              "datasourceUid": "__DATASOURCE__",
-              "model": {
-                "query": "SELECT COUNT(*) FROM __PROJECT_NAME__.__TABLE_NAME__ WHERE status >= 500"
-              }
-            }
-          ],
-          "for": "5m",
-          "annotations": {
-            "description": "Error rate exceeded threshold"
-          }
-        }
-      ]
-    }
-  ]
-}
-```
+**Template variables supported**: `__PROJECT_NAME__`, `__SHARED_PROJECT__`, `__DATASOURCE__`, `__DASHBOARD_UUID__`, table `dashboard_var` values
 
 ---
 
@@ -146,17 +79,14 @@ Alert rules support the same template variables as dashboards:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `dashboard_var` | `string` | ✅ | Variable placeholder for table name in dashboard |
-| `name` | `string` | ✅ | Table identifier |
-| `transforms` | `Transform[]` | ✅ | Array of transformation definitions |
+| `dashboard_var` | `string` | âœ… | Variable placeholder for table name |
+| `name` | `string` | âœ… | Table identifier |
+| `transforms` | `Transform[]` | âœ… | Array of transformations |
 
 ### Validation Rules for Table
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
-- `name` must be unique across all tables in the bundle
-- `name` must be ≥ 3 characters
-- `name` must start with a letter (a-z, A-Z)
-- `name` must contain only alphanumeric characters and underscores
-- No duplicate transform names within a table
+- `name` must be unique, â‰¥3 characters, start with letter, alphanumeric + underscore only
+- No duplicate transform names within table
 
 ---
 
@@ -164,69 +94,35 @@ Alert rules support the same template variables as dashboards:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅ | Summary table identifier |
-| `dashboard_var` | `string` | ✅ | Variable placeholder for summary table name in dashboard |
-| `parent_table_name` | `string` | ✅ | Name of the parent table to aggregate from |
-| `sql` | `SummarySqlFile` | ✅ | SQL file configuration for summary table |
+| `name` | `string` | âœ… | Summary table identifier |
+| `dashboard_var` | `string` | âœ… | Variable placeholder |
+| `parent_table_name` | `string` | âœ… | Parent table to aggregate from |
+| `sql` | `SummarySqlFile` | âœ… | SQL file configuration |
 
-### Validation Rules for SummaryTable
-- `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
-- `dashboard_var` must be unique across all summary tables in the bundle
-- `name` must be unique across all summary tables in the bundle
-- `parent_table_name` must reference a valid table name from the bundle's `tables` array
+### Validation Rules
+- `dashboard_var` must follow macro format, unique across summary tables
+- `parent_table_name` must reference valid table from bundle
+- SQL file supports template variables: `__PROJECT_NAME__`, `__SHARED_PROJECT__`, `__TABLE_NAME__`
 
-### Summary Table Template Variables
-
-Summary SQL files support these template variables:
-- `__PROJECT_NAME__` - Replaced with project name
-- `__TABLE_NAME__` - Replaced with `parent_table_name`
-
-### Example Summary SQL
-
+**Example summary SQL:**
 ```sql
--- summaries/mcdn_summary_min.sql
 SELECT 
   toStartOfMinute(timestamp) AS minute,
-  cdn_provider,
-  COUNT(*) AS requests,
-  SUM(bytes_sent) AS total_bytes,
-  AVG(response_time) AS avg_response_time
+  __SHARED_PROJECT___city_name(client_ip) AS city,
+  COUNT(*) AS requests
 FROM __PROJECT_NAME__.__TABLE_NAME__
-WHERE timestamp >= now() - INTERVAL 1 HOUR
-GROUP BY minute, cdn_provider
+GROUP BY minute, city
 ```
 
-When deployed with:
-- `__PROJECT_NAME__` = `sample_project`
-- `__TABLE_NAME__` = `mcdn_test` (from `parent_table_name`)
-
-Becomes:
+Becomes (with PROJECT_NAME=sample_project, SHARED_PROJECT=hdx_solutions, TABLE_NAME=mcdn_test):
 ```sql
 SELECT 
   toStartOfMinute(timestamp) AS minute,
-  cdn_provider,
-  COUNT(*) AS requests,
-  SUM(bytes_sent) AS total_bytes,
-  AVG(response_time) AS avg_response_time
+  hdx_solutions_city_name(client_ip) AS city,
+  COUNT(*) AS requests
 FROM sample_project.mcdn_test
-WHERE timestamp >= now() - INTERVAL 1 HOUR
-GROUP BY minute, cdn_provider
+GROUP BY minute, city
 ```
-
----
-
-## SummarySqlFile Object
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `path` | `string` | ✅ | Relative path to SQL file |
-| `sha256` | `string` | ❌ | Optional SHA256 hash of SQL file contents (64 hex characters) |
-
-### Validation Rules for SummarySqlFile
-- Path cannot start with `/`
-- Path cannot contain `..`
-- Path must end with `.sql`
-- Use `openssl dgst -sha256 <file_name>` to generate the sha256
 
 ---
 
@@ -234,167 +130,186 @@ GROUP BY minute, cdn_provider
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | ✅ | Relative path to transformation JSON |
-| `sha256` | `string` | ❌ | Optional SHA256 hash of transformation contents (64 hex characters) |
-| `sample` | `string` | ❌ | Deprecated field (ignored) |
+| `path` | `string` | âœ… | Relative path to transformation JSON |
+| `sha256` | `string` | âŒ | Optional SHA256 hash (64 hex characters) |
+| `sample` | `string` | âŒ | Deprecated (ignored) |
 
-### Validation Rules for Transform
-- `path` cannot start with `/`
-- `path` cannot contain `..`
-- `path` must end with `.json`
-- Transform JSON must be valid
+### Validation Rules
+- Path cannot start with `/` or contain `..`, must end with `.json`
 - Transform must have non-empty `name` field
 - Transform must have `settings.sample_data` (non-empty object or string)
-- If `subtype` field exists, must equal `"firehose"`
-- No duplicate transform names within same table
-- Use `openssl dgst -sha256 <file_name>` to generate the sha256
+- If `subtype` exists, must equal `"firehose"`
+- No duplicate transform names within table
 
 ### Transform Template Variables
 
-Transform SQL can reference custom functions and dictionaries:
-- `__PROJECT_NAME___function_name()` - Custom function call
-- `dictGet('__PROJECT_NAME___dict_name', 'column', key)` - Dictionary lookup
-
-### Example Transform with Template Variables
+Transform SQL can reference functions and dictionaries using template variables:
 
 ```json
 {
-  "name": "mcdn_akamai_ds2",
-  "type": "csv",
+  "name": "mcdn_akamai",
   "settings": {
-    "sql_transform": "SELECT \n  toUInt64(timestamp * 1000) AS timestamp,\n  __PROJECT_NAME___city_name(client_ip) AS city,\n  dictGet('__PROJECT_NAME___ua_cat_dict', 'category', user_agent) AS ua_category\nFROM {STREAM}",
-    "sample_data": {
-      "timestamp": 1234567890.123,
-      "client_ip": "1.2.3.4",
-      "user_agent": "Mozilla/5.0..."
-    }
+    "sql_transform": "SELECT __SHARED_PROJECT___city_name(ip) AS city, __PROJECT_NAME___custom_parser(data) AS parsed FROM {STREAM}",
+    "sample_data": {"ip": "1.2.3.4", "data": "..."}
   }
 }
 ```
 
-When deployed with `__PROJECT_NAME__` = `sample_project`, becomes:
-
+Becomes:
 ```sql
-SELECT 
-  toUInt64(timestamp * 1000) AS timestamp,
-  sample_project_city_name(client_ip) AS city,
-  dictGet('sample_project_ua_cat_dict', 'category', user_agent) AS ua_category
+SELECT hdx_solutions_city_name(ip) AS city, 
+       sample_project_custom_parser(data) AS parsed 
 FROM {STREAM}
 ```
 
-**Note**: Functions and dictionaries are automatically prefixed with project name by Hydrolix, so references must match:
-- Function deployed as: `sample_project_city_name`
-- Dictionary deployed as: `sample_project_ua_cat_dict`
-- SQL must reference with prefix: `sample_project_city_name()`, `dictGet('sample_project_ua_cat_dict', ...)`
+**Note**: Functions/dictionaries automatically prefixed with project name by Hydrolix, so SQL references must match deployed names.
 
 ---
 
-## Ui Object
+## Ui, Graphics, Metadata Objects
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `primary_url` | `string` | ✅ | HTTPS URL to primary documentation |
-| `method` | `Graphics` | ✅ | Method display information |
-| `source` | `Graphics` | ✅ | Source display information |
-| `data_category` | `string` | ✅ | Data category classification |
+**Ui**: `primary_url` (HTTPS), `method` (Graphics), `source` (Graphics), `data_category` (video/cdn/security)
 
-### Validation Rules for Ui
-- `primary_url` must start with `https://` or `file://`
-- `data_category` must be one of: `"video"`, `"cdn"`, `"security"`
-- `method.full_title` should align with `method` field (see naming conventions below)
-- `source.full_title` must be unique across all bundles
+**Graphics**: `full_title` (string), `icon_url` (HTTPS)
 
-### Method-Title Naming Conventions
+**Metadata**: `version` (X.Y.Z format), `maintainer` (valid email), `description` (non-empty), `channel_type` (AWS/Azure/GCP/3rdParty/Internal)
 
-| Method | Expected UI Title Contains |
-|--------|---------------------------|
-| `firehose` | "Amazon Data Firehose", "AWS Firehose", or "Kinesis Data Firehose" |
-| `s3` | "Amazon S3" or "AWS S3" |
-| `kinesis` | "Amazon Kinesis" or "AWS Kinesis" |
-| `http_streaming` | No specific requirement |
-| `http` | No specific requirement |
+**Method-title naming**: firehose â†’ "AWS Firehose", s3 â†’ "Amazon S3", kinesis â†’ "Amazon Kinesis"
 
-### Source-Title Naming Conventions
-
-- If `source` is `"waf"`, the `source.full_title` must contain "WAF" (case-insensitive)
+**Source-title naming**: waf source â†’ title contains "WAF"
 
 ---
 
-## Graphics Object
+## Dependencies Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `full_title` | `string` | ✅ | Display title for the component |
-| `icon_url` | `string` | ✅ | HTTPS URL to icon image |
-
-### Validation Rules for Graphics
-- `icon_url` must start with `https://` or `file://`
-
----
-
-## Metadata Object
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `version` | `string` | ✅ | Semantic version number |
-| `maintainer` | `string` | ✅ | Maintainer email address |
-| `description` | `string` | ✅ | Bundle description |
-| `channel_type` | `string` | ✅ | Distribution channel type |
-
-### Validation Rules for Metadata
-- `version` must follow semantic versioning format (e.g., `1.0.0`)
-- `version` must have exactly two dots (X.Y.Z)
-- `maintainer` must be a valid email address (contain `@` and `.`)
-- `description` cannot be empty or whitespace only
-- `channel_type` must be one of: `"AWS"`, `"Azure"`, `"GCP"`, `"3rdParty"`, `"Internal"`
-
----
-
-## MethodOverrides Object (Optional)
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `region` | `string` | ❌  | AWS region override |
-| `stream_prefix` | `string` | ❌  | Stream name prefix |
-
-### Validation Rules for MethodOverrides
-- No specific validation constraints beyond basic string format
-
----
-
-## Dependencies Object (Optional)
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `grafana` | `GrafanaDependencies` | ❌ | Grafana version and plugin requirements |
-| `hydrolix` | `HydrolixDependencies` | ❌ | Hydrolix cluster requirements |
-| `data-sources` | `DataSource[]` | ❌ | External data source configurations |
+| Field | Type | Description |
+|-------|------|-------------|
+| `grafana` | `GrafanaDependencies` | Grafana version and plugins |
+| `hydrolix` | `HydrolixDependencies` | Hydrolix resources |
+| `data-sources` | `DataSource[]` | External data sources |
 
 ### HydrolixDependencies Object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `cluster_version` | `string` | ❌ | Required Hydrolix cluster version |
-| `required_dictionaries` | `string[]` | ❌ | List of required dictionary names |
-| `required_functions` | `string[]` | ❌ | List of required function names |
+| Field | Type | Description |
+|-------|------|-------------|
+| `cluster_version` | `string` | Required cluster version |
+| `required_dictionaries` | `string[]` | Bundle-specific dictionaries (â†’ `{project}_{name}`) |
+| `required_functions` | `string[]` | Bundle-specific functions (â†’ `{project}_{name}`) |
+| `shared_dictionaries` | `string[]` | Shared dictionaries (â†’ `hdx_solutions_{name}`) |
+| `shared_functions` | `string[]` | Shared functions (â†’ `hdx_solutions_{name}`) |
 
-### Function and Dictionary Files
+### Validation Rules
+- **Shared resources** created in `hdx_solutions` project (shared across all bundles)
+- **Bundle-specific resources** created in bundle's project
+- **All declared resources must have local files** (deployment fails if missing)
+- **Empty arrays disable auto-discovery**: `"required_functions": []` explicitly means zero bundle-specific functions
+- **Omit for auto-discovery**: Don't include field to enable filesystem scanning
+- Auto-discovery only triggers when BOTH `required_*` AND `shared_*` omitted for a resource type
 
-**Functions** are defined in `functions/{name}.json`:
+---
 
+## Shared Resources Architecture
+
+### Resource Projects
+
+Resources are deployed to one of two projects based on their declaration:
+
+**hdx_solutions (Shared Project)**
+- Contains functions and dictionaries shared across all bundles
+- Resources prefixed with `hdx_solutions_` (e.g., `hdx_solutions_city_name`)
+- Maintained centrally by shared resources team
+- Created automatically if missing during deployment
+- Reused by all bundles that declare them as shared
+- Project created automatically if it doesn't exist
+
+**Bundle Project (e.g., sample_project)**
+- Contains bundle-specific resources unique to each bundle
+- Resources prefixed with project name (e.g., `sample_project_custom_parser`)
+- Maintained by bundle owner
+- Created during bundle deployment
+- Separate from other bundles
+
+### Template Variables
+
+**`__SHARED_PROJECT__`** - Replaced with shared project name (default: `hdx_solutions`)
+
+Use for shared resources:
+```sql
+SELECT __SHARED_PROJECT___city_name(ip) AS city
+FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
+```
+
+**`__PROJECT_NAME__`** - Replaced with bundle project name (e.g., `sample_project`)
+
+Use for bundle-specific resources:
+```sql
+SELECT __PROJECT_NAME___custom_parser(data) AS parsed
+FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
+```
+
+**Other template variables:**
+- `__DATASOURCE__` - Grafana datasource UID
+- `__DASHBOARD_UUID__` - Unique dashboard identifier
+- `__TABLE_NAME__` - Table name (in dashboards and summary SQL)
+
+### Cross-Project References
+
+Functions and dictionaries can reference resources from any project:
+
+```sql
+-- Bundle-specific function calling shared dictionary (valid!)
+CREATE FUNCTION sample_project_enrich AS
+(ip) -> dictGet('hdx_solutions_geoip_city', 'city_name', ip)
+
+-- Shared function calling another shared resource
+CREATE FUNCTION hdx_solutions_country_name AS
+(ip) -> dictGetString('hdx_solutions_geoip_locations', 'country', 
+                      hdx_solutions_geoname_id(ip))
+
+-- Transform using both shared and bundle-specific
+SELECT 
+  hdx_solutions_city_name(ip) AS city,
+  sample_project_custom_parser(data) AS parsed
+FROM sample_project.mcdn_test
+```
+
+---
+
+## Function and Dictionary Files
+
+### Function Files
+
+**Location**: `functions/{name}.json`
+
+**Shared function example** (`functions/city_name.json`):
 ```json
 {
   "name": "city_name",
   "description": "Get city name from IP address",
-  "sql": "(ip) -> dictGetString('__PROJECT_NAME___geoip_city_locations_en', 'city_name', __PROJECT_NAME___geoname_id(ip))"
+  "sql": "(ip) -> dictGetString('__SHARED_PROJECT___geoip_city_locations_en', 'city_name', __SHARED_PROJECT___geoname_id(ip))"
 }
 ```
 
-**Dictionaries** require two files:
+**Bundle-specific function example** (`functions/custom_parser.json`):
+```json
+{
+  "name": "custom_parser",
+  "description": "Parse custom log format",
+  "sql": "(data) -> dictGet('__PROJECT_NAME___custom_dict', 'value', JSONExtractString(data, 'key'))"
+}
+```
+
+**Deployment:**
+- Shared: Created as `hdx_solutions_city_name` in hdx_solutions project
+- Bundle-specific: Created as `sample_project_custom_parser` in bundle's project
+
+### Dictionary Files
+
+**Location**: TWO files required per dictionary
 1. Definition: `dictionaries/{name}.json`
 2. Data: `dictionaries/{name}.csv` (or `.yaml`, `.yml`, `.tsv`)
 
-**Dictionary definition example** (`dictionaries/ua_cat_dict.json`):
+**Definition example** (`dictionaries/ua_cat_dict.json`):
 ```json
 {
   "name": "ua_cat_dict",
@@ -418,7 +333,7 @@ FROM {STREAM}
 }
 ```
 
-**Dictionary data example** (`dictionaries/ua_cat_dict.yaml`):
+**Data example** (`dictionaries/ua_cat_dict.yaml`):
 ```yaml
 - regexp: ".*Googlebot.*"
   ua_category: "search_engine_crawler"
@@ -428,35 +343,54 @@ FROM {STREAM}
   is_bot: "false"
 ```
 
+**Deployment:**
+- Shared: Created as `hdx_solutions_ua_cat_dict` in hdx_solutions, data file uploaded to hdx_solutions
+- Bundle-specific: Created as `sample_project_ua_cat_dict` in bundle's project, data file uploaded to bundle's project
+
 ### Dictionary Zip Files
 
 Large dictionary files can be packaged in `dictionaries/dictionaries.zip`:
 - Bundle Deployer automatically extracts to `dictionaries/.extracted/`
-- Extraction uses `-j` flag to flatten directory structure
+- Extraction flattens directory structure (uses `-j` flag)
 - `.extracted/` directory should be in `.gitignore`
-- Files in root `dictionaries/` override extracted files
+- Files in root `dictionaries/` override extracted files (useful for custom overrides)
+- Both shared and bundle-specific dictionaries can be in the zip
+
+**Example:**
+```
+dictionaries/
+â”œâ”€â”€ dictionaries.zip              # Large files (committed to git or Git LFS)
+â”œâ”€â”€ .extracted/                   # Auto-created (gitignored)
+â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.json
+â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.csv
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ ua_cat_dict.json              # Custom override (bundle-specific)
+â””â”€â”€ ua_cat_dict.yaml
+```
 
 ### Auto-Discovery Mode
 
 If `dependencies.hydrolix` is empty or omitted, the Bundle Deployer automatically:
 1. Scans `functions/` for all `.json` files
-2. Extracts `dictionaries.zip` (if present)
+2. Extracts `dictionaries.zip` (if present) to `.extracted/`
 3. Scans `dictionaries/` and `.extracted/` for dictionary pairs (`.json` + data file)
-4. Deploys all discovered resources
+4. Deploys all discovered resources as **bundle-specific** in bundle's project
+5. **No shared resources are created** (must be explicitly declared)
 
-**Explicit mode** (recommended):
+**Explicit mode** (recommended for production):
 ```json
 {
   "dependencies": {
     "hydrolix": {
-      "required_functions": ["city_name", "breadcrumbs"],
-      "required_dictionaries": ["ua_cat_dict", "geoip_city_blocks_ipv4"]
+      "shared_functions": ["city_name", "breadcrumbs"],
+      "shared_dictionaries": ["geoip_city_blocks_ipv4"],
+      "required_dictionaries": ["ua_cat_dict"]
     }
   }
 }
 ```
 
-**Auto-discovery mode** (zero config):
+**Auto-discovery mode** (for vendor bundles):
 ```json
 {
   "dependencies": {
@@ -465,29 +399,88 @@ If `dependencies.hydrolix` is empty or omitted, the Bundle Deployer automaticall
 }
 ```
 
+**Hybrid mode** (shared explicit, bundle-specific auto-discover):
+```json
+{
+  "dependencies": {
+    "hydrolix": {
+      "shared_functions": ["city_name"]
+      // Omit required_functions to auto-discover bundle-specific
+    }
+  }
+}
+```
+
+### Auto-Discovery Trigger Logic
+
+Auto-discovery is triggered when **both** of the following are true for a resource type:
+- `required_*` field is omitted (not present in bundle.json)
+- `shared_*` field is omitted (not present in bundle.json)
+
+**Example triggering auto-discovery:**
+```json
+{
+  "dependencies": {
+    "hydrolix": {}  // No functions or dictionaries declared
+  }
+}
+```
+
+**Example NOT triggering auto-discovery:**
+```json
+{
+  "dependencies": {
+    "hydrolix": {
+      "shared_functions": ["city_name"]
+      // required_functions omitted - NO auto-discovery (shared declared)
+    }
+  }
+}
+```
+
+### Empty Array Behavior
+
+**Critical**: Empty arrays explicitly declare zero resources and disable auto-discovery:
+
+```json
+{
+  "required_functions": [],  // "I have zero bundle-specific functions"
+  "shared_functions": ["city_name"]
+}
+```
+
+This configuration:
+- âœ… Creates `city_name` in `hdx_solutions`
+- âŒ Does NOT auto-discover bundle-specific functions
+- Result: Only shared functions exist
+
+**To enable auto-discovery**, omit the field entirely:
+```json
+{
+  "shared_functions": ["city_name"]
+  // No required_functions field - enables auto-discovery for bundle-specific
+}
+```
+
 ### Validation Rules for Dependencies
 
-#### Function Dependencies
-- ⚠️ Warning if function declared but `functions/{name}.json` missing
-- ⚠️ Warning if function used in transform SQL but not declared
-- ⚠️ Warning if function declared but never used in transforms
+#### Declared Resources (Shared or Bundle-Specific)
+- âŒ **Deployment fails** if declared function missing `functions/{name}.json`
+- âŒ **Deployment fails** if declared dictionary missing definition or data file
+- âš ï¸ Warning if resource declared but never used in transforms
+- âš ï¸ Warning if resource used in SQL but not declared
 
-#### Dictionary Dependencies
-- ⚠️ Warning if dictionary declared but `dictionaries/{name}.json` missing
-- ⚠️ Warning if dictionary declared but data file missing
-- ⚠️ Warning if dictionary used in transform SQL (`dictGet`, `dictGetString`) but not declared
-- ⚠️ Warning if dictionary declared but never used in transforms
+#### File Search Paths
+Dictionaries searched in order:
+1. `dictionaries/{name}.json` and `dictionaries/{name}.[csv/yaml/yml/tsv]`
+2. `dictionaries/.extracted/{name}.json` and `dictionaries/.extracted/{name}.[csv/yaml/yml/tsv]`
 
-#### Production Mode (`--production` flag)
-- ❌ Error if declared function doesn't exist on cluster (with project prefix)
-- ❌ Error if declared dictionary doesn't exist on cluster (with project prefix)
-- ⚠️ Warning if local definition files missing
+First match is used, allowing root files to override extracted files.
 
 ---
 
 ## Valid Methods
 
-The `method` field must be one of:
 - `"firehose"` - Amazon Data Firehose
 - `"s3"` - Amazon S3
 - `"kinesis"` - Amazon Kinesis
@@ -501,143 +494,57 @@ The `method` field must be one of:
 
 ### Macro Variable Format
 
-Several fields use macro variable format for template substitution:
-
 **Format**: `__VARIABLE_NAME__`
 
 **Rules**:
 - Must start and end with double underscores (`__`)
-- Inner content must be uppercase letters, numerals (0-9), and single underscores only
-- No consecutive underscores within the variable name
-- Minimum 5 characters total (e.g., `__X__`)
-- Inner content cannot be empty
+- Inner content: uppercase letters, numerals (0-9), single underscores only
+- No consecutive underscores within variable name
+- Minimum 5 characters total
 
-**Examples**:
-- ✅ `__PROJECT_NAME__`
-- ✅ `__TABLE_NAME__`
-- ✅ `__DATA_SOURCE__`
-- ✅ `__TABLE1__`
-- ✅ `__SUMMARY_TABLE_NAME_1__`
-- ❌ `_PROJECT_` (single underscores)
-- ❌ `__project_name__` (lowercase)
-- ❌ `__PROJECT__NAME__` (consecutive underscores)
-- ❌ `____` (empty inner content)
+**Valid examples**: `__PROJECT_NAME__`, `__SHARED_PROJECT__`, `__TABLE_NAME__`, `__TABLE1__`
+
+**Invalid examples**: `_PROJECT_` (single underscores), `__project__` (lowercase), `__PROJECT__NAME__` (consecutive underscores)
 
 ### Standard Template Variables
 
 | Variable | Used In | Replaced With | Example |
 |----------|---------|---------------|---------|
-| `__PROJECT_NAME__` | Everywhere | Project name | `sample_project` |
+| `__PROJECT_NAME__` | SQL, Dashboards | Bundle project name | `sample_project` |
+| `__SHARED_PROJECT__` | SQL, Dashboards | Shared project name | `hdx_solutions` |
 | `__DATASOURCE__` | Dashboards | Grafana datasource UID | `abc123def456` |
 | `__DASHBOARD_UUID__` | Dashboards | Unique dashboard ID | `xyz789` |
-| `__TABLE_NAME__` | Dashboards | Table name | `mcdn_test` |
-| `__SUMMARY_TABLE_NAME_1__` | Dashboards | Summary table name | `mcdn_summary_min` |
+| `__TABLE_NAME__` | Dashboards, Summary SQL | Table name | `mcdn_test` |
 
-### Using `__PROJECT_NAME__` in SQL
+### Using Template Variables in SQL
 
-**Critical**: Hydrolix automatically prefixes functions and dictionaries with the project name. Always use `__PROJECT_NAME__` to ensure references match deployed names.
+**For shared resources** (in hdx_solutions project):
+```sql
+-- Function call
+SELECT __SHARED_PROJECT___city_name(ip) AS city
 
-**In function definitions** (`functions/city_name.json`):
-```json
-{
-  "sql": "(ip) -> dictGetString('__PROJECT_NAME___geoip_dict', 'city', ip)"
-}
+-- Dictionary lookup
+FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
 ```
 
-**In transform SQL**:
+**For bundle-specific resources** (in bundle's project):
 ```sql
+-- Function call
+SELECT __PROJECT_NAME___custom_parser(data) AS parsed
+
+-- Dictionary lookup
+FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
+```
+
+**Mixed usage** (common pattern):
+```sql
+-- Bundle-specific function using shared dictionary
 SELECT 
-  __PROJECT_NAME___city_name(client_ip) AS city,
-  dictGet('__PROJECT_NAME___ua_cat_dict', 'category', user_agent) AS category
+  __PROJECT_NAME___enrich_data(
+    ip,
+    dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
+  ) AS enriched
 FROM {STREAM}
-```
-
-**After deployment** (with `__PROJECT_NAME__` = `sample_project`):
-```sql
-SELECT 
-  sample_project_city_name(client_ip) AS city,
-  dictGet('sample_project_ua_cat_dict', 'category', user_agent) AS category
-FROM sample_project.mcdn_test
-```
-
-**Deployed resource names**:
-- Function: `sample_project_city_name` (Hydrolix adds prefix)
-- Dictionary: `sample_project_ua_cat_dict` (Hydrolix adds prefix)
-- Table: `sample_project.mcdn_test` (full qualified name)
-
-### Dashboard Variable Replacement
-
-**In dashboard JSON**:
-```json
-{
-  "dashboard": {
-    "uid": "__DASHBOARD_UUID__",
-    "title": "CDN Dashboard"
-  },
-  "datasource": {
-    "uid": "__DATASOURCE__"
-  },
-  "panels": [
-    {
-      "targets": [
-        {
-          "query": "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__"
-        }
-      ]
-    }
-  ]
-}
-```
-
-**After deployment**:
-```json
-{
-  "dashboard": {
-    "uid": "xyz789abc",
-    "title": "CDN Dashboard"
-  },
-  "datasource": {
-    "uid": "abc123def456"
-  },
-  "panels": [
-    {
-      "targets": [
-        {
-          "query": "SELECT * FROM sample_project.mcdn_test"
-        }
-      ]
-    }
-  ]
-}
-```
-
----
-
-## URL Validation
-
-HTTPS URLs must:
-- Start with `https://` or `file://`
-- Be valid URLs according to URL parsing standards
-
-Path fields must:
-- Not start with `/`
-- Not contain `..` (directory traversal)
-- End with appropriate extension:
-  - `.json` for dashboards, transforms, functions, dictionaries, alert rules
-  - `.sql` for summary table SQL files
-  - `.csv`, `.yaml`, `.yml`, or `.tsv` for dictionary data files
-
----
-
-## SHA256 Hash Format
-
-SHA256 hash fields must:
-- Be exactly 64 characters long
-- Contain only hexadecimal characters (0-9, a-f, A-F)
-
-Generate checksums with:
-```bash
-openssl dgst -sha256 file_name.json
 ```
 
 ---
@@ -653,8 +560,7 @@ openssl dgst -sha256 file_name.json
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundles/mcdn_test",
   "dashboard": {
     "path": "dashboards/CDN Dashboard.json",
-    "project_var": "__PROJECT_NAME__",
-    "sha256": "abc123..."
+    "project_var": "__PROJECT_NAME__"
   },
   "other_dashboards": [
     {
@@ -663,13 +569,25 @@ openssl dgst -sha256 file_name.json
     }
   ],
   "alert_rules": {
-    "path": "dashboards/alert-rules.json",
-    "sha256": "def456..."
+    "path": "dashboards/alert-rules.json"
   },
   "dependencies": {
     "hydrolix": {
-      "required_functions": ["city_name", "breadcrumbs"],
-      "required_dictionaries": ["ua_cat_dict", "geoip_city_blocks_ipv4"]
+      "required_dictionaries": ["ua_cat_dict"],
+      "shared_functions": ["city_name", "breadcrumbs", "country_iso_code", "geoname_id"],
+      "shared_dictionaries": [
+        "geoip_asn_blocks_ipv4",
+        "geoip_asn_blocks_ipv6",
+        "geoip_city_blocks_ipv4",
+        "geoip_city_blocks_ipv6",
+        "geoip_city_locations_en"
+      ]
+    },
+    "grafana": {
+      "version": "^12.1.0",
+      "plugins": [
+        {"name": "grafana-clickhouse-datasource", "version": "^4.10.1"}
+      ]
     }
   },
   "tables": [
@@ -677,13 +595,8 @@ openssl dgst -sha256 file_name.json
       "dashboard_var": "__TABLE_NAME__",
       "name": "mcdn_test",
       "transforms": [
-        {
-          "path": "transformations/mcdn_akamai_ds2.json",
-          "sha256": "789abc..."
-        },
-        {
-          "path": "transformations/mcdn_cloudflare.json"
-        }
+        {"path": "transformations/mcdn_akamai.json"},
+        {"path": "transformations/mcdn_cloudflare.json"}
       ]
     }
   ],
@@ -692,18 +605,13 @@ openssl dgst -sha256 file_name.json
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "mcdn_summary_min",
       "parent_table_name": "mcdn_test",
-      "sql": {
-        "path": "summaries/mcdn_summary_min.sql",
-        "sha256": "012def..."
-      }
+      "sql": {"path": "summaries/mcdn_summary_min.sql"}
     },
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "mcdn_summary_hour",
       "parent_table_name": "mcdn_test",
-      "sql": {
-        "path": "summaries/mcdn_summary_hour.sql"
-      }
+      "sql": {"path": "summaries/mcdn_summary_hour.sql"}
     }
   ],
   "ui": {
@@ -720,12 +628,21 @@ openssl dgst -sha256 file_name.json
   },
   "metadata": {
     "version": "1.0.0",
-    "maintainer": "user@example.com",
-    "description": "MCDN multi-CDN integration with functions and dictionaries",
+    "maintainer": "kevin.borkman@hydrolix.io",
+    "description": "MCDN multi-CDN integration with shared GeoIP functions",
     "channel_type": "3rdParty"
   }
 }
 ```
+
+This example demonstrates:
+- 4 shared functions in `hdx_solutions` project
+- 5 shared dictionaries in `hdx_solutions` project
+- 1 bundle-specific dictionary in bundle's project
+- 2 summary tables for pre-aggregation
+- Multiple transforms for different CDN formats
+- Alert rules configuration
+- Additional dashboards
 
 ---
 
@@ -733,103 +650,114 @@ openssl dgst -sha256 file_name.json
 
 ```
 my-bundles/mcdn_test/
-├── bundle.json                         # Bundle manifest (required)
-├── functions/                          # Custom SQL functions (optional)
-│   ├── city_name.json
-│   └── breadcrumbs.json
-├── dictionaries/                       # Lookup tables (optional)
-│   ├── dictionaries.zip               # Large files (auto-extracted)
-│   ├── .extracted/                    # Auto-created (gitignored)
-│   ├── ua_cat_dict.json               # Dictionary definition
-│   ├── ua_cat_dict.yaml               # Dictionary data
-│   ├── geoip_city_blocks_ipv4.json
-│   └── geoip_city_blocks_ipv4.csv
-├── transformations/                    # Data parsing schemas (required)
-│   ├── mcdn_akamai_ds2.json
-│   ├── mcdn_cloudflare.json
-│   └── mcdn_fastly.json
-├── dashboards/                         # Grafana visualizations (required)
-│   ├── CDN Dashboard.json             # Primary dashboard
-│   ├── alert-rules.json               # Alert rules (optional)
-│   └── Raw Logs.json                  # Additional dashboards (optional)
-└── summaries/                          # Pre-aggregated views (optional)
-    ├── mcdn_summary_min.sql
-    └── mcdn_summary_hour.sql
+â”œâ”€â”€ bundle.json                         # Bundle manifest (required)
+â”œâ”€â”€ functions/                          # Custom SQL functions (optional)
+â”‚   â”œâ”€â”€ city_name.json                 # Shared or bundle-specific
+â”‚   â”œâ”€â”€ breadcrumbs.json
+â”‚   â”œâ”€â”€ country_iso_code.json
+â”‚   â””â”€â”€ geoname_id.json
+â”œâ”€â”€ dictionaries/                       # Lookup tables (optional)
+â”‚   â”œâ”€â”€ dictionaries.zip               # Large files (auto-extracted)
+â”‚   â”œâ”€â”€ .extracted/                    # Auto-created (gitignored)
+â”‚   â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.json
+â”‚   â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.csv
+â”‚   â”‚   â””â”€â”€ ... (other shared dictionaries from zip)
+â”‚   â”œâ”€â”€ ua_cat_dict.json               # Bundle-specific
+â”‚   â””â”€â”€ ua_cat_dict.yaml
+â”œâ”€â”€ transformations/                    # Data parsing schemas (required)
+â”‚   â”œâ”€â”€ mcdn_akamai.json
+â”‚   â”œâ”€â”€ mcdn_cloudflare.json
+â”‚   â””â”€â”€ mcdn_fastly.json
+â”œâ”€â”€ dashboards/                         # Grafana visualizations (required)
+â”‚   â”œâ”€â”€ CDN Dashboard.json             # Primary dashboard
+â”‚   â”œâ”€â”€ alert-rules.json               # Alert rules (optional)
+â”‚   â””â”€â”€ Raw Logs.json                  # Additional dashboards (optional)
+â””â”€â”€ summaries/                          # Pre-aggregated views (optional)
+    â”œâ”€â”€ mcdn_summary_min.sql
+    â””â”€â”€ mcdn_summary_hour.sql
 ```
 
 ---
 
 ## Validation Summary
 
-### Structural Validation
-✅ Bundle JSON structure  
-✅ Required fields present  
-✅ Field types correct  
-✅ Enum values valid  
-✅ URL formats valid  
-✅ Path formats valid  
-✅ Macro variable formats valid
+### What Gets Validated (Always)
 
-### Content Validation
-✅ File existence  
-✅ JSON syntax  
-✅ Dashboard structure  
-✅ Transform structure  
-✅ Sample data presence  
-✅ Alert rules structure (if present)  
-✅ Summary table SQL (if present)
+**Structural**: Bundle JSON structure, required fields, field types, enums, URLs, paths, macro variables
 
-### Naming Validation
-✅ No duplicate table names  
-✅ No duplicate dashboard variables  
-✅ Method-title consistency  
-✅ Source-title consistency  
-✅ Bundle name includes source and method  
-✅ Table names start with letter  
-✅ Table names are alphanumeric + underscore only
+**Content**: File existence, JSON syntax, dashboard structure, transforms, sample data, alert rules, summary tables
 
-### Dependency Validation
-✅ Function files exist (warning if missing)  
-✅ Dictionary files exist (warning if missing)  
-✅ SQL references match declarations (warning if mismatch)  
-✅ No unused declarations (warning)
+**Naming**: No duplicates, method-title consistency, source-title consistency, table name format
 
-### Cross-Bundle Validation
-✅ No duplicate bundle names (global)  
-✅ No duplicate UI source titles (global)  
-✅ No duplicate table names (global)  
-✅ No duplicate base URLs (global)
+**Dependencies**: 
+- Shared function files exist (deployment fails if missing)
+- Shared dictionary files exist (deployment fails if missing)
+- Bundle-specific function files exist (deployment fails if missing)
+- Bundle-specific dictionary files exist (deployment fails if missing)
+- SQL references match declarations (warnings for mismatches)
 
-### Integration Testing (with `--local`)
-✅ Dictionary zip extraction  
-✅ Function creation in Hydrolix  
-✅ Dictionary creation in Hydrolix  
-✅ Table creation  
-✅ Transform deployment  
-✅ Sample data insertion  
-✅ Summary table creation  
-✅ Grafana datasource creation  
-✅ Dashboard deployment  
-✅ Alert rules deployment  
-✅ Headless browser testing
+**Cross-Bundle**: No duplicate names, titles, tables, URLs globally
+
+### What Gets Tested (With `--local`)
+
+**Shared Resources**: hdx_solutions project creation, shared function/dictionary creation, idempotent reuse
+
+**Bundle Resources**: Zip extraction, auto-discovery, bundle-specific function/dictionary creation
+
+**Data Pipeline**: Table creation, transform deployment, sample data insertion, summary tables
+
+**Grafana**: Datasource creation, dashboard deployment, alert rules
+
+**Browser**: Headless Chrome testing, error detection
 
 ---
 
 ## Best Practices
 
-### 1. Always Use Template Variables
+### 1. Use Correct Template Variables
 
 ```sql
--- ✅ Correct
-SELECT __PROJECT_NAME___city_name(ip) AS city
-FROM __PROJECT_NAME__.__TABLE_NAME__
+-- âœ… Shared resources
+SELECT __SHARED_PROJECT___city_name(ip) AS city
+FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
 
--- ❌ Wrong (hardcoded)
-SELECT sample_project_city_name(ip) AS city
-FROM sample_project.mcdn_test
+-- âœ… Bundle-specific resources
+SELECT __PROJECT_NAME___custom_parser(data) AS parsed
+FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
+
+-- âŒ Wrong (hardcoded project names)
+SELECT sample_project_city_name(ip)
+SELECT reference_city_name(ip)
 ```
 
-### 2. Include Sample Data
+### 2. Declare Shared Resources Explicitly
+
+For resources used by multiple bundles:
+```json
+{
+  "shared_functions": ["city_name", "breadcrumbs"],
+  "shared_dictionaries": ["geoip_city_blocks_ipv4"]
+}
+```
+
+**Why**: Clear documentation, proper categorization, prevents duplicates, easier maintenance
+
+### 3. Don't Use Empty Arrays
+
+```json
+// âŒ Empty array disables auto-discovery
+{
+  "required_functions": [],
+  "shared_functions": ["city_name"]
+}
+
+// âœ… Omit field to enable auto-discovery
+{
+  "shared_functions": ["city_name"]
+}
+```
+
+### 4. Include Sample Data
 
 Every transform must have `settings.sample_data`:
 ```json
@@ -837,37 +765,21 @@ Every transform must have `settings.sample_data`:
   "settings": {
     "sample_data": {
       "timestamp": 1234567890.123,
-      "client_ip": "1.2.3.4",
-      "user_agent": "Mozilla/5.0..."
+      "client_ip": "1.2.3.4"
     }
   }
 }
 ```
 
-### 3. Declare Dependencies
+### 5. Structure Dictionaries Properly
 
-**Explicit mode** for production bundles:
-```json
-{
-  "dependencies": {
-    "hydrolix": {
-      "required_functions": ["city_name"],
-      "required_dictionaries": ["ua_cat_dict"]
-    }
-  }
-}
-```
+**Required**: Two files per dictionary
+1. `dictionaries/{name}.json` - Definition
+2. `dictionaries/{name}.csv` - Data (or `.yaml`, `.yml`, `.tsv`)
 
-**Auto-discovery mode** for vendor bundles:
-```json
-{
-  "dependencies": {
-    "hydrolix": {}
-  }
-}
-```
+**For large files**: Package in `dictionaries.zip`, add `.extracted/` to `.gitignore`
 
-### 4. Use Checksums for Critical Files
+### 6. Use Checksums for Critical Files
 
 ```json
 {
@@ -879,27 +791,6 @@ Every transform must have `settings.sample_data`:
 ```
 
 Generate with: `openssl dgst -sha256 file_name.json`
-
-### 5. Structure Dictionaries Properly
-
-**Two files required**:
-1. `dictionaries/{name}.json` - Definition
-2. `dictionaries/{name}.csv` - Data (or `.yaml`, `.yml`, `.tsv`)
-
-**Large dictionaries**: Package in `dictionaries.zip` and add `.extracted/` to `.gitignore`
-
-### 6. Test Incrementally
-
-```bash
-# 1. Validate structure
-deno run --allow-all src/main.ts mcdn_test
-
-# 2. Test dashboard only
-deno run --allow-all src/main.ts --local-dashboard-only mcdn_test
-
-# 3. Full integration test
-deno run --allow-all src/main.ts --local mcdn_test
-```
 
 ---
 
@@ -914,14 +805,22 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### "Dashboard must have __DATASOURCE__"
 **Solution**: Add `"datasource": "__DATASOURCE__"` to dashboard JSON
 
-### "Unknown function sample_project_city_name"
-**Solution**: Ensure function SQL uses `__PROJECT_NAME__` and function was created successfully
+### "Shared function 'city_name' declared but file not found"
+**Solution**: Add `functions/city_name.json`, OR remove from `shared_functions`, OR check spelling
+
+### "Auto-discovering even though shared declared"
+**Cause**: Empty array in bundle.json:
+```json
+"required_functions": [],  // âŒ Disables auto-discovery
+```
+
+**Solution**: Remove empty array entirely
+
+### "Unknown function hdx_solutions_city_name"
+**Solution**: Ensure SQL uses `__SHARED_PROJECT__` template variable for shared functions, verify function created in hdx_solutions
 
 ### "Duplicate table name"
-**Solution**: Ensure all table names are unique within bundle
-
-### "Base URL doesn't match expected format"
-**Solution**: Update `base_url` to match GitHub repository path
+**Solution**: Ensure table names unique within bundle and across all bundles
 
 ---
 
@@ -933,9 +832,9 @@ deno run --allow-all src/main.ts --local mcdn_test
 - [Bundle Deployer.md](./Bundle%20Deployer.md) - Complete user guide
 - [Hydrolix Docs](https://docs.hydrolix.io/) - Platform reference
 
-**Validation Errors**:
+**For validation errors**:
 - Read error message carefully
 - Check referenced file and line
-- Review this specification
+- Review validation rules in this document
 - Examine example bundles in `my-bundles/`
-- Use cleanup tool for fresh starts
+- Use cleanup tool: `deno run --allow-all src/cleanup.ts --all your_bundle --dry-run`

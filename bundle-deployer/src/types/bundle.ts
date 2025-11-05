@@ -94,8 +94,10 @@ export interface GrafanaPlugin {
 
 export interface HydrolixDependencies {
   cluster_version?: string;
-  required_dictionaries?: string[];  
-  required_functions?: string[];     
+  required_dictionaries?: string[];
+  required_functions?: string[];   
+  shared_dictionaries?: string[];       
+  shared_functions?: string[];         
 }
 
 export interface DataSource {
@@ -165,8 +167,6 @@ export function validateBundle(bundle: Bundle): void {
   
   validateHttpsUrl(bundle.ui.method.icon_url, "ui.method.icon_url");
   validateHttpsUrl(bundle.ui.source.icon_url, "ui.source.icon_url");
-  
-  // Dependencies are now just strings - no validation needed on structure
 }
 
 function validateDashboard(dashboard: Dashboard): void {
@@ -270,4 +270,28 @@ function validateSha256(hash: string): void {
   if (!/^[0-9a-fA-F]+$/.test(hash)) {
     throw new Error(`${hash} must contain only hexadecimal characters`);
   }
+}
+
+// Helper function to get all dictionaries (both types)
+export function getAllDictionaries(bundle: Bundle): {
+  bundleSpecific: string[];
+  shared: string[];
+} {
+  const deps = bundle.dependencies?.hydrolix;
+  return {
+    bundleSpecific: deps?.required_dictionaries || [],
+    shared: deps?.shared_dictionaries || []
+  };
+}
+
+// Helper function to get all functions (both types)
+export function getAllFunctions(bundle: Bundle): {
+  bundleSpecific: string[];
+  shared: string[];
+} {
+  const deps = bundle.dependencies?.hydrolix;
+  return {
+    bundleSpecific: deps?.required_functions || [],
+    shared: deps?.shared_functions || []
+  };
 }

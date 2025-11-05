@@ -1,5 +1,5 @@
 {
-    "description": "Country ISO Code",
-    "name": "country_iso_code",
-    "sql": "(ip) -> dictGetString (\n  '__PROJECT_NAME___geoip_city_locations_en',\n  'country_iso_code',\n  __PROJECT_NAME___geoname_id (assumeNotNull (ip))\n)"
+  "description": "Country ISO Code",
+  "name": "country_iso_code",
+  "sql": "(ip) -> dictGetString (\n  '__SHARED_PROJECT___geoip_city_locations_en',\n  'country_iso_code',\n  __SHARED_PROJECT___geoname_id(assumeNotNull (ip))\n)"
 }

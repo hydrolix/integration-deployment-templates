@@ -1,8 +1,10 @@
 // Dashboard-only deployment (no table/data creation) with alert rules support
+// UPDATED: Returns array of all dashboard UIDs for plugin validation
 
 import type { Bundle, Output } from "./types/bundle.ts";
 import * as grafana from "./grafana/interface.ts";
 import * as hdx from "./hdx.ts";
+import * as hdxShared from "./hdx_shared.ts";
 import { GRAFANA_LOCATION } from "./grafana/container.ts";
 
 const BUNDLE_TESTING_CLUSTER = Deno.env.get("BUNDLE_TESTING_CLUSTER") || "";
@@ -11,8 +13,9 @@ export async function run(
   base: string,
   bundle: Bundle,
   output: Output
-): Promise<string> {
+): Promise<string[]> {  // ← CHANGED: Returns array instead of string
   const projectName = hdx.createProjectName();
+  const sharedProjectName = hdxShared.getSharedProjectName();
   
   // Create datalink
   const datalink = await grafana.createDatalink(projectName);
@@ -23,7 +26,7 @@ export async function run(
   output.datalink = datalink;
   
   // Load and process dashboard template
-  let dashboardData = await loadDashboardTemplate(base, bundle, projectName, datalink);
+  let dashboardData = await loadDashboardTemplate(base, bundle, projectName, datalink, sharedProjectName);
   
   // Replace table variables with table names
   for (const table of bundle.tables) {
@@ -44,6 +47,9 @@ export async function run(
   
   output.dashboard_id = dashboardId;
   
+  // Collect all dashboard UIDs
+  const allDashboardUids: string[] = [dashboardId];  // ← ADDED: Array to collect UIDs
+  
   // Create other dashboards if present
   if (bundle.other_dashboards) {
     for (const otherDash of bundle.other_dashboards) {
@@ -55,6 +61,7 @@ export async function run(
       otherDashboardData = otherDashboardData.replace(/__PROJECT_NAME__/g, projectName);
       otherDashboardData = otherDashboardData.replace(/__DATASOURCE__/g, datalink);
       otherDashboardData = otherDashboardData.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+      otherDashboardData = otherDashboardData.replace(/__SHARED_PROJECT__/g, sharedProjectName);
 
       // Replace VAR_SUMMARY variables
       if (bundle.summary_tables && bundle.summary_tables.length > 0) {
@@ -76,24 +83,26 @@ export async function run(
         }
       }
 
-      await grafana.createDashboard(otherDashboardData);
-      console.log(`✓ Created dashboard: ${otherDash.path}`);
+      const otherDashUid = await grafana.createDashboard(otherDashboardData);  // ← CHANGED: Capture UID
+      allDashboardUids.push(otherDashUid);  // ← ADDED: Add to collection
+      console.log(`✓ Created dashboard: ${otherDash.path} (UID: ${otherDashUid})`);
     }
   }
   
   // Create alert rules if present
   if (bundle.alert_rules) {
-    await createAlertRules(base, bundle, projectName, datalink, dashboardId);
+    await createAlertRules(base, bundle, projectName, datalink, dashboardId, sharedProjectName);
   }
   
-  return dashboardId;
+  return allDashboardUids;  // ← CHANGED: Return array instead of single UID
 }
 
 async function loadDashboardTemplate(
   base: string,
   bundle: Bundle,
   projectName: string,
-  datalink: string
+  datalink: string,
+  sharedProjectName: string
 ): Promise<string> {
   const path = `${base}/${bundle.dashboard.path}`;
   
@@ -102,6 +111,7 @@ async function loadDashboardTemplate(
   dashboard = dashboard.replace(/__PROJECT_NAME__/g, projectName);
   dashboard = dashboard.replace(/__DATASOURCE__/g, datalink);
   dashboard = dashboard.replace(/__DASHBOARD_UUID__/g, crypto.randomUUID());
+  dashboard = dashboard.replace(/__SHARED_PROJECT__/g, sharedProjectName);
   
   return dashboard;
 }
@@ -111,7 +121,8 @@ async function createAlertRules(
   bundle: Bundle,
   projectName: string,
   datalink: string,
-  dashboardId: string
+  dashboardId: string,
+  sharedProjectName: string
 ): Promise<void> {
   if (!bundle.alert_rules) {
     return;
@@ -126,6 +137,7 @@ async function createAlertRules(
   alertRulesContent = alertRulesContent.replace(/__PROJECT_NAME__/g, projectName);
   alertRulesContent = alertRulesContent.replace(/__DATASOURCE__/g, datalink);
   alertRulesContent = alertRulesContent.replace(/__DASHBOARD_UUID__/g, dashboardId);
+  alertRulesContent = alertRulesContent.replace(/__SHARED_PROJECT__/g, sharedProjectName);
   
   // Replace table variables with full table names
   for (const table of bundle.tables) {
