@@ -32,11 +32,11 @@ The Bundle Deployer supports shared resources that live in a central `hdx_soluti
 - **Bundle-Specific Resources** - Functions and dictionaries unique to a specific bundle
 
 **Benefits:**
-- âœ… No duplication - shared resources created once, used by all bundles
-- âœ… Easier maintenance - update shared resources in one centralized location
-- âœ… Smaller bundles - don't package common dictionaries repeatedly
-- âœ… Consistent behavior - all bundles use same GeoIP/UA parsing logic
-- âœ… Faster deployments - skip creation of resources that already exist
+- ✅ No duplication - shared resources created once, used by all bundles
+- ✅ Easier maintenance - update shared resources in one centralized location
+- ✅ Smaller bundles - don't package common dictionaries repeatedly
+- ✅ Consistent behavior - all bundles use same GeoIP/UA parsing logic
+- ✅ Faster deployments - skip creation of resources that already exist
 
 **Resource Projects:**
 - **hdx_solutions** - Shared resources (e.g., `hdx_solutions_city_name`, `hdx_solutions_geoip_city`)
@@ -183,10 +183,10 @@ The Bundle Deployer can automatically discover and deploy resources:
 ```
 
 **What happens:**
-- âœ… Creates shared resources in `hdx_solutions`
-- âœ… Creates bundle-specific resources in `sample_project`
-- âœ… Validates all declared resources have local files
-- âœ… No auto-discovery
+- ✅ Creates shared resources in `hdx_solutions`
+- ✅ Creates bundle-specific resources in `sample_project`
+- ✅ Validates all declared resources have local files
+- ✅ No auto-discovery
 
 ### Auto-Discovery Mode (Zero Config)
 ```json
@@ -217,16 +217,16 @@ The tool automatically:
 ```
 
 **What happens:**
-- âœ… Creates declared shared resources in `hdx_solutions`
-- ðŸ” Auto-discovers bundle-specific resources from filesystem
-- âœ… Best of both worlds
+- ✅ Creates declared shared resources in `hdx_solutions`
+- 🔍 Auto-discovers bundle-specific resources from filesystem
+- ✅ Best of both worlds
 
 ### Important: Empty Arrays Disable Auto-Discovery
 
 **Don't do this:**
 ```json
 {
-  "required_functions": [],  // âŒ Empty array disables auto-discovery
+  "required_functions": [],  // ❌ Empty array disables auto-discovery
   "shared_functions": ["city_name"]
 }
 ```
@@ -234,7 +234,7 @@ The tool automatically:
 **Do this instead:**
 ```json
 {
-  // âœ… Omit required_functions entirely
+  // ✅ Omit required_functions entirely
   "shared_functions": ["city_name"]
 }
 ```
@@ -264,25 +264,25 @@ The tool automatically:
 
 ```
 mcdn_test/
-â”œâ”€â”€ bundle.json                         # Manifest
-â”œâ”€â”€ functions/                          # Custom SQL functions
-â”‚   â”œâ”€â”€ city_name.json                 # Can be shared or bundle-specific
-â”‚   â””â”€â”€ breadcrumbs.json
-â”œâ”€â”€ dictionaries/                       # Lookup tables
-â”‚   â”œâ”€â”€ dictionaries.zip               # Large files (auto-extracted)
-â”‚   â”œâ”€â”€ .extracted/                    # Auto-created (gitignored)
-â”‚   â”œâ”€â”€ custom_dict.json               # Optional overrides
-â”‚   â””â”€â”€ custom_dict.csv
-â”œâ”€â”€ transformations/                    # Data parsing schemas
-â”‚   â”œâ”€â”€ mcdn_akamai_ds2.json
-â”‚   â””â”€â”€ mcdn_cloudflare.json
-â”œâ”€â”€ dashboards/                         # Grafana visualizations
-â”‚   â”œâ”€â”€ CDN Dashboard.json
-â”‚   â”œâ”€â”€ alert-rules.json               # Alert configurations
-â”‚   â””â”€â”€ Raw Logs.json                  # Additional dashboards
-â””â”€â”€ summaries/                          # Pre-aggregated views
-    â”œâ”€â”€ mcdn_summary_min.sql
-    â””â”€â”€ mcdn_summary_hour.sql
+├── bundle.json                         # Manifest
+├── functions/                          # Custom SQL functions
+│   ├── city_name.json                 # Can be shared or bundle-specific
+│   └── breadcrumbs.json
+├── dictionaries/                       # Lookup tables
+│   ├── dictionaries.zip               # Large files (auto-extracted)
+│   ├── .extracted/                    # Auto-created (gitignored)
+│   ├── custom_dict.json               # Optional overrides
+│   └── custom_dict.csv
+├── transformations/                    # Data parsing schemas
+│   ├── mcdn_akamai_ds2.json
+│   └── mcdn_cloudflare.json
+├── dashboards/                         # Grafana visualizations
+│   ├── CDN Dashboard.json
+│   ├── alert-rules.json               # Alert configurations
+│   └── Raw Logs.json                  # Additional dashboards
+└── summaries/                          # Pre-aggregated views
+    ├── mcdn_summary_min.sql
+    └── mcdn_summary_hour.sql
 ```
 
 ## Key Features
@@ -299,10 +299,10 @@ Resources shared across all bundles in `hdx_solutions` project:
 Automatically extracts `dictionaries.zip` to handle files exceeding GitHub's limits:
 ```
 dictionaries/
-â”œâ”€â”€ dictionaries.zip              # Committed to git
-â””â”€â”€ .extracted/                   # Auto-created, gitignored
-    â”œâ”€â”€ ua_cat_dict.json
-    â””â”€â”€ ua_cat_dict.yaml
+├── dictionaries.zip              # Committed to git
+└── .extracted/                   # Auto-created, gitignored
+    ├── ua_cat_dict.json
+    └── ua_cat_dict.yaml
 ```
 
 ### 3. **Alert Rules Support**

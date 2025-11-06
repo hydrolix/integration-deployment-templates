@@ -23,9 +23,9 @@ These checks run for every command, regardless of flags:
 **Purpose**: Ensures bundle references the correct GitHub repository location.
 
 **Checks**:
-- âœ… `bundle.base_url` matches expected format
-- âœ… Path includes bundle directory name
-- âœ… Points to main branch
+- ✅ `bundle.base_url` matches expected format
+- ✅ Path includes bundle directory name
+- ✅ Points to main branch
 
 **Expected format**: `https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundles/{bundle_name}`
 
@@ -38,12 +38,12 @@ These checks run for every command, regardless of flags:
 **Purpose**: Enforces consistent naming conventions across bundle components.
 
 **Checks**:
-- âœ… Method-title consistency (e.g., `firehose` â†’ UI title contains "AWS Firehose")
-- âœ… Source-title consistency (e.g., `waf` source â†’ UI title contains "WAF")
-- âœ… Bundle name includes both source and method (case-insensitive)
-- âœ… Semantic versioning format (X.Y.Z with exactly 2 dots)
-- âœ… Valid maintainer email (contains `@` and `.`)
-- âœ… Non-empty description
+- ✅ Method-title consistency (e.g., `firehose` â†’ UI title contains "AWS Firehose")
+- ✅ Source-title consistency (e.g., `waf` source â†’ UI title contains "WAF")
+- ✅ Bundle name includes both source and method (case-insensitive)
+- ✅ Semantic versioning format (X.Y.Z with exactly 2 dots)
+- ✅ Valid maintainer email (contains `@` and `.`)
+- ✅ Non-empty description
 
 **Failure examples**:
 - `docs.method.full_title 'Simple S3' does not match method 'firehose'`
@@ -57,9 +57,9 @@ These checks run for every command, regardless of flags:
 **Purpose**: Prevents naming conflicts within a single bundle.
 
 **Checks**:
-- âœ… No duplicate table names
-- âœ… Table names â‰¥3 characters, start with letter, alphanumeric + underscore only
-- âœ… No duplicate dashboard variables
+- ✅ No duplicate table names
+- ✅ Table names â‰¥3 characters, start with letter, alphanumeric + underscore only
+- ✅ No duplicate dashboard variables
 
 **Failure examples**:
 - `Duplicate table name mcdn_test`
@@ -73,10 +73,10 @@ These checks run for every command, regardless of flags:
 **Purpose**: Ensures file integrity through SHA256 checksum verification.
 
 **Checks**:
-- âœ… Dashboard file checksums (if provided)
-- âœ… Transform file checksums (if provided)
-- âœ… Summary SQL file checksums (if provided)
-- âœ… Computed checksums match declared checksums
+- ✅ Dashboard file checksums (if provided)
+- ✅ Transform file checksums (if provided)
+- ✅ Summary SQL file checksums (if provided)
+- ✅ Computed checksums match declared checksums
 
 **Failure example**: `SHA256 abc123...def does not match for local file transformations/mcdn_akamai.json`
 
@@ -89,11 +89,11 @@ These checks run for every command, regardless of flags:
 **Purpose**: Validates all transformation files referenced in the bundle.
 
 **Checks**:
-- âœ… All transform files exist and readable
-- âœ… Valid JSON syntax
-- âœ… Required `name` field (non-empty string)
-- âœ… No duplicate transform names within table
-- âœ… `subtype` must be "firehose" if present
+- ✅ All transform files exist and readable
+- ✅ Valid JSON syntax
+- ✅ Required `name` field (non-empty string)
+- ✅ No duplicate transform names within table
+- ✅ `subtype` must be "firehose" if present
 
 **Failure examples**:
 - `Transform file is not valid JSON: path=... error=Unexpected token`
@@ -107,8 +107,8 @@ These checks run for every command, regardless of flags:
 **Purpose**: Ensures all transforms include sample data for testing.
 
 **Checks**:
-- âœ… Each transform contains `settings.sample_data`
-- âœ… Sample data is non-empty object or string
+- ✅ Each transform contains `settings.sample_data`
+- ✅ Sample data is non-empty object or string
 
 **Failure example**: `No Sample data in transformation full_path=transformations/mcdn_akamai.json`
 
@@ -119,11 +119,11 @@ These checks run for every command, regardless of flags:
 **Purpose**: Validates Grafana dashboard files and their template variables.
 
 **Checks**:
-- âœ… File exists, valid JSON
-- âœ… Required template variables: `__DASHBOARD_UUID__`, `__DATASOURCE__`, `__PROJECT_NAME__`, all table `dashboard_var` values
-- âœ… Top-level `dashboard` object exists
-- âœ… No hardcoded `id` field
-- âœ… Validates primary dashboard and `other_dashboards` array
+- ✅ File exists, valid JSON
+- ✅ Required template variables: `__DASHBOARD_UUID__`, `__DATASOURCE__`, `__PROJECT_NAME__`, all table `dashboard_var` values
+- ✅ Top-level `dashboard` object exists
+- ✅ No hardcoded `id` field
+- ✅ Validates primary dashboard and `other_dashboards` array
 
 **Failure examples**:
 - `Dashboard must have __DATASOURCE__`
@@ -137,10 +137,10 @@ These checks run for every command, regardless of flags:
 **Purpose**: Validates alert rules file structure (if present).
 
 **Checks**:
-- âœ… Valid JSON with `apiVersion` field
-- âœ… `groups` array with â‰¥1 group
-- âœ… Each group has: `name`, `folder`, `interval`, `rules` (â‰¥1 rule)
-- âœ… Each rule has: `uid`, `title`, `condition`, `data` (array)
+- ✅ Valid JSON with `apiVersion` field
+- ✅ `groups` array with â‰¥1 group
+- ✅ Each group has: `name`, `folder`, `interval`, `rules` (â‰¥1 rule)
+- ✅ Each rule has: `uid`, `title`, `condition`, `data` (array)
 
 **Failure example**: `Group alerts, Rule 0: uid is required`
 
@@ -153,9 +153,9 @@ These checks run for every command, regardless of flags:
 **Purpose**: Validates summary table references and prevents duplicates.
 
 **Checks**:
-- âœ… `parent_table_name` references valid table in bundle
-- âœ… No duplicate `dashboard_var` values
-- âœ… Unique summary table names
+- ✅ `parent_table_name` references valid table in bundle
+- ✅ No duplicate `dashboard_var` values
+- ✅ Unique summary table names
 
 **Failure example**: `Invalid-Parent-Table-Reference summary_table=mcdn_summary_min parent_table_name=nonexistent`
 
@@ -168,12 +168,12 @@ These checks run for every command, regardless of flags:
 **Purpose**: Validates function and dictionary files exist and SQL references match.
 
 **Checks**:
-- âœ… Declared shared/bundle-specific functions have local files (`functions/{name}.json`)
-- âœ… Declared shared/bundle-specific dictionaries have both files (`.json` + data)
-- âœ… SQL references match declared functions (scans for `functionName\s*\(` pattern)
-- âœ… SQL dictionary calls match declarations (scans for `dictGet`, `dictGetString`, `dictGetOrDefault`)
-- âš ï¸ Warns if declared but unused
-- âš ï¸ Warns if used but undeclared
+- ✅ Declared shared/bundle-specific functions have local files (`functions/{name}.json`)
+- ✅ Declared shared/bundle-specific dictionaries have both files (`.json` + data)
+- ✅ SQL references match declared functions (scans for `functionName\s*\(` pattern)
+- ✅ SQL dictionary calls match declarations (scans for `dictGet`, `dictGetString`, `dictGetOrDefault`)
+- ⚠️ Warns if declared but unused
+- ⚠️ Warns if used but undeclared
 
 **Warning examples**:
 - `Function 'city_name' declared but no file: functions/city_name.json`
@@ -192,10 +192,10 @@ These checks run for every command, regardless of flags:
 **Purpose**: Prevents conflicts across all bundles in the repository.
 
 **Checks**:
-- âœ… No duplicate bundle names
-- âœ… No duplicate UI source titles
-- âœ… No duplicate table names
-- âœ… No duplicate base URLs
+- ✅ No duplicate bundle names
+- ✅ No duplicate UI source titles
+- ✅ No duplicate table names
+- ✅ No duplicate base URLs
 
 **Failure examples**:
 - `Duplicated-Bundle-Name error=mcdn_test`
@@ -219,7 +219,7 @@ These tests run only when deploying locally:
 **Shared Functions** (`hdx_shared.ts::checkAndCreateSharedFunction`):
 - Lists existing functions in hdx_solutions project
 - Checks if function exists by name (API returns name without project prefix)
-- Skips if exists (logs "âœ“ exists")
+- Skips if exists (logs "❌“ exists")
 - Creates from local file if missing:
   - Reads `functions/{name}.json`
   - Replaces `__SHARED_PROJECT__` and `__PROJECT_NAME__` template variables
@@ -230,7 +230,7 @@ These tests run only when deploying locally:
 **Shared Dictionaries** (`hdx_shared.ts::checkAndCreateSharedDictionary`):
 - Lists existing dictionaries in hdx_solutions project
 - Checks if dictionary exists by name (API returns name without project prefix)
-- Skips if exists (logs "âœ“ exists")
+- Skips if exists (logs "❌“ exists")
 - Creates from local files if missing:
   - Searches `dictionaries/` then `.extracted/` for files
   - Uploads data file to hdx_solutions
@@ -240,21 +240,21 @@ These tests run only when deploying locally:
 
 **Output example (first deployment)**:
 ```
-ðŸ”— Creating shared project: hdx_solutions...
-  âœ“ Created shared project (uuid: xxx)
+🔍— Creating shared project: hdx_solutions...
+  ❌“ Created shared project (uuid: xxx)
 
-ðŸ”— Processing 4 shared function(s) in hdx_solutions...
+🔍— Processing 4 shared function(s) in hdx_solutions...
   Creating shared function city_name...
-  âœ“ Created shared function city_name
+  ❌“ Created shared function city_name
 ```
 
 **Output example (subsequent deployment)**:
 ```
-ðŸ”— Checking for shared project: hdx_solutions...
-  âœ“ Shared project exists (uuid: xxx)
+🔍— Checking for shared project: hdx_solutions...
+  ❌“ Shared project exists (uuid: xxx)
 
-ðŸ”— Processing 4 shared function(s) in hdx_solutions...
-  âœ“ Shared function city_name exists (as hdx_solutions_city_name)
+🔍— Processing 4 shared function(s) in hdx_solutions...
+  ❌“ Shared function city_name exists (as hdx_solutions_city_name)
 ```
 
 ---
@@ -298,9 +298,9 @@ if (bundleFuncs.length === 0 && sharedFuncs.length === 0) {
 
 **Output example**:
 ```
-ðŸ“¦ Processing 1 bundle-specific dictionar(y/ies) in sample_project...
+📦 Processing 1 bundle-specific dictionar(y/ies) in sample_project...
   Uploading dictionary file: ua_cat_dict.yaml...
-  âœ“ Created dictionary ua_cat_dict
+  ❌“ Created dictionary ua_cat_dict
 ```
 
 ---
@@ -371,11 +371,11 @@ FROM sample_project.mcdn_test
 
 **Output example**:
 ```
-âœ“ Created Grafana datasource with UID: abc123
-âœ“ Created primary dashboard (UID: xyz789)
+❌“ Created Grafana datasource with UID: abc123
+❌“ Created primary dashboard (UID: xyz789)
 Creating 2 alert rule group(s)...
-  âœ“ Created folder "CDN Alerts"
-  âœ“ Created rule "High Error Rate"
+  ❌“ Created folder "CDN Alerts"
+  ❌“ Created rule "High Error Rate"
 ```
 
 ---
@@ -471,36 +471,36 @@ ERROR: Plugin validation failed: 1 required plugin(s) missing
 **Purpose**: Validates dependencies exist on cluster without deploying.
 
 **Checks**:
-- âœ… Lists functions/dictionaries in hdx_solutions (for shared resources)
-- âœ… Lists functions/dictionaries in bundle's project (for bundle-specific resources)
-- âœ… Checks each declared shared function exists (expected: `hdx_solutions_{name}`)
-- âœ… Checks each declared shared dictionary exists (expected: `hdx_solutions_{name}`)
-- âœ… Checks each declared bundle-specific function exists (expected: `{project}_{name}`)
-- âœ… Checks each declared bundle-specific dictionary exists (expected: `{project}_{name}`)
-- âœ… Verifies local files present
-- âŒ **Fails if resource missing on cluster**
-- âš ï¸ **Warns if local file missing**
+- ✅ Lists functions/dictionaries in hdx_solutions (for shared resources)
+- ✅ Lists functions/dictionaries in bundle's project (for bundle-specific resources)
+- ✅ Checks each declared shared function exists (expected: `hdx_solutions_{name}`)
+- ✅ Checks each declared shared dictionary exists (expected: `hdx_solutions_{name}`)
+- ✅ Checks each declared bundle-specific function exists (expected: `{project}_{name}`)
+- ✅ Checks each declared bundle-specific dictionary exists (expected: `{project}_{name}`)
+- ✅ Verifies local files present
+- ❌ **Fails if resource missing on cluster**
+- ⚠️ **Warns if local file missing**
 
 **Success output**:
 ```
-âœ“ All required dependencies exist on cluster
-âœ“ All required local files present
+❌“ All required dependencies exist on cluster
+❌“ All required local files present
 ```
 
 **Failure output**:
 ```
-âŒ Missing functions on cluster (hdx_solutions):
+❌ Missing functions on cluster (hdx_solutions):
    - city_name (expected as: hdx_solutions_city_name)
 
-âŒ Missing dictionaries on cluster (sample_project):
+❌ Missing dictionaries on cluster (sample_project):
    - custom_dict (expected as: sample_project_custom_dict)
 
-âš ï¸  Missing local definition files:
+⚠️  Missing local definition files:
    - functions/city_name.json
 
-ðŸ“‹ In production mode:
-   â€¢ Resources must exist on cluster before deployment
-   â€¢ Either create them manually or run without --production flag first
+📋 In production mode:
+   • Resources must exist on cluster before deployment
+   • Either create them manually or run without --production flag first
 ```
 
 **Use case**: Validate bundle ready for production where resources already exist.
@@ -555,8 +555,8 @@ ERROR: Plugin validation failed: 1 required plugin(s) missing
 ```
 
 This configuration:
-- âœ… Creates `city_name` in hdx_solutions
-- âŒ Does NOT auto-discover bundle-specific functions
+- ✅ Creates `city_name` in hdx_solutions
+- ❌ Does NOT auto-discover bundle-specific functions
 - To enable auto-discovery, **omit the field entirely**
 
 ### Cross-Project Resource References
@@ -588,11 +588,11 @@ All errors include:
 
 **Examples**:
 ```
-âŒ Transform file is not valid JSON: 
+❌ Transform file is not valid JSON: 
    path=transformations/mcdn_akamai.json 
    error=Unexpected token at line 45
 
-âŒ Shared function 'city_name' declared but file not found.
+❌ Shared function 'city_name' declared but file not found.
    Expected: my-bundles/mcdn_test/functions/city_name.json
    Actions:
      1. Add city_name.json to functions/ folder, OR
@@ -626,45 +626,45 @@ All errors include:
 
 ```
 1. DISCOVERY
-   â””â”€â”€ Find bundle.json files in my-bundles/
+   └── Find bundle.json files in my-bundles/
 
 2. PARSING & VALIDATION
-   â”œâ”€â”€ Parse JSON, validate structure
-   â”œâ”€â”€ Validate fields, formats, enums
-   â”œâ”€â”€ Check files exist
-   â””â”€â”€ Validate content
+   ├── Parse JSON, validate structure
+   ├── Validate fields, formats, enums
+   ├── Check files exist
+   └── Validate content
 
 3. CROSS-BUNDLE VALIDATION
-   â””â”€â”€ Check for global duplicates
+   └── Check for global duplicates
 
 4. SHARED RESOURCES (--local only)
-   â”œâ”€â”€ Check/create hdx_solutions project
-   â”œâ”€â”€ Create/verify shared functions
-   â””â”€â”€ Create/verify shared dictionaries
+   ├── Check/create hdx_solutions project
+   ├── Create/verify shared functions
+   └── Create/verify shared dictionaries
 
 5. BUNDLE RESOURCES (--local only)
-   â”œâ”€â”€ Extract zips
-   â”œâ”€â”€ Auto-discover (if not declared)
-   â”œâ”€â”€ Create bundle-specific functions
-   â””â”€â”€ Create bundle-specific dictionaries
+   ├── Extract zips
+   ├── Auto-discover (if not declared)
+   ├── Create bundle-specific functions
+   └── Create bundle-specific dictionaries
 
 6. DATA PIPELINE (--local only)
-   â”œâ”€â”€ Create tables
-   â”œâ”€â”€ Deploy transforms
-   â”œâ”€â”€ Insert sample data
-   â””â”€â”€ Create summary tables
+   ├── Create tables
+   ├── Deploy transforms
+   ├── Insert sample data
+   └── Create summary tables
 
 7. GRAFANA (--local or --local-dashboard-only)
-   â”œâ”€â”€ Setup container
-   â”œâ”€â”€ Create datasource
-   â”œâ”€â”€ Deploy dashboards
-   â””â”€â”€ Create alert rules
+   ├── Setup container
+   ├── Create datasource
+   ├── Deploy dashboards
+   └── Create alert rules
 
 8. BROWSER TESTING
-   â”œâ”€â”€ Launch Chrome
-   â”œâ”€â”€ Load dashboard
-   â”œâ”€â”€ Monitor errors
-   â””â”€â”€ Report results
+   ├── Launch Chrome
+   ├── Load dashboard
+   ├── Monitor errors
+   └── Report results
 ```
 
 ---
@@ -693,45 +693,45 @@ All errors include:
 
 ```
 1. Check if hdx_solutions_city_name exists
-   â”œâ”€ YES â†’ Log "âœ“ exists", skip
-   â””â”€ NO â†’ Continue
+   ├─ YES â†’ Log "❌“ exists", skip
+   └─ NO â†’ Continue
 
 2. Read functions/city_name.json
-   â””â”€ FAIL if missing
+   └─ FAIL if missing
 
 3. Replace __SHARED_PROJECT__ â†’ hdx_solutions
 
 4. POST to hdx_solutions functions endpoint
-   â””â”€ Creates as: hdx_solutions_city_name
+   └─ Creates as: hdx_solutions_city_name
 
-5. Log "âœ“ Created"
+5. Log "❌“ Created"
 ```
 
 ### Dictionary Deployment Flow
 
 ```
 1. Check if hdx_solutions_geoip_city exists
-   â”œâ”€ YES â†’ Log "âœ“ exists", skip
-   â””â”€ NO â†’ Continue
+   ├─ YES â†’ Log "❌“ exists", skip
+   └─ NO â†’ Continue
 
 2. Find files:
-   â”œâ”€ Search dictionaries/geoip_city.json + .csv/.yaml
-   â””â”€ Then .extracted/geoip_city.json + .csv/.yaml
-   â””â”€ FAIL if not found
+   ├─ Search dictionaries/geoip_city.json + .csv/.yaml
+   └─ Then .extracted/geoip_city.json + .csv/.yaml
+   └─ FAIL if not found
 
 3. Upload data file to hdx_solutions
 
 4. POST definition to hdx_solutions dictionaries endpoint
-   â””â”€ Creates as: hdx_solutions_geoip_city
+   └─ Creates as: hdx_solutions_geoip_city
 
-5. Log "âœ“ Created"
+5. Log "❌“ Created"
 ```
 
 ### Idempotency
 
 Shared resources are idempotent - running deployment multiple times:
 - First run: Creates shared resources
-- Subsequent runs: Reuses existing shared resources (logs "âœ“ exists")
+- Subsequent runs: Reuses existing shared resources (logs "❌“ exists")
 - Different bundles: Share same resources (no duplication)
 
 ---

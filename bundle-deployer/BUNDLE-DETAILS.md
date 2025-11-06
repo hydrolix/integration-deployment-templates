@@ -8,20 +8,20 @@ This document describes all valid fields and their validation rules for the Type
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | âœ… | Bundle identifier. Must contain only alphanumeric characters, underscores, and dashes |
-| `source` | `string` | âœ… | Data source type. Must contain only alphanumeric characters, dashes, and underscores |
-| `method` | `string` | âœ… | Integration method. See [Valid Methods](#valid-methods) |
-| `beta` | `boolean` | âœ… | Whether this is a beta release |
-| `base_url` | `string` | âœ… | HTTPS URL to the repository base path |
-| `dashboard` | `Dashboard` | âœ… | Primary dashboard configuration |
-| `other_dashboards` | `Dashboard[]` | âŒ | Optional additional dashboard configurations |
-| `alert_rules` | `AlertRules` | âŒ | Optional alert rules configuration |
-| `tables` | `Table[]` | âœ… | Array of table definitions |
-| `summary_tables` | `SummaryTable[]` | âŒ | Optional array of summary table definitions |
-| `ui` | `Ui` | âœ… | User interface configuration |
-| `metadata` | `Metadata` | âœ… | Bundle metadata |
-| `method_overrides` | `MethodOverrides` | âŒ | Optional method-specific overrides |
-| `dependencies` | `Dependencies` | âŒ | Optional dependency requirements |
+| `name` | `string` | ✅ | Bundle identifier. Must contain only alphanumeric characters, underscores, and dashes |
+| `source` | `string` | ✅ | Data source type. Must contain only alphanumeric characters, dashes, and underscores |
+| `method` | `string` | ✅ | Integration method. See [Valid Methods](#valid-methods) |
+| `beta` | `boolean` | ✅ | Whether this is a beta release |
+| `base_url` | `string` | ✅ | HTTPS URL to the repository base path |
+| `dashboard` | `Dashboard` | ✅ | Primary dashboard configuration |
+| `other_dashboards` | `Dashboard[]` | ❌ | Optional additional dashboard configurations |
+| `alert_rules` | `AlertRules` | ❌ | Optional alert rules configuration |
+| `tables` | `Table[]` | ✅ | Array of table definitions |
+| `summary_tables` | `SummaryTable[]` | ❌ | Optional array of summary table definitions |
+| `ui` | `Ui` | ✅ | User interface configuration |
+| `metadata` | `Metadata` | ✅ | Bundle metadata |
+| `method_overrides` | `MethodOverrides` | ❌ | Optional method-specific overrides |
+| `dependencies` | `Dependencies` | ❌ | Optional dependency requirements |
 
 ### Validation Rules for Root Object
 - `base_url` must start with `https://` or `file://`
@@ -40,9 +40,9 @@ Expected format: `https://github.com/hydrolix/integration-deployment-templates/b
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | âœ… | Relative path to dashboard JSON file |
-| `project_var` | `string` | âœ… | Variable placeholder for project name (must be `__PROJECT_NAME__`) |
-| `sha256` | `string` | âŒ | Optional SHA256 hash of dashboard contents (64 hex characters) |
+| `path` | `string` | ✅ | Relative path to dashboard JSON file |
+| `project_var` | `string` | ✅ | Variable placeholder for project name (must be `__PROJECT_NAME__`) |
+| `sha256` | `string` | ❌ | Optional SHA256 hash of dashboard contents (64 hex characters) |
 
 ### Validation Rules for Dashboard
 - `path` cannot start with `/` or contain `..`
@@ -62,8 +62,8 @@ Expected format: `https://github.com/hydrolix/integration-deployment-templates/b
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | âœ… | Relative path to alert rules JSON file |
-| `sha256` | `string` | âŒ | Optional SHA256 hash (64 hex characters) |
+| `path` | `string` | ✅ | Relative path to alert rules JSON file |
+| `sha256` | `string` | ❌ | Optional SHA256 hash (64 hex characters) |
 
 ### Validation Rules for AlertRules
 - Path cannot start with `/` or contain `..`, must end with `.json`
@@ -79,9 +79,9 @@ Expected format: `https://github.com/hydrolix/integration-deployment-templates/b
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `dashboard_var` | `string` | âœ… | Variable placeholder for table name |
-| `name` | `string` | âœ… | Table identifier |
-| `transforms` | `Transform[]` | âœ… | Array of transformations |
+| `dashboard_var` | `string` | ✅ | Variable placeholder for table name |
+| `name` | `string` | ✅ | Table identifier |
+| `transforms` | `Transform[]` | ✅ | Array of transformations |
 
 ### Validation Rules for Table
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
@@ -94,10 +94,10 @@ Expected format: `https://github.com/hydrolix/integration-deployment-templates/b
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | âœ… | Summary table identifier |
-| `dashboard_var` | `string` | âœ… | Variable placeholder |
-| `parent_table_name` | `string` | âœ… | Parent table to aggregate from |
-| `sql` | `SummarySqlFile` | âœ… | SQL file configuration |
+| `name` | `string` | ✅ | Summary table identifier |
+| `dashboard_var` | `string` | ✅ | Variable placeholder |
+| `parent_table_name` | `string` | ✅ | Parent table to aggregate from |
+| `sql` | `SummarySqlFile` | ✅ | SQL file configuration |
 
 ### Validation Rules
 - `dashboard_var` must follow macro format, unique across summary tables
@@ -130,9 +130,9 @@ GROUP BY minute, city
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `path` | `string` | âœ… | Relative path to transformation JSON |
-| `sha256` | `string` | âŒ | Optional SHA256 hash (64 hex characters) |
-| `sample` | `string` | âŒ | Deprecated (ignored) |
+| `path` | `string` | ✅ | Relative path to transformation JSON |
+| `sha256` | `string` | ❌ | Optional SHA256 hash (64 hex characters) |
+| `sample` | `string` | ❌ | Deprecated (ignored) |
 
 ### Validation Rules
 - Path cannot start with `/` or contain `..`, must end with `.json`
@@ -359,13 +359,13 @@ Large dictionary files can be packaged in `dictionaries/dictionaries.zip`:
 **Example:**
 ```
 dictionaries/
-â”œâ”€â”€ dictionaries.zip              # Large files (committed to git or Git LFS)
-â”œâ”€â”€ .extracted/                   # Auto-created (gitignored)
-â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.json
-â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.csv
-â”‚   â””â”€â”€ ...
-â”œâ”€â”€ ua_cat_dict.json              # Custom override (bundle-specific)
-â””â”€â”€ ua_cat_dict.yaml
+├── dictionaries.zip              # Large files (committed to git or Git LFS)
+├── .extracted/                   # Auto-created (gitignored)
+│   ├── geoip_city_blocks_ipv4.json
+│   ├── geoip_city_blocks_ipv4.csv
+│   └── ...
+├── ua_cat_dict.json              # Custom override (bundle-specific)
+└── ua_cat_dict.yaml
 ```
 
 ### Auto-Discovery Mode
@@ -450,8 +450,8 @@ Auto-discovery is triggered when **both** of the following are true for a resour
 ```
 
 This configuration:
-- âœ… Creates `city_name` in `hdx_solutions`
-- âŒ Does NOT auto-discover bundle-specific functions
+- ✅ Creates `city_name` in `hdx_solutions`
+- ❌ Does NOT auto-discover bundle-specific functions
 - Result: Only shared functions exist
 
 **To enable auto-discovery**, omit the field entirely:
@@ -465,10 +465,10 @@ This configuration:
 ### Validation Rules for Dependencies
 
 #### Declared Resources (Shared or Bundle-Specific)
-- âŒ **Deployment fails** if declared function missing `functions/{name}.json`
-- âŒ **Deployment fails** if declared dictionary missing definition or data file
-- âš ï¸ Warning if resource declared but never used in transforms
-- âš ï¸ Warning if resource used in SQL but not declared
+- ❌ **Deployment fails** if declared function missing `functions/{name}.json`
+- ❌ **Deployment fails** if declared dictionary missing definition or data file
+- ⚠️ Warning if resource declared but never used in transforms
+- ⚠️ Warning if resource used in SQL but not declared
 
 #### File Search Paths
 Dictionaries searched in order:
@@ -650,31 +650,31 @@ This example demonstrates:
 
 ```
 my-bundles/mcdn_test/
-â”œâ”€â”€ bundle.json                         # Bundle manifest (required)
-â”œâ”€â”€ functions/                          # Custom SQL functions (optional)
-â”‚   â”œâ”€â”€ city_name.json                 # Shared or bundle-specific
-â”‚   â”œâ”€â”€ breadcrumbs.json
-â”‚   â”œâ”€â”€ country_iso_code.json
-â”‚   â””â”€â”€ geoname_id.json
-â”œâ”€â”€ dictionaries/                       # Lookup tables (optional)
-â”‚   â”œâ”€â”€ dictionaries.zip               # Large files (auto-extracted)
-â”‚   â”œâ”€â”€ .extracted/                    # Auto-created (gitignored)
-â”‚   â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.json
-â”‚   â”‚   â”œâ”€â”€ geoip_city_blocks_ipv4.csv
-â”‚   â”‚   â””â”€â”€ ... (other shared dictionaries from zip)
-â”‚   â”œâ”€â”€ ua_cat_dict.json               # Bundle-specific
-â”‚   â””â”€â”€ ua_cat_dict.yaml
-â”œâ”€â”€ transformations/                    # Data parsing schemas (required)
-â”‚   â”œâ”€â”€ mcdn_akamai.json
-â”‚   â”œâ”€â”€ mcdn_cloudflare.json
-â”‚   â””â”€â”€ mcdn_fastly.json
-â”œâ”€â”€ dashboards/                         # Grafana visualizations (required)
-â”‚   â”œâ”€â”€ CDN Dashboard.json             # Primary dashboard
-â”‚   â”œâ”€â”€ alert-rules.json               # Alert rules (optional)
-â”‚   â””â”€â”€ Raw Logs.json                  # Additional dashboards (optional)
-â””â”€â”€ summaries/                          # Pre-aggregated views (optional)
-    â”œâ”€â”€ mcdn_summary_min.sql
-    â””â”€â”€ mcdn_summary_hour.sql
+├── bundle.json                         # Bundle manifest (required)
+├── functions/                          # Custom SQL functions (optional)
+│   ├── city_name.json                 # Shared or bundle-specific
+│   ├── breadcrumbs.json
+│   ├── country_iso_code.json
+│   └── geoname_id.json
+├── dictionaries/                       # Lookup tables (optional)
+│   ├── dictionaries.zip               # Large files (auto-extracted)
+│   ├── .extracted/                    # Auto-created (gitignored)
+│   │   ├── geoip_city_blocks_ipv4.json
+│   │   ├── geoip_city_blocks_ipv4.csv
+│   │   └── ... (other shared dictionaries from zip)
+│   ├── ua_cat_dict.json               # Bundle-specific
+│   └── ua_cat_dict.yaml
+├── transformations/                    # Data parsing schemas (required)
+│   ├── mcdn_akamai.json
+│   ├── mcdn_cloudflare.json
+│   └── mcdn_fastly.json
+├── dashboards/                         # Grafana visualizations (required)
+│   ├── CDN Dashboard.json             # Primary dashboard
+│   ├── alert-rules.json               # Alert rules (optional)
+│   └── Raw Logs.json                  # Additional dashboards (optional)
+└── summaries/                          # Pre-aggregated views (optional)
+    ├── mcdn_summary_min.sql
+    └── mcdn_summary_hour.sql
 ```
 
 ---
@@ -717,15 +717,15 @@ my-bundles/mcdn_test/
 ### 1. Use Correct Template Variables
 
 ```sql
--- âœ… Shared resources
+-- ✅ Shared resources
 SELECT __SHARED_PROJECT___city_name(ip) AS city
 FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
 
--- âœ… Bundle-specific resources
+-- ✅ Bundle-specific resources
 SELECT __PROJECT_NAME___custom_parser(data) AS parsed
 FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
 
--- âŒ Wrong (hardcoded project names)
+-- ❌ Wrong (hardcoded project names)
 SELECT sample_project_city_name(ip)
 SELECT reference_city_name(ip)
 ```
@@ -745,13 +745,13 @@ For resources used by multiple bundles:
 ### 3. Don't Use Empty Arrays
 
 ```json
-// âŒ Empty array disables auto-discovery
+// ❌ Empty array disables auto-discovery
 {
   "required_functions": [],
   "shared_functions": ["city_name"]
 }
 
-// âœ… Omit field to enable auto-discovery
+// ✅ Omit field to enable auto-discovery
 {
   "shared_functions": ["city_name"]
 }
@@ -811,7 +811,7 @@ Generate with: `openssl dgst -sha256 file_name.json`
 ### "Auto-discovering even though shared declared"
 **Cause**: Empty array in bundle.json:
 ```json
-"required_functions": [],  // âŒ Disables auto-discovery
+"required_functions": [],  // ❌ Disables auto-discovery
 ```
 
 **Solution**: Remove empty array entirely

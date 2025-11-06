@@ -111,13 +111,13 @@ deno run --allow-all src/main.ts --local-dashboard-only [bundle_name]
 ```
 
 This deploys dashboards without creating tables or data:
-- âœ… All validation checks
-- âœ… Grafana container setup
-- âœ… Datasource creation
-- âœ… Dashboard deployment
-- âœ… Alert rules creation (if defined)
-- âœ… Headless Chrome testing
-- âŒ **Does NOT** create tables, functions, dictionaries, or insert data
+- ✅ All validation checks
+- ✅ Grafana container setup
+- ✅ Datasource creation
+- ✅ Dashboard deployment
+- ✅ Alert rules creation (if defined)
+- ✅ Headless Chrome testing
+- ❌ **Does NOT** create tables, functions, dictionaries, or insert data
 
 **Example:**
 ```bash
@@ -155,16 +155,16 @@ deno run --allow-all src/main.ts --production mcdn_test
 
 **Success output:**
 ```
-âœ“ All required dependencies exist on cluster
-âœ“ All required local files present
+❌“ All required dependencies exist on cluster
+❌“ All required local files present
 ```
 
 **Failure output:**
 ```
-âŒ Missing functions on cluster (hdx_solutions):
+❌ Missing functions on cluster (hdx_solutions):
    - city_name (expected as: hdx_solutions_city_name)
 
-âŒ Missing dictionaries on cluster (sample_project):
+❌ Missing dictionaries on cluster (sample_project):
    - custom_dict (expected as: sample_project_custom_dict)
 ```
 
@@ -278,26 +278,26 @@ deno run --allow-all src/main.ts --local mcdn_test
 
 **Expected output:**
 ```
-ðŸ”— Checking for shared project: hdx_solutions...
+🔍— Checking for shared project: hdx_solutions...
   Creating shared project: hdx_solutions...
-  âœ“ Created shared project (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
+  ❌“ Created shared project (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
 
-ðŸ”— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+🔍— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
 Checking shared function: city_name...
   Creating shared function city_name (will become hdx_solutions_city_name)...
-  âœ“ Created shared function city_name
+  ❌“ Created shared function city_name
 Checking shared function: breadcrumbs...
   Creating shared function breadcrumbs (will become hdx_solutions_breadcrumbs)...
-  âœ“ Created shared function breadcrumbs
+  ❌“ Created shared function breadcrumbs
   [continues for all 4 functions]
 
-ðŸ”— Processing 5 EXPLICITLY DECLARED shared dictionar(y/ies) in hdx_solutions...
+🔍— Processing 5 EXPLICITLY DECLARED shared dictionar(y/ies) in hdx_solutions...
 Checking shared dictionary: geoip_asn_blocks_ipv4...
   Found files: dictionaries/.extracted/geoip_asn_blocks_ipv4.json + ...csv
   Uploading shared dictionary file: geoip_asn_blocks_ipv4.csv...
-  âœ“ Uploaded shared dictionary file
+  ❌“ Uploaded shared dictionary file
   Creating shared dictionary definition...
-  âœ“ Created shared dictionary geoip_asn_blocks_ipv4
+  ❌“ Created shared dictionary geoip_asn_blocks_ipv4
   [continues for all 5 dictionaries]
 ```
 
@@ -310,19 +310,19 @@ deno run --allow-all src/main.ts --local mcdn_test
 
 **Expected output:**
 ```
-ðŸ”— Checking for shared project: hdx_solutions...
-  âœ“ Shared project exists (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
+🔍— Checking for shared project: hdx_solutions...
+  ❌“ Shared project exists (uuid: 90943f33-66df-430d-83e8-18fd2e218e49)
 
-ðŸ”— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+🔍— Processing 4 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
 Checking shared function: city_name...
-  âœ“ Shared function city_name exists (as hdx_solutions_city_name)
+  ❌“ Shared function city_name exists (as hdx_solutions_city_name)
 Checking shared function: breadcrumbs...
-  âœ“ Shared function breadcrumbs exists (as hdx_solutions_breadcrumbs)
+  ❌“ Shared function breadcrumbs exists (as hdx_solutions_breadcrumbs)
   [all show "exists" - no creation]
 
-ðŸ“¦ No bundle-specific functions declared (using 4 shared function(s))
+📦 No bundle-specific functions declared (using 4 shared function(s))
 
-ðŸ“¦ Processing 1 EXPLICITLY DECLARED bundle-specific dictionar(y/ies) in sample_project...
+📦 Processing 1 EXPLICITLY DECLARED bundle-specific dictionar(y/ies) in sample_project...
   [creates bundle-specific resources]
 ```
 
@@ -337,12 +337,12 @@ deno run --allow-all src/main.ts --local cloudfront_logs
 
 **Expected output:**
 ```
-ðŸ”— Checking for shared project: hdx_solutions...
-  âœ“ Shared project exists
+🔍— Checking for shared project: hdx_solutions...
+  ❌“ Shared project exists
 
-ðŸ”— Processing 2 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
-  âœ“ Shared function city_name exists (as hdx_solutions_city_name)  â† Reused!
-  âœ“ Shared function country_iso_code exists  â† Reused!
+🔍— Processing 2 EXPLICITLY DECLARED shared function(s) in hdx_solutions...
+  ❌“ Shared function city_name exists (as hdx_solutions_city_name)  â† Reused!
+  ❌“ Shared function country_iso_code exists  â† Reused!
 ```
 
 The second bundle reuses shared resources created by the first bundle.
@@ -354,41 +354,41 @@ The second bundle reuses shared resources created by the first bundle.
 ### Validation Phase (Always Run)
 
 #### Structural Validation
-- âœ… Bundle JSON structure and required fields
-- âœ… URL format validation (`https://` or `file://`)
-- âœ… Path validation (no `/`, no `..`, proper extensions)
-- âœ… Macro variable format (`__VARIABLE_NAME__`)
-- âœ… Enum validation (method, source, channel_type, data_category)
-- âœ… SHA256 checksum format (64 hex characters)
-- âœ… Bundle name format (alphanumeric, underscores, dashes)
-- âœ… Table name validation (â‰¥3 chars, starts with letter, alphanumeric + underscore)
+- ✅ Bundle JSON structure and required fields
+- ✅ URL format validation (`https://` or `file://`)
+- ✅ Path validation (no `/`, no `..`, proper extensions)
+- ✅ Macro variable format (`__VARIABLE_NAME__`)
+- ✅ Enum validation (method, source, channel_type, data_category)
+- ✅ SHA256 checksum format (64 hex characters)
+- ✅ Bundle name format (alphanumeric, underscores, dashes)
+- ✅ Table name validation (â‰¥3 chars, starts with letter, alphanumeric + underscore)
 
 #### Content Validation
-- âœ… No duplicate table names or dashboard variables within bundle
-- âœ… Naming consistency (method titles align with method, source titles unique)
-- âœ… File existence and accessibility for all referenced files
-- âœ… JSON syntax validation for all JSON files
-- âœ… Transform structure (name field, valid JSON)
-- âœ… Sample data presence (non-empty object or string)
-- âœ… Dashboard structure (top-level dashboard object, no hardcoded id)
-- âœ… Alert rules structure (apiVersion, groups, rules with required fields)
-- âœ… Summary table references (parent_table_name must exist)
+- ✅ No duplicate table names or dashboard variables within bundle
+- ✅ Naming consistency (method titles align with method, source titles unique)
+- ✅ File existence and accessibility for all referenced files
+- ✅ JSON syntax validation for all JSON files
+- ✅ Transform structure (name field, valid JSON)
+- ✅ Sample data presence (non-empty object or string)
+- ✅ Dashboard structure (top-level dashboard object, no hardcoded id)
+- ✅ Alert rules structure (apiVersion, groups, rules with required fields)
+- ✅ Summary table references (parent_table_name must exist)
 
 #### Shared Resources Validation
-- âœ… Declared shared functions have local files (`functions/{name}.json`)
-- âœ… Declared shared dictionaries have both files (`.json` + data file)
-- âœ… Declared bundle-specific functions have local files
-- âœ… Declared bundle-specific dictionaries have both files
-- âœ… SQL references match declared functions/dictionaries
-- âœ… Template variables used correctly (`__SHARED_PROJECT__` vs `__PROJECT_NAME__`)
-- âš ï¸ Warns if declared resources unused in SQL
-- âš ï¸ Warns if SQL uses undeclared resources
+- ✅ Declared shared functions have local files (`functions/{name}.json`)
+- ✅ Declared shared dictionaries have both files (`.json` + data file)
+- ✅ Declared bundle-specific functions have local files
+- ✅ Declared bundle-specific dictionaries have both files
+- ✅ SQL references match declared functions/dictionaries
+- ✅ Template variables used correctly (`__SHARED_PROJECT__` vs `__PROJECT_NAME__`)
+- ⚠️ Warns if declared resources unused in SQL
+- ⚠️ Warns if SQL uses undeclared resources
 
 #### Cross-Bundle Validation
-- âœ… No duplicate bundle names globally
-- âœ… No duplicate UI source titles globally
-- âœ… No duplicate table names globally
-- âœ… No duplicate base URLs globally
+- ✅ No duplicate bundle names globally
+- ✅ No duplicate UI source titles globally
+- ✅ No duplicate table names globally
+- ✅ No duplicate base URLs globally
 
 ---
 
@@ -403,7 +403,7 @@ The second bundle reuses shared resources created by the first bundle.
 **Shared Functions**:
 - Lists existing functions in hdx_solutions project
 - Checks if each declared shared function exists (matches by name without prefix)
-- Skips if function exists (logs "âœ“ exists")
+- Skips if function exists (logs "❌“ exists")
 - Creates from local file if missing:
   - Reads `functions/{name}.json`
   - Replaces `__SHARED_PROJECT__` and `__PROJECT_NAME__` template variables
@@ -414,7 +414,7 @@ The second bundle reuses shared resources created by the first bundle.
 **Shared Dictionaries**:
 - Lists existing dictionaries in hdx_solutions project
 - Checks if each declared shared dictionary exists (matches by name without prefix)
-- Skips if dictionary exists (logs "âœ“ exists")
+- Skips if dictionary exists (logs "❌“ exists")
 - Creates from local files if missing:
   - Searches for files in `dictionaries/` then `dictionaries/.extracted/`
   - Reads definition (`{name}.json`) and data file (`{name}.[csv/yaml/yml/tsv]`)
@@ -616,8 +616,8 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### Validation Success
 ```
 Testing http_streaming_mcdn_test
-âœ“ All required dependencies exist on cluster
-âœ“ All required local files present
+❌“ All required dependencies exist on cluster
+❌“ All required local files present
 Final check on all bundles for duplicated tokens...
 SUCCESS
 ```
@@ -629,16 +629,16 @@ ERROR: Failed bundle validation: Transform file is not valid JSON: path=transfor
 
 ### Deployment Success
 ```
-ðŸ”— Processing 4 shared function(s) in hdx_solutions...
-  âœ“ Shared function city_name exists
-  âœ“ Shared function breadcrumbs exists
+🔍— Processing 4 shared function(s) in hdx_solutions...
+  ❌“ Shared function city_name exists
+  ❌“ Shared function breadcrumbs exists
   [...]
 
-ðŸ“¦ No bundle-specific functions declared (using 4 shared function(s))
+📦 No bundle-specific functions declared (using 4 shared function(s))
 
 Creating table: mcdn_test
-âœ“ Successfully inserted sample data
-âœ“ Created Grafana datasource
+❌“ Successfully inserted sample data
+❌“ Created Grafana datasource
 Starting headless browser test...
 Datasource errors: 0
 SUCCESS
@@ -646,7 +646,7 @@ SUCCESS
 
 ### Deployment Failure
 ```
-âŒ Transform validation failed:
+❌ Transform validation failed:
    Error: Unknown function sample_project_city_name
 
 ERROR: Failed to add transform
@@ -667,24 +667,24 @@ Your bundle must follow this structure:
 
 ```
 my-bundles/mcdn_test/
-â”œâ”€â”€ bundle.json                    # Required: Bundle manifest
-â”œâ”€â”€ functions/                      # Optional: SQL functions
-â”‚   â”œâ”€â”€ city_name.json             # Shared or bundle-specific
-â”‚   â””â”€â”€ breadcrumbs.json
-â”œâ”€â”€ dictionaries/                   # Optional: Lookup tables
-â”‚   â”œâ”€â”€ dictionaries.zip           # Large files (auto-extracted)
-â”‚   â”œâ”€â”€ .extracted/                # Auto-created (gitignored)
-â”‚   â”œâ”€â”€ ua_cat_dict.json           # Definition
-â”‚   â””â”€â”€ ua_cat_dict.yaml           # Data
-â”œâ”€â”€ transformations/                # Required: Data schemas
-â”‚   â”œâ”€â”€ mcdn_akamai.json
-â”‚   â””â”€â”€ mcdn_cloudflare.json
-â”œâ”€â”€ dashboards/                     # Required: Visualizations
-â”‚   â”œâ”€â”€ CDN Dashboard.json
-â”‚   â”œâ”€â”€ alert-rules.json           # Optional
-â”‚   â””â”€â”€ Raw Logs.json              # Optional
-â””â”€â”€ summaries/                      # Optional: Pre-aggregations
-    â””â”€â”€ mcdn_summary_min.sql
+├── bundle.json                    # Required: Bundle manifest
+├── functions/                      # Optional: SQL functions
+│   ├── city_name.json             # Shared or bundle-specific
+│   └── breadcrumbs.json
+├── dictionaries/                   # Optional: Lookup tables
+│   ├── dictionaries.zip           # Large files (auto-extracted)
+│   ├── .extracted/                # Auto-created (gitignored)
+│   ├── ua_cat_dict.json           # Definition
+│   └── ua_cat_dict.yaml           # Data
+├── transformations/                # Required: Data schemas
+│   ├── mcdn_akamai.json
+│   └── mcdn_cloudflare.json
+├── dashboards/                     # Required: Visualizations
+│   ├── CDN Dashboard.json
+│   ├── alert-rules.json           # Optional
+│   └── Raw Logs.json              # Optional
+└── summaries/                      # Optional: Pre-aggregations
+    └── mcdn_summary_min.sql
 ```
 
 ---
@@ -759,7 +759,7 @@ Plugin validation failed: 1 required plugin(s) missing
 
 **"Shared function declared but file not found":**
 ```
-âŒ Shared function 'city_name' declared but file not found.
+❌ Shared function 'city_name' declared but file not found.
    Expected: my-bundles/mcdn_test/functions/city_name.json
 ```
 
@@ -770,25 +770,25 @@ Plugin validation failed: 1 required plugin(s) missing
 
 **"Auto-discovering even though shared declared":**
 ```
-ðŸ“¦ AUTO-DISCOVERING bundle-specific functions...
+📦 AUTO-DISCOVERING bundle-specific functions...
   Found: city_name  â† Should be shared!
 ```
 
 **Cause:** Empty array in bundle.json:
 ```json
-"required_functions": [],  // âŒ Triggers auto-discovery
+"required_functions": [],  // ❌ Triggers auto-discovery
 "shared_functions": ["city_name"]
 ```
 
 **Solution:** Remove empty array:
 ```json
-// âœ… Just omit required_functions
+// ✅ Just omit required_functions
 "shared_functions": ["city_name"]
 ```
 
 **"Functions created in wrong project":**
 ```
-âœ“ Created function city_name  // In sample_project, should be hdx_solutions!
+❌“ Created function city_name  // In sample_project, should be hdx_solutions!
 ```
 
 **Solution:**
@@ -847,15 +847,15 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### 2. Use Correct Template Variables
 
 ```sql
--- âœ… Shared resources
+-- ✅ Shared resources
 SELECT __SHARED_PROJECT___city_name(ip) AS city
 FROM dictGet('__SHARED_PROJECT___geoip_city', 'city_name', ip)
 
--- âœ… Bundle-specific resources
+-- ✅ Bundle-specific resources
 SELECT __PROJECT_NAME___custom_parser(data) AS parsed
 FROM dictGet('__PROJECT_NAME___custom_dict', 'key', value)
 
--- âŒ Wrong (hardcoded)
+-- ❌ Wrong (hardcoded)
 SELECT sample_project_city_name(ip)
 SELECT reference_city_name(ip)
 ```
@@ -875,9 +875,9 @@ For resources used by multiple bundles:
 ### 4. Don't Use Empty Arrays
 
 ```json
-âŒ "required_functions": []  // Disables auto-discovery
+❌ "required_functions": []  // Disables auto-discovery
 
-âœ… // Omit field entirely to enable auto-discovery
+✅ // Omit field entirely to enable auto-discovery
 ```
 
 ### 5. Test Incrementally
@@ -896,10 +896,10 @@ deno run --allow-all src/main.ts --local mcdn_test
 ### 6. Use Bundle-Scoped Cleanup
 
 ```bash
-# âœ… Safe - only mcdn_test resources
+# ✅ Safe - only mcdn_test resources
 deno run --allow-all src/cleanup.ts --all mcdn_test
 
-# âŒ Dangerous - deletes EVERYTHING
+# ❌ Dangerous - deletes EVERYTHING
 deno run --allow-all src/cleanup.ts --all
 ```
 
