@@ -218,7 +218,7 @@ The tool automatically:
 
 **What happens:**
 - ✅ Creates declared shared resources in `hdx_solutions`
-- 🔍 Auto-discovers bundle-specific resources from filesystem
+- 🔍 Auto-discovers bundle-specific resources from filesystem
 - ✅ Best of both worlds
 
 ### Important: Empty Arrays Disable Auto-Discovery
