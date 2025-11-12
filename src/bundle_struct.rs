@@ -8,6 +8,7 @@ pub struct Bundle {
     pub base_url: String,
     pub dashboard: Dashboard,
     pub other_dashboards: Option<Vec<Dashboard>>,
+    pub alert_rules: Option<AlertRules>,
     #[serde(deserialize_with = "deserialize_valid_method")]
     pub method: String,
     pub method_overrides: Option<MethodOverrides>,
@@ -30,6 +31,15 @@ pub struct Dashboard {
     #[serde(deserialize_with = "deserialize_url_path")]
     pub path: String,
     pub project_var: String,
+    #[serde(default, deserialize_with = "deserialize_optional_sha256")]
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct AlertRules {
+    #[serde(deserialize_with = "deserialize_url_path")]
+    pub path: String,
     #[serde(default, deserialize_with = "deserialize_optional_sha256")]
     pub sha256: Option<String>,
 }
@@ -140,24 +150,13 @@ pub struct HydrolixDependencies {
     #[serde(rename = "cluster_version")]
     pub cluster_version: Option<String>,
     #[serde(rename = "required_dictionaries")]
-    pub required_dictionaries: Option<Vec<Dictionary>>,
+    pub required_dictionaries: Option<Vec<String>>,
     #[serde(rename = "required_functions")]
-    pub required_functions: Option<Vec<Function>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct Dictionary {
-    pub name: String,
-    #[serde(deserialize_with = "deserialize_https_url")]
-    pub source: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct Function {
-    pub name: String,
-    pub definition: String,
+    pub required_functions: Option<Vec<String>>,
+    #[serde(rename = "shared_dictionaries")]
+    pub shared_dictionaries: Option<Vec<String>>,
+    #[serde(rename = "shared_functions")]
+    pub shared_functions: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -455,5 +454,50 @@ where
             Ok(Some(s))
         }
         None => Ok(None),
+    }
+}
+
+// Helper functions to extract functions and dictionaries
+impl Bundle {
+    /// Get all functions categorized by type (bundle-specific vs shared)
+    pub fn get_all_functions(&self) -> (Vec<String>, Vec<String>) {
+        let bundle_specific = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.required_functions.as_ref())
+            .map(|f| f.clone())
+            .unwrap_or_default();
+
+        let shared = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.shared_functions.as_ref())
+            .map(|f| f.clone())
+            .unwrap_or_default();
+
+        (bundle_specific, shared)
+    }
+
+    /// Get all dictionaries categorized by type (bundle-specific vs shared)
+    pub fn get_all_dictionaries(&self) -> (Vec<String>, Vec<String>) {
+        let bundle_specific = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.required_dictionaries.as_ref())
+            .map(|d| d.clone())
+            .unwrap_or_default();
+
+        let shared = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.shared_dictionaries.as_ref())
+            .map(|d| d.clone())
+            .unwrap_or_default();
+
+        (bundle_specific, shared)
     }
 }

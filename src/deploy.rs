@@ -7,6 +7,7 @@ use uuid::Uuid;
 use crate::bundle_struct::Bundle;
 use crate::grafana;
 use crate::hdx;
+use crate::hdx_shared;
 use crate::output_struct::Output;
 use crate::output_struct::OutputTable;
 use crate::output_struct::OutputTransformation;
@@ -16,7 +17,7 @@ use crate::GRAFANA_LOCATION;
 const TABLE_READY_DELAY_SECS: u64 = 30;
 const DATA_READY_DELAY_SECS: u64 = 30;
 
-pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<String, String> {
+pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
     let bearer_token = match hdx::get_auth_token().await {
         Ok(v) => v,
         Err(e) => {
@@ -29,6 +30,113 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     };
 
     let project_name = hdx::create_project_name();
+    let shared_project_name = hdx_shared::get_shared_project_name();
+
+    // ========================================================================
+    // PHASE 1: SHARED RESOURCES (commons project)
+    // ========================================================================
+
+    if let Some(deps) = &bundle.dependencies {
+        if let Some(_hydrolix) = &deps.hydrolix {
+            let (bundle_funcs, shared_funcs) = bundle.get_all_functions();
+
+            // Create SHARED functions first (they may be used by bundle-specific ones)
+            if !shared_funcs.is_empty() {
+                println!(
+                    "\n🔗 Processing {} EXPLICITLY DECLARED shared function(s) in {}...",
+                    shared_funcs.len(),
+                    shared_project_name
+                );
+
+                for function_name in &shared_funcs {
+                    match hdx_shared::check_and_create_shared_function(
+                        &bearer_token,
+                        function_name,
+                        base,
+                    )
+                    .await
+                    {
+                        Ok(_) => (),
+                        Err(e) => return Err(format!("Failed to create shared function: {}", e)),
+                    }
+                }
+            }
+
+            // Create SHARED dictionaries (may be used by functions/transforms)
+            let (bundle_dicts, shared_dicts) = bundle.get_all_dictionaries();
+
+            if !shared_dicts.is_empty() {
+                println!(
+                    "\n🔗 Processing {} EXPLICITLY DECLARED shared dictionar(y/ies) in {}...",
+                    shared_dicts.len(),
+                    shared_project_name
+                );
+
+                for dictionary_name in &shared_dicts {
+                    match hdx_shared::check_and_create_shared_dictionary(
+                        &bearer_token,
+                        dictionary_name,
+                        base,
+                    )
+                    .await
+                    {
+                        Ok(_) => (),
+                        Err(e) => {
+                            return Err(format!("Failed to create shared dictionary: {}", e))
+                        }
+                    }
+                }
+            }
+
+            // ========================================================================
+            // PHASE 2: BUNDLE-SPECIFIC RESOURCES (sample_project)
+            // ========================================================================
+
+            if !bundle_funcs.is_empty() {
+                println!(
+                    "\n📦 Processing {} bundle-specific function(s) in {}...",
+                    bundle_funcs.len(),
+                    project_name
+                );
+
+                for function_name in &bundle_funcs {
+                    match hdx::check_and_create_function(
+                        &bearer_token,
+                        function_name,
+                        base,
+                    )
+                    .await
+                    {
+                        Ok(_) => (),
+                        Err(e) => return Err(format!("Failed to create bundle-specific function: {}", e)),
+                    }
+                }
+            }
+
+            if !bundle_dicts.is_empty() {
+                println!(
+                    "\n📦 Processing {} bundle-specific dictionar(y/ies) in {}...",
+                    bundle_dicts.len(),
+                    project_name
+                );
+
+                for dictionary_name in &bundle_dicts {
+                    match hdx::check_and_create_dictionary(
+                        &bearer_token,
+                        dictionary_name,
+                        base,
+                    )
+                    .await
+                    {
+                        Ok(_) => (),
+                        Err(e) => {
+                            return Err(format!("Failed to create bundle-specific dictionary: {}", e))
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     let datalink = match grafana::interface::create_datalink(&project_name).await {
         Ok(v) => v,
@@ -98,7 +206,78 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Str
     };
 
     output.dashboard_id = dashboard_id.clone();
-    Ok(dashboard_id)
+
+    // Collect all dashboard UIDs
+    let mut all_dashboard_uids: Vec<String> = vec![dashboard_id];
+
+    // Create other dashboards if present
+    if let Some(other_dashboards) = &bundle.other_dashboards {
+        let shared_project_name = hdx_shared::get_shared_project_name();
+
+        for other_dash in other_dashboards {
+            println!("Creating additional dashboard: {}", other_dash.path);
+
+            let other_dash_path = format!("{}/{}", base, other_dash.path);
+            let mut other_dashboard_data = fs::read_to_string(&other_dash_path)
+                .await
+                .map_err(|e| {
+                    format!(
+                        "Failed to read other dashboard {}: {}",
+                        other_dash_path, e
+                    )
+                })?;
+
+            other_dashboard_data =
+                other_dashboard_data.replace("__PROJECT_NAME__", &project_name);
+            other_dashboard_data = other_dashboard_data.replace("__DATASOURCE__", &datalink);
+            other_dashboard_data = other_dashboard_data
+                .replace("__DASHBOARD_UUID__", &Uuid::new_v4().to_string());
+            other_dashboard_data =
+                other_dashboard_data.replace("__SHARED_PROJECT__", &shared_project_name);
+
+            // Replace summary table variables if present
+            if let Some(summary_tables) = &bundle.summary_tables {
+                if !summary_tables.is_empty() {
+                    let summary_min = format!("{}.{}", project_name, summary_tables[0].name);
+                    other_dashboard_data = other_dashboard_data
+                        .replace("${VAR_SUMMARY_MIN}", &summary_min)
+                        .replace("$VAR_SUMMARY_MIN", &summary_min);
+                }
+                if summary_tables.len() > 1 {
+                    let summary_hour = format!("{}.{}", project_name, summary_tables[1].name);
+                    other_dashboard_data = other_dashboard_data
+                        .replace("${VAR_SUMMARY_HOUR}", &summary_hour)
+                        .replace("$VAR_SUMMARY_HOUR", &summary_hour);
+                }
+            }
+
+            // Replace table dashboard vars
+            for table in &bundle.tables {
+                other_dashboard_data =
+                    other_dashboard_data.replace(&table.dashboard_var, &table.name);
+            }
+
+            // Replace summary table dashboard vars
+            if let Some(summary_tables) = &bundle.summary_tables {
+                for summary in summary_tables {
+                    other_dashboard_data =
+                        other_dashboard_data.replace(&summary.dashboard_var, &summary.name);
+                }
+            }
+
+            let other_dash_uid = grafana::interface::create_dashboard(&other_dashboard_data)
+                .await
+                .map_err(|e| format!("Failed to create other dashboard: {}", e))?;
+
+            all_dashboard_uids.push(other_dash_uid.clone());
+            println!(
+                "✓ Created dashboard: {} (UID: {})",
+                other_dash.path, other_dash_uid
+            );
+        }
+    }
+
+    Ok(all_dashboard_uids)
 }
 
 async fn load_dashboard_template(

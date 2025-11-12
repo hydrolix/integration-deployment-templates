@@ -10,6 +10,8 @@ mod deploy;
 mod deploy_only_dashboard;
 mod grafana;
 mod hdx;
+mod hdx_check_dependencies;
+mod hdx_shared;
 mod headless_browser;
 mod output_struct;
 mod validate;
@@ -43,6 +45,15 @@ lazy_static! {
     static ref DUMP_OUTPUT: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--output".to_string())
+    };
+    static ref STRICT_PLUGINS: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--strict-plugins".to_string())
+            || std::env::var("STRICT_PLUGIN_VALIDATION").unwrap_or_default() == "true"
+    };
+    static ref PRODUCTION_MODE: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--production".to_string())
     };
     static ref MATCH_ONLY: String = {
         let mut value = "".to_string();
@@ -175,6 +186,37 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Bad summary table: error={e}")),
     }
 
+    match validate::alert_rules_are_valid::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Alert rules validation failed: error={e}")),
+    }
+
+    // Check dependencies (warnings only, doesn't fail validation)
+    match validate::check_dependencies::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => eprintln!("WARNING: Dependency check failed: {e}"),
+    }
+
+    // Production mode: Check that resources exist on remote cluster
+    if *PRODUCTION_MODE {
+        println!("Production mode: Checking remote cluster for required resources...");
+        match hdx::get_auth_token().await {
+            Ok(bearer_token) => {
+                match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base).await {
+                    Ok(_) => println!("✓ All required resources exist on remote cluster"),
+                    Err(e) => {
+                        eprintln!("ERROR: Production mode dependency check failed: {e}");
+                        return Err(format!("Production dependency check failed: {e}"));
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("ERROR: Failed to authenticate for production check: {e}");
+                return Err(format!("Production auth failed: {e}"));
+            }
+        }
+    }
+
     if *IS_LOCAL_DASHBOARD_ONLY {
         // Kill the previous container if it exists
         _ = grafana::container::kill().await;
@@ -187,11 +229,12 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        let dashboard_id = match deploy_only_dashboard::run(base, bundle, &mut output).await {
+        let dashboard_ids = match deploy_only_dashboard::run(base, bundle, &mut output).await {
             Ok(v) => v,
             Err(e) => return Err(format!("Failed to deploy dashboard error={e}")),
         };
-        println!("Dashboard_id={dashboard_id}");
+        println!("Dashboard IDs: {:?}", dashboard_ids);
+        println!("Primary dashboard_id={}", dashboard_ids.get(0).unwrap_or(&"N/A".to_string()));
     }
 
     if *IS_LOCAL {
@@ -206,16 +249,35 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        let dashboard_id = match deploy::run(base, bundle, &mut output).await {
+        let dashboard_ids = match deploy::run(base, bundle, &mut output).await {
             Ok(v) => v,
             Err(e) => return Err(format!("Failed to deploy error={e}")),
         };
 
-        println!("Dashboard_id={dashboard_id}");
+        println!("Total dashboards deployed: {}", dashboard_ids.len());
+        println!("Dashboard IDs: {:?}", dashboard_ids);
+
+        // Check for required Grafana plugins
+        match grafana::grafana_plugins_check::check_deployed_dashboards(&dashboard_ids, *STRICT_PLUGINS).await {
+            Ok(_) => (),
+            Err(e) => {
+                if *STRICT_PLUGINS {
+                    return Err(format!("Plugin validation failed: {}", e));
+                } else {
+                    eprintln!("Plugin check warning: {}", e);
+                }
+            }
+        }
+
+        // Use primary dashboard for headless browser check
+        let primary_dashboard_id = dashboard_ids
+            .get(0)
+            .cloned()
+            .unwrap_or_else(|| "".to_string());
 
         println!("Checking the Grafana dashboard with headless Chrome");
         let (datasource_error_count, nodata_error_count) =
-            match headless_browser::run(&dashboard_id).await {
+            match headless_browser::run(&primary_dashboard_id).await {
                 Ok(v) => v,
                 Err(e) => return Err(format!("Failed to run headless browser error={e}")),
             };
