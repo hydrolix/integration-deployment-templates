@@ -3,6 +3,7 @@
   "source": "cdn_insights",
   "method": "http_streaming",
   "beta": true,
+  "solution": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default-1760472897943.json",

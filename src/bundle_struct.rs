@@ -11,6 +11,8 @@ pub struct Bundle {
     #[serde(deserialize_with = "deserialize_valid_method")]
     pub method: String,
     pub method_overrides: Option<MethodOverrides>,
+    #[serde(default)]
+    pub solution: bool,
     pub beta: bool,
     #[serde(deserialize_with = "deserialize_https_url")]
     pub base_url: String,
