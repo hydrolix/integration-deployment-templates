@@ -1,4 +1,4 @@
-# Bundle Format Documentation
+# Bundle Format Documentation v2
 
 A bundle is a Hydrolix JSON configuration file that packages transformations, dashboards, and documentation for data integration and visualization.
 
@@ -28,6 +28,8 @@ This document describes all valid fields and their validation rules.
 - `source` must contain only alphanumeric characters, dashes, and underscores
 - No duplicate table names across all tables
 - No duplicate `dashboard_var` values across all tables and summary tables
+- **Dependency validation**: All resources referenced in dependency fields must exist (see [Dependency Validation](#dependency-validation))
+- **DAG validation**: The dependency graph must be acyclic (no circular dependencies)
 
 ## Dashboard Object
 
@@ -36,6 +38,7 @@ This document describes all valid fields and their validation rules.
 | `path` | `string` | ✅ | Relative path to dashboard JSON or TSV file |
 | `project_var` | `string` | ✅ | Variable placeholder for project name |
 | `sha256` | `string` | ❌ | Optional SHA256 hash of dashboard contents (64 hex characters) |
+| `requires_plugins` | `string[]` | ❌ | Optional array of Grafana plugin names required by this dashboard |
 
 ### Validation Rules for Dashboard
 - `path` cannot start with `/`
@@ -43,6 +46,7 @@ This document describes all valid fields and their validation rules.
 - `path` must end with `.json` or `.tsv`
 - `project_var` must follow macro format: `__VARIABLE_NAME__`
 - Use `openssl dgst -sha256 <file_name>` to generate the sha256
+- All plugin names in `requires_plugins` must exist in `dependencies.grafana.plugins[].name`
 
 ## Table Object
 
@@ -51,10 +55,14 @@ This document describes all valid fields and their validation rules.
 | `dashboard_var` | `string` | ✅ | Variable placeholder for table name in dashboard |
 | `name` | `string` | ✅ | Table identifier |
 | `transforms` | `Transform[]` | ✅ | Array of transformation definitions |
+| `requires_functions` | `string[]` | ❌ | **NEW**: Optional array of custom function names this table depends on |
+| `requires_dictionaries` | `string[]` | ❌ | **NEW**: Optional array of dictionary names this table depends on directly |
 
 ### Validation Rules for Table
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
 - `name` must be unique across all tables in the bundle
+- All names in `requires_functions` must exist in `dependencies.hydrolix.required_functions[].name`
+- All names in `requires_dictionaries` must exist in `dependencies.hydrolix.required_dictionaries[].name`
 
 ## SummaryTable Object
 
@@ -64,12 +72,16 @@ This document describes all valid fields and their validation rules.
 | `dashboard_var` | `string` | ✅ | Variable placeholder for summary table name in dashboard |
 | `parent_table_name` | `string` | ✅ | Name of the parent table to aggregate from |
 | `sql` | `SummarySqlFile` | ✅ | SQL file configuration for summary table |
+| `requires_functions` | `string[]` | ❌ | **NEW**: Optional array of custom function names this summary table depends on |
+| `requires_dictionaries` | `string[]` | ❌ | **NEW**: Optional array of dictionary names this summary table depends on directly |
 
 ### Validation Rules for SummaryTable
 - `dashboard_var` must follow macro format: `__VARIABLE_NAME__`
 - `dashboard_var` must be unique across all summary tables in the bundle
 - `name` must be unique across all summary tables in the bundle
 - `parent_table_name` must reference a valid table name from the bundle's `tables` array
+- All names in `requires_functions` must exist in `dependencies.hydrolix.required_functions[].name`
+- All names in `requires_dictionaries` must exist in `dependencies.hydrolix.required_dictionaries[].name`
 
 ## SummarySqlFile Object
 
@@ -168,8 +180,9 @@ This document describes all valid fields and their validation rules.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | `string` | ✅  | Plugin identifier |
-| `version` | `string` | ✅  | Plugin version requirement |
+| `name` | `string` | ✅  | Plugin identifier (e.g., `grafana-clickhouse-datasource`, `marcusolsson-treemap-panel`) |
+| `version` | `string` | ✅  | Plugin version requirement (semver range) |
+| `type` | `string` | ❌  | Plugin type: `"datasource"` or `"panel"` (optional, for documentation) |
 
 ### HydrolixDependencies Object
 
@@ -192,6 +205,10 @@ This document describes all valid fields and their validation rules.
 |-------|------|----------|-------------|
 | `name` | `string` | ✅  | Function name |
 | `definition` | `string` | ✅  | Function SQL definition |
+| `requires_dictionaries` | `string[]` | ❌ | **NEW**: Optional array of dictionary names this function depends on |
+
+### Validation Rules for Function
+- All names in `requires_dictionaries` must exist in `dependencies.hydrolix.required_dictionaries[].name`
 
 ### DataSource Object
 
@@ -207,6 +224,70 @@ This document describes all valid fields and their validation rules.
 - `dependencies.grafana.plugins[].name` must be valid plugin identifiers
 - `dependencies.grafana.version` must follow semantic version range format
 - `dependencies.hydrolix.cluster_version` must follow semantic version range format
+
+## Dependency Validation
+
+The bundle format now supports explicit dependency tracking to ensure resources are created in the correct order. The dependency graph must be validated to ensure:
+
+1. **Reference Integrity**: All referenced resources exist
+2. **Acyclic Graph**: No circular dependencies exist
+3. **Execution Order**: A valid topological sort can be computed
+
+### Dependency Chain
+
+The typical dependency chain is:
+
+```
+Dictionaries
+    ↓
+Functions (may depend on dictionaries)
+    ↓
+Tables (may depend on functions and/or dictionaries)
+    ↓
+Summary Tables (depend on parent tables, may depend on functions and/or dictionaries)
+```
+
+### Validation Rules
+
+1. **Dictionary References**:
+   - `dependencies.hydrolix.required_functions[].requires_dictionaries[]` names must exist in `dependencies.hydrolix.required_dictionaries[].name`
+   - `tables[].requires_dictionaries[]` names must exist in `dependencies.hydrolix.required_dictionaries[].name`
+   - `summary_tables[].requires_dictionaries[]` names must exist in `dependencies.hydrolix.required_dictionaries[].name`
+
+2. **Function References**:
+   - `tables[].requires_functions[]` names must exist in `dependencies.hydrolix.required_functions[].name`
+   - `summary_tables[].requires_functions[]` names must exist in `dependencies.hydrolix.required_functions[].name`
+
+3. **Table References**:
+   - `summary_tables[].parent_table_name` must exist in `tables[].name`
+
+4. **Plugin References**:
+   - `dashboard.requires_plugins[]` names must exist in `dependencies.grafana.plugins[].name`
+   - `other_dashboards[].requires_plugins[]` names must exist in `dependencies.grafana.plugins[].name`
+
+5. **Acyclic Validation**:
+   - The complete dependency graph must not contain cycles
+   - Use topological sort to validate and compute execution order
+
+### Execution Order Computation
+
+To compute the correct execution order:
+
+1. Build a directed graph where:
+   - Each dictionary, function, table, and summary table is a node
+   - Each dependency relationship is an edge
+
+2. Perform topological sort to get execution order:
+   ```
+   Level 0: Dictionaries (no dependencies)
+   Level 1: Functions that depend only on dictionaries
+   Level 2: Functions that depend on Level 1 functions
+   Level 3: Tables that depend on dictionaries/functions
+   Level 4: Summary tables that depend on tables
+   ...and so on
+   ```
+
+3. Resources at the same level can be created in parallel
 
 ## Valid Methods
 
@@ -261,7 +342,8 @@ SHA256 hash fields must:
 - Be exactly 64 characters long
 - Contain only hexadecimal characters (0-9, a-f, A-F)
 
-## Example Bundle with Summary Tables and Dependencies
+## Example Bundle with Complete Dependency Chain
+
 ```json
 {
   "name": "kinesis-cloudfront",
@@ -272,7 +354,8 @@ SHA256 hash fields must:
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__",
-    "sha256": "65d22b569bb986a28e98246637bd41dad5ecf56220965d2cc3491577a160138b"
+    "sha256": "65d22b569bb986a28e98246637bd41dad5ecf56220965d2cc3491577a160138b",
+    "requires_plugins": ["marcusolsson-treemap-panel"]
   },
   "other_dashboards": [
     {
@@ -284,6 +367,7 @@ SHA256 hash fields must:
     {
       "dashboard_var": "__TABLE_NAME__",
       "name": "cloudfront_kinesis",
+      "requires_functions": ["lookup_city", "lookup_asn"],
       "transforms": [
         {
           "path": "transformations/current.json",
@@ -298,6 +382,7 @@ SHA256 hash fields must:
       "name": "cloudfront_hourly_summary",
       "dashboard_var": "__SUMMARY_TABLE_HOURLY__",
       "parent_table_name": "cloudfront_kinesis",
+      "requires_functions": ["lookup_city"],
       "sql": {
         "path": "sql/hourly_summary.sql",
         "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890"
@@ -336,8 +421,14 @@ SHA256 hash fields must:
       "version": "^12.1.0",
       "plugins": [
         {
-          "name": "grafana-clickhouse-datasource",
-          "version": "^4.10.1"
+          "name": "hydrolix-datasource",
+          "version": "^1.0.0",
+          "type": "datasource"
+        },
+        {
+          "name": "marcusolsson-treemap-panel",
+          "version": "^1.3.0",
+          "type": "panel"
         }
       ]
     },
@@ -345,7 +436,7 @@ SHA256 hash fields must:
       "cluster_version": "^5.4.0",
       "required_dictionaries": [
         {
-          "name": "geoip_asm",
+          "name": "geoip_asn",
           "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz"
         },
         {
@@ -353,9 +444,67 @@ SHA256 hash fields must:
           "source": "https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz"
         }
       ],
-      "required_functions": []
+      "required_functions": [
+        {
+          "name": "lookup_city",
+          "definition": "CREATE FUNCTION lookup_city(ip String) RETURNS String AS dictGet('geoip_city', 'city_name', tuple(IPv4StringToNum(ip)))",
+          "requires_dictionaries": ["geoip_city"]
+        },
+        {
+          "name": "lookup_asn",
+          "definition": "CREATE FUNCTION lookup_asn(ip String) RETURNS UInt32 AS dictGet('geoip_asn', 'asn', tuple(IPv4StringToNum(ip)))",
+          "requires_dictionaries": ["geoip_asn"]
+        }
+      ]
     },
     "data-sources": []
   }
 }
 ```
+
+### Execution Order for Example Bundle
+
+Based on the dependency graph:
+
+```
+Level 0 (parallel):
+  - Dictionary: geoip_asn
+  - Dictionary: geoip_city
+
+Level 1 (parallel, after Level 0):
+  - Function: lookup_city (requires geoip_city)
+  - Function: lookup_asn (requires geoip_asn)
+
+Level 2 (after Level 1):
+  - Table: cloudfront_kinesis (requires lookup_city, lookup_asn)
+
+Level 3 (parallel, after Level 2):
+  - Summary Table: cloudfront_hourly_summary (requires cloudfront_kinesis, lookup_city)
+  - Summary Table: cloudfront_daily_summary (requires cloudfront_kinesis)
+
+Grafana Setup (can happen anytime before dashboard deployment):
+  - Install plugin: hydrolix-datasource
+  - Install plugin: marcusolsson-treemap-panel
+
+Final:
+  - Deploy dashboard (requires plugins installed)
+```
+
+## Changes from v1
+
+**New Fields**:
+- `Function.requires_dictionaries` - Explicit dictionary dependencies for functions
+- `Table.requires_functions` - Explicit function dependencies for tables
+- `Table.requires_dictionaries` - Explicit dictionary dependencies for tables
+- `SummaryTable.requires_functions` - Explicit function dependencies for summary tables
+- `SummaryTable.requires_dictionaries` - Explicit dictionary dependencies for summary tables
+- `Dashboard.requires_plugins` - Explicit Grafana plugin dependencies for dashboards
+- `GrafanaPlugin.type` - Optional plugin type classification
+
+**New Validation Rules**:
+- Dependency reference integrity validation
+- Acyclic dependency graph validation
+- Execution order computation via topological sort
+
+**Purpose**:
+These changes enable automated dependency resolution and ensure resources are created in the correct order, preventing runtime errors due to missing dependencies.
