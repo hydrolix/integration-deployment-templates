@@ -58,7 +58,7 @@
         },
         {
           "path": "transformations/cloudfront_lsalv1/transform.json",
-          "sample": "transformations/cloudfront_lsalv1/sample_data.json"
+          "sample": "transformations/cloudfront_lsalv1/sample_data.tsv"
         },
         {
           "path": "transformations/fastly/transform.json",
