@@ -57,10 +57,6 @@
           "sample": "transformations/cloudfront_firehose/sample_data.json"
         },
         {
-          "path": "transformations/cloudfront_lsalv1/transform.json",
-          "sample": "transformations/cloudfront_lsalv1/sample_data.tsv"
-        },
-        {
           "path": "transformations/fastly/transform.json",
           "sample": "transformations/fastly/sample_data.json"
         },
