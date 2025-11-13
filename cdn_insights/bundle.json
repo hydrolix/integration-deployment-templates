@@ -46,23 +46,28 @@
       "transforms": [
         {
           "path": "transformations/akamai_ds2/transform.json",
-          "sample": "transformations/akamai_ds2/sample_data.json"
+          "sample": "transformations/akamai_ds2/sample_data.json",
+          "method": "http_streaming"
         },
         {
           "path": "transformations/cloudflare/transform.json",
-          "sample": "transformations/cloudflare/sample_data.json"
+          "sample": "transformations/cloudflare/sample_data.json",
+          "method": "http_streaming"
         },
         {
           "path": "transformations/cloudfront_firehose/transform.json",
-          "sample": "transformations/cloudfront_firehose/sample_data.json"
+          "sample": "transformations/cloudfront_firehose/sample_data.json",
+          "method": "firehose"
         },
         {
           "path": "transformations/fastly/transform.json",
-          "sample": "transformations/fastly/sample_data.json"
+          "sample": "transformations/fastly/sample_data.json",
+          "method": "http_streaming"
         },
         {
           "path": "transformations/tencent/transform.json",
-          "sample": "transformations/tencent/sample_data.json"
+          "sample": "transformations/tencent/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
