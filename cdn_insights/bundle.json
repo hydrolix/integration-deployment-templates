@@ -1,7 +1,7 @@
 {
   "name": "http_streaming_cdn_insights",
   "source": "cdn_insights",
-  "method": "http_streaming_firehose",
+  "method": "multi_stream",
   "beta": true,
   "solution": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
