@@ -96,7 +96,7 @@
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
     "source": {
-      "full_title": "Multi CDN",
+      "full_title": "CDN Insights",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/mcdn.png"
     },
     "data_category": "security"
