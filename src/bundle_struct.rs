@@ -4,25 +4,25 @@ use url::Url;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Bundle {
-    #[serde(deserialize_with = "deserialize_https_url")]
-    pub base_url: String,
-    pub dashboard: Dashboard,
-    pub other_dashboards: Option<Vec<Dashboard>>,
-    pub alert_rules: Option<AlertRules>,
-    #[serde(deserialize_with = "deserialize_valid_method")]
-    pub method: String,
-    pub method_overrides: Option<MethodOverrides>,
     #[serde(deserialize_with = "deserialize_valid_name")]
     pub name: String,
     #[serde(deserialize_with = "deserialize_valid_source")]
     pub source: String,
+    #[serde(deserialize_with = "deserialize_valid_method")]
+    pub method: String,
+    pub method_overrides: Option<MethodOverrides>,
     pub beta: bool,
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub base_url: String,
+    pub dashboard: Dashboard,
+    pub other_dashboards: Option<Vec<Dashboard>>,
     pub tables: Vec<Table>,
     pub summary_tables: Option<Vec<SummaryTable>>,
     pub ui: Ui,
     pub metadata: Metadata,
     #[serde(default)]
     pub dependencies: Option<Dependencies>,
+    pub alert_rules: Option<AlertRules>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
