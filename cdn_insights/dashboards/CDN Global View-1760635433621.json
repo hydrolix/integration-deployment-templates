@@ -2144,9 +2144,9 @@
           "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "type": "constant",
           "current": {
-              "value": "__PROJECT_NAME__.__TABLE_NAME__",
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "selected": false
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
           }
         },
         {
@@ -2418,7 +2418,7 @@
     },
     "timepicker": {},
     "timezone": "utc",
-    "title": "CDN Global View",
+    "title": "Multi CDN - Global View",
     "uid": "__DASHBOARD_UUID__",
     "version": 34,
     "weekStart": ""

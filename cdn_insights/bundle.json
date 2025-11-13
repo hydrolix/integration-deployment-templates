@@ -86,11 +86,11 @@
   "ui": {
     "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "method": {
-      "full_title": "Http-Streaming",
+      "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
     "source": {
-      "full_title": "MCDN TEST",
+      "full_title": "Multi CDN",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/mcdn.png"
     },
     "data_category": "security"

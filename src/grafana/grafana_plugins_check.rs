@@ -12,15 +12,20 @@ struct PluginInfo {
     id: String,
     name: String,
     plugin_type: String,
+    #[allow(dead_code)]
     enabled: bool,
+    #[allow(dead_code)]
     version: Option<String>,
 }
 
 #[derive(Debug, Clone)]
 struct DashboardPluginUsage {
+    #[allow(dead_code)]
     dashboard_uid: String,
     dashboard_title: String,
+    #[allow(dead_code)]
     plugin_id: String,
+    #[allow(dead_code)]
     plugin_type: String,
     panel_count: usize,
 }
@@ -141,7 +146,10 @@ pub async fn check_deployed_dashboards(
             );
             eprintln!("    Used in:");
             for u in usage {
-                eprintln!("      - \"{}\" ({} panel(s))", u.dashboard_title, u.panel_count);
+                eprintln!(
+                    "      - \"{}\" ({} panel(s))",
+                    u.dashboard_title, u.panel_count
+                );
             }
         }
 
@@ -205,9 +213,7 @@ async fn get_dashboard_by_uid(uid: &str) -> Result<Value, String> {
 fn extract_plugins_from_dashboard(dashboard_data: &Value) -> HashMap<String, usize> {
     let mut plugin_counts: HashMap<String, usize> = HashMap::new();
 
-    let dashboard = dashboard_data
-        .get("dashboard")
-        .unwrap_or(dashboard_data);
+    let dashboard = dashboard_data.get("dashboard").unwrap_or(dashboard_data);
 
     if let Some(panels) = dashboard.get("panels").and_then(|p| p.as_array()) {
         fn process_panel(panel: &Value, plugin_counts: &mut HashMap<String, usize>) {
@@ -324,10 +330,7 @@ async fn get_installed_plugins() -> Result<Vec<PluginInfo>, String> {
                 .and_then(|v| v.as_str())
                 .unwrap_or("unknown")
                 .to_string(),
-            enabled: p
-                .get("enabled")
-                .and_then(|v| v.as_bool())
-                .unwrap_or(true),
+            enabled: p.get("enabled").and_then(|v| v.as_bool()).unwrap_or(true),
             version: p
                 .get("info")
                 .and_then(|i| i.get("version"))

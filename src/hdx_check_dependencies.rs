@@ -7,8 +7,8 @@ use tokio::fs;
 use crate::bundle_struct::Bundle;
 use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const PROJ_UUID: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
+const PROJ_UUID: &str = "689bf77f-7694-46a8-a2f9-1eb1d1cbe1dd";
 const PROJ_NAME: &str = "sample_project";
 
 pub async fn check_dependencies_exist(
@@ -66,7 +66,8 @@ pub async fn check_dependencies_exist(
                                 missing_functions.push(function_name.clone());
                             }
 
-                            let file_path = format!("{}/functions/{}.json", base_dir, function_name);
+                            let file_path =
+                                format!("{}/functions/{}.json", base_dir, function_name);
                             if fs::metadata(&file_path).await.is_err() {
                                 missing_files.push(format!("functions/{}.json", function_name));
                             }
@@ -74,8 +75,9 @@ pub async fn check_dependencies_exist(
                     }
                     Ok(response) => {
                         return Err(format!(
-                            "Failed to list functions: {}",
-                            response.status()
+                            "Failed to list functions: {}: {:?}",
+                            response.status(),
+                            response
                         ));
                     }
                     Err(e) => {
@@ -179,14 +181,20 @@ pub async fn check_dependencies_exist(
     if !missing_functions.is_empty() {
         errors.push("\n❌ Missing functions on cluster:".to_string());
         for name in &missing_functions {
-            errors.push(format!("   - {} (expected as: {}_{})", name, PROJ_NAME, name));
+            errors.push(format!(
+                "   - {} (expected as: {}_{})",
+                name, PROJ_NAME, name
+            ));
         }
     }
 
     if !missing_dictionaries.is_empty() {
         errors.push("\n❌ Missing dictionaries on cluster:".to_string());
         for name in &missing_dictionaries {
-            errors.push(format!("   - {} (expected as: {}_{})", name, PROJ_NAME, name));
+            errors.push(format!(
+                "   - {} (expected as: {}_{})",
+                name, PROJ_NAME, name
+            ));
         }
     }
 

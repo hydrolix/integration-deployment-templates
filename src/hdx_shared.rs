@@ -56,10 +56,7 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
     };
 
     if !response.status().is_success() {
-        return Err(format!(
-            "Failed to list projects: {}",
-            response.status()
-        ));
+        return Err(format!("Failed to list projects: {}", response.status()));
     }
 
     let projects: Value = match response.json().await {
@@ -176,7 +173,7 @@ pub async fn check_and_create_shared_function(
         .header("Authorization", format!("Bearer {}", bearer_token))
         .send()
         .await
-        .map_err(|e| format!("Failed to list functions: {}", e))?;
+        .map_err(|e| format!("Failed to list functions before creating: {}", e))?;
 
     if list_response.status().is_success() {
         let response_data: Value = list_response
@@ -365,11 +362,7 @@ pub async fn check_and_create_shared_dictionary(
         .await
         .map_err(|e| format!("Failed to read dictionary data file: {}", e))?;
 
-    let file_name = files
-        .1
-        .split('/')
-        .last()
-        .ok_or("Invalid data file path")?;
+    let file_name = files.1.split('/').last().ok_or("Invalid data file path")?;
 
     upload_shared_dictionary_file(bearer_token, file_name, &data_file_content).await?;
     create_shared_dictionary_definition(bearer_token, dictionary_name, dict_def).await?;
@@ -447,10 +440,7 @@ async fn upload_shared_dictionary_file(
                         };
 
                         if name == base_file_name || name == file_name {
-                            println!(
-                                "  ✓ Shared dictionary file already uploaded: {}",
-                                file_name
-                            );
+                            println!("  ✓ Shared dictionary file already uploaded: {}", file_name);
                             return Ok(());
                         }
                     }

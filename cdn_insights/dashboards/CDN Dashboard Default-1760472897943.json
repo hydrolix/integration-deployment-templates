@@ -3769,9 +3769,9 @@
           "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "type": "constant",
           "current": {
-              "value": "__PROJECT_NAME__.__TABLE_NAME__",
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "selected": false
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
           }
         },
         {
@@ -4088,7 +4088,7 @@
     },
     "timepicker": {},
     "timezone": "utc",
-    "title": "CDN Dashboard Default",
+    "title": "Mutli CDN - Default",
     "uid": "__DASHBOARD_UUID__",
     "version": 13,
     "weekStart": ""

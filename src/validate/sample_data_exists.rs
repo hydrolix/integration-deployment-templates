@@ -36,6 +36,13 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
                 continue;
             }
 
+            // Check if it's a non-empty array
+            if let Some(arr) = sample_data.as_array() {
+                if !arr.is_empty() {
+                    continue;
+                }
+            }
+
             // Check if it's a non-empty string
             if sample_data.as_str().is_some() {
                 continue;

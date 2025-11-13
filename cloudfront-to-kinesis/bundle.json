@@ -52,10 +52,7 @@
     },
     "hydrolix": {
       "cluster_version": "^5.4.0",
-      "required_dictionaries": [
-        "geoip_asm",
-        "geoip_city"
-      ],
+      "required_dictionaries": [],
       "required_functions": []
     },
     "data-sources": []

@@ -1,9 +1,9 @@
+use lazy_static::lazy_static;
 use reqwest::Client;
 use serde_json::{json, Value};
 use tokio::time::sleep;
 use tokio::time::Duration;
 use uuid::Uuid;
-use lazy_static::lazy_static;
 
 // These are static but not secret
 const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
@@ -75,6 +75,7 @@ pub async fn get_auth_token() -> Result<String, String> {
     }
 }
 
+#[allow(dead_code)]
 /// Ensure a zip file is extracted to the .extracted/ directory
 /// Uses unzip -j flag to flatten directory structure
 pub async fn ensure_zip_extracted(
@@ -123,6 +124,7 @@ pub async fn ensure_zip_extracted(
     Ok(())
 }
 
+#[allow(dead_code)]
 /// Discover dictionary files in the bundle directory
 /// Scans dictionaries/ and dictionaries/.extracted/ for .json files with matching data files
 pub async fn discover_dictionaries(base_dir: &str) -> Result<Vec<String>, String> {
@@ -142,7 +144,15 @@ pub async fn discover_dictionaries(base_dir: &str) -> Result<Vec<String>, String
             continue; // Directory doesn't exist, skip
         }
 
-        let dir_display = dir.split('/').rev().take(2).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("/");
+        let dir_display = dir
+            .split('/')
+            .rev()
+            .take(2)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .collect::<Vec<_>>()
+            .join("/");
         println!("  Scanning for dictionaries in {}...", dir_display);
 
         let mut entries = match fs::read_dir(&dir).await {
@@ -180,6 +190,7 @@ pub async fn discover_dictionaries(base_dir: &str) -> Result<Vec<String>, String
     Ok(discovered)
 }
 
+#[allow(dead_code)]
 /// Discover function files in the bundle directory
 /// Scans functions/ and functions/.extracted/ for .json files
 pub async fn discover_functions(base_dir: &str) -> Result<Vec<String>, String> {
@@ -199,7 +210,15 @@ pub async fn discover_functions(base_dir: &str) -> Result<Vec<String>, String> {
             continue; // Directory doesn't exist, skip
         }
 
-        let dir_display = dir.split('/').rev().take(2).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("/");
+        let dir_display = dir
+            .split('/')
+            .rev()
+            .take(2)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .collect::<Vec<_>>()
+            .join("/");
         println!("  Scanning for functions in {}...", dir_display);
 
         let mut entries = match fs::read_dir(&dir).await {
@@ -826,8 +845,12 @@ pub async fn check_and_create_function(
         .await
         .map_err(|e| format!("Failed to read function file {}: {}", function_file_path, e))?;
 
-    let mut function_def: Value = serde_json::from_str(&content)
-        .map_err(|e| format!("Failed to parse function JSON {}: {}", function_file_path, e))?;
+    let mut function_def: Value = serde_json::from_str(&content).map_err(|e| {
+        format!(
+            "Failed to parse function JSON {}: {}",
+            function_file_path, e
+        )
+    })?;
 
     // Replace __PROJECT_NAME__ in function SQL
     if let Some(sql) = function_def.get_mut("sql") {
@@ -985,11 +1008,7 @@ pub async fn check_and_create_dictionary(
         .await
         .map_err(|e| format!("Failed to read dictionary data file {}: {}", files.1, e))?;
 
-    let file_name = files
-        .1
-        .split('/')
-        .last()
-        .ok_or("Invalid data file path")?;
+    let file_name = files.1.split('/').last().ok_or("Invalid data file path")?;
 
     upload_dictionary_file(bearer_token, file_name, &data_file_content).await?;
     create_dictionary_definition(bearer_token, dictionary_name, dict_def).await?;
@@ -1034,10 +1053,7 @@ async fn upload_dictionary_file(
                         };
 
                         if name == base_file_name || name == file_name {
-                            println!(
-                                "  ✓ Dictionary file already uploaded: {}",
-                                file_name
-                            );
+                            println!("  ✓ Dictionary file already uploaded: {}", file_name);
                             return Ok(());
                         }
                     }
@@ -1087,7 +1103,10 @@ async fn upload_dictionary_file(
             .text()
             .await
             .unwrap_or_else(|_| "Unknown error".to_string());
-        return Err(format!("Failed to upload (HTTP {}): {}", status, error_text));
+        return Err(format!(
+            "Failed to upload (HTTP {}): {}",
+            status, error_text
+        ));
     }
 
     println!("  ✓ Uploaded dictionary file: {}", base_file_name);
