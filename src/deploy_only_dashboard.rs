@@ -10,6 +10,22 @@ use crate::GRAFANA_LOCATION;
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
     output.grafana_domain = format!("{GRAFANA_LOCATION}/");
 
+    // Create datasource first to test configuration
+    println!("\n🔗 Creating test datasource...");
+    let _datasource_uid = match grafana::interface::create_datalink("test_project").await {
+        Ok(uid) => {
+            println!("✓ Datasource created successfully with UID: {}", uid);
+            uid
+        }
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} Failed to create datasource. {e}",
+                file!(),
+                line!()
+            ));
+        }
+    };
+
     let full_path = format!("{base}/{}", bundle.dashboard.path);
 
     let mut dashboard_data = match fs::read_to_string(&full_path).await {

@@ -13,8 +13,10 @@ use lazy_static::lazy_static;
 use serde_json::Value;
 use std::collections::HashSet;
 
-const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const PROJ_UUID: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
+const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const PROJ_UUID: &str = "c7605c4b-9854-41c4-a210-b861d13e8bf4";
 const PROJ_NAME: &str = "sample_project";
 
 lazy_static! {

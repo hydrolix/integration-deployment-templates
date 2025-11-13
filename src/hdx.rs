@@ -6,8 +6,10 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 // These are static but not secret
-const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const PROJ_UUID: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
+const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
+const PROJ_UUID: &str = "c7605c4b-9854-41c4-a210-b861d13e8bf4";
 const PROJ_NAME: &str = "sample_project";
 const HTTP_TIMEOUT: u64 = 120;
 
@@ -48,16 +50,29 @@ pub async fn get_auth_token() -> Result<String, String> {
         }
     };
 
+    let status = response.status();
     let json: serde_json::Value = match response.json().await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
-                "ERROR: {}.{} Could not deserialize: {e}",
+                "ERROR: {}.{} Could not deserialize response (HTTP {}): {e}",
                 file!(),
-                line!()
+                line!(),
+                status
             ));
         }
     };
+
+    // Debug: print what we got back
+    if !status.is_success() {
+        return Err(format!(
+            "ERROR: {}.{} Authentication failed (HTTP {}): {}",
+            file!(),
+            line!(),
+            status,
+            serde_json::to_string_pretty(&json).unwrap_or_else(|_| format!("{:?}", json))
+        ));
+    }
 
     let token = json["auth_token"]["access_token"]
         .as_str()
@@ -66,9 +81,10 @@ pub async fn get_auth_token() -> Result<String, String> {
 
     if token.is_empty() {
         Err(format!(
-            "ERROR: {}.{} Could not find token in payload",
+            "ERROR: {}.{} Could not find token in payload. Response was: {}",
             file!(),
-            line!()
+            line!(),
+            serde_json::to_string_pretty(&json).unwrap_or_else(|_| format!("{:?}", json))
         ))
     } else {
         Ok(token)
@@ -267,6 +283,71 @@ hdx_primary_key='minute'"
 
 */
 
+pub async fn verify_table_exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
+    let url = format!(
+        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        *BUNDLE_TESTING_CLUSTER
+    );
+
+    let max_attempts = 12; // Try for up to 60 seconds (12 * 5 seconds)
+
+    for attempt in 1..=max_attempts {
+        let response = match CLIENT
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", bearer_token))
+            .header("Accept", "application/json")
+            .timeout(Duration::from_secs(HTTP_TIMEOUT))
+            .send()
+            .await
+        {
+            Ok(v) => v,
+            Err(e) => {
+                if attempt == max_attempts {
+                    return Err(format!("Failed to list tables: {}", e));
+                }
+                sleep(Duration::from_secs(5)).await;
+                continue;
+            }
+        };
+
+        if response.status().is_success() {
+            if let Ok(tables_json) = response.json::<Value>().await {
+                // Handle different response formats
+                let empty_vec = vec![];
+                let tables_array = if tables_json.is_array() {
+                    tables_json.as_array().unwrap()
+                } else if let Some(results) = tables_json.get("results") {
+                    results.as_array().unwrap_or(&empty_vec)
+                } else if let Some(data) = tables_json.get("data") {
+                    data.as_array().unwrap_or(&empty_vec)
+                } else {
+                    &empty_vec
+                };
+
+                for table in tables_array {
+                    if let Some(name) = table.get("name").and_then(|n| n.as_str()) {
+                        if name == table_name {
+                            println!("  ✓ Verified table '{}' exists in API", table_name);
+                            // Wait additional time for table to propagate to query engine
+                            println!("  ⏳ Waiting 30s for table to propagate to database engine...");
+                            sleep(Duration::from_secs(30)).await;
+                            println!("  ✓ Table should now be ready in database engine");
+                            return Ok(());
+                        }
+                    }
+                }
+            }
+        }
+
+        if attempt < max_attempts {
+            println!("  Table '{}' not found yet, waiting... (attempt {}/{})", table_name, attempt, max_attempts);
+            sleep(Duration::from_secs(5)).await;
+        }
+    }
+
+    Err(format!("Table '{}' not found after {} attempts", table_name, max_attempts))
+}
+
 pub async fn create_summary_table(
     bearer_token: &str,
     table_name: &str,
@@ -282,8 +363,6 @@ pub async fn create_summary_table(
             }
         }
     });
-
-    eprintln!("payload={:?}", payload);
 
     let url = format!(
         "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
@@ -313,11 +392,17 @@ pub async fn create_summary_table(
 
     // Check if the request was successful
     if !response.status().is_success() {
+        let status = response.status();
+        let error_body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Could not read error response".to_string());
         return Err(format!(
-            "ERROR: {}.{} url={url} {}",
+            "ERROR: {}.{} url={url} {} - Server response: {}",
             file!(),
             line!(),
-            response.status()
+            status,
+            error_body
         ));
     }
     Ok(table_name.to_string())
@@ -386,26 +471,29 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
     };
 
     // Check if the request was successful
-    if !response.status().is_success() {
-        return Err(format!(
-            "ERROR: {}.{} {}",
-            file!(),
-            line!(),
-            response.status()
-        ));
-    }
+    let status = response.status();
 
-    // Just grab the body in case we want to debug something
+    // Get the response body
     let table_data = match response.text().await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
-                "ERROR: {}.{} url={url} error={e}",
+                "ERROR: {}.{} url={url} error reading response: {e}",
                 file!(),
                 line!()
             ));
         }
     };
+
+    if !status.is_success() {
+        return Err(format!(
+            "ERROR: {}.{} {} - Server response: {}",
+            file!(),
+            line!(),
+            status,
+            table_data
+        ));
+    }
 
     let table_json: Value = match serde_json::from_str(&table_data) {
         Ok(v) => v,

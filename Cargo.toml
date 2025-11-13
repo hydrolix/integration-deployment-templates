@@ -2,6 +2,7 @@
 name = "bundle-validator"
 version = "0.1.0"
 edition = "2021"
+default-run = "bundle-validator"
 
 [lib]
 name = "bundle_validator"

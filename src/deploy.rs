@@ -169,7 +169,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         }
     }
 
-    // Create summary tables if present
+    // Create summary tables if present (will actively verify parent tables exist)
     if let Some(summary_tables) = &bundle.summary_tables {
         for summary in summary_tables {
             match create_summary_table(
@@ -316,7 +316,10 @@ async fn process_table(
     println!("Creating table: {}", table.name);
 
     let table_uuid = match hdx::create_table(bearer_token, &table.name).await {
-        Ok(v) => v,
+        Ok(v) => {
+            println!("  ✓ Table '{}' created successfully (UUID: {})", table.name, v);
+            v
+        }
         Err(e) => {
             return Err(format!(
                 "ERROR: {}.{} Failed to create table {}: {e}",
@@ -336,10 +339,13 @@ async fn process_table(
     };
 
     for transform in &table.transforms {
-        let transform_json = match read_transform_file(base, &transform.path).await {
+        let mut transform_json = match read_transform_file(base, &transform.path).await {
             Ok(v) => v,
             Err(e) => return Err(e),
         };
+
+        // Replace template variables in transform SQL
+        transform_json = replace_transform_variables(transform_json, project_name);
 
         let transform_name = match add_transformation(
             bearer_token,
@@ -402,6 +408,24 @@ async fn create_summary_table(
     sql = sql.replace("__PROJECT_NAME__", project_name);
     sql = sql.replace("__TABLE_NAME__", &summary.parent_table_name);
 
+    println!("Creating summary table: {}", summary.name);
+    println!("  Parent table: {}.{}", project_name, summary.parent_table_name);
+
+    // Verify parent table exists before creating summary
+    println!("  Verifying parent table '{}' exists...", summary.parent_table_name);
+    match hdx::verify_table_exists(bearer_token, &summary.parent_table_name).await {
+        Ok(_) => (),
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} Cannot create summary table - parent table not found: {e}",
+                file!(),
+                line!()
+            ));
+        }
+    }
+
+    println!("  SQL preview: {}", &sql.lines().take(5).collect::<Vec<_>>().join("\n"));
+
     match hdx::create_summary_table(bearer_token, &summary.name, &sql).await {
         Ok(_) => (),
         Err(e) => {
@@ -432,10 +456,13 @@ async fn seed_tables_with_data(
 ) -> Result<(), String> {
     for table in &bundle.tables {
         for transform in &table.transforms {
-            let transform_json = match read_transform_file(base, &transform.path).await {
+            let mut transform_json = match read_transform_file(base, &transform.path).await {
                 Ok(v) => v,
                 Err(e) => return Err(e),
             };
+
+            // Replace template variables in transform SQL
+            transform_json = replace_transform_variables(transform_json, project_name);
 
             let transform_name = get_transformation_name(&transform_json);
 
@@ -478,6 +505,29 @@ async fn read_transform_file(base: &str, relative_path: &str) -> Result<Value, S
             line!()
         )),
     }
+}
+
+fn replace_transform_variables(transform_json: Value, project_name: &str) -> Value {
+    let mut transform = transform_json;
+
+    // Get the shared project name
+    let shared_project_name = crate::hdx_shared::get_shared_project_name();
+
+    // Check if there's a sql_transform field in settings
+    if let Some(settings) = transform.get_mut("settings") {
+        if let Some(sql_transform) = settings.get("sql_transform") {
+            if let Some(sql_str) = sql_transform.as_str() {
+                // Replace template variables
+                let updated_sql = sql_str
+                    .replace("__PROJECT_NAME__", project_name)
+                    .replace("__SHARED_PROJECT__", &shared_project_name);
+
+                settings["sql_transform"] = Value::String(updated_sql);
+            }
+        }
+    }
+
+    transform
 }
 
 async fn add_transformation(

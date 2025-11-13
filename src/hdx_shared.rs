@@ -10,7 +10,8 @@ use tokio::fs;
 
 use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
 const HTTP_TIMEOUT_SECS: u64 = 120;
 
 static SHARED_PROJECT_UUID: OnceCell<Mutex<Option<String>>> = OnceCell::new();
@@ -56,7 +57,9 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
     };
 
     if !response.status().is_success() {
-        return Err(format!("Failed to list projects: {}", response.status()));
+        let status = response.status();
+        let error_body = response.text().await.unwrap_or_else(|_| "Could not read error response".to_string());
+        return Err(format!("Failed to list projects: {} - URL: {} - Response: {}", status, list_url, error_body));
     }
 
     let projects: Value = match response.json().await {
