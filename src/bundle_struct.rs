@@ -90,6 +90,7 @@ pub struct Transform {
     pub sha256: Option<String>,
     #[serde(default, deserialize_with = "deserialize_optional_url_path")]
     pub sample: Option<String>,
+    pub method: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -308,7 +309,7 @@ where
 
     match s.as_str() {
         // Convert String to &str for matching
-        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" => Ok(s),
+        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" | "multi_stream" => Ok(s),
         _ => Err(de::Error::custom(format!("{} is an invalid method", s))),
     }
 }
