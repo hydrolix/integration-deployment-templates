@@ -3,7 +3,7 @@
   "source": "cdn_insights",
   "method": "http_streaming",
   "beta": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/my-bundles/cdn_insights",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default-1760472897943.json",
     "project_var": "__PROJECT_NAME__"
@@ -20,10 +20,22 @@
   ],
   "dependencies": {
     "hydrolix": {
-      "required_functions": [],           
-      "required_dictionaries": [], 
-      "shared_functions": ["city_name", "breadcrumbs", "country_iso_code", "geoname_id"],  
-      "shared_dictionaries": ["geoip_asn_blocks_ipv4", "geoip_asn_blocks_ipv6", "geoip_city_blocks_ipv4", "geoip_city_blocks_ipv6", "geoip_city_locations_en", "ua_cat_dict"] 
+      "required_functions": [],
+      "required_dictionaries": [],
+      "shared_functions": [
+        "city_name",
+        "breadcrumbs",
+        "country_iso_code",
+        "geoname_id"
+      ],
+      "shared_dictionaries": [
+        "geoip_asn_blocks_ipv4",
+        "geoip_asn_blocks_ipv6",
+        "geoip_city_blocks_ipv4",
+        "geoip_city_blocks_ipv6",
+        "geoip_city_locations_en",
+        "ua_cat_dict"
+      ]
     }
   },
   "tables": [
