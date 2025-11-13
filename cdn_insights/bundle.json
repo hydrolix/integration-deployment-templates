@@ -2,6 +2,10 @@
   "name": "http_streaming_cdn_insights",
   "source": "cdn_insights",
   "method": "multi_stream",
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
   "beta": true,
   "solution": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
