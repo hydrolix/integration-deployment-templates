@@ -90,6 +90,7 @@ pub struct Transform {
     pub sha256: Option<String>,
     #[serde(default, deserialize_with = "deserialize_optional_url_path")]
     pub sample: Option<String>,
+    pub method: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
