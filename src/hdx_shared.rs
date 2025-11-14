@@ -10,8 +10,8 @@ use tokio::fs;
 
 use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
 const HTTP_TIMEOUT_SECS: u64 = 120;
 
 static SHARED_PROJECT_UUID: OnceCell<Mutex<Option<String>>> = OnceCell::new();

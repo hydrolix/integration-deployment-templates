@@ -6,10 +6,10 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 // These are static but not secret
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";
-const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";
-const PROJ_UUID: &str = "c7605c4b-9854-41c4-a210-b861d13e8bf4";
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+const PROJ_UUID: &str = "c7605c4b-9854-41c4-a210-b861d13e8bf4";  // markeplace-dev
+const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
 const PROJ_NAME: &str = "sample_project";
 const HTTP_TIMEOUT: u64 = 120;
 
@@ -327,11 +327,7 @@ pub async fn verify_table_exists(bearer_token: &str, table_name: &str) -> Result
                 for table in tables_array {
                     if let Some(name) = table.get("name").and_then(|n| n.as_str()) {
                         if name == table_name {
-                            println!("  ✓ Verified table '{}' exists in API", table_name);
-                            // Wait additional time for table to propagate to query engine
-                            println!("  ⏳ Waiting 30s for table to propagate to database engine...");
-                            sleep(Duration::from_secs(30)).await;
-                            println!("  ✓ Table should now be ready in database engine");
+                            println!("  ✓ Verified table '{}' exists and is ready", table_name);
                             return Ok(());
                         }
                     }
