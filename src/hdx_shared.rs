@@ -46,6 +46,7 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
     );
 
     let client = reqwest::Client::new();
+    eprintln!("DEBUG: Requesting projects list from: {}", list_url);
     let response = match client
         .get(&list_url)
         .header("Authorization", format!("Bearer {}", bearer_token))
@@ -53,7 +54,7 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
         .await
     {
         Ok(r) => r,
-        Err(e) => return Err(format!("Failed to list projects: {}", e)),
+        Err(e) => return Err(format!("Failed to list projects from URL {}: {}", list_url, e)),
     };
 
     if !response.status().is_success() {
