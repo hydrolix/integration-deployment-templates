@@ -3,8 +3,7 @@
   "source": "cdn_insights",
   "method": "multi_stream",
   "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
+    "region": "us-east-1"
   },
   "beta": true,
   "solution": true,
