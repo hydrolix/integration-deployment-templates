@@ -96,7 +96,7 @@
   "ui": {
     "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "method": {
-      "full_title": "Http Streaming",
+      "full_title": "Http Streaming, Firehose",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
     "source": {
