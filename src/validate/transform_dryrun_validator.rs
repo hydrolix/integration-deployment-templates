@@ -161,10 +161,7 @@ async fn validate_via_dryrun_with_retry(
             if error.contains("unknown transform") {
                 last_result = Some(result);
                 if attempt < max_retries {
-                    println!(
-                        "    ⏳ Transform not ready yet, retrying ({}/{})...",
-                        attempt, max_retries
-                    );
+                    // Silently retry (removed verbose retry messages)
                     sleep(Duration::from_millis(5000)).await; // 5 seconds between retries
                     continue;
                 }
@@ -202,13 +199,7 @@ async fn validate_via_dryrun(
         json!([sample_data])
     };
 
-    let payload_len = payload.as_array().map(|a| a.len()).unwrap_or(0);
-    println!("    🔍 DEBUG: Sending {} sample record(s) to dry-run", payload_len);
-    println!("    🔍 DEBUG: URL: {}", url);
-    println!(
-        "    🔍 DEBUG: Headers: x-hdx-table={}, x-hdx-transform={}",
-        full_table_name, transform_name
-    );
+    // Removed debug output for cleaner logs
 
     let client = reqwest::Client::builder()
         .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
@@ -247,69 +238,20 @@ async fn validate_via_dryrun(
                 }
             };
 
-            println!("    🔍 DEBUG: Response text length: {}", response_text.len());
-            println!("    🔍 DEBUG: Response preview: {}", &response_text.chars().take(500).collect::<String>());
+            // Show response for debugging
+            if response_text.len() < 200 {
+                println!("    Response: {}", response_text);
+            }
 
             // Try to parse as JSON
             match serde_json::from_str::<Value>(&response_text) {
                 Ok(transformed_data) => {
-                    // Debug: log the structure
-                    println!(
-                        "    🔍 DEBUG: Response has {} rows",
-                        transformed_data
-                            .get("rows")
-                            .and_then(|v| v.as_u64())
-                            .unwrap_or(0)
-                    );
+                    // Removed verbose debug output
 
-                    if let Some(meta) = transformed_data.get("meta").and_then(|v| v.as_array()) {
-                        let unknown_col = meta.iter().find(|c| {
-                            c.get("name")
-                                .and_then(|n| n.as_str())
-                                .map(|n| n == "unknown")
-                                .unwrap_or(false)
-                        });
-
-                        if let Some(_) = unknown_col {
-                            let unknown_index = meta
-                                .iter()
-                                .position(|c| {
-                                    c.get("name")
-                                        .and_then(|n| n.as_str())
-                                        .map(|n| n == "unknown")
-                                        .unwrap_or(false)
-                                })
-                                .unwrap();
-
-                            println!("    🔍 DEBUG: Found 'unknown' column at index {}", unknown_index);
-
-                            if let Some(data) = transformed_data.get("data").and_then(|d| d.as_array()) {
-                                if !data.is_empty() {
-                                    if let Some(first_row) = data[0].as_array() {
-                                        if let Some(unknown_val) = first_row.get(unknown_index) {
-                                            let preview = serde_json::to_string(unknown_val)
-                                                .unwrap_or_default()
-                                                .chars()
-                                                .take(200)
-                                                .collect::<String>();
-                                            println!("    🔍 DEBUG: First row unknown value: {}", preview);
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            println!("    🔍 DEBUG: No 'unknown' column in meta");
-                        }
-                    }
+                    // Check for unknown column (debug output removed for cleaner logs)
 
                     // Check if response contains data with "unknown" column populated
                     let unknown_check = check_for_unknown_data(&transformed_data);
-
-                    println!(
-                        "    🔍 DEBUG: unknownCheck.hasData = {}, values count = {}",
-                        !unknown_check.is_empty(),
-                        unknown_check.len()
-                    );
 
                     if !unknown_check.is_empty() {
                         return ValidationResult::unknown_data(unknown_check);
@@ -443,9 +385,7 @@ pub async fn validate_transform_by_querying(
         urlencoding::encode(&sql)
     );
 
-    println!("    🔍 DEBUG: Querying all records with unknown data");
-    println!("    🔍 DEBUG: SQL: {}", sql);
-    println!("    🔍 DEBUG: Cluster: {}", cluster);
+    // Removed verbose debug output
 
     let client = reqwest::Client::new();
     match client
@@ -477,16 +417,13 @@ pub async fn validate_transform_by_querying(
                 }
             };
 
-            let rows = result.get("rows").and_then(|v| v.as_u64()).unwrap_or(0);
-            println!("    🔍 DEBUG: Query returned {} rows with unknown data", rows);
+            let _rows = result.get("rows").and_then(|v| v.as_u64()).unwrap_or(0);
 
             if let Some(data) = result.get("data").and_then(|d| d.as_array()) {
                 if data.is_empty() {
                     println!("    ✅ No records with unknown data found in table");
                     return Ok(());
                 }
-
-                println!("    🔍 DEBUG: Analyzing {} record(s) with unknown data", data.len());
 
                 // Analyze records for catastrophic failures
                 let analysis = analyze_unknown_data(data);
@@ -551,7 +488,7 @@ fn analyze_unknown_data(data: &[Value]) -> UnknownDataAnalysis {
     let mut catastrophic_by_transform: std::collections::HashMap<String, usize> =
         std::collections::HashMap::new();
 
-    for (i, row) in data.iter().enumerate() {
+    for (_i, row) in data.iter().enumerate() {
         let transform_name = row
             .get("hdx_transform")
             .and_then(|v| v.as_str())
@@ -570,31 +507,15 @@ fn analyze_unknown_data(data: &[Value]) -> UnknownDataAnalysis {
                 if unknown_map.contains_key("data") {
                     if let Some(Value::String(_)) = unknown_map.get("data") {
                         is_catastrophic = true;
-                        if i < 3 {
-                            println!(
-                                "    🔍 DEBUG: Record {} [{}]: Found 'data' key - CATASTROPHIC",
-                                i + 1,
-                                transform_name
-                            );
-                        }
                     }
                 }
 
                 // Check 2: Does unknown contain any very large string values?
                 if !is_catastrophic {
-                    for (key, value) in unknown_map.iter() {
+                    for (_key, value) in unknown_map.iter() {
                         if let Some(s) = value.as_str() {
                             if s.len() > LARGE_STRING_THRESHOLD {
                                 is_catastrophic = true;
-                                if i < 3 {
-                                    println!(
-                                        "    🔍 DEBUG: Record {} [{}]: Found large string ({} chars) in unknown.{} - CATASTROPHIC",
-                                        i + 1,
-                                        transform_name,
-                                        s.len(),
-                                        key
-                                    );
-                                }
                                 break;
                             }
                         }
