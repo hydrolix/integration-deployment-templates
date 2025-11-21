@@ -7,5 +7,7 @@ pub mod no_duplicate_tokens;
 pub mod no_global_duplicates;
 pub mod sample_data_exists;
 pub mod summary_table;
+pub mod transform_dryrun_validator;
+pub mod transform_sql_validator;
 pub mod transforms_are_valid;
 pub mod valid_base_url;

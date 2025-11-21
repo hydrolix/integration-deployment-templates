@@ -11,11 +11,13 @@ use crate::hdx_shared;
 use crate::output_struct::Output;
 use crate::output_struct::OutputTable;
 use crate::output_struct::OutputTransformation;
+use crate::validate::transform_dryrun_validator;
 use crate::BUNDLE_TESTING_CLUSTER;
 use crate::GRAFANA_LOCATION;
+use crate::STRICT_TRANSFORMS;
 
 const TABLE_READY_DELAY_SECS: u64 = 30;
-const DATA_READY_DELAY_SECS: u64 = 30;
+const DATA_READY_DELAY_SECS: u64 = 10; // Reduced from 30
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
     let bearer_token = match hdx::get_auth_token().await {
@@ -339,6 +341,8 @@ async fn process_table(
     };
 
     for transform in &table.transforms {
+        println!("  Processing transform: {}", transform.path);
+
         let mut transform_json = match read_transform_file(base, &transform.path).await {
             Ok(v) => v,
             Err(e) => return Err(e),
@@ -357,9 +361,36 @@ async fn process_table(
         )
         .await
         {
-            Ok(v) => v,
+            Ok(v) => {
+                println!("    ✓ Transform '{}' created successfully", v);
+                v
+            },
             Err(e) => return Err(e),
         };
+
+        // Validate transform after creation using dry-run API (includes built-in waits/retries)
+        let sample_data = get_sample_data_as_json(&transform_json);
+        if !sample_data.is_null() {
+            match transform_dryrun_validator::validate_transform_after_creation(
+                &BUNDLE_TESTING_CLUSTER,
+                bearer_token,
+                project_name,
+                &table.name,
+                &transform_name,
+                &sample_data,
+                &transform.path,
+                *STRICT_TRANSFORMS,
+            )
+            .await
+            {
+                Ok(_) => (),
+                Err(e) => return Err(e),
+            }
+
+            // Give transform a moment to be fully ready for data insertion
+            println!("      Waiting for transform to be fully available...");
+            sleep(Duration::from_secs(5)).await;
+        }
 
         match insert_sample_data_if_present(
             bearer_token,
@@ -370,8 +401,28 @@ async fn process_table(
         )
         .await
         {
-            Ok(_) => (),
+            Ok(_) => {
+                println!("    ✓ Sample data inserted (or skipped if none present)");
+            },
             Err(e) => return Err(e),
+        }
+
+        // Validate by querying table for unknown data (catastrophic parsing failures)
+        if !sample_data.is_null() {
+            match transform_dryrun_validator::validate_transform_by_querying(
+                &BUNDLE_TESTING_CLUSTER,
+                bearer_token,
+                project_name,
+                &table.name,
+                &transform_name,
+                &transform.path,
+                *STRICT_TRANSFORMS,
+            )
+            .await
+            {
+                Ok(_) => (),
+                Err(e) => return Err(e),
+            }
         }
 
         output_table.transforms.push(OutputTransformation {
@@ -561,10 +612,12 @@ async fn insert_sample_data_if_present(
 ) -> Result<(), String> {
     let sample_data = get_sample_data_as_json(transform_json);
     if sample_data.is_null() {
+        println!("      (No sample data found, skipping)");
         return Ok(());
     }
 
-    println!("Waiting for table to be ready for data...");
+    println!("      Inserting sample data for transform '{}'...", transform_name);
+    println!("      Waiting for table to be ready for data...");
     sleep(Duration::from_secs(DATA_READY_DELAY_SECS)).await;
 
     let full_table_name = format!("{}.{}", project_name, table_name);
@@ -600,13 +653,17 @@ fn get_transformation_type(transform_json: &Value) -> String {
 }
 
 fn get_sample_data_as_json(transform_json: &Value) -> Value {
-    transform_json
-        .get("settings")
-        .and_then(|s| s.get("sample_data"))
-        .and_then(|sd| sd.as_object())
-        .filter(|obj| !obj.is_empty())
-        .map(|_| transform_json["settings"]["sample_data"].clone())
-        .unwrap_or(Value::Null)
+    if let Some(settings) = transform_json.get("settings") {
+        if let Some(sample_data) = settings.get("sample_data") {
+            // Sample data can be either an object or an array
+            match sample_data {
+                Value::Object(obj) if !obj.is_empty() => return sample_data.clone(),
+                Value::Array(arr) if !arr.is_empty() => return sample_data.clone(),
+                _ => {}
+            }
+        }
+    }
+    Value::Null
 }
 
 fn get_transformation_name(transform_json: &Value) -> String {

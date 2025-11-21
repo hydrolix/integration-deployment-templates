@@ -13,11 +13,11 @@ use lazy_static::lazy_static;
 use serde_json::Value;
 use std::collections::HashSet;
 
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
-const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
-const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
-const PROJ_NAME: &str = "cdn_test_project";
+const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox (default)
+const ORG_UUID_SAND: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
+const PROJ_UUID: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox sample_project (default)
+const PROJ_UUID_SAND: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
+const PROJ_NAME: &str = "sample_project";
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =

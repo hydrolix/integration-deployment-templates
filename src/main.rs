@@ -42,6 +42,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--marketplace".to_string())
     };
+    static ref STRICT_TRANSFORMS: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--strict-transforms".to_string())
+    };
     static ref DUMP_OUTPUT: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--output".to_string())
