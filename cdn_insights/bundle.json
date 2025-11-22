@@ -26,7 +26,7 @@
     "hydrolix": {
       "required_functions": [],
       "required_dictionaries": [
-        "commons_ua_cat_dict"
+        "ua_cat_dict"
       ],
       "shared_functions": [
         "city_name",
