@@ -52,7 +52,8 @@
         {
           "path": "transformations/akamai_ds2/transform.json",
           "sample": "transformations/akamai_ds2/sample_data.json",
-          "method": "http_streaming"
+          "method": "http_streaming",
+	  "sha256": "923b9e441dd21bf90c90e0c1d232ed4174b52c9decd8b8d58452c9e2b251160e"
         },
         {
           "path": "transformations/cloudflare/transform.json",
