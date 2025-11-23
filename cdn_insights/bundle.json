@@ -16,7 +16,8 @@
   "other_dashboards": [
     {
       "path": "dashboards/CDN Global View-1760635433621.json",
-      "project_var": "__PROJECT_NAME__"
+      "project_var": "__PROJECT_NAME__",
+      "sha256": "332c63e91a8ee7a5c8f680f496c53f1b8748535f5151ce7e19e54f2e2e45400c"
     },
     {
       "path": "dashboards/Raw Logs-1760472918020.json",
