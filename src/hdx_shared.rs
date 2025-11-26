@@ -10,15 +10,15 @@ use tokio::fs;
 
 use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox (default)
-const ORG_UUID_SAND: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
+const ORG_UUID: &str = "2b8cbbf8-dcb8-4c28-bd94-cb46147296d1";  // QA environment (default)
+const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
 const HTTP_TIMEOUT_SECS: u64 = 120;
 
 static SHARED_PROJECT_UUID: OnceCell<Mutex<Option<String>>> = OnceCell::new();
 
 lazy_static! {
     static ref SHARED_PROJECT_NAME: String =
-        env::var("SHARED_PROJECT_NAME").unwrap_or_else(|_| "commons".to_string());
+        env::var("SHARED_PROJECT_NAME").unwrap_or_else(|_| "reference".to_string());
     static ref IS_LOCAL: bool = {
         let args: Vec<String> = env::args().collect();
         args.contains(&"--local".to_string())
