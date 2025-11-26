@@ -1,10 +1,10 @@
 {
-    "name": "mcdn_cloudflare",
+    "name": "cloudflare",
     "description": "Version v1.0",
     "settings": {
-        "is_default": true,
+        "is_default": false,
         "rate_limit": null,
-        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresult_type IN ('hit', 'stale', 'revalidated', 'updating') as cache_was_cached,\ndecodeURLComponent(queryString(request_full_path)) as request_query_string,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n*\n FROM {STREAM}",
+        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresult_type IN ('hit', 'stale', 'revalidated', 'updating') as cache_was_cached,\ndecodeURLComponent(queryString(request_full_path)) as request_query_string,\ndictGet('__SHARED_PROJECT__.ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('__SHARED_PROJECT__.ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n*\n FROM {STREAM}",
         "null_values": [],
         "sample_data": [
             {

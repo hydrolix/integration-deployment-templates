@@ -10,16 +10,16 @@
   "solution": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
   "dashboard": {
-    "path": "dashboards/CDN Dashboard Default-1760472897943.json",
+    "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
   },
   "other_dashboards": [
     {
-      "path": "dashboards/CDN Global View-1760635433621.json",
+      "path": "dashboards/CDN Global View.json",
       "project_var": "__PROJECT_NAME__"
     },
     {
-      "path": "dashboards/Raw Logs-1760472918020.json",
+      "path": "dashboards/Raw Logs.json",
       "project_var": "__PROJECT_NAME__"
     }
   ],

@@ -1,0 +1,2199 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "hydrolix-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix"
+    },
+    {
+      "name": "VAR_SUMMARY_MIN",
+      "type": "constant",
+      "label": "summary_min",
+      "value": "demo_customer.tp_multi_summary_min",
+      "description": ""
+    },
+    {
+      "name": "VAR_SUMMARY_HOUR",
+      "type": "constant",
+      "label": "summary_hour",
+      "value": "demo_customer.tp_multi_summary_hour",
+      "description": ""
+    },
+    {
+      "name": "VAR_CDN1",
+      "type": "constant",
+      "label": "cdn1",
+      "value": "Akamai",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "version": "0.6.0"
+    },
+    {
+      "type": "panel",
+      "id": "marcusolsson-treemap-panel",
+      "name": "Treemap",
+      "version": "2.0.1"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Reset All Variables",
+      "tooltip": "Reset all template variables back to default value",
+      "type": "link",
+      "url": "/d/ac2ee644-e333-4bed-88fe-dc81e0c2b8ae/wip-global-view-cat-ideas-wtreemap?orgId=10&from=now-15m&to=now&timezone=utc&var-item_formatted_for_display=%0A%20%20CASE%0A%20%20%20%20WHEN%20hdx_cdn%20IS%20NULL%20THEN%20%27__null__%27%0A%20%20%20%20WHEN%20hdx_cdn%20%3D%20%27%27%20THEN%20%27__empty__%27%0A%20%20%20%20ELSE%20REPLACE%28hdx_cdn,%20%27undefined%27,%20%27undef%27%29%0A%20%20END%0A&var-item_formatted_for_filter=%0A%20%20CASE%0A%20%20%20%20WHEN%20hdx_cdn%20IS%20NULL%20THEN%20%27__null__%27%0A%20%20%20%20WHEN%20hdx_cdn%20%3D%20%27%27%20THEN%20%27__empty__%27%0A%20%20%20%20ELSE%0A%20%20%20%20%20%20REPLACE%28%0A%20%20%20%20%20%20%20%20REPLACE%28%0A%20%20%20%20%20%20%20%20%20%20COALESCE%28hdx_cdn,%20%27__null__%27%29,%0A%20%20%20%20%20%20%20%20%20%20%27,%27,%20%27__gfc__%27%0A%20%20%20%20%20%20%20%20%29,%0A%20%20%20%20%20%20%20%20%27%7C%27,%20%27__gfp__%27%0A%20%20%20%20%20%20%29%0A%20%20END%0A&var-next_dim=hdx_cdn&var-filter=&var-drill_chain=$__all&var-treeMapGroupBy=hdx_cdn&var-drill_chain_for_display=%3Cspan%20style%3D%22display:%20inline-block;%20vertical-align:%20middle;%20background-color:%20%233787F3;%20color:%20white;%20padding:%203px%208px;%20border-radius:%204px;%22%3ECDN%3C%2Fspan%3E%20%3Cspan%20style%3D%22color:%23565a64;%22%3E%E2%86%92%3C%2Fspan%3E%20%3Cspan%20style%3D%22display:%20inline-block;%20vertical-align:%20middle;%20background-color:%20%23202226;%20border:%201px%20solid%20%23333740;%20color:%20%239FA9B8;%20padding:%203px%208px;%20border-radius:%204px;%22%3EASN%3C%2Fspan%3E%20%3Cspan%20style%3D%22color:%23565a64;%22%3E%E2%86%92%3C%2Fspan%3E%20%3Cspan%20style%3D%22display:%20inline-block;%20vertical-align:%20middle;%20background-color:%20%23202226;%20border:%201px%20solid%20%23333740;%20color:%20%239FA9B8;%20padding:%203px%208px;%20border-radius:%204px;%22%3EHostname%3C%2Fspan%3E%20%3Cspan%20style%3D%22color:%23565a64;%22%3E%E2%86%92%3C%2Fspan%3E%20%3Cspan%20style%3D%22display:%20inline-block;%20vertical-align:%20middle;%20background-color:%20%23202226;%20border:%201px%20solid%20%23333740;%20color:%20%239FA9B8;%20padding:%203px%208px;%20border-radius:%204px;%22%3EEdge%20pop%3C%2Fspan%3E&var-next_dim_for_display=CDN&var-customize_drilldown_order=$__all&var-minErrorRate=0.00"
+    }
+  ],
+  "panels": [
+    {
+      "description": "The bolded item is the dimension currently displayed in the TreeMaps. Click any TreeMap cell to filter by that value and advance to the next step. Use the \"Customize Drilldown Order\" dropdown above to change the order of the dimensions.\nTo inspect the \"Raw Logs\", click on any square in the Treemap and select \"View Raw Logs\".",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 45,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "\n${drill_chain_for_display:text}\n\n💡 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.0.0",
+      "title": "Drilldown Path:",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "title": "Filter to this item type",
+              "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=${next_dim}|=|${__data.fields.filter_item:percentencode}"
+            },
+            {
+              "targetBlank": true,
+              "title": "View CDN Panel",
+              "url": "/d/a4e20623-567f-41b0-adb4-76753c9c8wpiv2/cdn-dashboard-default-revision?${__all_variables}&${__url_time_range}&var-filter=${next_dim}|=|${__data.fields.filter_item}&${adhocFilterName:queryparam}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Filter to RAW logs",
+              "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&${__url_time_range}&var-filter=${next_dim}|=|${__data.fields.filter_item}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green"
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 0.05
+              },
+              {
+                "color": "green",
+                "value": 0.1
+              },
+              {
+                "color": "super-light-green",
+                "value": 0.2
+              },
+              {
+                "color": "yellow",
+                "value": 0.25
+              },
+              {
+                "color": "orange",
+                "value": 0.5
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 0.6
+              },
+              {
+                "color": "red",
+                "value": 0.75
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 0.9
+              },
+              {
+                "color": "dark-red",
+                "value": 0.95
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error_ratio"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 44,
+      "options": {
+        "colorByField": "error_ratio",
+        "labelFields": [
+          "error_ratio"
+        ],
+        "sizeField": "count",
+        "textField": "item",
+        "tiling": "treemapSquarify"
+      },
+      "pluginVersion": "2.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT  \r\n    ${item_formatted_for_display} as item,\r\n    ${item_formatted_for_filter} as filter_item, \r\n    cnt_all as count,\r\n    countMergeIf(\r\n        `count()`,\r\n        response_status_code >= '400'\r\n        AND response_status_code < '600'\r\n    ) as errorcount,\r\n    errorcount / cnt_all AS error_ratio\r\nFROM ${table}\r\nWHERE $__timeFilter(timestamp)\r\n    AND $__adHocFilter() \r\nGROUP BY item, filter_item\r\nHAVING error_ratio >= ${minErrorRate}\r\nORDER BY count DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Treemap by HTTP Error Rate; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "${next_dim_for_display} by HTTP Error Rate (>${minErrorRate})",
+      "type": "marcusolsson-treemap-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 42,
+      "panels": [],
+      "title": "CDN Rollup",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "View ${__data.fields.hdx_cdn} CDN panel",
+              "url": "/d/a4e20623-567f-41b0-adb4-76753c9c8wpiv2/cdn-dashboard-default-revision?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__data.fields.hdx_cdn}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Filter to RAW logs",
+              "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__data.fields.hdx_cdn}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n    (SUM(cache_hit) / (SUM(cache_hit) + SUM(cache_miss))) AS total,\n    hdx_cdn\nFROM \n(\n    SELECT \n        countMergeIf(`count()`,cache_was_cached = 1) AS cache_hit,\n        countMergeIf(`count()`,cache_was_cached = 0) AS cache_miss,\n        hdx_cdn\n    FROM \n        ${table}\n    WHERE \n        $__timeFilter(timestamp)\n        AND $__adHocFilter()\n        GROUP BY \n            hdx_cdn\n)\nGROUP BY \n    hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Edge Cache Hit Total %; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Edge Cache Hit Total %",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "View ${__field.name} CDN panel",
+              "url": "/d/a4e20623-567f-41b0-adb4-76753c9c8wpiv2/cdn-dashboard-default-revision?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__field.name}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Filter to RAW logs",
+              "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__field.name}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    response_total_bytes*8/${seconds} AS theBytes,\n    timestamp as time,\n    hdx_cdn\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    timestamp, hdx_cdn\nORDER BY hdx_cdn\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Peak Throughput Rate; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Peak Throughput Rate",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "hdx_cdn"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        },
+        {
+          "id": "joinByLabels",
+          "options": {
+            "value": "hdx_cdn"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SB5 Throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SB0 Throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 26,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "hide": false,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\n  timestamp,\n  response_total_bytes*8/${seconds} AS TotalThroughput\nFROM\n  ${table}\nWHERE\n  $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY timestamp\nORDER BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Throughput; du=${__user.login}'",
+          "refId": "a"
+        }
+      ],
+      "title": "Total Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SB5 throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SB0 throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1 Minute throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5 Minute throughput"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1 Minute average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5 Minute average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1 Minute Average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5 Minute Average"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "sum"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    timestamp as time,\n    response_total_bytes*8/${seconds} AS Throughput,\n    hdx_cdn as CDN\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY time, CDN\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Throughput by CDN; du=${__user.login}'",
+          "refId": "1 Minute"
+        }
+      ],
+      "title": "Throughput by CDN",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status code"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 38,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    timestamp as time,\n    countMergeIf(`count()`,response_status_code >= '400' AND response_status_code < '500') AS \"4xx\", \n    countMergeIf(`count()`,response_status_code >= '500' AND response_status_code < '600') AS \"5xx\",\n    hdx_cdn\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY time, hdx_cdn\nORDER BY time, hdx_cdn\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx-5xx Response Status Count; du=${__user.login}'",
+          "refId": "${cdn1}"
+        }
+      ],
+      "title": "4xx-5xx Response Status Count",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 41,
+      "panels": [],
+      "title": "General panels",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 43
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS Total\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count; du=${__user.login}'",
+          "refId": "${cdn1}"
+        }
+      ],
+      "title": "2xx Response Status Count",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [
+            {
+              "title": "View ${__data.fields.hdx_cdn} CDN panel",
+              "url": "/d/a4e20623-567f-41b0-adb4-76753c9c8wpiv2/cdn-dashboard-default-revision?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__data.fields.hdx_cdn}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Filter to RAW logs",
+              "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&${__url_time_range}&var-filter=hdx_cdn|=|${__data.fields.hdx_cdn}"
+            }
+          ],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count",
+                  "percentage",
+                  "Akamai percentage"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 43
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^percentage$/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    hdx_cdn,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY hdx_cdn\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic percentage (bytes) per CDN; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Traffic Percentage (bytes) per CDN",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [
+            {
+              "title": "View ${__data.fields.hdx_cdn} CDN panel",
+              "url": "/d/a4e20623-567f-41b0-adb4-76753c9c8wpiv2/cdn-dashboard-default-revision?${__all_variables}&${__url_time_range}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
+            },
+            {
+              "targetBlank": true,
+              "title": "Filter to RAW logs",
+              "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&${__url_time_range}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
+            }
+          ],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count",
+                  "percentage",
+                  "Akamai percentage"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 43
+      },
+      "id": 43,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^percentage$/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    user_agent_category,\n    response_total_bytes as total_bytes,\n    round(response_total_bytes * 100.0 / sum(response_total_bytes) OVER(), 2) as percentage\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY user_agent_category\nORDER BY percentage DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic Percentage (bytes) per User Agent Category; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Traffic Percentage (bytes) per User Agent Category",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 52
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '399' AND response_status_code < '500') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count; du=${__user.login}'",
+          "refId": "${cdn1}"
+        }
+      ],
+      "title": "4xx Response Status Count",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 52
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    timestamp as time,\n    hdx_cdn as CDN,\n    countMergeIf(`count()`,response_status_code > '499' AND response_status_code < '600') AS Total\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY \n    time, CDN\nORDER BY \n    time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count; du=${__user.login}'",
+          "refId": "${cdn1}"
+        }
+      ],
+      "title": "5xx Response Status Count",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "#EAB839",
+                "value": 2000
+              },
+              {
+                "color": "red",
+                "value": 4000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 61
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "hide": false,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\n    timestamp AS time,\n    quantiles_response_ttfb_ms[2] AS TTFB,\n    hdx_cdn AS CDN\nFROM\n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY\n    time, hdx_cdn\nORDER BY\n    time asc\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Median TTFB by CDN; du=${__user.login}'",
+          "refId": "${cdn1}"
+        }
+      ],
+      "title": "Median TTFB by CDN",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 298
+              },
+              {
+                "id": "displayName"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Host"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Filter for this hostname",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=request_host|=|${__value.text}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "Filter to RAW logs",
+                    "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=request_host|=|${__value.text}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Country"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Filter for this country",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "Filter to RAW logs",
+                    "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 70
+      },
+      "id": 16,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    request_host AS Host,\n    client_country_iso_code AS Country,\n    SUM(Total) AS Total\nFROM (\n    SELECT \n        request_host,\n        client_country_iso_code,\n        cnt_all AS Total,\n        hdx_cdn as CDN\n    FROM ${table}\n    WHERE $__timeFilter(timestamp)\n      AND notEmpty(request_host)\n      AND $__adHocFilter()\n    GROUP BY hdx_cdn, request_host, client_country_iso_code\n)\nGROUP BY Host, Country\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Global Requests by Country - All CDNs; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 100 Global Requests by Country - All CDNs",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "POP"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Filter to this POP",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=edge_pop|=|${__value.text}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "Filter to RAW logs",
+                    "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=edge_pop|=|${__value.text}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 70
+      },
+      "id": 46,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n    edge_pop AS POP,\n    countMergeIf(`count()`,response_status_code >= '200'AND response_status_code < '300') AS \"2xx\",\n    countMergeIf(`count()`,response_status_code >= '300'AND response_status_code < '400') AS \"3xx\",\n    countMergeIf(`count()`,response_status_code >= '400'AND response_status_code < '500') AS \"4xx\",\n    countMergeIf(`count()`,response_status_code >= '500'AND response_status_code < '600') AS \"5xx\",\n    cnt_all AS Total\nFROM ${table}\nWHERE $__timeFilter(timestamp)\n  AND $__adHocFilter()\nGROUP BY \n    edge_pop\nORDER BY Total DESC\nLIMIT 100\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Edge Pop by 2xx-5xx - All CDNs; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 100 Edge Pop by 2xx-5xx",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 41,
+  "tags": [
+    "mcdn"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_min}'\nWHEN ${duration} > 24 THEN '${summary_hour}'\nEND",
+        "hide": 2,
+        "name": "table",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_min}'\nWHEN ${duration} > 24 THEN '${summary_hour}'\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 60\nWHEN ${duration} > 24 THEN 3600\nEND",
+        "hide": 2,
+        "name": "seconds",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 60\nWHEN ${duration} > 24 THEN 3600\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "hide": 2,
+        "name": "summary_min",
+        "query": "${VAR_SUMMARY_MIN}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_SUMMARY_MIN}",
+          "text": "${VAR_SUMMARY_MIN}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_SUMMARY_MIN}",
+            "text": "${VAR_SUMMARY_MIN}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "summary_hour",
+        "query": "${VAR_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_SUMMARY_HOUR}",
+          "text": "${VAR_SUMMARY_HOUR}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_SUMMARY_HOUR}",
+            "text": "${VAR_SUMMARY_HOUR}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "cdn1",
+        "query": "${VAR_CDN1}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_CDN1}",
+          "text": "${VAR_CDN1}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_CDN1}",
+            "text": "${VAR_CDN1}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "current": {},
+        "definition": "SELECT $$\n  CASE\n    WHEN ${next_dim} IS NULL THEN '__null__'\n    WHEN ${next_dim} = '' THEN '__empty__'\n    ELSE REPLACE(${next_dim}, 'undefined', 'undef')\n  END\n$$",
+        "hide": 2,
+        "name": "item_formatted_for_display",
+        "options": [],
+        "query": "SELECT $$\n  CASE\n    WHEN ${next_dim} IS NULL THEN '__null__'\n    WHEN ${next_dim} = '' THEN '__empty__'\n    ELSE REPLACE(${next_dim}, 'undefined', 'undef')\n  END\n$$",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT $$\n  CASE\n    WHEN ${next_dim} IS NULL THEN '__null__'\n    WHEN ${next_dim} = '' THEN '__empty__'\n    ELSE\n      REPLACE(\n        REPLACE(\n          COALESCE(${next_dim}, '__null__'),\n          ',', '__gfc__'\n        ),\n        '|', '__gfp__'\n      )\n  END\n$$",
+        "hide": 2,
+        "name": "item_formatted_for_filter",
+        "options": [],
+        "query": "SELECT $$\n  CASE\n    WHEN ${next_dim} IS NULL THEN '__null__'\n    WHEN ${next_dim} = '' THEN '__empty__'\n    ELSE\n      REPLACE(\n        REPLACE(\n          COALESCE(${next_dim}, '__null__'),\n          ',', '__gfc__'\n        ),\n        '|', '__gfp__'\n      )\n  END\n$$",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
+        "hide": 2,
+        "name": "next_dim",
+        "options": [],
+        "query": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "beydc3kqc3ksge"
+        },
+        "filters": [],
+        "name": "filter",
+        "type": "adhoc"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {},
+        "definition": "SELECT $$[${customize_drilldown_order:singlequote}]$$",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "drill_chain",
+        "options": [],
+        "query": "SELECT $$[${customize_drilldown_order:singlequote}]$$",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "hdx_cdn",
+          "value": "hdx_cdn"
+        },
+        "description": "Select the GroupBy option for the \"Error Treemaps\" panels.\nPlease note that changing the \"Focus On\" value overrides the current \"Drilldown Path\" selection.",
+        "label": "Focus On:",
+        "name": "treeMapGroupBy",
+        "options": [
+          {
+            "selected": true,
+            "text": "CDN",
+            "value": "hdx_cdn"
+          },
+          {
+            "selected": false,
+            "text": "ASN",
+            "value": "client_asn"
+          },
+          {
+            "selected": false,
+            "text": "Hostname",
+            "value": "request_host"
+          },
+          {
+            "selected": false,
+            "text": "Edge pop",
+            "value": "edge_pop"
+          }
+        ],
+        "query": "CDN : hdx_cdn, ASN : client_asn, Hostname : request_host, Edge pop : edge_pop",
+        "type": "custom"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {},
+        "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">→</span> '\n)",
+        "hide": 2,
+        "name": "drill_chain_for_display",
+        "options": [],
+        "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">→</span> '\n)",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+        "hide": 2,
+        "name": "next_dim_for_display",
+        "options": [],
+        "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": [
+            "$__all"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "includeAll": true,
+        "label": "Customize \"Drilldown Path\" Order",
+        "multi": true,
+        "name": "customize_drilldown_order",
+        "options": [
+          {
+            "selected": false,
+            "text": "CDN",
+            "value": "hdx_cdn"
+          },
+          {
+            "selected": false,
+            "text": "ASN",
+            "value": "client_asn"
+          },
+          {
+            "selected": false,
+            "text": "Hostname",
+            "value": "request_host"
+          },
+          {
+            "selected": false,
+            "text": "Edge pop",
+            "value": "edge_pop"
+          }
+        ],
+        "query": "CDN : hdx_cdn, ASN : client_asn, Hostname : request_host, Edge pop : edge_pop",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "0.00",
+          "value": "0.00"
+        },
+        "description": "Filter out items in the \"Error Treemaps\" panels with an error rate below this value.\nThe error rate is a number between 0 and 1: \nFor example, to exclude items with an error rate less than 1%, set this value to 0.01.",
+        "label": "Min Error Rate",
+        "name": "minErrorRate",
+        "options": [
+          {
+            "selected": true,
+            "text": "0.00",
+            "value": "0.00"
+          }
+        ],
+        "query": "0.00",
+        "type": "textbox"
+      },
+      {
+        "current": {},
+        "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "hide": 2,
+        "name": "duration",
+        "options": [],
+        "query": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "CDN Global View - REVISION",
+  "uid": "ebfd6462-2d66-4e82-a0a0-6b220c43507brev",
+  "version": 9,
+  "weekStart": ""
+}
