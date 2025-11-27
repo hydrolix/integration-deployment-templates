@@ -26,6 +26,22 @@ lazy_static! {
         std::env::var("BUNDLE_TESTING_USERNAME").unwrap_or_else(|_| "".to_string());
     static ref BUNDLE_TESTING_PASSWORD: String =
         std::env::var("BUNDLE_TESTING_PASSWORD").unwrap_or_else(|_| "".to_string());
+    static ref GRAFANA_URL: String =
+        std::env::var("GRAFANA_URL").unwrap_or_else(|_| "localhost:3000".to_string());
+    static ref GRAFANA_USE_HTTPS: bool = {
+        std::env::var("GRAFANA_USE_HTTPS").unwrap_or_else(|_| "false".to_string()) == "true"
+    };
+    static ref GRAFANA_TOKEN: String =
+        std::env::var("GRAFANA_TOKEN").unwrap_or_else(|_| "".to_string());
+    static ref GRAFANA_FOLDER_UID: String =
+        std::env::var("GRAFANA_FOLDER_UID").unwrap_or_else(|_| "".to_string());
+    static ref GRAFANA_USERNAME: String =
+        std::env::var("GRAFANA_USERNAME").unwrap_or_else(|_| "admin".to_string());
+    static ref GRAFANA_PASSWORD: String =
+        std::env::var("GRAFANA_PASSWORD").unwrap_or_else(|_| "admin".to_string());
+    static ref SKIP_GRAFANA_CONTAINER: bool = {
+        std::env::var("SKIP_GRAFANA_CONTAINER").unwrap_or_default() == "true"
+    };
     static ref SCAN_WIP: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--wip".to_string())
@@ -76,6 +92,15 @@ lazy_static! {
 //pub const GRAFANA_LOCATION: &str = "host.docker.internal:3000";
 
 pub const GRAFANA_LOCATION: &str = "localhost:3000";
+
+// Helper function to get full Grafana URL with protocol
+pub fn get_grafana_base_url() -> String {
+    // Default to HTTPS for non-localhost URLs, or if explicitly enabled
+    let is_localhost = GRAFANA_URL.starts_with("localhost") || GRAFANA_URL.starts_with("127.0.0.1");
+    let use_https = *GRAFANA_USE_HTTPS || !is_localhost;
+    let protocol = if use_https { "https" } else { "http" };
+    format!("{}://{}", protocol, *GRAFANA_URL)
+}
 
 #[tokio::main]
 async fn main() {
@@ -222,15 +247,19 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     }
 
     if *IS_LOCAL_DASHBOARD_ONLY {
-        // Kill the previous container if it exists
-        _ = grafana::container::kill().await;
+        if !*SKIP_GRAFANA_CONTAINER {
+            // Kill the previous container if it exists
+            _ = grafana::container::kill().await;
 
-        match grafana::container::start().await {
-            Ok(_) => (),
-            Err(e) => {
-                eprintln!("Failed to start the Grafana container... error={e}");
-                std::process::exit(1);
+            match grafana::container::start().await {
+                Ok(_) => (),
+                Err(e) => {
+                    eprintln!("Failed to start the Grafana container... error={e}");
+                    std::process::exit(1);
+                }
             }
+        } else {
+            println!("Using external Grafana instance at: {}", *GRAFANA_URL);
         }
 
         let dashboard_ids = match deploy_only_dashboard::run(base, bundle, &mut output).await {
@@ -242,15 +271,19 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     }
 
     if *IS_LOCAL {
-        // Kill the previous container if it exists
-        _ = grafana::container::kill().await;
+        if !*SKIP_GRAFANA_CONTAINER {
+            // Kill the previous container if it exists
+            _ = grafana::container::kill().await;
 
-        match grafana::container::start().await {
-            Ok(_) => (),
-            Err(e) => {
-                eprintln!("Failed to start the Grafana container... error={e}");
-                std::process::exit(1);
+            match grafana::container::start().await {
+                Ok(_) => (),
+                Err(e) => {
+                    eprintln!("Failed to start the Grafana container... error={e}");
+                    std::process::exit(1);
+                }
             }
+        } else {
+            println!("Using external Grafana instance at: {}", *GRAFANA_URL);
         }
 
         let dashboard_ids = match deploy::run(base, bundle, &mut output).await {

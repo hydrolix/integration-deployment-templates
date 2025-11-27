@@ -13,7 +13,7 @@ use crate::output_struct::OutputTable;
 use crate::output_struct::OutputTransformation;
 use crate::validate::transform_dryrun_validator;
 use crate::BUNDLE_TESTING_CLUSTER;
-use crate::GRAFANA_LOCATION;
+use crate::get_grafana_base_url;
 use crate::STRICT_TRANSFORMS;
 
 const TABLE_READY_DELAY_SECS: u64 = 30;
@@ -153,7 +153,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
 
     output.cluster_domain = BUNDLE_TESTING_CLUSTER.to_string();
     output.project_name = project_name.clone();
-    output.grafana_domain = format!("{GRAFANA_LOCATION}/");
+    output.grafana_domain = format!("{}/", get_grafana_base_url());
     output.datalink = datalink.to_string();
 
     let mut dashboard_data =

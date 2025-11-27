@@ -5,10 +5,10 @@ use crate::bundle_struct::Bundle;
 use crate::grafana;
 use crate::output_struct::Output;
 
-use crate::GRAFANA_LOCATION;
+use crate::get_grafana_base_url;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
-    output.grafana_domain = format!("{GRAFANA_LOCATION}/");
+    output.grafana_domain = format!("{}/", get_grafana_base_url());
 
     // Create datasource first to test configuration
     println!("\n🔗 Creating test datasource...");

@@ -8,7 +8,7 @@ use tokio::time::{sleep, timeout, Duration};
 use bollard::container::KillContainerOptions;
 use std::default::Default;
 
-use crate::GRAFANA_LOCATION;
+use crate::get_grafana_base_url;
 
 #[allow(deprecated)]
 pub async fn kill() -> Result<(), String> {
@@ -89,12 +89,12 @@ pub async fn start() -> Result<(), String> {
             ));
         }
     };
-    wait_for_grafana_ready(GRAFANA_LOCATION, 60).await
+    wait_for_grafana_ready(&get_grafana_base_url(), 60).await
 }
 
 async fn wait_for_grafana_ready(base_url: &str, max_wait_secs: u64) -> Result<(), String> {
     let client = reqwest::Client::new();
-    let health_url = format!("http://{}/api/health", base_url);
+    let health_url = format!("{}/api/health", base_url);
     let start_time = std::time::Instant::now();
 
     loop {

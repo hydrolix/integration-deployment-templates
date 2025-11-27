@@ -8,10 +8,18 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::time::sleep;
 
-use crate::GRAFANA_LOCATION;
+use crate::{GRAFANA_TOKEN, GRAFANA_USERNAME, GRAFANA_PASSWORD};
+use crate::get_grafana_base_url;
 
 // url, grafana_dashboard_id, username, password
 pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
+    // If using token auth, skip headless browser validation (can't get session cookie with token)
+    if !GRAFANA_TOKEN.is_empty() {
+        println!("⚠️  Skipping headless browser validation (using token authentication)");
+        println!("   Dashboard created successfully but not validated with browser");
+        return Ok((0, 0));
+    }
+
     let (cookie_name, cookie_value) = match get_grafana_session_cookie().await {
         Ok((n, v)) => (n.to_string(), v.to_string()),
         Err(e) => return Err(format!("ERROR: {}.{} {e}", file!(), line!())),
@@ -84,7 +92,7 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     let cookie = Network::CookieParam {
         name: cookie_name.to_string(),
         value: cookie_value.to_string(),
-        url: Some(format!("http://{GRAFANA_LOCATION}/")),
+        url: Some(format!("{}/", get_grafana_base_url())),
         //domain: Some("host.docker.internal".to_string()),
         domain: None,
         path: Some("/".to_string()),
@@ -106,7 +114,7 @@ pub async fn run(grafana_dashboard_id: &str) -> Result<(i32, i32), String> {
     }
 
     // Navigate to the domain first going back two weeks to test the time-range collar
-    let url = format!("http://{GRAFANA_LOCATION}/d/{grafana_dashboard_id}?from=now-14d&to=now");
+    let url = format!("{}/d/{grafana_dashboard_id}?from=now-14d&to=now", get_grafana_base_url());
 
     let _x = match tab.navigate_to(&url) {
         Ok(v) => v,
@@ -159,11 +167,11 @@ async fn get_grafana_session_cookie() -> Result<(String, String), String> {
     };
 
     let response = match client
-        .post(format!("http://{GRAFANA_LOCATION}/login"))
+        .post(format!("{}/login", get_grafana_base_url()))
         .header(header::CONTENT_TYPE, "application/json")
         .json(&serde_json::json!({
-            "user": "admin",
-            "password": "admin"
+            "user": *GRAFANA_USERNAME,
+            "password": *GRAFANA_PASSWORD
         }))
         .send()
         .await

@@ -4,8 +4,9 @@ use serde_json::Value;
 use std::time::Duration;
 use tokio::time::sleep;
 
-use crate::GRAFANA_LOCATION;
+use crate::{GRAFANA_TOKEN, GRAFANA_FOLDER_UID, GRAFANA_USERNAME, GRAFANA_PASSWORD};
 use crate::{BUNDLE_TESTING_CLUSTER, BUNDLE_TESTING_PASSWORD, BUNDLE_TESTING_USERNAME};
+use crate::get_grafana_base_url;
 
 const HDX_DATABASE_PORT: &str = "9440";
 const HTTP_TIMEOUT: u64 = 120;
@@ -42,19 +43,55 @@ pub struct SecureJsonData {
 
 async fn delete_existing_datasource(name: &str) -> Result<(), String> {
     // List all datasources
-    let list_url = format!("http://{GRAFANA_LOCATION}/api/datasources");
-    let client = reqwest::Client::new();
+    let list_url = format!("{}/api/datasources", get_grafana_base_url());
+    println!("  🔍 Checking for existing datasource at: {}", list_url);
 
-    let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
-
-    let response = match client
-        .get(&list_url)
-        .header("Authorization", format!("Basic {}", auth))
-        .send()
-        .await
+    // Create client with explicit timeouts and accept invalid certs for testing
+    println!("  🔧 Creating HTTP client...");
+    let client = match reqwest::Client::builder()
+        .connect_timeout(Duration::from_secs(10))
+        .timeout(Duration::from_secs(30))
+        .danger_accept_invalid_certs(true)  // Temporarily for debugging
+        .build()
     {
-        Ok(r) => r,
-        Err(e) => return Err(format!("Failed to list datasources: {}", e)),
+        Ok(c) => {
+            println!("  ✓ HTTP client created successfully");
+            c
+        },
+        Err(e) => return Err(format!("Failed to create HTTP client: {}", e)),
+    };
+
+    let mut request = client.get(&list_url);
+
+    // Use token auth if available, otherwise fall back to basic auth
+    if !GRAFANA_TOKEN.is_empty() {
+        println!("  🔑 Using token authentication");
+        request = request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+    } else {
+        println!("  🔑 Using basic authentication");
+        let auth = base64::engine::general_purpose::STANDARD.encode(format!("{}:{}", *GRAFANA_USERNAME, *GRAFANA_PASSWORD));
+        request = request.header("Authorization", format!("Basic {}", auth));
+    }
+
+    println!("  📡 Sending request to Grafana...");
+
+    // Wrap in tokio timeout as additional safety
+    let response = match tokio::time::timeout(
+        Duration::from_secs(15),
+        request.send()
+    ).await {
+        Ok(Ok(r)) => {
+            println!("  ✓ Got response from Grafana");
+            r
+        },
+        Ok(Err(e)) => {
+            println!("  ❌ Request failed: {}", e);
+            return Err(format!("Failed to list datasources: {}", e));
+        },
+        Err(_) => {
+            println!("  ❌ Request timed out after 15 seconds");
+            return Err("Request timed out after 15 seconds".to_string());
+        }
     };
 
     if !response.status().is_success() {
@@ -73,13 +110,18 @@ async fn delete_existing_datasource(name: &str) -> Result<(), String> {
                 if ds_name == name {
                     if let Some(id) = ds.get("id").and_then(|i| i.as_i64()) {
                         // Delete this datasource
-                        let delete_url = format!("http://{GRAFANA_LOCATION}/api/datasources/{}", id);
-                        let auth2 = base64::engine::general_purpose::STANDARD.encode("admin:admin");
-                        let _ = client
-                            .delete(&delete_url)
-                            .header("Authorization", format!("Basic {}", auth2))
-                            .send()
-                            .await;
+                        let delete_url = format!("{}/api/datasources/{}", get_grafana_base_url(), id);
+                        let mut delete_request = client.delete(&delete_url);
+
+                        // Use token auth if available, otherwise fall back to basic auth
+                        if !GRAFANA_TOKEN.is_empty() {
+                            delete_request = delete_request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+                        } else {
+                            let auth2 = base64::engine::general_purpose::STANDARD.encode(format!("{}:{}", *GRAFANA_USERNAME, *GRAFANA_PASSWORD));
+                            delete_request = delete_request.header("Authorization", format!("Basic {}", auth2));
+                        }
+
+                        let _ = delete_request.send().await;
                         println!("  Deleted existing datasource: {}", name);
                     }
                 }
@@ -125,12 +167,12 @@ pub async fn create_datalink(project_name: &str) -> Result<String, String> {
         }
     };
 
-    let url = format!("http://{GRAFANA_LOCATION}/api/datasources");
+    let url = format!("{}/api/datasources", get_grafana_base_url());
 
     let response = match post_basic_auth(
         &url,
-        "admin",
-        "admin",
+        &GRAFANA_USERNAME,
+        &GRAFANA_PASSWORD,
         &payload,
         Some(vec![("X-Grafana-Org-Id", "1")]), // Add the X-Grafana-Org-Id header
     )
@@ -160,14 +202,48 @@ pub async fn create_datalink(project_name: &str) -> Result<String, String> {
 }
 
 pub async fn create_dashboard(dashboard_data: &str) -> Result<String, String> {
-    let url = format!("http://{GRAFANA_LOCATION}/api/dashboards/import");
+    let url = format!("{}/api/dashboards/import", get_grafana_base_url());
 
-    let boxed_str: Box<str> = dashboard_data.into();
+    // Parse the dashboard JSON - it might already be wrapped or just the dashboard
+    let mut dashboard_json: Value = match serde_json::from_str(dashboard_data) {
+        Ok(v) => v,
+        Err(e) => return Err(format!("ERROR: {}.{} Failed to parse dashboard JSON: {e}", file!(), line!())),
+    };
+
+    // Check if it's already an import payload or just a dashboard
+    let import_request = if dashboard_json.get("dashboard").is_some() {
+        // Already in import format, just add folder if needed
+        if !GRAFANA_FOLDER_UID.is_empty() {
+            dashboard_json["folderUid"] = Value::String(GRAFANA_FOLDER_UID.to_string());
+            println!("  📁 Creating dashboard in folder: {}", *GRAFANA_FOLDER_UID);
+        }
+        dashboard_json
+    } else {
+        // Raw dashboard, wrap it in import format
+        let mut import_req = serde_json::json!({
+            "dashboard": dashboard_json,
+            "overwrite": true,
+            "inputs": []
+        });
+
+        if !GRAFANA_FOLDER_UID.is_empty() {
+            import_req["folderUid"] = Value::String(GRAFANA_FOLDER_UID.to_string());
+            println!("  📁 Creating dashboard in folder: {}", *GRAFANA_FOLDER_UID);
+        }
+        import_req
+    };
+
+    let import_payload = match serde_json::to_string(&import_request) {
+        Ok(v) => v,
+        Err(e) => return Err(format!("ERROR: {}.{} Failed to serialize import request: {e}", file!(), line!())),
+    };
+
+    let boxed_str: Box<str> = import_payload.into();
 
     let result_data = match post_string_basic_auth(
         &url,
-        "admin",
-        "admin",
+        &GRAFANA_USERNAME,
+        &GRAFANA_PASSWORD,
         boxed_str.clone(),
         Some(vec![("X-Grafana-Org-Id", "1")]), // Add the X-Grafana-Org-Id header
     )
@@ -207,11 +283,17 @@ pub async fn post_basic_auth(
 
     let mut request = client
         .post(url)
-        .basic_auth(username, Some(password))
         .header("accept", "application/json")
         .header("content-type", "application/json")
         .timeout(Duration::from_secs(HTTP_TIMEOUT))
         .json(payload);
+
+    // Use token auth if available, otherwise fall back to basic auth
+    if !GRAFANA_TOKEN.is_empty() {
+        request = request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+    } else {
+        request = request.basic_auth(username, Some(password));
+    }
 
     // Add additional headers if provided
     if let Some(headers) = additional_headers {
@@ -260,11 +342,17 @@ pub async fn post_string_basic_auth(
     let client = reqwest::Client::new();
     let mut request = client
         .post(url)
-        .basic_auth(username, Some(password))
         .header("accept", "application/json")
         .header("content-type", "application/json")
         .timeout(Duration::from_secs(HTTP_TIMEOUT))
         .body(payload.to_string());
+
+    // Use token auth if available, otherwise fall back to basic auth
+    if !GRAFANA_TOKEN.is_empty() {
+        request = request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+    } else {
+        request = request.basic_auth(username, Some(password));
+    }
 
     // Add additional headers if provided
     if let Some(headers) = additional_headers {

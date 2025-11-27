@@ -5,7 +5,8 @@ use base64::Engine;
 use serde_json::Value;
 use std::collections::HashMap;
 
-use crate::GRAFANA_LOCATION;
+use crate::{GRAFANA_TOKEN, GRAFANA_USERNAME, GRAFANA_PASSWORD};
+use crate::get_grafana_base_url;
 
 #[derive(Debug, Clone)]
 struct PluginInfo {
@@ -188,14 +189,20 @@ pub async fn check_deployed_dashboards(
 }
 
 async fn get_dashboard_by_uid(uid: &str) -> Result<Value, String> {
-    let url = format!("http://{}/api/dashboards/uid/{}", &*GRAFANA_LOCATION, uid);
-
-    let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
+    let url = format!("{}/api/dashboards/uid/{}", get_grafana_base_url(), uid);
 
     let client = reqwest::Client::new();
-    let response = client
-        .get(&url)
-        .header("Authorization", format!("Basic {}", auth))
+    let mut request = client.get(&url);
+
+    // Use token auth if available, otherwise fall back to basic auth
+    if !GRAFANA_TOKEN.is_empty() {
+        request = request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+    } else {
+        let auth = base64::engine::general_purpose::STANDARD.encode(format!("{}:{}", *GRAFANA_USERNAME, *GRAFANA_PASSWORD));
+        request = request.header("Authorization", format!("Basic {}", auth));
+    }
+
+    let response = request
         .send()
         .await
         .map_err(|e| format!("Failed to fetch dashboard: {}", e))?;
@@ -285,14 +292,20 @@ fn is_builtin_plugin(plugin_id: &str) -> bool {
 }
 
 async fn get_installed_plugins() -> Result<Vec<PluginInfo>, String> {
-    let url = format!("http://{}/api/plugins", &*GRAFANA_LOCATION);
-
-    let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
+    let url = format!("{}/api/plugins", get_grafana_base_url());
 
     let client = reqwest::Client::new();
-    let response = client
-        .get(&url)
-        .header("Authorization", format!("Basic {}", auth))
+    let mut request = client.get(&url);
+
+    // Use token auth if available, otherwise fall back to basic auth
+    if !GRAFANA_TOKEN.is_empty() {
+        request = request.header("Authorization", format!("Bearer {}", *GRAFANA_TOKEN));
+    } else {
+        let auth = base64::engine::general_purpose::STANDARD.encode(format!("{}:{}", *GRAFANA_USERNAME, *GRAFANA_PASSWORD));
+        request = request.header("Authorization", format!("Basic {}", auth));
+    }
+
+    let response = request
         .send()
         .await
         .map_err(|e| format!("Failed to fetch plugins: {}", e))?;
