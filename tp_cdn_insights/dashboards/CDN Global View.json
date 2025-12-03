@@ -1936,18 +1936,18 @@
         {
           "hide": 2,
           "name": "summary_min",
-          "query": "__PROJECT_NAME__.mcdn_summary_min",
+          "query": "__PROJECT_NAME__.tp_multi_summary_min",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "__PROJECT_NAME__.mcdn_summary_min",
-            "text": "__PROJECT_NAME__.mcdn_summary_min",
+            "value": "__PROJECT_NAME__.tp_multi_summary_min",
+            "text": "__PROJECT_NAME__.tp_multi_summary_min",
             "selected": false
           },
           "options": [
             {
-              "value": "__PROJECT_NAME__.mcdn_summary_min",
-              "text": "__PROJECT_NAME__.mcdn_summary_min",
+              "value": "__PROJECT_NAME__.tp_multi_summary_min",
+              "text": "__PROJECT_NAME__.tp_multi_summary_min",
               "selected": false
             }
           ]
@@ -1955,18 +1955,18 @@
         {
           "hide": 2,
           "name": "summary_hour",
-          "query": "__PROJECT_NAME__.mcdn_summary_hour",
+          "query": "__PROJECT_NAME__.tp_multi_summary_hour",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "__PROJECT_NAME__.mcdn_summary_hour",
-            "text": "__PROJECT_NAME__.mcdn_summary_hour",
+            "value": "__PROJECT_NAME__.tp_multi_summary_hour",
+            "text": "__PROJECT_NAME__.tp_multi_summary_hour",
             "selected": false
           },
           "options": [
             {
-              "value": "__PROJECT_NAME__.mcdn_summary_hour",
-              "text": "__PROJECT_NAME__.mcdn_summary_hour",
+              "value": "__PROJECT_NAME__.tp_multi_summary_hour",
+              "text": "__PROJECT_NAME__.tp_multi_summary_hour",
               "selected": false
             }
           ]
@@ -2013,12 +2013,19 @@
           "type": "query"
         },
         {
-          "current": {},
-          "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
+          "current": {
+            "value": "hdx_cdn",
+            "text": "hdx_cdn"
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT if(empty(remaining), '${treeMapGroupBy}', remaining[1]) AS result",
           "hide": 2,
           "name": "next_dim",
           "options": [],
-          "query": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
+          "query": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT if(empty(remaining), '${treeMapGroupBy}', remaining[1]) AS result",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2095,11 +2102,11 @@
         },
         {
           "current": {},
-          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
           "hide": 2,
           "name": "next_dim_for_display",
           "options": [],
-          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
           "refresh": 2,
           "regex": "",
           "type": "query"

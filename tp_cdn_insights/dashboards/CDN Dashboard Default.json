@@ -3813,18 +3813,18 @@
           "description": "",
           "hide": 2,
           "name": "summary_min",
-          "query": "__PROJECT_NAME__.mcdn_summary_min",
+          "query": "__PROJECT_NAME__.tp_multi_summary_min",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "__PROJECT_NAME__.mcdn_summary_min",
-            "text": "__PROJECT_NAME__.mcdn_summary_min",
+            "value": "__PROJECT_NAME__.tp_multi_summary_min",
+            "text": "__PROJECT_NAME__.tp_multi_summary_min",
             "selected": false
           },
           "options": [
             {
-              "value": "__PROJECT_NAME__.mcdn_summary_min",
-              "text": "__PROJECT_NAME__.mcdn_summary_min",
+              "value": "__PROJECT_NAME__.tp_multi_summary_min",
+              "text": "__PROJECT_NAME__.tp_multi_summary_min",
               "selected": false
             }
           ]
@@ -3833,18 +3833,18 @@
           "description": "",
           "hide": 2,
           "name": "summary_hour",
-          "query": "__PROJECT_NAME__.mcdn_summary_hour",
+          "query": "__PROJECT_NAME__.tp_multi_summary_hour",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "__PROJECT_NAME__.mcdn_summary_hour",
-            "text": "__PROJECT_NAME__.mcdn_summary_hour",
+            "value": "__PROJECT_NAME__.tp_multi_summary_hour",
+            "text": "__PROJECT_NAME__.tp_multi_summary_hour",
             "selected": false
           },
           "options": [
             {
-              "value": "__PROJECT_NAME__.mcdn_summary_hour",
-              "text": "__PROJECT_NAME__.mcdn_summary_hour",
+              "value": "__PROJECT_NAME__.tp_multi_summary_hour",
+              "text": "__PROJECT_NAME__.tp_multi_summary_hour",
               "selected": false
             }
           ]

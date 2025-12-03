@@ -1,6 +1,6 @@
 {
-  "name": "multi_stream_cdn_insights_tp",
-  "source": "cdn_insights_tp",
+  "name": "multi_stream_tp_cdn_insights",
+  "source": "tp_cdn_insights",
   "method": "multi_stream",
   "method_overrides": {
     "region": "us-east-1",
@@ -8,7 +8,7 @@
   },
   "beta": true,
   "solution": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights_tp",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/tp_cdn_insights",
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
@@ -46,7 +46,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "cdn_insights_tp",
+      "name": "tp_cdn_insights",
       "transforms": [
         {
           "path": "transformations/cloudflare/transform.json",
@@ -74,16 +74,16 @@
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "mcdn_summary_min",
-      "parent_table_name": "cdn_insights_tp",
+      "name": "tp_multi_summary_min",
+      "parent_table_name": "tp_cdn_insights",
       "sql": {
         "path": "summaries/tp_multi_summary_min.sql"
       }
     },
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
-      "name": "mcdn_summary_hour",
-      "parent_table_name": "cdn_insights_tp",
+      "name": "tp_multi_summary_hour",
+      "parent_table_name": "tp_cdn_insights",
       "sql": {
         "path": "summaries/tp_multi_summary_hour.sql"
       }

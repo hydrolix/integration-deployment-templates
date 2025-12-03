@@ -1,76 +1,51 @@
 {
-  "name": "mcdn_akamai_ds2",
+  "name": "cloudflare",
   "description": "Version v1.0",
   "settings": {
     "is_default": true,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\ncommons_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)') as origin_time_to_last_byte_ms,\ncommons_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'n=([^,\\]]+)') as edge_pop,\ncommons_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'a=([^,\\]]+)') AS origin_ip,\ncommons_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'l=([^,\\]]+)') AS origin_time_to_first_byte_ms,\ncommons_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'a=([^,\\]]+)') as edge_ip,\nmultiIf(\ncacheStatus=1,1,\nbreadcrumbs IS NULL OR empty(breadcrumbs),0,\norigin_ip IS NULL OR empty(origin_ip) OR origin_ip = '127.0.0.1',1,0\n) AS cache_was_cached,\ndecodeURLComponent(assumeNotNull(queryStr)) AS request_query_string,\ndecodeURLComponent(assumeNotNull(referer)) AS request_referer,\ndecodeURLComponent(assumeNotNull(UA)) as user_agent,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
-    "null_values": [
-      "-",
-      "-1",
-      "^"
-    ],
+    "sql_transform": "SELECT reqTimeSec, result_type, cacheStatus, totalBytes, statusCode, timeToFirstByte, transferTimeMSec, rspContentType, reqMethod, reqHost, request_full_path, queryStr, referer, reqPath, user_agent_category, UA, cliIP, edge_pop, Edge_IP, Origin_IP, Origin_TurnAroundTime, Origin_RequestEndTime, country, city, asn, Edge_GeoInfo, breadcrumbs, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=g[^]]*\\\\])', 'n=([^,\\\\]]+)') as edge_pop, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms, hdx_source_latency_sec, hdx_cdn, hdx_transform, unknown FROM {STREAM}",
+    "null_values": [],
     "sample_data": [
       {
-        "reqTimeSec": 1759940340,
-        "cacheStatus": 1,
-        "totalBytes": 1268,
-        "statusCode": 200,
-        "timeToFirstByte": 83,
-        "transferTimeMSec": 199,
-        "rspContentType": "application/vnd.apple.mpegurl",
-        "reqMethod": "GET",
-        "reqHost": "hydrolix.io",
-        "queryStr": "",
-        "referer": "https://hydrolix.io",
-        "reqPath": "/hls/Crimson Arcade S03E08 — Garden Doors/multivariant.m3u8",
-        "UA": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/124.0.0.0 Mobile/15E148 Safari/604.1",
-        "cliIP": "73.142.98.77",
-        "country": "US",
-        "city": "New Haven",
-        "Asnum": "7922",
-        "origin_ip": "52.75.0.13",
-        "breadcrumbs": ""
+        "timestamp": "2025-10-02T21:06:14"
       }
     ],
     "shadow_table": null,
     "output_columns": [
       {
-        "name": "timestamp",
+        "name": "reqTimeSec",
         "datatype": {
-          "type": "epoch",
+          "type": "datetime",
           "index": false,
           "primary": true,
-          "format": "s",
+          "format": "2006-01-02T15:04:05Z",
           "resolution": "ms",
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqTimeSec"
-            ]
+            "from_input_field": "EdgeStartTimestamp"
           },
           "suppress": false
         }
       },
       {
-        "name": "cacheStatus",
+        "name": "result_type",
         "datatype": {
-          "type": "boolean",
+          "type": "string",
           "index": true,
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/cacheStatus"
-            ]
+            "from_input_field": "CacheCacheStatus"
           },
           "suppress": true
         }
       },
       {
-        "name": "cache_was_cached",
+        "name": "cacheStatus",
         "datatype": {
           "type": "boolean",
           "index": true,
@@ -85,7 +60,7 @@
         }
       },
       {
-        "name": "response_total_bytes",
+        "name": "totalBytes",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -94,15 +69,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/totalBytes"
-            ]
+            "from_input_field": "EdgeResponseBytes"
           },
           "suppress": false
         }
       },
       {
-        "name": "response_status_code",
+        "name": "statusCode",
         "datatype": {
           "type": "string",
           "index": true,
@@ -111,15 +84,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/statusCode"
-            ]
+            "from_input_field": "EdgeResponseStatus"
           },
           "suppress": false
         }
       },
       {
-        "name": "response_time_to_first_byte_ms",
+        "name": "timeToFirstByte",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -128,15 +99,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/timeToFirstByte"
-            ]
+            "from_input_field": "EdgeTimeToFirstByteMs"
           },
           "suppress": false
         }
       },
       {
-        "name": "response_time_to_last_byte_ms",
+        "name": "transferTimeMSec",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -145,15 +114,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/transferTimeMSec"
-            ]
+            "from_input_field": "OriginResponseDurationMs"
           },
           "suppress": false
         }
       },
       {
-        "name": "response_content_type",
+        "name": "rspContentType",
         "datatype": {
           "type": "string",
           "index": true,
@@ -162,15 +129,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/rspContentType"
-            ]
+            "from_input_field": "EdgeResponseContentType"
           },
           "suppress": false
         }
       },
       {
-        "name": "request_method",
+        "name": "reqMethod",
         "datatype": {
           "type": "string",
           "index": true,
@@ -179,15 +144,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqMethod"
-            ]
+            "from_input_field": "ClientRequestMethod"
           },
           "suppress": false
         }
       },
       {
-        "name": "request_host",
+        "name": "reqHost",
         "datatype": {
           "type": "string",
           "index": true,
@@ -196,31 +159,28 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqHost"
-            ]
+            "from_input_field": "ClientRequestHost"
           },
           "suppress": false
         }
       },
       {
-        "name": "queryStr",
+        "name": "request_full_path",
         "datatype": {
           "type": "string",
           "index": true,
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/queryStr"
-            ]
+            "from_input_field": "ClientRequestURI"
           },
           "suppress": true
         }
       },
       {
-        "name": "request_query_string",
+        "name": "queryStr",
         "datatype": {
           "type": "string",
           "index": true,
@@ -240,18 +200,17 @@
           "type": "string",
           "index": true,
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/referer"
-            ]
+            "from_input_field": "ClientRequestReferer"
           },
           "suppress": false
         }
       },
       {
-        "name": "request_referer",
+        "name": "reqPath",
         "datatype": {
           "type": "string",
           "index": true,
@@ -260,55 +219,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "request_path",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/reqPath"
-            ]
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "UA",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/UA"
-            ]
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "is_bot_traffic",
-        "datatype": {
-          "type": "boolean",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientRequestPath"
           },
           "suppress": false
         }
@@ -329,7 +240,37 @@
         }
       },
       {
-        "name": "user_agent",
+        "name": "UA",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestUserAgent"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cliIP",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
         "datatype": {
           "type": "string",
           "index": true,
@@ -344,7 +285,7 @@
         }
       },
       {
-        "name": "client_ip",
+        "name": "Edge_IP",
         "datatype": {
           "type": "string",
           "index": true,
@@ -353,15 +294,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/cliIP"
-            ]
+            "from_input_field": "EdgeServerIP"
           },
           "suppress": false
         }
       },
       {
-        "name": "edge_ip",
+        "name": "Origin_IP",
         "datatype": {
           "type": "string",
           "index": true,
@@ -370,13 +309,43 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "OriginIP"
           },
           "suppress": false
         }
       },
       {
-        "name": "origin_ip",
+        "name": "Origin_TurnAroundTime",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Origin_RequestEndTime",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "country",
         "datatype": {
           "type": "string",
           "index": true,
@@ -385,7 +354,52 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientCountry"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientCity"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientASN"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Edge_GeoInfo",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeColoCode"
           },
           "suppress": false
         }
@@ -421,81 +435,16 @@
         }
       },
       {
-        "name": "client_country_iso_code",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/country"
-            ]
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "client_city",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/city"
-            ]
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "client_asn",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/asn"
-            ]
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "edge_pop",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
         "name": "breadcrumbs",
         "datatype": {
           "type": "string",
-          "index": false,
-          "source": null,
+          "index": true,
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
-          "suppress": true
+          "source": null,
+          "suppress": false
         }
       },
       {
@@ -520,7 +469,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "Akamai",
+          "default": "Cloudflare",
           "script": null,
           "source": null,
           "suppress": false
@@ -533,7 +482,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "Akamai multi cdn",
+          "default": "Cloudflare TP multicdn template",
           "script": null,
           "source": null,
           "suppress": false
@@ -580,6 +529,6 @@
         "depth": null
       }
     }
-  },
+    },
   "type": "json"
 }

@@ -107,7 +107,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT *\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE timestamp > now() - INTERVAL 15 MINUTE\nAND $__adHocFilter() \nORDER BY timestamp DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
+            "rawSql": "SELECT *\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE reqTimeSec > now() - INTERVAL 15 MINUTE\nAND $__adHocFilter() \nORDER BY reqTimeSec DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -146,18 +146,18 @@
         {
           "hide": 2,
           "name": "timestamp",
-          "query": "timestamp",
+          "query": "reqTimeSec",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "timestamp",
-            "text": "timestamp",
+            "value": "reqTimeSec",
+            "text": "reqTimeSec",
             "selected": false
           },
           "options": [
             {
-              "value": "timestamp",
-              "text": "timestamp",
+              "value": "reqTimeSec",
+              "text": "reqTimeSec",
               "selected": false
             }
           ]

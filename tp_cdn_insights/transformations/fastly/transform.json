@@ -4,7 +4,7 @@
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 as cacheStatus,\n__SHARED_PROJECT__.city_name(cliIP) as city,\ndictGet('__SHARED_PROJECT__.ua_cat_dict', 'ua_category', assumeNotNull(user_agent_category)) AS user_agent_category,\n__SHARED_PROJECT__.breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT__.breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 as cacheStatus,\n__SHARED_PROJECT___city_name(cliIP) as city,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent_category)) AS user_agent_category,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms,\n * \nFROM {STREAM}",
     "null_values": [
       "-1",
       "(null)"

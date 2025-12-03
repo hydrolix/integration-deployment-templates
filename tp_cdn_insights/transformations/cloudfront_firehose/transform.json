@@ -1,15 +1,13 @@
 {
-  "name": "cloudfront_firehose",
-  "description": "Version v1.0",
+  "name": "mcdn_cloudfront_fireshose_v3",
+  "description": "",
+  "created": "2025-12-02T22:32:57.551418Z",
+  "modified": "2025-12-02T22:32:57.551432Z",
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nround(response_time_to_first_byte_sec * 1000) AS response_time_to_first_byte_ms,\nround(response_time_to_last_byte_sec * 1000) AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('__SHARED_PROJECT__.geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('__SHARED_PROJECT__.geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n __SHARED_PROJECT__.city_name(client_ip) as client_city,\ndictGet('__SHARED_PROJECT__.ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
-    "null_values": [
-      "-",
-      "^",
-      "(null)"
-    ],
+    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency_sec,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\nIF(isIPv6String(assumeNotNull(cliIP)), \n   NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNumOrDefault(assumeNotNull(cliIP)))), '0'), \n   NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4OrDefault(cliIP))), '0')) AS Edge_GeoInfo,\n__SHARED_PROJECT___city_name(cliIP) as city,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "null_values": [],
     "sample_data": [
       {
         "records": [
@@ -24,39 +22,7 @@
     "shadow_table": null,
     "output_columns": [
       {
-        "name": "request_id",
-        "datatype": {
-          "type": "string",
-          "index": false,
-          "primary": false,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "requestId"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "firehose_timestamp",
-        "datatype": {
-          "type": "epoch",
-          "index": false,
-          "primary": false,
-          "format": "ms",
-          "resolution": "ms",
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "timestamp"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "timestamp",
+        "name": "reqTimeSec",
         "datatype": {
           "type": "epoch",
           "index": false,
@@ -91,22 +57,7 @@
         }
       },
       {
-        "name": "detailed_result_type",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "x-edge-detailed-result-type"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "cache_was_cached",
+        "name": "cacheStatus",
         "datatype": {
           "type": "boolean",
           "index": true,
@@ -121,7 +72,7 @@
         }
       },
       {
-        "name": "response_total_bytes",
+        "name": "totalBytes",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -136,7 +87,7 @@
         }
       },
       {
-        "name": "response_status_code",
+        "name": "statusCode",
         "datatype": {
           "type": "string",
           "index": true,
@@ -151,22 +102,7 @@
         }
       },
       {
-        "name": "response_time_to_first_byte_sec",
-        "datatype": {
-          "type": "double",
-          "index": false,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time-to-first-byte"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "response_time_to_first_byte_ms",
+        "name": "timeToFirstByte",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -175,13 +111,13 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "time-to-first-byte"
           },
           "suppress": false
         }
       },
       {
-        "name": "response_time_to_last_byte_sec",
+        "name": "response_time_to_last_byte",
         "datatype": {
           "type": "double",
           "index": false,
@@ -196,7 +132,7 @@
         }
       },
       {
-        "name": "response_time_to_last_byte_ms",
+        "name": "transferTimeMSec",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -226,7 +162,7 @@
         }
       },
       {
-        "name": "request_method",
+        "name": "reqMethod",
         "datatype": {
           "type": "string",
           "index": true,
@@ -241,7 +177,7 @@
         }
       },
       {
-        "name": "request_host",
+        "name": "reqHost",
         "datatype": {
           "type": "string",
           "index": true,
@@ -256,7 +192,7 @@
         }
       },
       {
-        "name": "request_query_string",
+        "name": "queryStr",
         "datatype": {
           "type": "string",
           "index": true,
@@ -271,7 +207,7 @@
         }
       },
       {
-        "name": "request_referer",
+        "name": "referer",
         "datatype": {
           "type": "string",
           "index": true,
@@ -286,7 +222,7 @@
         }
       },
       {
-        "name": "request_path",
+        "name": "reqPath",
         "datatype": {
           "type": "string",
           "index": true,
@@ -301,7 +237,7 @@
         }
       },
       {
-        "name": "user_agent",
+        "name": "UA",
         "datatype": {
           "type": "string",
           "index": true,
@@ -331,7 +267,7 @@
         }
       },
       {
-        "name": "client_ip",
+        "name": "cliIP",
         "datatype": {
           "type": "string",
           "index": true,
@@ -346,7 +282,7 @@
         }
       },
       {
-        "name": "edge_ip",
+        "name": "Edge_IP",
         "datatype": {
           "type": "string",
           "index": true,
@@ -361,7 +297,7 @@
         }
       },
       {
-        "name": "origin_ip",
+        "name": "Origin_IP",
         "datatype": {
           "type": "string",
           "index": true,
@@ -374,7 +310,7 @@
         }
       },
       {
-        "name": "origin_time_to_first_byte_sec",
+        "name": "Origin_TurnAroundTime",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -385,26 +321,11 @@
           "source": {
             "from_input_field": "origin-fbl"
           },
-          "suppress": true
-        }
-      },
-      {
-        "name": "origin_time_to_first_byte_ms",
-        "datatype": {
-          "type": "uint64",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
           "suppress": false
         }
       },
       {
-        "name": "origin_time_to_last_byte_sec",
+        "name": "Origin_RequestEndTime",
         "datatype": {
           "type": "uint64",
           "index": true,
@@ -415,26 +336,11 @@
           "source": {
             "from_input_field": "origin-lbl"
           },
-          "suppress": true
-        }
-      },
-      {
-        "name": "origin_time_to_last_byte_ms",
-        "datatype": {
-          "type": "uint64",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
           "suppress": false
         }
       },
       {
-        "name": "client_country_iso_code",
+        "name": "country",
         "datatype": {
           "type": "string",
           "index": true,
@@ -449,7 +355,7 @@
         }
       },
       {
-        "name": "client_city",
+        "name": "city",
         "datatype": {
           "type": "string",
           "index": true,
@@ -464,7 +370,7 @@
         }
       },
       {
-        "name": "client_asn",
+        "name": "Edge_GeoInfo",
         "datatype": {
           "type": "string",
           "index": true,
@@ -489,6 +395,21 @@
           "script": null,
           "source": {
             "from_input_field": "x-edge-location"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
           },
           "suppress": false
         }
@@ -535,6 +456,19 @@
         }
       },
       {
+        "name": "breadcrumbs",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
         "name": "unknown",
         "datatype": {
           "type": "map",
@@ -562,7 +496,6 @@
     "compression": "",
     "wurfl": null,
     "format_details": {
-      "subtype": "firehose",
       "flattening": {
         "active": false,
         "map_flattening_strategy": {
