@@ -3800,6 +3800,10 @@
         },
         {
           "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
           "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
           "hide": 2,
           "name": "duration",

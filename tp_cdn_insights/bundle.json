@@ -102,7 +102,7 @@
     "data_category": "security"
   },
   "metadata": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "maintainer": "kevin.borkman@hydrolix.io",
     "description": "CDN Insights TP Description",
     "channel_type": "AWS"

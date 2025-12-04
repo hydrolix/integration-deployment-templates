@@ -11,3 +11,8 @@ pub mod transform_dryrun_validator;
 pub mod transform_sql_validator;
 pub mod transforms_are_valid;
 pub mod valid_base_url;
+pub mod summary_table_references;
+pub mod summary_column_schema;
+pub mod raw_logs_timestamp;
+pub mod template_variable_datasource;
+pub mod dashboard_column_usage;

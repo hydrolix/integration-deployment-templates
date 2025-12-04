@@ -5,7 +5,7 @@ SELECT
   edge_pop,
   reqHost as request_host,
   country as client_country_iso_code,
-  city,
+  city as client_city,
   Edge_GeoInfo as client_asn,
   user_agent_category,
   hdx_cdn,
@@ -26,7 +26,7 @@ GROUP BY
   edge_pop,
   request_host,
   client_country_iso_code,
-  city,
+  client_city,
   client_asn,
   user_agent_category,
   hdx_cdn

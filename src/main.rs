@@ -226,6 +226,30 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => eprintln!("WARNING: Dependency check failed: {e}"),
     }
 
+    // Validate summary table references in dashboards
+    match validate::summary_table_references::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Summary table reference validation failed: error={e}")),
+    }
+
+    // Validate dashboard column usage against summary and base tables (dynamic)
+    match validate::dashboard_column_usage::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Dashboard column usage validation failed: error={e}")),
+    }
+
+    // Validate Raw Logs timestamp column
+    match validate::raw_logs_timestamp::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Raw Logs timestamp validation failed: error={e}")),
+    }
+
+    // Validate dashboard template variable datasources
+    match validate::template_variable_datasource::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Dashboard template variable validation failed: error={e}")),
+    }
+
     // Production mode: Check that resources exist on remote cluster
     if *PRODUCTION_MODE {
         println!("Production mode: Checking remote cluster for required resources...");
