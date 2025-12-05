@@ -16,3 +16,5 @@ pub mod summary_column_schema;
 pub mod raw_logs_timestamp;
 pub mod template_variable_datasource;
 pub mod dashboard_column_usage;
+pub mod template_variable_consistency;
+pub mod datasource_uid_consistency;

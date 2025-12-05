@@ -9,7 +9,8 @@ use crate::bundle_struct::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let mut declared_functions: HashSet<String> = HashSet::new();
-    let mut declared_dictionaries: HashSet<String> = HashSet::new();
+    let mut required_dictionaries: HashSet<String> = HashSet::new();
+    let mut shared_dictionaries: HashSet<String> = HashSet::new();
 
     // Collect declared dependencies
     if let Some(deps) = &bundle.dependencies {
@@ -20,13 +21,24 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
                 }
             }
 
-            if let Some(required_dictionaries) = &hydrolix.required_dictionaries {
-                for dict_name in required_dictionaries {
-                    declared_dictionaries.insert(dict_name.clone());
+            if let Some(required_dicts) = &hydrolix.required_dictionaries {
+                for dict_name in required_dicts {
+                    required_dictionaries.insert(dict_name.clone());
+                }
+            }
+
+            if let Some(shared_dicts) = &hydrolix.shared_dictionaries {
+                for dict_name in shared_dicts {
+                    shared_dictionaries.insert(dict_name.clone());
                 }
             }
         }
     }
+
+    // All declared dictionaries (both required and shared)
+    let mut all_declared_dictionaries: HashSet<String> = HashSet::new();
+    all_declared_dictionaries.extend(required_dictionaries.iter().cloned());
+    all_declared_dictionaries.extend(shared_dictionaries.iter().cloned());
 
     // Check that local files exist for each declared dependency
     println!("Checking local function files...");
@@ -42,8 +54,15 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
     }
 
+    // Only check local files for REQUIRED dictionaries (not shared)
+    // Shared dictionaries are expected to exist in __SHARED_PROJECT__ in the cluster
     println!("Checking local dictionary files...");
-    for dict_name in &declared_dictionaries {
+    if !shared_dictionaries.is_empty() {
+        println!("  ⓘ Shared dictionaries declared (expected to exist in __SHARED_PROJECT__): {:?}",
+                 shared_dictionaries.iter().collect::<Vec<_>>());
+    }
+
+    for dict_name in &required_dictionaries {
         let json_path = format!("{}/dictionaries/{}.json", base, dict_name);
 
         // Check for JSON definition
@@ -55,7 +74,7 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             );
         } else {
             eprintln!(
-                "  ⚠️  WARNING: Dictionary '{}' declared but no definition: dictionaries/{}.json",
+                "  ⚠️  WARNING: Required dictionary '{}' declared but no definition: dictionaries/{}.json",
                 dict_name, dict_name
             );
         }
@@ -79,7 +98,7 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
 
             if !found_data_file {
                 eprintln!(
-                    "  ⚠️  WARNING: Dictionary '{}' has definition but no data file (checked .csv, .yaml, .yml, .tsv)",
+                    "  ⚠️  WARNING: Required dictionary '{}' has definition but no data file (checked .csv, .yaml, .yml, .tsv)",
                     dict_name
                 );
             }
@@ -132,13 +151,19 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             for cap in dict_get_pattern.captures_iter(sql_str) {
                 if let Some(dict_name_match) = cap.get(1) {
                     let dict_name = dict_name_match.as_str();
-                    used_dictionaries.insert(dict_name.to_string());
 
-                    if !declared_dictionaries.contains(dict_name) {
-                        eprintln!(
-                            "  ⚠️  WARNING: Transform {} uses dictionary '{}' but it's not declared in dependencies.hydrolix.required_dictionaries",
-                            transform.path, dict_name
-                        );
+                    // Strip __SHARED_PROJECT__ prefix if present
+                    let dict_name_clean = dict_name.strip_prefix("__SHARED_PROJECT___")
+                        .unwrap_or(dict_name);
+
+                    used_dictionaries.insert(dict_name_clean.to_string());
+
+                    // Check if dictionary is declared in EITHER required_dictionaries OR shared_dictionaries
+                    if !all_declared_dictionaries.contains(dict_name_clean) {
+                        return Err(format!(
+                            "Transform {} uses dictionary '{}' but it's not declared in dependencies.hydrolix.required_dictionaries or shared_dictionaries",
+                            transform.path, dict_name_clean
+                        ));
                     }
                 }
             }
@@ -155,7 +180,7 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
     }
 
-    for dict_name in &declared_dictionaries {
+    for dict_name in &all_declared_dictionaries {
         if !used_dictionaries.contains(dict_name) {
             eprintln!(
                 "  ⚠️  INFO: Dictionary '{}' is declared but not used in any transforms",

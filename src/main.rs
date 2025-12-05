@@ -220,10 +220,10 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Alert rules validation failed: error={e}")),
     }
 
-    // Check dependencies (warnings only, doesn't fail validation)
+    // Check dependencies (hard error for undeclared dictionaries)
     match validate::check_dependencies::run(base, bundle).await {
         Ok(_) => (),
-        Err(e) => eprintln!("WARNING: Dependency check failed: {e}"),
+        Err(e) => return Err(format!("Dependency validation failed: error={e}")),
     }
 
     // Validate summary table references in dashboards
@@ -248,6 +248,18 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     match validate::template_variable_datasource::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Dashboard template variable validation failed: error={e}")),
+    }
+
+    // Validate template variable consistency across dashboards
+    match validate::template_variable_consistency::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Template variable consistency validation failed: error={e}")),
+    }
+
+    // Validate datasource UID consistency (should use __DATASOURCE__ placeholder)
+    match validate::datasource_uid_consistency::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Datasource UID consistency validation failed: error={e}")),
     }
 
     // Production mode: Check that resources exist on remote cluster
