@@ -197,10 +197,15 @@ fn extract_column_references(dashboard_json: &str) -> Result<HashSet<String>, St
                 &sql
             };
 
+            // Remove string literals to avoid treating values as column names
+            // Replace 'quoted strings' with empty space to preserve positions for other matches
+            let string_literal_regex = Regex::new(r"'[^']*'").unwrap();
+            let sql_without_strings = string_literal_regex.replace_all(sql_without_settings, " ");
+
             // Remove AS aliases (output column names) to avoid validating them
             let as_alias_regex = Regex::new(r"(?i)\s+AS\s+([a-zA-Z_][a-zA-Z0-9_]*)").unwrap();
             let aliases: HashSet<String> = as_alias_regex
-                .captures_iter(sql_without_settings)
+                .captures_iter(&sql_without_strings)
                 .filter_map(|cap| cap.get(1).map(|m| m.as_str().to_string()))
                 .collect();
 
@@ -208,7 +213,7 @@ fn extract_column_references(dashboard_json: &str) -> Result<HashSet<String>, St
             // Pattern: word characters not preceded by $ or function call
             let identifier_regex = Regex::new(r"\b([a-zA-Z_][a-zA-Z0-9_]*)\b").unwrap();
 
-            for ident_cap in identifier_regex.captures_iter(sql_without_settings) {
+            for ident_cap in identifier_regex.captures_iter(&sql_without_strings) {
                 if let Some(ident) = ident_cap.get(1) {
                     let ident_str = ident.as_str();
 
