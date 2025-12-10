@@ -68,7 +68,14 @@ pub async fn kill() -> Result<(), String> {
 
 pub async fn start() -> Result<(), String> {
     match Command::new("docker")
-        .args(["run", "--rm", "-p", "3000:3000", "javiani/grafana:latest"])
+        .args([
+            "run",
+            "--rm",
+            "-d",
+            "-p",
+            "3000:3000",
+            "javiani/grafana:latest",
+        ])
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()

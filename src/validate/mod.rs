@@ -1,3 +1,5 @@
+pub mod alert_rules_are_valid;
+pub mod check_dependencies;
 pub mod dashboard_is_valid;
 pub mod naming_is_valid;
 pub mod no_bad_checksums;

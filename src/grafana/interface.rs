@@ -1,3 +1,4 @@
+use base64::Engine;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::time::Duration;
@@ -22,10 +23,12 @@ pub struct CreateDataSourceRequest {
 }
 
 #[derive(Serialize, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct JsonData {
     pub default_database: String,
+    pub host: String,  // Changed from 'server' to 'host'
     pub port: String,
-    pub server: String,
+    pub protocol: String,  // Added protocol field
     pub query_timeout: String,
     pub secure: bool,
     pub timeout: String,
@@ -37,15 +40,69 @@ pub struct SecureJsonData {
     pub password: String,
 }
 
+async fn delete_existing_datasource(name: &str) -> Result<(), String> {
+    // List all datasources
+    let list_url = format!("http://{GRAFANA_LOCATION}/api/datasources");
+    let client = reqwest::Client::new();
+
+    let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
+
+    let response = match client
+        .get(&list_url)
+        .header("Authorization", format!("Basic {}", auth))
+        .send()
+        .await
+    {
+        Ok(r) => r,
+        Err(e) => return Err(format!("Failed to list datasources: {}", e)),
+    };
+
+    if !response.status().is_success() {
+        return Ok(()); // If we can't list, just continue
+    }
+
+    let datasources: Value = match response.json().await {
+        Ok(v) => v,
+        Err(_) => return Ok(()),
+    };
+
+    // Find datasource with matching name
+    if let Some(datasources_array) = datasources.as_array() {
+        for ds in datasources_array {
+            if let Some(ds_name) = ds.get("name").and_then(|n| n.as_str()) {
+                if ds_name == name {
+                    if let Some(id) = ds.get("id").and_then(|i| i.as_i64()) {
+                        // Delete this datasource
+                        let delete_url = format!("http://{GRAFANA_LOCATION}/api/datasources/{}", id);
+                        let auth2 = base64::engine::general_purpose::STANDARD.encode("admin:admin");
+                        let _ = client
+                            .delete(&delete_url)
+                            .header("Authorization", format!("Basic {}", auth2))
+                            .send()
+                            .await;
+                        println!("  Deleted existing datasource: {}", name);
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
 pub async fn create_datalink(project_name: &str) -> Result<String, String> {
+    // Delete any existing datasource with the same name
+    let _ = delete_existing_datasource("Bundle Testing").await;
+
     let datasource_request = CreateDataSourceRequest {
         name: "Bundle Testing".to_string(),
-        datasource_type: "grafana-clickhouse-datasource".to_string(),
+        datasource_type: "hydrolix-hydrolix-datasource".to_string(),
         access: "proxy".to_string(),
         jsonData: JsonData {
             default_database: project_name.to_string(),
+            host: BUNDLE_TESTING_CLUSTER.to_string(),  // Changed from 'server' to 'host'
             port: HDX_DATABASE_PORT.to_string(),
-            server: BUNDLE_TESTING_CLUSTER.to_string(),
+            protocol: "native".to_string(),  // Added protocol (native or http)
             query_timeout: "600".to_string(),
             secure: true,
             timeout: "10".to_string(),

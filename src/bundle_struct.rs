@@ -4,24 +4,27 @@ use url::Url;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Bundle {
-    #[serde(deserialize_with = "deserialize_https_url")]
-    pub base_url: String,
-    pub dashboard: Dashboard,
-    pub other_dashboards: Option<Vec<Dashboard>>,
-    #[serde(deserialize_with = "deserialize_valid_method")]
-    pub method: String,
-    pub method_overrides: Option<MethodOverrides>,
     #[serde(deserialize_with = "deserialize_valid_name")]
     pub name: String,
     #[serde(deserialize_with = "deserialize_valid_source")]
     pub source: String,
+    #[serde(deserialize_with = "deserialize_valid_method")]
+    pub method: String,
+    pub method_overrides: Option<MethodOverrides>,
+    #[serde(default)]
+    pub solution: bool,
     pub beta: bool,
+    #[serde(deserialize_with = "deserialize_https_url")]
+    pub base_url: String,
+    pub dashboard: Dashboard,
+    pub other_dashboards: Option<Vec<Dashboard>>,
     pub tables: Vec<Table>,
     pub summary_tables: Option<Vec<SummaryTable>>,
     pub ui: Ui,
     pub metadata: Metadata,
     #[serde(default)]
     pub dependencies: Option<Dependencies>,
+    pub alert_rules: Option<AlertRules>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -30,6 +33,15 @@ pub struct Dashboard {
     #[serde(deserialize_with = "deserialize_url_path")]
     pub path: String,
     pub project_var: String,
+    #[serde(default, deserialize_with = "deserialize_optional_sha256")]
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct AlertRules {
+    #[serde(deserialize_with = "deserialize_url_path")]
+    pub path: String,
     #[serde(default, deserialize_with = "deserialize_optional_sha256")]
     pub sha256: Option<String>,
 }
@@ -78,6 +90,7 @@ pub struct Transform {
     pub sha256: Option<String>,
     #[serde(default, deserialize_with = "deserialize_optional_url_path")]
     pub sample: Option<String>,
+    pub method: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -140,24 +153,13 @@ pub struct HydrolixDependencies {
     #[serde(rename = "cluster_version")]
     pub cluster_version: Option<String>,
     #[serde(rename = "required_dictionaries")]
-    pub required_dictionaries: Option<Vec<Dictionary>>,
+    pub required_dictionaries: Option<Vec<String>>,
     #[serde(rename = "required_functions")]
-    pub required_functions: Option<Vec<Function>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct Dictionary {
-    pub name: String,
-    #[serde(deserialize_with = "deserialize_https_url")]
-    pub source: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct Function {
-    pub name: String,
-    pub definition: String,
+    pub required_functions: Option<Vec<String>>,
+    #[serde(rename = "shared_dictionaries")]
+    pub shared_dictionaries: Option<Vec<String>>,
+    #[serde(rename = "shared_functions")]
+    pub shared_functions: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -307,7 +309,7 @@ where
 
     match s.as_str() {
         // Convert String to &str for matching
-        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" => Ok(s),
+        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" | "multi_stream" => Ok(s),
         _ => Err(de::Error::custom(format!("{} is an invalid method", s))),
     }
 }
@@ -455,5 +457,50 @@ where
             Ok(Some(s))
         }
         None => Ok(None),
+    }
+}
+
+// Helper functions to extract functions and dictionaries
+impl Bundle {
+    /// Get all functions categorized by type (bundle-specific vs shared)
+    pub fn get_all_functions(&self) -> (Vec<String>, Vec<String>) {
+        let bundle_specific = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.required_functions.as_ref())
+            .map(|f| f.clone())
+            .unwrap_or_default();
+
+        let shared = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.shared_functions.as_ref())
+            .map(|f| f.clone())
+            .unwrap_or_default();
+
+        (bundle_specific, shared)
+    }
+
+    /// Get all dictionaries categorized by type (bundle-specific vs shared)
+    pub fn get_all_dictionaries(&self) -> (Vec<String>, Vec<String>) {
+        let bundle_specific = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.required_dictionaries.as_ref())
+            .map(|d| d.clone())
+            .unwrap_or_default();
+
+        let shared = self
+            .dependencies
+            .as_ref()
+            .and_then(|d| d.hydrolix.as_ref())
+            .and_then(|h| h.shared_dictionaries.as_ref())
+            .map(|d| d.clone())
+            .unwrap_or_default();
+
+        (bundle_specific, shared)
     }
 }
