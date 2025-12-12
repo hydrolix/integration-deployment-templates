@@ -174,6 +174,57 @@ fn split_by_comma(text: &str) -> Vec<String> {
     parts
 }
 
+fn remove_sql_comments(sql: &str) -> String {
+    let mut result = String::new();
+    let mut chars = sql.chars().peekable();
+
+    while let Some(ch) = chars.next() {
+        match ch {
+            '-' => {
+                // Check for -- line comment
+                if chars.peek() == Some(&'-') {
+                    chars.next(); // consume second dash
+                    // Skip until end of line or end of string
+                    while let Some(&next_ch) = chars.peek() {
+                        if next_ch == '\n' || next_ch == '\r' {
+                            break;
+                        }
+                        chars.next();
+                    }
+                    // Add space to preserve token separation
+                    result.push(' ');
+                } else {
+                    result.push(ch);
+                }
+            }
+            '/' => {
+                // Check for /* block comment */
+                if chars.peek() == Some(&'*') {
+                    chars.next(); // consume asterisk
+                    // Skip until we find */
+                    let mut found_end = false;
+                    while let Some(inner_ch) = chars.next() {
+                        if inner_ch == '*' && chars.peek() == Some(&'/') {
+                            chars.next(); // consume closing slash
+                            found_end = true;
+                            break;
+                        }
+                    }
+                    // Add space to preserve token separation
+                    result.push(' ');
+                } else {
+                    result.push(ch);
+                }
+            }
+            _ => {
+                result.push(ch);
+            }
+        }
+    }
+
+    result
+}
+
 fn extract_column_references(dashboard_json: &str) -> Result<HashSet<String>, String> {
     let mut columns = HashSet::new();
 
@@ -190,11 +241,14 @@ fn extract_column_references(dashboard_json: &str) -> Result<HashSet<String>, St
                 .replace("\\t", " ")
                 .replace("\\r", " ");
 
+            // Remove SQL comments before processing
+            let sql_without_comments = remove_sql_comments(&sql);
+
             // Remove SETTINGS clause to avoid extracting identifiers from admin comments
-            let sql_without_settings = if let Some(settings_pos) = sql.to_uppercase().find("SETTINGS") {
-                &sql[..settings_pos]
+            let sql_without_settings = if let Some(settings_pos) = sql_without_comments.to_uppercase().find("SETTINGS") {
+                &sql_without_comments[..settings_pos]
             } else {
-                &sql
+                &sql_without_comments
             };
 
             // Remove string literals to avoid treating values as column names
