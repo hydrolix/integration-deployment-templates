@@ -1,4 +1,6 @@
 use crate::bundle_struct::Bundle;
+use regex::Regex;
+use std::collections::HashSet;
 use std::path::Path;
 use tokio::fs;
 
@@ -50,18 +52,30 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        // Look for references to summary tables that don't exist
-        // Common patterns: "summary_min", "summary_hour", "mcdn_summary"
-        let common_patterns = vec!["summary_min", "summary_hour", "mcdn_summary"];
-        for pattern in common_patterns {
-            if dashboard_json.contains(&format!("__PROJECT_NAME__.{}", pattern)) {
-                let pattern_in_bundle = summary_table_names.iter().any(|name| name.contains(pattern));
-                if !pattern_in_bundle {
-                    return Err(format!(
-                        "Dashboard {} references '__PROJECT_NAME__.{}' but no summary table with that name exists in bundle.json. Available: {:?}",
-                        dashboard_path, pattern, summary_table_names
-                    ));
+        // Extract ALL __PROJECT_NAME__.{table_name} references using regex
+        let table_ref_pattern = Regex::new(r"__PROJECT_NAME__\.([a-zA-Z0-9_]+)").unwrap();
+        let mut referenced_tables: HashSet<String> = HashSet::new();
+
+        for cap in table_ref_pattern.captures_iter(&dashboard_json) {
+            if let Some(table_match) = cap.get(1) {
+                let table_name = table_match.as_str().to_string();
+
+                // Skip template variables (e.g., __TABLE_NAME__, __VARIABLE__, etc.)
+                if table_name.starts_with("__") && table_name.ends_with("__") {
+                    continue;
                 }
+
+                referenced_tables.insert(table_name);
+            }
+        }
+
+        // Check each referenced table exists in bundle
+        for referenced_table in &referenced_tables {
+            if !summary_table_names.contains(referenced_table) {
+                return Err(format!(
+                    "Dashboard {} references '__PROJECT_NAME__.{}' but no summary table with that name exists in bundle.json. Available: {:?}",
+                    dashboard_path, referenced_table, summary_table_names
+                ));
             }
         }
     }
