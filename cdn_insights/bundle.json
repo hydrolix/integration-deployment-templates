@@ -8,7 +8,7 @@
   },
   "beta": true,
   "solution": true,
-  "base_url": "https://github.com/hydrolix/solution-bundles/blob/dev/bundles/native/cdn-insights",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/cdn_insights",
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
