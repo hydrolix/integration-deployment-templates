@@ -1,68 +1,43 @@
 {
-  "name": "mcdn_tencent",
+  "name": "cloudflare",
   "description": "Version v1.0",
   "settings": {
-    "is_default": true,
+    "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\ncommons_city_name(client_ip) as client_city,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
-    "null_values": [
-      "-",
-      "-1"
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresult_type IN ('hit', 'stale', 'revalidated', 'updating') as cache_was_cached,\ndecodeURLComponent(queryString(request_full_path)) as request_query_string,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n*\n FROM {STREAM}",
+    "null_values": [],
+    "sample_data": [
+      {
+        "ClientIP": "50.205.69.23",
+        "OriginIP": "52.75.0.2",
+        "ClientASN": 7922,
+        "ClientCity": "West Hartford",
+        "ClientState": "US",
+        "EdgeColoCode": "SJC",
+        "EdgeServerIP": null,
+        "ClientCountry": "US",
+        "CacheCacheStatus": "hit",
+        "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+        "ClientRequestHost": [
+          "https:",
+          "",
+          "hydrolix.io"
+        ],
+        "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+        "EdgeResponseBytes": 840923,
+        "ClientRequestQuery": "",
+        "EdgeResponseStatus": 200,
+        "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
+        "OriginResponseTime": 0,
+        "ClientRequestMethod": "GET",
+        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+        "EdgeTimeToFirstByteMs": 72,
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        "EdgeResponseContentType": "video/mp4",
+        "OriginResponseDurationMs": 334,
+        "OriginResponseHeaderReceiveDurationMs": 0
+      }
     ],
-    "sample_data": {
-      "BotTag": "normal",
-      "JA3Hash": "-",
-      "LogTime": "2024-10-13T23:30:39Z",
-      "ClientIP": "0.0.0.0",
-      "OriginIP": "0.0.0.0",
-      "ClientISP": "AS396982",
-      "RequestID": "13719873400522703510",
-      "RequestUA": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
-      "RemotePort": 80,
-      "RequestUrl": "/app/",
-      "ClientState": "CN-LN",
-      "EdgeEndTime": "2024-10-13T23:30:39Z",
-      "RequestHost": "chatgpt.skyrun.vip",
-      "RequestTime": "2024-10-13T23:30:39Z",
-      "ClientRegion": "US",
-      "EdgeServerID": "b3da9837137ad37f8e430b1d6de51dc5-d41d8cd98f00b204e9800998ecf8427e",
-      "EdgeServerIP": "0.0.0.0",
-      "RequestBytes": 769,
-      "RequestRange": "-",
-      "BotClassProxy": "-",
-      "RequestMethod": "GET",
-      "RequestStatus": "1",
-      "RequestReferer": "-",
-      "SecurityAction": "-",
-      "SecurityModule": "-",
-      "SecurityRuleID": "-",
-      "BotClassScanner": "-",
-      "EdgeCacheStatus": "miss",
-      "EdgeSeverRegion": "US",
-      "ParentRequestID": "-",
-      "RequestProtocol": "HTTP/1.1",
-      "BotClassAttacker": "-",
-      "ClientDeviceType": "Desktop",
-      "EdgeInternalTime": 378,
-      "EdgeResponseTime": 379,
-      "RequestBodyBytes": 0,
-      "BotCharacteristic": "-",
-      "EdgeResponseBytes": 825,
-      "OriginSSLProtocol": "-",
-      "RequestSSLProtocol": "-",
-      "BotClassMaliciousBot": "-",
-      "EdgeResponseBodyBytes": 548,
-      "RequestUrlQueryString": "-",
-      "EdgeFunctionSubrequest": 0,
-      "EdgeResponseStatusCode": 404,
-      "BotClassAccountTakeOver": "-",
-      "OriginResponseStatusCode": 404,
-      "OriginDNSResponseDuration": 0,
-      "OriginTCPHandshakeDuration": 182.485,
-      "OriginTLSHandshakeDuration": -1,
-      "OriginResponseHeaderDuration": 182.676,
-      "OriginRequestHeaderSendDuration": 0.001
-    },
     "shadow_table": null,
     "output_columns": [
       {
@@ -71,12 +46,12 @@
           "type": "datetime",
           "index": false,
           "primary": true,
-          "format": "2006-01-02T15:05:05Z",
+          "format": "2006-01-02T15:04:05Z",
           "resolution": "ms",
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "RequestTime"
+            "from_input_field": "EdgeStartTimestamp"
           },
           "suppress": false
         }
@@ -91,7 +66,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeCacheStatus"
+            "from_input_field": "CacheCacheStatus"
           },
           "suppress": true
         }
@@ -136,7 +111,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseStatusCode"
+            "from_input_field": "EdgeResponseStatus"
           },
           "suppress": false
         }
@@ -151,7 +126,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeInternalTime"
+            "from_input_field": "EdgeTimeToFirstByteMs"
           },
           "suppress": false
         }
@@ -166,7 +141,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseTime"
+            "from_input_field": "OriginResponseDurationMs"
           },
           "suppress": false
         }
@@ -180,7 +155,9 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "EdgeResponseContentType"
+          },
           "suppress": false
         }
       },
@@ -194,7 +171,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "RequestMethod"
+            "from_input_field": "ClientRequestMethod"
           },
           "suppress": false
         }
@@ -209,58 +186,28 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "RequestHost"
+            "from_input_field": "ClientRequestHost"
           },
           "suppress": false
+        }
+      },
+      {
+        "name": "request_full_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestURI"
+          },
+          "suppress": true
         }
       },
       {
         "name": "request_query_string",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "RequestUrlQueryString"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "request_referer",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "RequestReferer"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "request_path",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "RequestUrl"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "user_agent_category",
         "datatype": {
           "type": "string",
           "index": true,
@@ -275,9 +222,39 @@
         }
       },
       {
-        "name": "is_bot_traffic",
+        "name": "request_referer",
         "datatype": {
-          "type": "boolean",
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestReferer"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestPath"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
           "index": true,
           "format": null,
           "resolution": null,
@@ -299,7 +276,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "RequestUA"
+            "from_input_field": "ClientRequestUserAgent"
           },
           "suppress": false
         }
@@ -359,7 +336,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseHeaderDuration"
+            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
           },
           "suppress": false
         }
@@ -373,7 +350,9 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "OriginResponseTime"
+          },
           "suppress": false
         }
       },
@@ -387,7 +366,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRegion"
+            "from_input_field": "ClientCountry"
           },
           "suppress": false
         }
@@ -402,7 +381,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientCity"
           },
           "suppress": false
         }
@@ -417,7 +396,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientISP"
+            "from_input_field": "ClientASN"
           },
           "suppress": false
         }
@@ -432,7 +411,22 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeServerID"
+            "from_input_field": "EdgeColoCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_bot_traffic",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
           },
           "suppress": false
         }
@@ -459,7 +453,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "Tencent",
+          "default": "Cloudflare",
           "script": null,
           "source": null,
           "suppress": false
@@ -472,7 +466,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "Tencent multi cdn",
+          "default": "Cloudflare multi cdn",
           "script": null,
           "source": null,
           "suppress": false

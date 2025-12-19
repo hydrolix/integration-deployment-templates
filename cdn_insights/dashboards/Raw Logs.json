@@ -118,20 +118,11 @@
     "refresh": "",
     "schemaVersion": 41,
     "tags": [
-      "v1.0"
+      "v1.0",
+      "mcdn"
     ],
     "templating": {
       "list": [
-        {
-          "baseFilters": [],
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "filters": [],
-          "name": "filter",
-          "type": "adhoc"
-        },
         {
           "hide": 2,
           "name": "table",
@@ -169,6 +160,16 @@
               "selected": false
             }
           ]
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "Filters",
+          "type": "adhoc"
         }
       ]
     },
@@ -188,10 +189,10 @@
         "1d"
       ]
     },
-    "timezone": "",
-    "title": "CDN Insights - Raw Logs",
+    "timezone": "utc",
+    "title": "Raw Logs",
     "uid": "__DASHBOARD_UUID__",
-    "version": 7,
+    "version": 11,
     "weekStart": ""
   }
 }

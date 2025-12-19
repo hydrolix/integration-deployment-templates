@@ -1,4 +1,5 @@
-{
+[
+  {
     "BotTag": "normal",
     "JA3Hash": "-",
     "LogTime": "2024-10-13T23:30:39Z",
@@ -51,4 +52,5 @@
     "OriginTLSHandshakeDuration": -1,
     "OriginResponseHeaderDuration": 182.676,
     "OriginRequestHeaderSendDuration": 0.001
-}
+  }
+]

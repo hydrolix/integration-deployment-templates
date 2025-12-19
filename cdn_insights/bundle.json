@@ -3,22 +3,23 @@
   "source": "cdn_insights",
   "method": "multi_stream",
   "method_overrides": {
-    "region": "us-east-1"
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
   },
   "beta": true,
   "solution": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
+  "base_url": "https://github.com/hydrolix/solution-bundles/blob/dev/bundles/native/cdn-insights",
   "dashboard": {
-    "path": "dashboards/CDN Dashboard Default-1760472897943.json",
+    "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
   },
   "other_dashboards": [
     {
-      "path": "dashboards/CDN Global View-1760635433621.json",
+      "path": "dashboards/CDN Global View.json",
       "project_var": "__PROJECT_NAME__"
     },
     {
-      "path": "dashboards/Raw Logs-1760472918020.json",
+      "path": "dashboards/Raw Logs.json",
       "project_var": "__PROJECT_NAME__"
     }
   ],
@@ -48,28 +49,23 @@
       "name": "cdn_insights",
       "transforms": [
         {
-          "path": "transformations/akamai_ds2/transform.json",
-          "sample": "transformations/akamai_ds2/sample_data.json",
+          "path": "transformations/mcdn_akamai_ds2/transform.json",
           "method": "http_streaming"
         },
         {
-          "path": "transformations/cloudflare/transform.json",
-          "sample": "transformations/cloudflare/sample_data.json",
+          "path": "transformations/mcdn_cloudflare/transform.json",
           "method": "http_streaming"
         },
         {
-          "path": "transformations/cloudfront_firehose/transform.json",
-          "sample": "transformations/cloudfront_firehose/sample_data.json",
+          "path": "transformations/mcdn_cloudfront_firehose/transform.json",
           "method": "firehose"
         },
         {
-          "path": "transformations/fastly/transform.json",
-          "sample": "transformations/fastly/sample_data.json",
+          "path": "transformations/mcdn_fastly/transform.json",
           "method": "http_streaming"
         },
         {
-          "path": "transformations/tencent/transform.json",
-          "sample": "transformations/tencent/sample_data.json",
+          "path": "transformations/mcdn_tencent/transform.json",
           "method": "http_streaming"
         }
       ]
@@ -96,7 +92,7 @@
   "ui": {
     "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "method": {
-      "full_title": "Http Streaming, Firehose",
+      "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
     "source": {
@@ -106,7 +102,7 @@
     "data_category": "security"
   },
   "metadata": {
-    "version": "1.0.0",
+    "version": "1.0.5",
     "maintainer": "kevin.borkman@hydrolix.io",
     "description": "CDN Insights Description",
     "channel_type": "AWS"
