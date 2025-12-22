@@ -1,0 +1,30 @@
+[
+  {
+    "name": "regexp",
+    "datatype": {
+      "type": "string",
+      "denullify": true
+    }
+  },
+  {
+    "name": "ua_category",
+    "datatype": {
+      "type": "string",
+      "denullify": true
+    }
+  },
+  {
+    "name": "is_bot",
+    "datatype": {
+      "type": "uint8",
+      "denullify": true
+    }
+  },
+  {
+    "name": "ai_category",
+    "datatype": {
+      "type": "string",
+      "denullify": true
+    }
+  }
+]
