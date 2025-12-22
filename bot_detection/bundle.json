@@ -8,7 +8,7 @@
   },
   "beta": true,
   "solution": true,
-  "base_url": "https://github.com/hydrolix/solution-bundles/blob/feature/bot-detection/bundles/native/bot-detection",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/feature/bot-detection/bot_detection",
   "dashboard": {
     "path": "dashboards/Bot Detection Summary.json",
     "project_var": "__PROJECT_NAME__"
