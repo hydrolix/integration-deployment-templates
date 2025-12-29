@@ -10,16 +10,16 @@
   "solution": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
   "dashboard": {
-    "path": "dashboards/CDN Dashboard Default.json",
+    "path": "dashboards/default.json",
     "project_var": "__PROJECT_NAME__"
   },
   "other_dashboards": [
     {
-      "path": "dashboards/CDN Global View.json",
+      "path": "dashboards/global.json",
       "project_var": "__PROJECT_NAME__"
     },
     {
-      "path": "dashboards/Raw Logs.json",
+      "path": "dashboards/raw.json",
       "project_var": "__PROJECT_NAME__"
     }
   ],
@@ -50,22 +50,27 @@
       "transforms": [
         {
           "path": "transformations/mcdn_akamai_ds2/transform.json",
+          "sample": "transformations/akamai_ds2/sample_data.json",
           "method": "http_streaming"
         },
         {
           "path": "transformations/mcdn_cloudflare/transform.json",
+          "sample": "transformations/mcdn_cloudflare/sample_data.json",
           "method": "http_streaming"
         },
         {
           "path": "transformations/mcdn_cloudfront_firehose/transform.json",
+          "sample": "transformations/mcdn_cloudfront_firehose/sample_data.json",
           "method": "firehose"
         },
         {
           "path": "transformations/mcdn_fastly/transform.json",
+          "sample": "transformations/mcdn_fastly/sample_data.json",
           "method": "http_streaming"
         },
         {
           "path": "transformations/mcdn_tencent/transform.json",
+          "sample": "transformations/mcdn_tencent/sample_data.json",
           "method": "http_streaming"
         }
       ]
