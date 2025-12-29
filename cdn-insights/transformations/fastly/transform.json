@@ -1,67 +1,35 @@
 {
-    "name": "mcdn_tencent",
+    "name": "fastly",
     "description": "Version v1.0",
     "settings": {
         "is_default": true,
         "rate_limit": null,
-        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\n__SHARED_PROJECT___city_name(client_ip) as client_city,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresponse_time_to_first_byte * 1000.0 as response_time_to_first_byte_ms,\nresponse_time_to_last_byte * 1000.0 as response_time_to_last_byte_ms,\npositionCaseInsensitive (result_type, 'hit') > 0 AS cache_was_cached,\nsplitByChar('?', assumeNotNull(original_url))[2] AS request_query_string,\nsplitByChar('?', assumeNotNull(original_url))[1] AS request_path,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
         "null_values": [
-            "-",
-            "-1"
+            "-1",
+            "(null)"
         ],
         "sample_data": {
-            "BotTag": "normal",
-            "JA3Hash": "-",
-            "LogTime": "2024-10-13T23:30:39Z",
-            "ClientIP": "0.0.0.0",
-            "OriginIP": "0.0.0.0",
-            "ClientISP": "AS396982",
-            "RequestID": "13719873400522703510",
-            "RequestUA": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
-            "RemotePort": 80,
-            "RequestUrl": "/app/",
-            "ClientState": "CN-LN",
-            "EdgeEndTime": "2024-10-13T23:30:39Z",
-            "RequestHost": "chatgpt.skyrun.vip",
-            "RequestTime": "2024-10-13T23:30:39Z",
-            "ClientRegion": "US",
-            "EdgeServerID": "b3da9837137ad37f8e430b1d6de51dc5-d41d8cd98f00b204e9800998ecf8427e",
-            "EdgeServerIP": "0.0.0.0",
-            "RequestBytes": 769,
-            "RequestRange": "-",
-            "BotClassProxy": "-",
-            "RequestMethod": "GET",
-            "RequestStatus": "1",
-            "RequestReferer": "-",
-            "SecurityAction": "-",
-            "SecurityModule": "-",
-            "SecurityRuleID": "-",
-            "BotClassScanner": "-",
-            "EdgeCacheStatus": "miss",
-            "EdgeSeverRegion": "US",
-            "ParentRequestID": "-",
-            "RequestProtocol": "HTTP/1.1",
-            "BotClassAttacker": "-",
-            "ClientDeviceType": "Desktop",
-            "EdgeInternalTime": 378,
-            "EdgeResponseTime": 379,
-            "RequestBodyBytes": 0,
-            "BotCharacteristic": "-",
-            "EdgeResponseBytes": 825,
-            "OriginSSLProtocol": "-",
-            "RequestSSLProtocol": "-",
-            "BotClassMaliciousBot": "-",
-            "EdgeResponseBodyBytes": 548,
-            "RequestUrlQueryString": "-",
-            "EdgeFunctionSubrequest": 0,
-            "EdgeResponseStatusCode": 404,
-            "BotClassAccountTakeOver": "-",
-            "OriginResponseStatusCode": 404,
-            "OriginDNSResponseDuration": 0,
-            "OriginTCPHandshakeDuration": 182.485,
-            "OriginTLSHandshakeDuration": -1,
-            "OriginResponseHeaderDuration": 182.676,
-            "OriginRequestHeaderSendDuration": 0.001
+            "edge_ip": "2a04:4e42:200::498",
+            "is_edge": true,
+            "edge_pop": "SJC",
+            "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
+            "origin_ip": "(null)",
+            "timestamp": "2025-10-02T21:06:14",
+            "client_asn": "7922",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15",
+            "client_city": "yuba city",
+            "result_type": "HIT-CLUSTER",
+            "original_url": "/media/segment_1920p1080_015.ts",
+            "request_host": "bbb-fastly.hdx-demo.us",
+            "request_method": "GET",
+            "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
+            "response_status_code": "200",
+            "response_total_bytes": 1831674,
+            "response_content_type": "video/mp2t",
+            "client_country_iso_code": "USA",
+            "response_time_to_last_byte": 0.003,
+            "response_time_to_first_byte": 0
         },
         "shadow_table": null,
         "output_columns": [
@@ -71,12 +39,14 @@
                     "type": "datetime",
                     "index": false,
                     "primary": true,
-                    "format": "2006-01-02T15:05:05Z",
+                    "format": "2006-01-02T15:04:05",
                     "resolution": "ms",
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestTime"
+                        "from_json_pointers": [
+                            "/timestamp"
+                        ]
                     },
                     "suppress": false
                 }
@@ -91,7 +61,7 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeCacheStatus"
+                        "from_input_field": "result_type"
                     },
                     "suppress": true
                 }
@@ -121,7 +91,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeResponseBytes"
+                        "from_json_pointers": [
+                            "/response_total_bytes"
+                        ]
                     },
                     "suppress": false
                 }
@@ -136,9 +108,30 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeResponseStatusCode"
+                        "from_json_pointers": [
+                            "/response_status_code"
+                        ]
                     },
                     "suppress": false
+                }
+            },
+            {
+                "name": "response_time_to_first_byte",
+                "datatype": {
+                    "type": "double",
+                    "index": false,
+                    "primary": false,
+                    "ignore": false,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_time_to_first_byte"
+                        ]
+                    },
+                    "suppress": true
                 }
             },
             {
@@ -151,9 +144,28 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeInternalTime"
+                        "from_input_field": "sql_transform"
                     },
                     "suppress": false
+                }
+            },
+            {
+                "name": "response_time_to_last_byte",
+                "datatype": {
+                    "type": "double",
+                    "index": false,
+                    "primary": false,
+                    "ignore": false,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_time_to_last_byte"
+                        ]
+                    },
+                    "suppress": true
                 }
             },
             {
@@ -166,7 +178,7 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeResponseTime"
+                        "from_input_field": "sql_transform"
                     },
                     "suppress": false
                 }
@@ -180,7 +192,11 @@
                     "resolution": null,
                     "default": null,
                     "script": null,
-                    "source": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_content_type"
+                        ]
+                    },
                     "suppress": false
                 }
             },
@@ -194,7 +210,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestMethod"
+                        "from_json_pointers": [
+                            "/request_method"
+                        ]
                     },
                     "suppress": false
                 }
@@ -209,7 +227,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestHost"
+                        "from_json_pointers": [
+                            "/request_host"
+                        ]
                     },
                     "suppress": false
                 }
@@ -224,7 +244,7 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestUrlQueryString"
+                        "from_input_field": "sql_transform"
                     },
                     "suppress": false
                 }
@@ -239,9 +259,28 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestReferer"
+                        "from_json_pointers": [
+                            "/request_referer"
+                        ]
                     },
                     "suppress": false
+                }
+            },
+            {
+                "name": "original_url",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/original_url"
+                        ]
+                    },
+                    "suppress": true
                 }
             },
             {
@@ -254,7 +293,7 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestUrl"
+                        "from_input_field": "sql_transform"
                     },
                     "suppress": false
                 }
@@ -284,7 +323,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "RequestUA"
+                        "from_json_pointers": [
+                            "/user_agent"
+                        ]
                     },
                     "suppress": false
                 }
@@ -299,7 +340,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "ClientIP"
+                        "from_json_pointers": [
+                            "/client_ip"
+                        ]
                     },
                     "suppress": false
                 }
@@ -314,7 +357,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeServerIP"
+                        "from_json_pointers": [
+                            "/edge_ip"
+                        ]
                     },
                     "suppress": false
                 }
@@ -329,7 +374,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "OriginIP"
+                        "from_json_pointers": [
+                            "/origin_ip"
+                        ]
                     },
                     "suppress": false
                 }
@@ -344,7 +391,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "OriginResponseHeaderDuration"
+                        "from_json_pointers": [
+                            "/origin_time_to_first_byte_ms"
+                        ]
                     },
                     "suppress": false
                 }
@@ -358,7 +407,11 @@
                     "resolution": null,
                     "default": null,
                     "script": null,
-                    "source": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/origin_time_to_last_byte_ms"
+                        ]
+                    },
                     "suppress": false
                 }
             },
@@ -372,7 +425,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "ClientRegion"
+                        "from_json_pointers": [
+                            "/client_country_iso_code"
+                        ]
                     },
                     "suppress": false
                 }
@@ -387,7 +442,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "sql_transform"
+                        "from_json_pointers": [
+                            "/client_city"
+                        ]
                     },
                     "suppress": false
                 }
@@ -402,7 +459,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "ClientISP"
+                        "from_json_pointers": [
+                            "/client_asn"
+                        ]
                     },
                     "suppress": false
                 }
@@ -417,7 +476,9 @@
                     "default": null,
                     "script": null,
                     "source": {
-                        "from_input_field": "EdgeServerID"
+                        "from_json_pointers": [
+                            "/edge_pop"
+                        ]
                     },
                     "suppress": false
                 }
@@ -444,7 +505,7 @@
                     "index": true,
                     "format": null,
                     "resolution": null,
-                    "default": "Tencent",
+                    "default": "Fastly",
                     "script": null,
                     "source": null,
                     "suppress": false
@@ -457,7 +518,7 @@
                     "index": true,
                     "format": null,
                     "resolution": null,
-                    "default": "Tencent multi cdn",
+                    "default": "Fastly multi cdn",
                     "script": null,
                     "source": null,
                     "suppress": false

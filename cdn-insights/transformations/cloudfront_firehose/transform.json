@@ -1,5 +1,5 @@
 {
-  "name": "mcdn_cloudfront_firehose",
+  "name": "cloudfront_firehose",
   "description": "Version v1.0",
   "settings": {
     "is_default": false,
