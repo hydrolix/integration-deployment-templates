@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 
 const MIN_TABLE_NAME: usize = 3;
 

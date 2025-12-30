@@ -1,9 +1,9 @@
 use tokio::fs;
 use uuid::Uuid;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 use crate::grafana;
-use crate::output_struct::Output;
+use crate::output::Output;
 
 use crate::GRAFANA_LOCATION;
 
@@ -12,7 +12,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
 
     // Create datasource first to test configuration
     println!("\n🔗 Creating test datasource...");
-    let _datasource_uid = match grafana::interface::create_datalink("test_project").await {
+    let _datasource_uid = match grafana::datasource::create("test_project").await {
         Ok(uid) => {
             println!("✓ Datasource created successfully with UID: {}", uid);
             uid
@@ -43,7 +43,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
 
     dashboard_data = dashboard_data.replace("__DASHBOARD_UUID__", &format!("{}", Uuid::new_v4()));
 
-    let grafana_dashboard_id = match grafana::interface::create_dashboard(&dashboard_data).await {
+    let grafana_dashboard_id = match grafana::dashboard::create(&dashboard_data).await {
         Ok(v) => v.to_string(),
         Err(e) => {
             return Err(format!(

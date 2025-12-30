@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 use crate::BUNDLE_TESTING_CLUSTER;
 
 const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev

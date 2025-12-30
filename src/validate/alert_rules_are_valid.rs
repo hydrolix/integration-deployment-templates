@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct AlertRulesFile {

@@ -5,7 +5,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let mut declared_functions: HashSet<String> = HashSet::new();

@@ -2,15 +2,15 @@ use serde_json::Value;
 use tokio::fs;
 use tokio::time::sleep;
 use tokio::time::Duration;
-use uuid::Uuid;
 
-use crate::bundle_struct::Bundle;
+use crate::bundle::Bundle;
 use crate::grafana;
 use crate::hdx;
+use crate::hdx_old;
 use crate::hdx_shared;
-use crate::output_struct::Output;
-use crate::output_struct::OutputTable;
-use crate::output_struct::OutputTransformation;
+use crate::output::Output;
+use crate::output::OutputTable;
+use crate::output::OutputTransformation;
 use crate::BUNDLE_TESTING_CLUSTER;
 use crate::GRAFANA_LOCATION;
 
@@ -18,7 +18,7 @@ const TABLE_READY_DELAY_SECS: u64 = 30;
 const DATA_READY_DELAY_SECS: u64 = 30;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
-    let bearer_token = match hdx::get_auth_token().await {
+    let bearer_token = match hdx_old::get_auth_token().await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
@@ -29,7 +29,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         }
     };
 
-    let project_name = hdx::create_project_name();
+    let project_name = hdx_old::create_project_name();
 
     // ========================================================================
     // PHASE 1: SHARED RESOURCES (commons project)
@@ -41,7 +41,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         return Err(format!("shared project failed validation: {}", e));
     };
 
-    let datalink = match grafana::interface::create_datalink(&project_name).await {
+    let datalink = match grafana::datasource::create(&project_name).await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
@@ -58,7 +58,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     output.datalink = datalink.to_string();
 
     let mut dashboard_data =
-        match load_dashboard_template(base, bundle, &project_name, &datalink).await {
+        match grafana::dashboard::load_template(base, bundle, &project_name, &datalink).await {
             Ok(v) => v,
             Err(e) => return Err(e),
         };
@@ -97,7 +97,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     }
 
     // Create Grafana dashboard
-    let dashboard_id = match grafana::interface::create_dashboard(&dashboard_data).await {
+    let dashboard_id = match grafana::dashboard::create(&dashboard_data).await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
@@ -111,109 +111,26 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     output.dashboard_id = dashboard_id.clone();
 
     // Collect all dashboard UIDs
-    let mut all_dashboard_uids: Vec<String> = vec![dashboard_id];
+    let mut all_dashboard_uuids =
+        match grafana::dashboard::create_others(bundle, &project_name, base, &datalink).await {
+            Ok(v) => v,
+            Err(e) => return Err(format!("could not create other dashboards: {}", e)),
+        };
+    all_dashboard_uuids.push(dashboard_id);
 
-    // Create other dashboards if present
-    if let Some(other_dashboards) = &bundle.other_dashboards {
-        let shared_project_name = hdx_shared::get_shared_project_name();
-
-        for other_dash in other_dashboards {
-            println!("Creating additional dashboard: {}", other_dash.path);
-
-            let other_dash_path = format!("{}/{}", base, other_dash.path);
-            let mut other_dashboard_data =
-                fs::read_to_string(&other_dash_path).await.map_err(|e| {
-                    format!("Failed to read other dashboard {}: {}", other_dash_path, e)
-                })?;
-
-            other_dashboard_data = other_dashboard_data.replace("__PROJECT_NAME__", &project_name);
-            other_dashboard_data = other_dashboard_data.replace("__DATASOURCE__", &datalink);
-            other_dashboard_data =
-                other_dashboard_data.replace("__DASHBOARD_UUID__", &Uuid::new_v4().to_string());
-            other_dashboard_data =
-                other_dashboard_data.replace("__SHARED_PROJECT__", &shared_project_name);
-
-            // Replace summary table variables if present
-            if let Some(summary_tables) = &bundle.summary_tables {
-                if !summary_tables.is_empty() {
-                    let summary_min = format!("{}.{}", project_name, summary_tables[0].name);
-                    other_dashboard_data = other_dashboard_data
-                        .replace("${VAR_SUMMARY_MIN}", &summary_min)
-                        .replace("$VAR_SUMMARY_MIN", &summary_min);
-                }
-                if summary_tables.len() > 1 {
-                    let summary_hour = format!("{}.{}", project_name, summary_tables[1].name);
-                    other_dashboard_data = other_dashboard_data
-                        .replace("${VAR_SUMMARY_HOUR}", &summary_hour)
-                        .replace("$VAR_SUMMARY_HOUR", &summary_hour);
-                }
-            }
-
-            // Replace table dashboard vars
-            for table in &bundle.tables {
-                other_dashboard_data =
-                    other_dashboard_data.replace(&table.dashboard_var, &table.name);
-            }
-
-            // Replace summary table dashboard vars
-            if let Some(summary_tables) = &bundle.summary_tables {
-                for summary in summary_tables {
-                    other_dashboard_data =
-                        other_dashboard_data.replace(&summary.dashboard_var, &summary.name);
-                }
-            }
-
-            let other_dash_uid = grafana::interface::create_dashboard(&other_dashboard_data)
-                .await
-                .map_err(|e| format!("Failed to create other dashboard: {}", e))?;
-
-            all_dashboard_uids.push(other_dash_uid.clone());
-            println!(
-                "✓ Created dashboard: {} (UID: {})",
-                other_dash.path, other_dash_uid
-            );
-        }
-    }
-
-    Ok(all_dashboard_uids)
-}
-
-async fn load_dashboard_template(
-    base: &str,
-    bundle: &Bundle,
-    project_name: &str,
-    datalink: &str,
-) -> Result<String, String> {
-    let path = format!("{base}/{}", bundle.dashboard.path);
-
-    let mut dashboard = match fs::read_to_string(&path).await {
-        Ok(v) => v,
-        Err(e) => {
-            return Err(format!(
-                "ERROR: {}.{} Failed to read dashboard path={path}: {e}",
-                file!(),
-                line!()
-            ));
-        }
-    };
-
-    dashboard = dashboard.replace("__PROJECT_NAME__", project_name);
-    dashboard = dashboard.replace("__DATASOURCE__", datalink);
-    dashboard = dashboard.replace("__DASHBOARD_UUID__", &Uuid::new_v4().to_string());
-
-    Ok(dashboard)
+    Ok(all_dashboard_uuids)
 }
 
 async fn process_table(
     base: &str,
     bearer_token: &str,
     project_name: &str,
-    table: &crate::bundle_struct::Table,
+    table: &crate::bundle::Table,
     output: &mut Output,
 ) -> Result<(), String> {
     println!("Creating table: {}", table.name);
 
-    let table_uuid = match hdx::create_table(bearer_token, &table.name).await {
+    let table_uuid = match hdx::table::create(bearer_token, &table.name).await {
         Ok(v) => {
             println!(
                 "  ✓ Table '{}' created successfully (UUID: {})",
@@ -290,7 +207,7 @@ async fn create_summary_table(
     base: &str,
     bearer_token: &str,
     project_name: &str,
-    summary: &crate::bundle_struct::SummaryTable,
+    summary: &crate::bundle::SummaryTable,
     dashboard_data: &mut String,
 ) -> Result<(), String> {
     let path = format!("{base}/{}", summary.sql.path);
@@ -320,7 +237,7 @@ async fn create_summary_table(
         "  Verifying parent table '{}' exists...",
         summary.parent_table_name
     );
-    match hdx::verify_table_exists(bearer_token, &summary.parent_table_name).await {
+    match hdx::table::exists(bearer_token, &summary.parent_table_name).await {
         Ok(_) => (),
         Err(e) => {
             return Err(format!(
@@ -336,7 +253,7 @@ async fn create_summary_table(
         &sql.lines().take(5).collect::<Vec<_>>().join("\n")
     );
 
-    match hdx::create_summary_table(bearer_token, &summary.name, &sql).await {
+    match hdx_old::create_summary_table(bearer_token, &summary.name, &sql).await {
         Ok(_) => (),
         Err(e) => {
             return Err(format!(
@@ -450,7 +367,7 @@ async fn add_transformation(
 ) -> Result<String, String> {
     let full_table_name = format!("{}.{}", project_name, table_name);
 
-    match hdx::add_transform_to_table(bearer_token, table_uuid, transform_json).await {
+    match hdx::table::add_transform(bearer_token, table_uuid, transform_json).await {
         Ok(v) => Ok(v),
         Err(e) => Err(format!(
             "ERROR: {}.{} Failed to add transformation path={} table={}: {e}",
@@ -479,7 +396,8 @@ async fn insert_sample_data_if_present(
 
     let full_table_name = format!("{}.{}", project_name, table_name);
 
-    match hdx::insert_into_table(bearer_token, &full_table_name, transform_name, &sample_data).await
+    match hdx::table::insert_into(bearer_token, &full_table_name, transform_name, &sample_data)
+        .await
     {
         Ok(_) => Ok(()),
         Err(e) => Err(format!(
