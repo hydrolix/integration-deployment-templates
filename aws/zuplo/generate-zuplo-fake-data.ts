@@ -307,4 +307,3 @@ function zuplo_timestamp() {
 
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
 }
-

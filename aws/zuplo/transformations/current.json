@@ -1,0 +1,544 @@
+{
+  "created": "2025-08-20T15:01:38.335203460+00:00",
+  "description": "Default transformation for Zuplo logs",
+  "modified": "2025-08-20T15:01:38.335203460+00:00",
+  "name": "ZuploLogs",
+  "settings": {
+    "compression": "none",
+    "format_details": {
+      "flattening": {
+        "active": true,
+        "depth": 10,
+        "map_flattening_strategy": {
+          "left": ".",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "[",
+          "right": "]"
+        }
+      }
+    },
+    "is_default": true,
+    "null_values": [
+      "-",
+      "null"
+    ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "auto_random_string"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "auto_key_value_map"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "accountName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asOrganization"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "clientIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "colo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "continent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "deploymentName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "int32"
+        },
+        "name": "durationMs"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hashmap_message"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "instanceId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "latitude"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "logSourceVersion"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "longitude"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "method"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "metroCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "operationId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "postalCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "projectName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "region"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "regionCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "routePath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "statusCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "systemRouteName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})T(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})\\.(?P<millisecond>[0-9]{3})Z",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "timezone"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "url"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userSub"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "zuploUserAgent"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": {
+      "accountName": "test account",
+      "asOrganization": "VNIS JOINT STOCK COMPANY",
+      "asn": "150814",
+      "city": "Ho Chi Minh City",
+      "clientIP": "103.67.184.73",
+      "colo": "HKG",
+      "continent": "AS",
+      "country": "VN",
+      "deploymentName": "mockbin-main-647f01c",
+      "durationMs": 445,
+      "hashmap_message": "User login successful request_id:12334 exec_time=24ms mem_used=78mb",
+      "instanceId": "b7b1ada5-3b63-4037-a814-0d76305a3957",
+      "latitude": "10.82302",
+      "logSourceVersion": "1.0",
+      "longitude": "106.62965",
+      "method": "GET",
+      "metroCode": "test",
+      "operationId": "test",
+      "postalCode": "71606",
+      "projectName": "testProject",
+      "region": "Hải Dương Province",
+      "regionCode": "61",
+      "requestId": "e232846b-912b-4855-8034-56e501bd10c9",
+      "routePath": "/(.*)",
+      "statusCode": 203,
+      "systemRouteName": "Test",
+      "timestamp": "2025-02-05T22:42:36.715Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "url": "https://api.mockbin.io/68f17ffc93a94889a099c7869aed498d",
+      "userSub": "Test",
+      "zuploUserAgent": "Zuplo/6.51.9"
+    },
+    "shadow_table": null,
+    "sql_transform": "SELECT *,\n  multiIf(\n    hashmap_message IS NULL, CAST(map(), 'Map(String, String)'),\n    hashmap_message = '', CAST(map(), 'Map(String, String)'),\n    length(arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2')))) = 0, CAST(map(), 'Map(String, String)'),\n    mapFromArrays(\n      arrayMap(x -> trim(splitByString('=', x)[1]), \n               arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2')))),\n      arrayMap(x -> trim(splitByString('=', x)[2]), \n               arrayFilter(x -> length(splitByString('=', x)) = 2, splitByString(' ', replaceRegexpAll(assumeNotNull(hashmap_message), '([A-Za-z]+):\\\\s*([^\\\\s]+)', '\\\\1=\\\\2'))))\n    )\n  ) AS auto_key_value_map,\n  toString(rand()) AS auto_random_string\nFROM {STREAM}",
+    "wurfl": null
+  },
+  "type": "json"
+}
