@@ -6,7 +6,6 @@ use tokio::time::Duration;
 use crate::bundle::Bundle;
 use crate::grafana;
 use crate::hdx;
-use crate::hdx_old;
 use crate::hdx_shared;
 use crate::output::Output;
 use crate::output::OutputTable;
@@ -18,7 +17,7 @@ const TABLE_READY_DELAY_SECS: u64 = 30;
 const DATA_READY_DELAY_SECS: u64 = 30;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
-    let bearer_token = match hdx_old::get_auth_token().await {
+    let bearer_token = match hdx::auth::get_token().await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
@@ -29,7 +28,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         }
     };
 
-    let project_name = hdx_old::create_project_name();
+    let project_name = hdx::get_project_name();
 
     // ========================================================================
     // PHASE 1: SHARED RESOURCES (commons project)
@@ -253,7 +252,7 @@ async fn create_summary_table(
         &sql.lines().take(5).collect::<Vec<_>>().join("\n")
     );
 
-    match hdx_old::create_summary_table(bearer_token, &summary.name, &sql).await {
+    match hdx::table::create_summary(bearer_token, &summary.name, &sql).await {
         Ok(_) => (),
         Err(e) => {
             return Err(format!(

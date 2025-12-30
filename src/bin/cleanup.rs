@@ -9,7 +9,6 @@
 
 use bundle_validator::bundle::Bundle;
 use bundle_validator::hdx;
-use bundle_validator::hdx_old;
 use lazy_static::lazy_static;
 use serde_json::Value;
 use std::collections::HashSet;
@@ -81,7 +80,7 @@ async fn main() {
     }
 
     // Get authentication token
-    let bearer_token = match hdx_old::get_auth_token().await {
+    let bearer_token = match hdx::auth::get_token().await {
         Ok(token) => {
             println!("✓ Authenticated successfully");
             token
@@ -176,7 +175,7 @@ async fn delete_functions_impl(
         }
 
         // Try to discover from bundle directory
-        if let Ok(discovered) = hdx_old::discover_functions(bundle_name).await {
+        if let Ok(discovered) = hdx::functions::discover(bundle_name).await {
             for func_name in discovered {
                 set.insert(func_name);
             }
@@ -406,7 +405,7 @@ async fn delete_dictionary_files_impl(
         let mut all_dict_names = bundle_dicts;
 
         // Try to discover from bundle directory
-        if let Ok(discovered) = hdx_old::discover_dictionaries(bundle_name).await {
+        if let Ok(discovered) = hdx::dictionaries::discover(bundle_name).await {
             all_dict_names.extend(discovered);
         }
 

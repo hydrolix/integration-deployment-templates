@@ -10,7 +10,6 @@ mod deploy;
 mod grafana;
 mod hdx;
 mod hdx_check_dependencies;
-mod hdx_old;
 mod hdx_shared;
 mod output;
 mod validate;
@@ -199,7 +198,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     // Production mode: Check that resources exist on remote cluster
     if *PRODUCTION_MODE {
         println!("Production mode: Checking remote cluster for required resources...");
-        match hdx_old::get_auth_token().await {
+        match hdx::auth::get_token().await {
             Ok(bearer_token) => {
                 match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base)
                     .await

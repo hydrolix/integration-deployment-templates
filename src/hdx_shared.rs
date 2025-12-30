@@ -1,13 +1,13 @@
 // Shared resource management for commons project
 // Handles functions and dictionaries that are shared across all bundles
 
+use bundle_validator::hdx;
 use lazy_static::lazy_static;
 use serde_json::Value;
 use std::env;
 use tokio::fs;
 
 use crate::bundle::Bundle;
-use crate::hdx_old;
 use crate::BUNDLE_TESTING_CLUSTER;
 
 // const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
@@ -93,7 +93,7 @@ pub async fn check_dicts_and_funcs(
         );
 
         for function_name in &bundle_funcs {
-            match hdx_old::check_and_create_function(bearer_token, function_name, base).await {
+            match hdx::functions::create_and_check(bearer_token, function_name, base).await {
                 Ok(_) => (),
                 Err(e) => return Err(format!("Failed to create bundle-specific function: {}", e)),
             }
@@ -108,7 +108,7 @@ pub async fn check_dicts_and_funcs(
         );
 
         for dictionary_name in &bundle_dicts {
-            match hdx_old::check_and_create_dictionary(bearer_token, dictionary_name, base).await {
+            match hdx::dictionaries::create_and_check(bearer_token, dictionary_name, base).await {
                 Ok(_) => (),
                 Err(e) => {
                     return Err(format!(

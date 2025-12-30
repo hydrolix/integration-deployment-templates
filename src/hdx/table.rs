@@ -1,28 +1,10 @@
-use lazy_static::lazy_static;
-use reqwest::Client;
+use crate::hdx::{
+    BUNDLE_TESTING_CLUSTER, CLIENT, FOR_MARKETPLACE, HTTP_TIMEOUT, ORG_UUID, PROJ_UUID,
+};
 use serde_json::{json, Value};
 use tokio::time::sleep;
 use tokio::time::Duration;
 use uuid::Uuid;
-
-// These are static but not secret
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev
-const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152"; // markeplace-dev cdn_test_project
-const HTTP_TIMEOUT: u64 = 120;
-
-lazy_static! {
-    static ref CLIENT: Client = reqwest::Client::new();
-    static ref BUNDLE_TESTING_CLUSTER: String =
-        std::env::var("BUNDLE_TESTING_CLUSTER").unwrap_or_else(|_| "".to_string());
-    static ref BUNDLE_TESTING_USERNAME: String =
-        std::env::var("BUNDLE_TESTING_USERNAME").unwrap_or_else(|_| "".to_string());
-    static ref BUNDLE_TESTING_PASSWORD: String =
-        std::env::var("BUNDLE_TESTING_PASSWORD").unwrap_or_else(|_| "".to_string());
-    static ref FOR_MARKETPLACE: bool = {
-        let args: Vec<String> = std::env::args().collect();
-        args.contains(&"--marketplace".to_string())
-    };
-}
 
 pub async fn exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
     let url = format!(
@@ -538,4 +520,85 @@ pub async fn delete(bearer_token: &str, uuid: &str) -> Result<(), String> {
             response.status()
         ))
     }
+}
+
+/*
+{
+    "name": "my.summarytable",
+    "description": "Minute-by-minute summary of parent table",
+    "type": "summary",
+    "settings": {
+        "merge": {
+            "enabled": true
+        },
+        "summary": {
+            "enabled": true,
+            "sql": "SELECT toStartOfMinute(timestamp) AS minute,
+sum(cost) AS sum_cost, avg(tax) AS avg_tax, quantile(0.95)(distance)
+AS distance_p95 FROM project.parent_table GROUP BY minute SETTINGS
+hdx_primary_key='minute'"
+        }
+    }
+}
+
+*/
+
+pub async fn create_summary(
+    bearer_token: &str,
+    table_name: &str,
+    sql: &str,
+) -> Result<String, String> {
+    let payload = json!({
+        "name": table_name,
+         "type": "summary",
+        "settings": {
+            "summary": {
+                "enabled": true,
+                "sql": sql
+            }
+        }
+    });
+
+    let url = format!(
+        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        *BUNDLE_TESTING_CLUSTER
+    );
+
+    // Send the POST request
+    let response = match CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json, text/plain, */*")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .json(&payload)
+        .send()
+        .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ))
+        }
+    };
+
+    // Check if the request was successful
+    if !response.status().is_success() {
+        let status = response.status();
+        let error_body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Could not read error response".to_string());
+        return Err(format!(
+            "ERROR: {}.{} url={url} {} - Server response: {}",
+            file!(),
+            line!(),
+            status,
+            error_body
+        ));
+    }
+    Ok(table_name.to_string())
 }
