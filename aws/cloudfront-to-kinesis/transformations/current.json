@@ -1,0 +1,1197 @@
+{
+  "created": "2024-09-05T19:06:42.199073Z",
+  "description": "Cascade Cloudfront Transform",
+  "modified": "2024-09-05T19:57:04.292872Z",
+  "name": "v1_official_cascade_transformation",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "buffer_size": 4096,
+      "comment": "#",
+      "delimiter": "\t",
+      "escape": "\"",
+      "quote": "\"",
+      "skip_comments": false,
+      "skip_head": 0,
+      "windows_ending": false
+    },
+    "is_default": true,
+    "null_values": [
+      "-"
+    ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": "cloudfront",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2000
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": "real time logs",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2001
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_source"
+      },
+      {
+        "datatype": {
+          "default": "edge",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_layer"
+      },
+      {
+        "datatype": {
+          "default": "v1_cloudfront_edge",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2070
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "s",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_input_index": 0
+          },
+          "suppress": false,
+          "type": "epoch"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 1
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "client_ip"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "cf_response_time_to_first_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "response_time_to_first_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 3
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "response_status_code"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 4
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "response_content_bytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 5
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_method"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 6
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_protocol_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 7
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_host"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 8
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "request_full_path"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_path"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 9
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "request_total_bytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 10
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "pop"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 11
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "edge_request_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 12
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_distribution_domain_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 13
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "cf_time_taken"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "response_time_to_last_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 14
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "http_request_protocol_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 15
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "client_ip_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "client_is_ipv6"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 16
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_user_agent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 17
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 18
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_cookie"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 19
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_query_string"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 20
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cache_edge_response_result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 21
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_x_forwarded_for"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 22
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_ssl_protocol"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 23
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_ssl_cipher"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 24
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cache_edge_result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 25
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_fle_encrypted_fields"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 26
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_fle_status"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 27
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "response_content_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 28
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "response_content_length"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "response_range"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 29
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_range_start"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 30
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_range_end"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 31
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "request_port"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 32
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cache_edge_detailed_result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 33
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "client_country_iso_code"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 34
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_accept_encoding"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 35
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_accept"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 36
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cache_behavior_path_pattern"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 37
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "request_headers_string"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "request_header_values"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 38
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "request_header_names_string"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "request_header_names"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 39
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "request_headers_count"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 40
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_primary_distribution_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 41
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cf_primary_distribution_dns_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 42
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "origin_fbl"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "origin_first_byte_latency"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "origin_last_byte_latency"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 43
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "origin_lbl"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 44
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "client_asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 45
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_encoded_bitrate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 46
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_buffer_length"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 47
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cmcd_buffer_starvation"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 48
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_content_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 49
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_object_duration"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 50
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_deadline"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 51
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_measured_throughput"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 52
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_next_object_request"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 53
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_next_range_request"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 54
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_object_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 55
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "cmcd_playback_rate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 56
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_requested_maximum_throughput"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 57
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_streaming_format"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 58
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_session_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 59
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_stream_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 60
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "cmcd_startup"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 61
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_top_bitrate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 62
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "cmcd_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_input_index": 2050
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_latency"
+      }
+    ],
+    "sample_data": "1722571980.802\\t66.58.176.77\\t0.013\\t200\\t386\\tGET\\thttps\\tdmg3j8t66naeg.cloudfront.net\\t/\\t256\\tSEA73-P2\\tp-TURWJuCqHrv6DdZhj4uausuDMXq2dunidCTVLn8PVkg0itvFJhDQ==\\tdmg3j8t66naeg.cloudfront.net\\t0.014\\tHTTP/2.0\\tIPv4\\tMozilla/5.0%20(Macintosh;%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit/605.1.15%20(KHTML,%20like%20Gecko)%20Version/17.5%20Safari/605.1.15\\t-\\t-\\t-\\tHit\\t-\\tTLSv1.3\\tTLS_AES_128_GCM_SHA256\\tHit\\t-\\t-\\ttext/html\\t77\\t-\\t-\\t59844\\tHit\\tUS\\tgzip,%20deflate,%20br\\ttext/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\t*\\thost:dmg3j8t66naeg.cloudfront.net%0Aaccept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8%0Asec-fetch-site:none%0Aaccept-encoding:gzip,%20deflate,%20br%0Asec-fetch-mode:navigate%0Auser-agent:Mozilla/5.0%20(Macintosh;%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit/605.1.15%20(KHTML,%20like%20Gecko)%20Version/17.5%20Safari/605.1.15%0Aaccept-language:en-US,en;q=0.9%0Asec-fetch-dest:document%0A\\thost%0Aaccept%0Asec-fetch-site%0Aaccept-encoding%0Asec-fetch-mode%0Auser-agent%0Aaccept-language%0Asec-fetch-dest%0A\\t8\\tEDSB5IQNTX2OR\\tdmg3j8t66naeg.cloudfront.net\\t-\\t-\\t8047\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-\\t-",
+    "sql_transform": "SELECT \n  path(request_full_path) as request_path,\n  arrayMap(x -> splitByChar(':', x), splitByString('%0A', assumeNotNull(request_headers_string))) as request_headers_split,\n  arrayPopBack(arrayMap (y -> y[1], request_headers_split)) as request_header_names,\narrayPopBack(arrayMap(x -> decodeURLComponent(x), arrayMap(x -> replaceOne(x, ':',''), arrayMap(x -> extract(x,'^.[^:]*(.*)') ,splitByString('%0A', assumeNotNull(request_headers_string)))))) as request_header_values,\ndecodeURLComponent(assumeNotNull(response_content_type)) as response_content_type,\ndecodeURLComponent(assumeNotNull(request_user_agent)) as request_user_agent,\ndecodeURLComponent(assumeNotNull(request_referer)) as request_referer,\ndecodeURLComponent(assumeNotNull(decodeURLComponent(assumeNotNull(request_query_string)))) as request_query_string,\ndecodeURLComponent(assumeNotNull(decodeURLComponent(assumeNotNull(request_full_path)))) as request_full_path,\ndecodeURLComponent(assumeNotNull(cmcd_session_id)) as cmcd_session_id,\ndecodeURLComponent(assumeNotNull(decodeURLComponent(assumeNotNull(cmcd_next_object_request)))) as cmcd_next_object_request,\ndatediff('s', timestamp, now64(3)) as hdx_latency,\nif(client_ip_version = 'IPv6', true, false) as client_is_ipv6,\nconcat(toString(cf_range_start), '-', toString(cf_range_end)) as response_range,\ncf_time_taken * 1000 as response_time_to_last_byte,\norigin_fbl * 1000 as origin_first_byte_latency,\norigin_lbl * 1000 as origin_last_byte_latency,\ncf_response_time_to_first_byte * 1000 as response_time_to_first_byte,\n*\nFROM {STREAM}",
+    "wurfl": null
+  },
+  "type": "csv"
+}

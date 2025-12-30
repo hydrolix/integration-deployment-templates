@@ -1,0 +1,65 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-mediapackage",
+  "beta": false,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__",
+    "sha256": "e04123e3cb59f7cee76252fdbcd217751eb32c449860a014d6133783b92ae3fb"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Amazon Data Firehose MediaPackage",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "firehose",
+  "name": "firehose-mediapackage",
+  "source": "mediapackage",
+  "tables": [
+    {
+      "dashboard_var": "__EGRESS_TABLE__",
+      "name": "mediapackage_egress",
+      "transforms": [
+        {
+          "path": "transformations/egress/current.json",
+          "sample": "transformations/egress/sample_data_template.json",
+          "sha256": "bdc0d45a8e7493f82c436e00434364338551cfbc10e6a86e3cb07036f6323d86"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__INGRESS_TABLE__",
+      "name": "mediapackage_ingress",
+      "transforms": [
+        {
+          "path": "transformations/ingress/current.json",
+          "sample": "transformations/ingress/sample_data_template.json",
+          "sha256": "df7c47731e57fabf5b998dbc3d5c3bb60a868e8d9c523b87169f59c80a36bd96"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__METRICS_TABLE__",
+      "name": "mediapackage_metrics",
+      "transforms": [
+        {
+          "path": "transformations/metrics/current.json",
+          "sample": "transformations/metrics/sample_data_template.json",
+          "sha256": "ffc4c3936fba2a543b3865024a4283301ee52fedbc3cf8df067c075786fba0e7"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "video",
+    "method": {
+      "full_title": "Amazon Data Firehose",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
+    },
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaPackage.html",
+    "source": {
+      "full_title": "AWS Elemental MediaPackage",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediapackage.jpeg"
+    }
+  }
+}

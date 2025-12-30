@@ -1,0 +1,643 @@
+{
+  "description": "",
+  "name": "waf_to_firehose_transform",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      },
+      "subtype": "firehose"
+    },
+    "is_default": true,
+    "null_values": [],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": "firehose",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_source"
+      },
+      {
+        "datatype": {
+          "default": "waf",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": "edge",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_layer"
+      },
+      {
+        "datatype": {
+          "default": "cascade_waf_default_v1",
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/formatVersion"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "ms",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/timestamp"
+            ]
+          },
+          "suppress": false,
+          "type": "epoch"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/country"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "client_country_iso_code"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/clientIp"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "client_ip"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/args"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_query_string"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/httpMethod"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_method"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/httpVersion"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "http_request_protocol_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/requestId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/uri"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "request_path"
+      },
+      {
+        "datatype": {
+          "default": [
+            {
+              "none": "true"
+            }
+          ],
+          "elements": [
+            {
+              "elements": [
+                {
+                  "index": true,
+                  "type": "string"
+                },
+                {
+                  "index": true,
+                  "type": "string"
+                }
+              ],
+              "index": true,
+              "type": "map"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpRequest/headers"
+            ]
+          },
+          "suppress": true,
+          "type": "array"
+        },
+        "name": "headers"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/action"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_action"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpSourceId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_source_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/responseCodeSent"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_responseCodeSent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/ja3Fingerprint"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_ja3_fingerprint"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/nonTerminatingMatchingRules"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_nonTerminatingMatchingRules"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/rateBasedRuleList"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_rateBasedRuleList"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/ruleGroupList"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_ruleGroupList"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/requestId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_requestId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/terminatingRuleId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_terminatingRuleId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/terminatingRuleMatchDetails"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_terminatingRuleMatchDetails"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/excludedRules"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_excludedRules"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/requestHeadersInserted"
+            ]
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "waf_requestHeadersInserted"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/terminatingRuleType"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_terminatingRuleType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/webaclId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "waf_webaclId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "http_headers"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/captchaResponse"
+            ]
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "waf_captchaResponse"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/challengeResponse"
+            ]
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "waf_challengeResponse"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": {
+      "records": [
+        {
+          "data": "ewogICJmb3JtYXRWZXJzaW9uIjogIjEuMCIsCiAgInRpbWVzdGFtcCI6IDE3MzU0OTI4MDAsCiAgImh0dHBSZXF1ZXN0IjogewogICAgImNsaWVudElwIjogIjIwMy4wLjExMy40MiIsCiAgICAiY291bnRyeSI6ICJVUyIsCiAgICAidXJpIjogIi9leGFtcGxlL3BhdGgiLAogICAgImFyZ3MiOiAicGFyYW0xPXZhbHVlMSZwYXJhbTI9dmFsdWUyIiwKICAgICJodHRwTWV0aG9kIjogIkdFVCIsCiAgICAiaHR0cFZlcnNpb24iOiAiSFRUUC8xLjEiLAogICAgInJlcXVlc3RJZCI6ICJhYmNkMTIzNGVmZ2g1Njc4IiwKICAgICJoZWFkZXJzIjogWwogICAgICB7ICJob3N0IjogImV4YW1wbGUuY29tIiB9LAogICAgICB7ICJ1c2VyLWFnZW50IjogImN1cmwvNy42OC4wIiB9LAogICAgICB7ICJhY2NlcHQiOiAiKi8qIiB9CiAgICBdCiAgfSwKICAiYWN0aW9uIjogIkFMTE9XIiwKICAiaHR0cFNvdXJjZUlkIjogImV4YW1wbGUtc291cmNlLWlkIiwKICAicmVzcG9uc2VDb2RlU2VudCI6ICIyMDAiLAogICJqYTNGaW5nZXJwcmludCI6ICJhYmMxMjNqYTNmaW5nZXJwcmludCIsCiAgIm5vblRlcm1pbmF0aW5nTWF0Y2hpbmdSdWxlcyI6IFsicnVsZTEiLCAicnVsZTIiXSwKICAicmF0ZUJhc2VkUnVsZUxpc3QiOiBbInJhdGVSdWxlMSJdLAogICJydWxlR3JvdXBMaXN0IjogWyJncm91cDEiXSwKICAicmVxdWVzdElkIjogImFiY2QxMjM0ZWZnaDU2NzgiLAogICJ0ZXJtaW5hdGluZ1J1bGVJZCI6ICJydWxlLXRlcm1pbmF0ZS0xMjMiLAogICJ0ZXJtaW5hdGluZ1J1bGVNYXRjaERldGFpbHMiOiBbImRldGFpbDEiLCAiZGV0YWlsMiJdLAogICJleGNsdWRlZFJ1bGVzIjogWyJleGNsdWRlZFJ1bGUxIl0sCiAgInJlcXVlc3RIZWFkZXJzSW5zZXJ0ZWQiOiBbImhlYWRlcjE6IHZhbHVlMSJdLAogICJ0ZXJtaW5hdGluZ1J1bGVUeXBlIjogIlJFR1VMQVIiLAogICJ3ZWJhY2xJZCI6ICJ3ZWJhY2wtZXhhbXBsZS1pZCIsCiAgImNhcHRjaGFSZXNwb25zZSI6IHsKICAgICJyZXNwb25zZUNvZGUiOiAiY2FwdGNoYS1jb2RlIiwKICAgICJzdGF0dXMiOiAiUEFTU0VEIgogIH0sCiAgImNoYWxsZW5nZVJlc3BvbnNlIjogewogICAgInJlc3BvbnNlQ29kZSI6ICJjaGFsbGVuZ2UtY29kZSIsCiAgICAic3RhdHVzIjogIlBBU1NFRCIKICB9Cn0="
+        }
+      ],
+      "requestId": "1c568c93-33ba-4c8a-b18b-a8e8b1a40f3b",
+      "timestamp": 1740106044100
+    },
+    "sql_transform": "SELECT\narrayMap(x -> mapValues(x), headers) as requests,\narrayMap(x -> x[1], requests)::Array(String) as request_header,\narrayMap(x -> x[2], requests) as request_value,\nmapFromArrays(request_header, request_value) as http_headers,\ndecodeURLComponent(request_query_string) as request_query_string,\n*\nFROM {STREAM}",
+    "wurfl": null
+  },
+  "type": "json"
+}

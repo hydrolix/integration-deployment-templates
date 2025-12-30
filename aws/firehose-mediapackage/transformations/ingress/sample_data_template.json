@@ -1,0 +1,17 @@
+{
+  "account": "111111111111",
+  "channelArn": "arn:aws:mediapackage:us-east-1:111111111111:channels/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+  "channelId": "bunny-channel",
+  "clientIp": "11.255.111.11",
+  "data.requestId": "Root=1-11111111-1a1a1a1a1a1a1a1a1a1a1a1a",
+  "data.timestamp": "2025-02-20T00:59:50.985580Z",
+  "domainName": "1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com",
+  "method": "PUT",
+  "processingTime": 0.042,
+  "protocol": "HTTP/1.1",
+  "receivedBytes": 1185,
+  "request": "https://1a1a1a1a1a1a1a1a.mediapackage.us-east-1.amazonaws.com:443/in/v2/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a/channel_1.m3u8",
+  "sentBytes": 601,
+  "statusCode": "201",
+  "userAgent": "AWSElementalMediaLive"
+}
