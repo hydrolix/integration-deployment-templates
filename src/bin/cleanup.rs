@@ -13,11 +13,12 @@ use lazy_static::lazy_static;
 use serde_json::Value;
 use std::collections::HashSet;
 
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
-const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
-const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev
+const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152"; // markeplace-dev cdn_test_project
 const PROJ_NAME: &str = "cdn_test_project";
+
+// const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174"; // partnersandbox
+// const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf"; // partnersandbox
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =
@@ -28,14 +29,19 @@ lazy_static! {
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
 
-    let delete_functions = args.contains(&"--functions".to_string()) || args.contains(&"--all".to_string());
-    let delete_dictionaries = args.contains(&"--dictionaries".to_string()) || args.contains(&"--all".to_string());
-    let delete_dictionary_files = args.contains(&"--dictionary-files".to_string()) || args.contains(&"--all".to_string());
-    let delete_tables = args.contains(&"--tables".to_string()) || args.contains(&"--all".to_string());
+    let delete_functions =
+        args.contains(&"--functions".to_string()) || args.contains(&"--all".to_string());
+    let delete_dictionaries =
+        args.contains(&"--dictionaries".to_string()) || args.contains(&"--all".to_string());
+    let delete_dictionary_files =
+        args.contains(&"--dictionary-files".to_string()) || args.contains(&"--all".to_string());
+    let delete_tables =
+        args.contains(&"--tables".to_string()) || args.contains(&"--all".to_string());
     let dry_run = args.contains(&"--dry-run".to_string());
 
     // Get bundle name (first non-flag argument)
-    let bundle_name = args.iter()
+    let bundle_name = args
+        .iter()
         .skip(1)
         .find(|arg| !arg.starts_with("--"))
         .cloned()
@@ -87,7 +93,9 @@ async fn main() {
 
     // Execute cleanup operations
     if delete_functions {
-        if let Err(e) = delete_functions_impl(&bearer_token, bundle.as_ref(), &bundle_name, dry_run).await {
+        if let Err(e) =
+            delete_functions_impl(&bearer_token, bundle.as_ref(), &bundle_name, dry_run).await
+        {
             eprintln!("\n❌ Failed to delete functions: {}", e);
             std::process::exit(1);
         }
@@ -101,7 +109,10 @@ async fn main() {
     }
 
     if delete_dictionary_files {
-        if let Err(e) = delete_dictionary_files_impl(&bearer_token, bundle.as_ref(), &bundle_name, dry_run).await {
+        if let Err(e) =
+            delete_dictionary_files_impl(&bearer_token, bundle.as_ref(), &bundle_name, dry_run)
+                .await
+        {
             eprintln!("\n❌ Failed to delete dictionary files: {}", e);
             std::process::exit(1);
         }
@@ -121,12 +132,18 @@ async fn main() {
 fn print_usage() {
     println!("Cleanup Script for Hydrolix Resources");
     println!("\nUsage:");
-    println!("  cargo run --bin cleanup -- --functions <bundle-name>       # Delete bundle's functions");
+    println!(
+        "  cargo run --bin cleanup -- --functions <bundle-name>       # Delete bundle's functions"
+    );
     println!("  cargo run --bin cleanup -- --dictionaries <bundle-name>    # Delete bundle's dictionaries");
     println!("  cargo run --bin cleanup -- --dictionary-files <bundle-name> # Delete bundle's dictionary files");
-    println!("  cargo run --bin cleanup -- --tables <bundle-name>          # Delete bundle's tables");
+    println!(
+        "  cargo run --bin cleanup -- --tables <bundle-name>          # Delete bundle's tables"
+    );
     println!("  cargo run --bin cleanup -- --all <bundle-name>             # Delete everything for bundle");
-    println!("  cargo run --bin cleanup -- --all <bundle-name> --dry-run   # Show what would be deleted");
+    println!(
+        "  cargo run --bin cleanup -- --all <bundle-name> --dry-run   # Show what would be deleted"
+    );
     println!("\nNote: --all includes functions, dictionaries, dictionary files, and tables");
     println!("      Provide bundle name to delete only that bundle's resources (recommended)");
     println!("      Omit bundle name to delete ALL resources in project (dangerous!)");
@@ -138,8 +155,7 @@ async fn load_bundle(bundle_name: &str) -> Result<Bundle, String> {
         .await
         .map_err(|e| format!("Failed to read bundle file: {}", e))?;
 
-    serde_json::from_str::<Bundle>(&content)
-        .map_err(|e| format!("Failed to parse bundle: {}", e))
+    serde_json::from_str::<Bundle>(&content).map_err(|e| format!("Failed to parse bundle: {}", e))
 }
 
 async fn delete_functions_impl(
@@ -216,13 +232,15 @@ async fn delete_functions_impl(
 
     let mut deleted = 0;
     for func in functions {
-        let name = func.get("name")
+        let name = func
+            .get("name")
             .or_else(|| func.get("function_name"))
             .or_else(|| func.get("id"))
             .and_then(|v| v.as_str())
             .unwrap_or("unknown");
 
-        let uuid = func.get("uuid")
+        let uuid = func
+            .get("uuid")
             .or_else(|| func.get("id"))
             .or_else(|| func.get("uid"))
             .or_else(|| func.get("function_id"))
@@ -272,10 +290,7 @@ async fn delete_functions_impl(
     Ok(())
 }
 
-async fn delete_dictionaries_impl(
-    bearer_token: &str,
-    dry_run: bool,
-) -> Result<(), String> {
+async fn delete_dictionaries_impl(bearer_token: &str, dry_run: bool) -> Result<(), String> {
     println!("\n🗑️  Deleting all dictionary definitions...");
     println!("  (Note: Uploaded dictionary files will NOT be deleted)");
 
@@ -293,7 +308,10 @@ async fn delete_dictionaries_impl(
         .map_err(|e| format!("Failed to list dictionaries: {}", e))?;
 
     if !response.status().is_success() {
-        return Err(format!("Failed to list dictionaries: {}", response.status()));
+        return Err(format!(
+            "Failed to list dictionaries: {}",
+            response.status()
+        ));
     }
 
     let response_data: Value = response
@@ -301,13 +319,14 @@ async fn delete_dictionaries_impl(
         .await
         .map_err(|e| format!("Failed to parse response: {}", e))?;
 
-    let dictionaries = if let Some(results) = response_data.get("results").and_then(|r| r.as_array()) {
-        results.clone()
-    } else if let Some(arr) = response_data.as_array() {
-        arr.clone()
-    } else {
-        vec![]
-    };
+    let dictionaries =
+        if let Some(results) = response_data.get("results").and_then(|r| r.as_array()) {
+            results.clone()
+        } else if let Some(arr) = response_data.as_array() {
+            arr.clone()
+        } else {
+            vec![]
+        };
 
     if dictionaries.is_empty() {
         println!("  No dictionaries to delete");
@@ -318,13 +337,15 @@ async fn delete_dictionaries_impl(
 
     let mut deleted = 0;
     for dict in dictionaries {
-        let name = dict.get("name")
+        let name = dict
+            .get("name")
             .or_else(|| dict.get("dictionary_name"))
             .or_else(|| dict.get("id"))
             .and_then(|v| v.as_str())
             .unwrap_or("unknown");
 
-        let uuid = dict.get("uuid")
+        let uuid = dict
+            .get("uuid")
             .or_else(|| dict.get("id"))
             .or_else(|| dict.get("uid"))
             .or_else(|| dict.get("dictionary_id"))
@@ -397,7 +418,10 @@ async fn delete_dictionary_files_impl(
             set.insert(format!("{}.tsv", dict_name));
         }
 
-        println!("  Scope: Files for {} dictionar(y/ies) from bundle", all_dict_names.len());
+        println!(
+            "  Scope: Files for {} dictionar(y/ies) from bundle",
+            all_dict_names.len()
+        );
         Some(set)
     } else {
         println!("  Scope: ALL dictionary files in project");
@@ -418,7 +442,10 @@ async fn delete_dictionary_files_impl(
         .map_err(|e| format!("Failed to list dictionary files: {}", e))?;
 
     if !response.status().is_success() {
-        return Err(format!("Failed to list dictionary files: {}", response.status()));
+        return Err(format!(
+            "Failed to list dictionary files: {}",
+            response.status()
+        ));
     }
 
     let response_data: Value = response
@@ -441,7 +468,8 @@ async fn delete_dictionary_files_impl(
             })
             .collect()
     } else if let Some(files_arr) = response_data.get("files").and_then(|f| f.as_array()) {
-        files_arr.iter()
+        files_arr
+            .iter()
             .map(|f| {
                 if let Some(s) = f.as_str() {
                     s.to_string()
@@ -455,7 +483,8 @@ async fn delete_dictionary_files_impl(
             })
             .collect()
     } else if let Some(results) = response_data.get("results").and_then(|r| r.as_array()) {
-        results.iter()
+        results
+            .iter()
             .map(|f| {
                 if let Some(s) = f.as_str() {
                     s.to_string()
@@ -562,26 +591,27 @@ async fn delete_tables_impl(
     let response_data: Value = serde_json::from_str(&table_list_text)
         .map_err(|e| format!("Failed to parse table list: {}", e))?;
 
-    let tables: Vec<(String, String)> = if let Some(results) = response_data.get("results").and_then(|r| r.as_array()) {
-        results
-            .iter()
-            .filter_map(|t| {
-                let name = t.get("name").and_then(|n| n.as_str())?;
-                let uuid = t.get("uuid").and_then(|u| u.as_str())?;
-                Some((name.to_string(), uuid.to_string()))
-            })
-            .collect()
-    } else if let Some(arr) = response_data.as_array() {
-        arr.iter()
-            .filter_map(|t| {
-                let name = t.get("name").and_then(|n| n.as_str())?;
-                let uuid = t.get("uuid").and_then(|u| u.as_str())?;
-                Some((name.to_string(), uuid.to_string()))
-            })
-            .collect()
-    } else {
-        vec![]
-    };
+    let tables: Vec<(String, String)> =
+        if let Some(results) = response_data.get("results").and_then(|r| r.as_array()) {
+            results
+                .iter()
+                .filter_map(|t| {
+                    let name = t.get("name").and_then(|n| n.as_str())?;
+                    let uuid = t.get("uuid").and_then(|u| u.as_str())?;
+                    Some((name.to_string(), uuid.to_string()))
+                })
+                .collect()
+        } else if let Some(arr) = response_data.as_array() {
+            arr.iter()
+                .filter_map(|t| {
+                    let name = t.get("name").and_then(|n| n.as_str())?;
+                    let uuid = t.get("uuid").and_then(|u| u.as_str())?;
+                    Some((name.to_string(), uuid.to_string()))
+                })
+                .collect()
+        } else {
+            vec![]
+        };
 
     if tables.is_empty() {
         println!("  No tables found on cluster");

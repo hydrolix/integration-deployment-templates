@@ -179,7 +179,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize url: {}",
+                e
+            )))
+        }
     };
 
     // Validate URL format
@@ -202,7 +207,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize url path: {}",
+                e
+            )))
+        }
     };
 
     if s.starts_with("/") || s.contains("..") {
@@ -230,7 +240,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize macro name: {}",
+                e
+            )))
+        }
     };
 
     // Must be at least 5 characters: "__X__"
@@ -288,7 +303,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize json path: {}",
+                e
+            )))
+        }
     };
 
     match s.ends_with(".json") {
@@ -304,12 +324,19 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize method: {}",
+                e
+            )))
+        }
     };
 
     match s.as_str() {
         // Convert String to &str for matching
-        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" | "multi_stream" => Ok(s),
+        "firehose" | "s3" | "kinesis" | "lambda" | "http_streaming" | "http" | "multi_stream" => {
+            Ok(s)
+        }
         _ => Err(de::Error::custom(format!("{} is an invalid method", s))),
     }
 }
@@ -321,7 +348,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize source: {}",
+                e
+            )))
+        }
     };
 
     if s.chars()
@@ -343,7 +375,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize channel type: {}",
+                e
+            )))
+        }
     };
 
     match s.as_str() {
@@ -362,7 +399,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize data category: {}",
+                e
+            )))
+        }
     };
 
     match s.as_str() {
@@ -410,7 +452,12 @@ where
 {
     let s = match String::deserialize(deserializer) {
         Ok(v) => v,
-        Err(e) => return Err(e),
+        Err(e) => {
+            return Err(de::Error::custom(format!(
+                "failed to deserialize name: {}",
+                e
+            )))
+        }
     };
 
     match s.as_str() {
@@ -469,7 +516,7 @@ impl Bundle {
             .as_ref()
             .and_then(|d| d.hydrolix.as_ref())
             .and_then(|h| h.required_functions.as_ref())
-            .map(|f| f.clone())
+            .cloned()
             .unwrap_or_default();
 
         let shared = self
@@ -477,7 +524,7 @@ impl Bundle {
             .as_ref()
             .and_then(|d| d.hydrolix.as_ref())
             .and_then(|h| h.shared_functions.as_ref())
-            .map(|f| f.clone())
+            .cloned()
             .unwrap_or_default();
 
         (bundle_specific, shared)
@@ -490,7 +537,7 @@ impl Bundle {
             .as_ref()
             .and_then(|d| d.hydrolix.as_ref())
             .and_then(|h| h.required_dictionaries.as_ref())
-            .map(|d| d.clone())
+            .cloned()
             .unwrap_or_default();
 
         let shared = self
@@ -498,7 +545,7 @@ impl Bundle {
             .as_ref()
             .and_then(|d| d.hydrolix.as_ref())
             .and_then(|h| h.shared_dictionaries.as_ref())
-            .map(|d| d.clone())
+            .cloned()
             .unwrap_or_default();
 
         (bundle_specific, shared)

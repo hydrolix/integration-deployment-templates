@@ -26,9 +26,9 @@ pub struct CreateDataSourceRequest {
 #[serde(rename_all = "camelCase")]
 pub struct JsonData {
     pub default_database: String,
-    pub host: String,  // Changed from 'server' to 'host'
+    pub host: String, // Changed from 'server' to 'host'
     pub port: String,
-    pub protocol: String,  // Added protocol field
+    pub protocol: String, // Added protocol field
     pub query_timeout: String,
     pub secure: bool,
     pub timeout: String,
@@ -73,7 +73,8 @@ async fn delete_existing_datasource(name: &str) -> Result<(), String> {
                 if ds_name == name {
                     if let Some(id) = ds.get("id").and_then(|i| i.as_i64()) {
                         // Delete this datasource
-                        let delete_url = format!("http://{GRAFANA_LOCATION}/api/datasources/{}", id);
+                        let delete_url =
+                            format!("http://{GRAFANA_LOCATION}/api/datasources/{}", id);
                         let auth2 = base64::engine::general_purpose::STANDARD.encode("admin:admin");
                         let _ = client
                             .delete(&delete_url)
@@ -100,9 +101,9 @@ pub async fn create_datalink(project_name: &str) -> Result<String, String> {
         access: "proxy".to_string(),
         jsonData: JsonData {
             default_database: project_name.to_string(),
-            host: BUNDLE_TESTING_CLUSTER.to_string(),  // Changed from 'server' to 'host'
+            host: BUNDLE_TESTING_CLUSTER.to_string(), // Changed from 'server' to 'host'
             port: HDX_DATABASE_PORT.to_string(),
-            protocol: "native".to_string(),  // Added protocol (native or http)
+            protocol: "native".to_string(), // Added protocol (native or http)
             query_timeout: "600".to_string(),
             secure: true,
             timeout: "10".to_string(),

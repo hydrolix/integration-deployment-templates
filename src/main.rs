@@ -202,7 +202,9 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         println!("Production mode: Checking remote cluster for required resources...");
         match hdx::get_auth_token().await {
             Ok(bearer_token) => {
-                match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base).await {
+                match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base)
+                    .await
+                {
                     Ok(_) => println!("✓ All required resources exist on remote cluster"),
                     Err(e) => {
                         eprintln!("ERROR: Production mode dependency check failed: {e}");
@@ -234,7 +236,10 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             Err(e) => return Err(format!("Failed to deploy dashboard error={e}")),
         };
         println!("Dashboard IDs: {:?}", dashboard_ids);
-        println!("Primary dashboard_id={}", dashboard_ids.get(0).unwrap_or(&"N/A".to_string()));
+        println!(
+            "Primary dashboard_id={}",
+            dashboard_ids.first().unwrap_or(&"N/A".to_string())
+        );
     }
 
     if *IS_LOCAL {
@@ -258,7 +263,12 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         println!("Dashboard IDs: {:?}", dashboard_ids);
 
         // Check for required Grafana plugins
-        match grafana::grafana_plugins_check::check_deployed_dashboards(&dashboard_ids, *STRICT_PLUGINS).await {
+        match grafana::grafana_plugins_check::check_deployed_dashboards(
+            &dashboard_ids,
+            *STRICT_PLUGINS,
+        )
+        .await
+        {
             Ok(_) => (),
             Err(e) => {
                 if *STRICT_PLUGINS {
@@ -271,7 +281,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
         // Use primary dashboard for headless browser check
         let primary_dashboard_id = dashboard_ids
-            .get(0)
+            .first()
             .cloned()
             .unwrap_or_else(|| "".to_string());
 

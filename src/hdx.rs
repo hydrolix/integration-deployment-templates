@@ -6,12 +6,13 @@ use tokio::time::Duration;
 use uuid::Uuid;
 
 // These are static but not secret
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
-const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
-const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev
+const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152"; // markeplace-dev cdn_test_project
 const PROJ_NAME: &str = "cdn_test_project";
 const HTTP_TIMEOUT: u64 = 120;
+
+// const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+// const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
 
 lazy_static! {
     static ref CLIENT: Client = reqwest::Client::new();
@@ -126,7 +127,7 @@ pub async fn ensure_zip_extracted(
 
     // Use -j flag to flatten directory structure (strip paths)
     let output = Command::new("unzip")
-        .args(&["-j", "-q", "-o", &zip_path, "-d", &extract_dir])
+        .args(["-j", "-q", "-o", &zip_path, "-d", &extract_dir])
         .output()
         .await
         .map_err(|e| format!("Failed to run unzip command: {}", e))?;
@@ -336,12 +337,18 @@ pub async fn verify_table_exists(bearer_token: &str, table_name: &str) -> Result
         }
 
         if attempt < max_attempts {
-            println!("  Table '{}' not found yet, waiting... (attempt {}/{})", table_name, attempt, max_attempts);
+            println!(
+                "  Table '{}' not found yet, waiting... (attempt {}/{})",
+                table_name, attempt, max_attempts
+            );
             sleep(Duration::from_secs(5)).await;
         }
     }
 
-    Err(format!("Table '{}' not found after {} attempts", table_name, max_attempts))
+    Err(format!(
+        "Table '{}' not found after {} attempts",
+        table_name, max_attempts
+    ))
 }
 
 pub async fn create_summary_table(
@@ -586,7 +593,7 @@ pub async fn add_transform_to_table(
 
         // For client errors (4xx) or after max retries, return error
         return Err(format!(
-            "ERROR: {}.{} 
+            "ERROR: {}.{}
             Hydrolix add transform failed, status: {} url={url} (attempt {})",
             file!(),
             line!(),
@@ -1092,7 +1099,11 @@ pub async fn check_and_create_dictionary(
         .await
         .map_err(|e| format!("Failed to read dictionary data file {}: {}", files.1, e))?;
 
-    let file_name = files.1.split('/').last().ok_or("Invalid data file path")?;
+    let file_name = files
+        .1
+        .split('/')
+        .next_back()
+        .ok_or("Invalid data file path")?;
 
     upload_dictionary_file(bearer_token, file_name, &data_file_content).await?;
     create_dictionary_definition(bearer_token, dictionary_name, dict_def).await?;
@@ -1146,7 +1157,11 @@ async fn upload_dictionary_file(
         }
     }
 
-    let ext = file_name.split('.').last().unwrap_or("csv").to_lowercase();
+    let ext = file_name
+        .split('.')
+        .next_back()
+        .unwrap_or("csv")
+        .to_lowercase();
     let mime_type = if ext == "yaml" || ext == "yml" {
         "application/x-yaml"
     } else {

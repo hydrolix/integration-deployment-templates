@@ -39,17 +39,28 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     if let Some(deps) = &bundle.dependencies {
         if let Some(_hydrolix) = &deps.hydrolix {
             let (bundle_funcs, shared_funcs) = bundle.get_all_functions();
+            let (bundle_dicts, shared_dicts) = bundle.get_all_dictionaries();
+
+            // Initialize shared project context if needed
+            let shared_proj =
+                match hdx_shared::SharedProject::new(&bearer_token, shared_funcs, shared_dicts)
+                    .await
+                {
+                    Ok(v) => v,
+                    Err(e) => return Err(format!("Failed to initialize shared project: {}", e)),
+                };
 
             // Create SHARED functions first (they may be used by bundle-specific ones)
-            if !shared_funcs.is_empty() {
+            if !shared_proj.funcs.is_empty() {
                 println!(
                     "\n🔗 Processing {} EXPLICITLY DECLARED shared function(s) in {}...",
-                    shared_funcs.len(),
+                    shared_proj.funcs.len(),
                     shared_project_name
                 );
 
-                for function_name in &shared_funcs {
+                for function_name in &shared_proj.funcs {
                     match hdx_shared::check_and_create_shared_function(
+                        &shared_proj,
                         &bearer_token,
                         function_name,
                         base,
@@ -63,17 +74,16 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
             }
 
             // Create SHARED dictionaries (may be used by functions/transforms)
-            let (bundle_dicts, shared_dicts) = bundle.get_all_dictionaries();
-
-            if !shared_dicts.is_empty() {
+            if !shared_proj.dicts.is_empty() {
                 println!(
                     "\n🔗 Processing {} EXPLICITLY DECLARED shared dictionar(y/ies) in {}...",
-                    shared_dicts.len(),
+                    shared_proj.dicts.len(),
                     shared_project_name
                 );
 
-                for dictionary_name in &shared_dicts {
+                for dictionary_name in &shared_proj.dicts {
                     match hdx_shared::check_and_create_shared_dictionary(
+                        &shared_proj,
                         &bearer_token,
                         dictionary_name,
                         base,
@@ -81,9 +91,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
                     .await
                     {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(format!("Failed to create shared dictionary: {}", e))
-                        }
+                        Err(e) => return Err(format!("Failed to create shared dictionary: {}", e)),
                     }
                 }
             }
@@ -100,15 +108,11 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
                 );
 
                 for function_name in &bundle_funcs {
-                    match hdx::check_and_create_function(
-                        &bearer_token,
-                        function_name,
-                        base,
-                    )
-                    .await
-                    {
+                    match hdx::check_and_create_function(&bearer_token, function_name, base).await {
                         Ok(_) => (),
-                        Err(e) => return Err(format!("Failed to create bundle-specific function: {}", e)),
+                        Err(e) => {
+                            return Err(format!("Failed to create bundle-specific function: {}", e))
+                        }
                     }
                 }
             }
@@ -121,16 +125,15 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
                 );
 
                 for dictionary_name in &bundle_dicts {
-                    match hdx::check_and_create_dictionary(
-                        &bearer_token,
-                        dictionary_name,
-                        base,
-                    )
-                    .await
+                    match hdx::check_and_create_dictionary(&bearer_token, dictionary_name, base)
+                        .await
                     {
                         Ok(_) => (),
                         Err(e) => {
-                            return Err(format!("Failed to create bundle-specific dictionary: {}", e))
+                            return Err(format!(
+                                "Failed to create bundle-specific dictionary: {}",
+                                e
+                            ))
                         }
                     }
                 }
@@ -218,20 +221,15 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
             println!("Creating additional dashboard: {}", other_dash.path);
 
             let other_dash_path = format!("{}/{}", base, other_dash.path);
-            let mut other_dashboard_data = fs::read_to_string(&other_dash_path)
-                .await
-                .map_err(|e| {
-                    format!(
-                        "Failed to read other dashboard {}: {}",
-                        other_dash_path, e
-                    )
+            let mut other_dashboard_data =
+                fs::read_to_string(&other_dash_path).await.map_err(|e| {
+                    format!("Failed to read other dashboard {}: {}", other_dash_path, e)
                 })?;
 
-            other_dashboard_data =
-                other_dashboard_data.replace("__PROJECT_NAME__", &project_name);
+            other_dashboard_data = other_dashboard_data.replace("__PROJECT_NAME__", &project_name);
             other_dashboard_data = other_dashboard_data.replace("__DATASOURCE__", &datalink);
-            other_dashboard_data = other_dashboard_data
-                .replace("__DASHBOARD_UUID__", &Uuid::new_v4().to_string());
+            other_dashboard_data =
+                other_dashboard_data.replace("__DASHBOARD_UUID__", &Uuid::new_v4().to_string());
             other_dashboard_data =
                 other_dashboard_data.replace("__SHARED_PROJECT__", &shared_project_name);
 
@@ -317,7 +315,10 @@ async fn process_table(
 
     let table_uuid = match hdx::create_table(bearer_token, &table.name).await {
         Ok(v) => {
-            println!("  ✓ Table '{}' created successfully (UUID: {})", table.name, v);
+            println!(
+                "  ✓ Table '{}' created successfully (UUID: {})",
+                table.name, v
+            );
             v
         }
         Err(e) => {
@@ -409,10 +410,16 @@ async fn create_summary_table(
     sql = sql.replace("__TABLE_NAME__", &summary.parent_table_name);
 
     println!("Creating summary table: {}", summary.name);
-    println!("  Parent table: {}.{}", project_name, summary.parent_table_name);
+    println!(
+        "  Parent table: {}.{}",
+        project_name, summary.parent_table_name
+    );
 
     // Verify parent table exists before creating summary
-    println!("  Verifying parent table '{}' exists...", summary.parent_table_name);
+    println!(
+        "  Verifying parent table '{}' exists...",
+        summary.parent_table_name
+    );
     match hdx::verify_table_exists(bearer_token, &summary.parent_table_name).await {
         Ok(_) => (),
         Err(e) => {
@@ -424,7 +431,10 @@ async fn create_summary_table(
         }
     }
 
-    println!("  SQL preview: {}", &sql.lines().take(5).collect::<Vec<_>>().join("\n"));
+    println!(
+        "  SQL preview: {}",
+        &sql.lines().take(5).collect::<Vec<_>>().join("\n")
+    );
 
     match hdx::create_summary_table(bearer_token, &summary.name, &sql).await {
         Ok(_) => (),

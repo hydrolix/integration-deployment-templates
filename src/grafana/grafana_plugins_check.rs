@@ -62,7 +62,7 @@ pub async fn check_deployed_dashboards(
                 for (plugin_id, count) in plugins {
                     plugin_usage
                         .entry(plugin_id.clone())
-                        .or_insert_with(Vec::new)
+                        .or_default()
                         .push(DashboardPluginUsage {
                             dashboard_uid: uid.clone(),
                             dashboard_title: dashboard
@@ -188,7 +188,7 @@ pub async fn check_deployed_dashboards(
 }
 
 async fn get_dashboard_by_uid(uid: &str) -> Result<Value, String> {
-    let url = format!("http://{}/api/dashboards/uid/{}", &*GRAFANA_LOCATION, uid);
+    let url = format!("http://{}/api/dashboards/uid/{}", GRAFANA_LOCATION, uid);
 
     let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
 
@@ -285,7 +285,7 @@ fn is_builtin_plugin(plugin_id: &str) -> bool {
 }
 
 async fn get_installed_plugins() -> Result<Vec<PluginInfo>, String> {
-    let url = format!("http://{}/api/plugins", &*GRAFANA_LOCATION);
+    let url = format!("http://{}/api/plugins", GRAFANA_LOCATION);
 
     let auth = base64::engine::general_purpose::STANDARD.encode("admin:admin");
 

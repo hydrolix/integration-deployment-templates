@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: check-yaml
+        args: [--unsafe]
+    -   id: end-of-file-fixer
+    -   id: check-merge-conflict
+    -   id: check-json
+    -   id: check-toml
+    -   id: mixed-line-ending
+    -   id: pretty-format-json
+        args: [--autofix, --no-ensure-ascii]
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: rustfmt
+        description: Check if all files follow the rustfmt style
+        entry: cargo fmt --all -- --check --color always
+        types: [rust]
+        language: system
+        pass_filenames: false
+      - id: rust-clippy
+        name: rust-clippy
+        description: Lint all of the files
+        entry: cargo clippy --all-features -- -D warnings
+        types: [rust]
+        language: system
+        pass_filenames: false
+      - id: cargo-check
+        name: cargo-check
+        description: Check the package for errors.
+        entry: cargo check
+        types: [rust]
+        language: system
+        pass_filenames: false

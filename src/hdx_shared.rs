@@ -2,19 +2,15 @@
 // Handles functions and dictionaries that are shared across all bundles
 
 use lazy_static::lazy_static;
-use once_cell::sync::OnceCell;
 use serde_json::Value;
 use std::env;
-use std::sync::Mutex;
 use tokio::fs;
 
 use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
-const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+// const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev
 const HTTP_TIMEOUT_SECS: u64 = 120;
-
-static SHARED_PROJECT_UUID: OnceCell<Mutex<Option<String>>> = OnceCell::new();
 
 lazy_static! {
     static ref SHARED_PROJECT_NAME: String =
@@ -27,82 +23,108 @@ lazy_static! {
 }
 
 // ============================================================================
-// SHARED PROJECT MANAGEMENT
+// SHARED PROJECT CONTEXT
 // ============================================================================
 
-pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, String> {
-    let cell = SHARED_PROJECT_UUID.get_or_init(|| Mutex::new(None));
-    let mut guard = cell.lock().unwrap();
+pub struct SharedProject {
+    project_uuid: String,
+    pub dicts: Vec<String>,
+    pub funcs: Vec<String>,
+}
 
-    if let Some(uuid) = guard.as_ref() {
-        return Ok(uuid.clone());
-    }
+impl SharedProject {
+    pub async fn new(
+        bearer_token: &str,
+        funcs: Vec<String>,
+        dicts: Vec<String>,
+    ) -> Result<Self, String> {
+        println!("Checking for shared project: {}...", *SHARED_PROJECT_NAME);
 
-    println!("Checking for shared project: {}...", *SHARED_PROJECT_NAME);
+        let list_url = format!(
+            "https://{}/config/v1/orgs/{}/projects/",
+            *BUNDLE_TESTING_CLUSTER, ORG_UUID
+        );
 
-    let list_url = format!(
-        "https://{}/config/v1/orgs/{}/projects/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID
-    );
+        let client = reqwest::Client::new();
+        eprintln!("DEBUG: Requesting projects list from: {}", list_url);
+        let response = match client
+            .get(&list_url)
+            .header("Authorization", format!("Bearer {}", bearer_token))
+            .send()
+            .await
+        {
+            Ok(r) => r,
+            Err(e) => {
+                return Err(format!(
+                    "Failed to list projects from URL {}: {}",
+                    list_url, e
+                ))
+            }
+        };
 
-    let client = reqwest::Client::new();
-    eprintln!("DEBUG: Requesting projects list from: {}", list_url);
-    let response = match client
-        .get(&list_url)
-        .header("Authorization", format!("Bearer {}", bearer_token))
-        .send()
-        .await
-    {
-        Ok(r) => r,
-        Err(e) => return Err(format!("Failed to list projects from URL {}: {}", list_url, e)),
-    };
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_body = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Could not read error response".to_string());
+            return Err(format!(
+                "failed to list projects: {} - URL: {} - Response: {}",
+                status, list_url, error_body
+            ));
+        }
 
-    if !response.status().is_success() {
-        let status = response.status();
-        let error_body = response.text().await.unwrap_or_else(|_| "Could not read error response".to_string());
-        return Err(format!("Failed to list projects: {} - URL: {} - Response: {}", status, list_url, error_body));
-    }
+        let projects: Value = match response.json().await {
+            Ok(p) => p,
+            Err(e) => return Err(format!("failed to parse projects response: {}", e)),
+        };
 
-    let projects: Value = match response.json().await {
-        Ok(p) => p,
-        Err(e) => return Err(format!("Failed to parse projects response: {}", e)),
-    };
+        // Try multiple possible response structures
+        let empty_vec = vec![];
+        let existing = if projects.is_array() {
+            projects.as_array().unwrap()
+        } else if let Some(results) = projects.get("results") {
+            results.as_array().unwrap_or(&empty_vec)
+        } else if let Some(projects_data) = projects.get("projects") {
+            projects_data.as_array().unwrap_or(&empty_vec)
+        } else if let Some(data) = projects.get("data") {
+            data.as_array().unwrap_or(&empty_vec)
+        } else {
+            &empty_vec
+        };
 
-    // Try multiple possible response structures
-    let empty_vec = vec![];
-    let existing = if projects.is_array() {
-        projects.as_array().unwrap()
-    } else if let Some(results) = projects.get("results") {
-        results.as_array().unwrap_or(&empty_vec)
-    } else if let Some(projects_data) = projects.get("projects") {
-        projects_data.as_array().unwrap_or(&empty_vec)
-    } else if let Some(data) = projects.get("data") {
-        data.as_array().unwrap_or(&empty_vec)
-    } else {
-        &empty_vec
-    };
-
-    // Look for existing shared project
-    for project in existing {
-        if let Some(name) = project.get("name").and_then(|n| n.as_str()) {
-            if name == *SHARED_PROJECT_NAME {
-                if let Some(uuid) = project.get("uuid").and_then(|u| u.as_str()) {
-                    let uuid_str = uuid.to_string();
-                    println!("  ✓ Shared project exists (uuid: {})", uuid_str);
-                    *guard = Some(uuid_str.clone());
-                    return Ok(uuid_str);
+        // Look for existing shared project
+        for project in existing {
+            if let Some(name) = project.get("name").and_then(|n| n.as_str()) {
+                if name == *SHARED_PROJECT_NAME {
+                    if let Some(uuid) = project.get("uuid").and_then(|u| u.as_str()) {
+                        let project_uuid = uuid.to_string();
+                        println!("  ✓ Shared project exists (uuid: {})", project_uuid);
+                        return Ok(Self {
+                            project_uuid,
+                            funcs,
+                            dicts,
+                        });
+                    }
                 }
             }
         }
+
+        // Project doesn't exist - create it
+        println!("  Creating shared project: {}...", *SHARED_PROJECT_NAME);
+        let project_uuid = create_shared_project(bearer_token).await?;
+        println!("  ✓ Created shared project (uuid: {})", project_uuid);
+
+        Ok(Self {
+            project_uuid,
+            funcs,
+            dicts,
+        })
     }
 
-    // Project doesn't exist - create it
-    println!("  Creating shared project: {}...", *SHARED_PROJECT_NAME);
-    let uuid = create_shared_project(bearer_token).await?;
-    println!("  ✓ Created shared project (uuid: {})", uuid);
-    *guard = Some(uuid.clone());
-
-    Ok(uuid)
+    pub fn project_uuid(&self) -> &str {
+        &self.project_uuid
+    }
 }
 
 async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
@@ -156,13 +178,14 @@ async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
 // ============================================================================
 
 pub async fn check_and_create_shared_function(
+    ctx: &SharedProject,
     bearer_token: &str,
     function_name: &str,
     base_dir: &str,
 ) -> Result<(), String> {
     println!("Checking shared function: {}...", function_name);
 
-    let project_uuid = ensure_shared_project_exists(bearer_token).await?;
+    let project_uuid = ctx.project_uuid();
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
@@ -238,8 +261,8 @@ pub async fn check_and_create_shared_function(
     if let Some(sql) = function_def.get_mut("sql") {
         if let Some(sql_str) = sql.as_str() {
             let replaced = sql_str
-                .replace("__SHARED_PROJECT__", &*SHARED_PROJECT_NAME)
-                .replace("__PROJECT_NAME__", &*SHARED_PROJECT_NAME); // Fallback
+                .replace("__SHARED_PROJECT__", &SHARED_PROJECT_NAME)
+                .replace("__PROJECT_NAME__", &SHARED_PROJECT_NAME); // Fallback
             *sql = Value::String(replaced);
         }
     }
@@ -291,13 +314,14 @@ pub async fn check_and_create_shared_function(
 // ============================================================================
 
 pub async fn check_and_create_shared_dictionary(
+    ctx: &SharedProject,
     bearer_token: &str,
     dictionary_name: &str,
     base_dir: &str,
 ) -> Result<(), String> {
     println!("Checking shared dictionary: {}...", dictionary_name);
 
-    let project_uuid = ensure_shared_project_exists(bearer_token).await?;
+    let project_uuid = ctx.project_uuid();
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
@@ -366,10 +390,16 @@ pub async fn check_and_create_shared_dictionary(
         .await
         .map_err(|e| format!("Failed to read dictionary data file: {}", e))?;
 
-    let file_name = files.1.split('/').last().ok_or("Invalid data file path")?;
+    let file_name = files
+        .1
+        .split('/')
+        .next_back()
+        .ok_or("Invalid data file path")?;
 
-    upload_shared_dictionary_file(bearer_token, file_name, &data_file_content).await?;
-    create_shared_dictionary_definition(bearer_token, dictionary_name, dict_def).await?;
+    upload_shared_dictionary_file(project_uuid, bearer_token, file_name, &data_file_content)
+        .await?;
+    create_shared_dictionary_definition(project_uuid, bearer_token, dictionary_name, dict_def)
+        .await?;
 
     println!("  ✓ Created shared dictionary {}", dictionary_name);
     Ok(())
@@ -407,12 +437,11 @@ async fn find_dictionary_files(
 }
 
 async fn upload_shared_dictionary_file(
+    project_uuid: &str,
     bearer_token: &str,
     file_name: &str,
     file_content: &str,
 ) -> Result<(), String> {
-    let project_uuid = ensure_shared_project_exists(bearer_token).await?;
-
     let files_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/files/",
         *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
@@ -453,7 +482,11 @@ async fn upload_shared_dictionary_file(
         }
     }
 
-    let ext = file_name.split('.').last().unwrap_or("csv").to_lowercase();
+    let ext = file_name
+        .split('.')
+        .next_back()
+        .unwrap_or("csv")
+        .to_lowercase();
     let mime_type = if ext == "yaml" || ext == "yml" {
         "application/x-yaml"
     } else {
@@ -501,12 +534,11 @@ async fn upload_shared_dictionary_file(
 }
 
 async fn create_shared_dictionary_definition(
+    project_uuid: &str,
     bearer_token: &str,
     dictionary_name: &str,
     dict_definition: Value,
 ) -> Result<(), String> {
-    let project_uuid = ensure_shared_project_exists(bearer_token).await?;
-
     let dict_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
         *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
