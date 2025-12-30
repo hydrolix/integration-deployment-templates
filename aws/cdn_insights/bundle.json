@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn_insights",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn_insights",
   "beta": true,
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default-1760472897943.json",

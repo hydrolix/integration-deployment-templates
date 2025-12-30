@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cloudfront-to-kinesis",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cloudfront-to-kinesis",
   "beta": false,
   "dashboard": {
     "path": "dashboards/current.json",
