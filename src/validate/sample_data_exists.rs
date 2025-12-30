@@ -1,4 +1,4 @@
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 use serde_json::Value;
 use tokio::fs;
 

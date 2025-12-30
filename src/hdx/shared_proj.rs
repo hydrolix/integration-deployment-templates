@@ -6,7 +6,7 @@ use serde_json::Value;
 use std::env;
 use tokio::fs;
 
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 use crate::hdx::{dictionaries, functions, BUNDLE_TESTING_CLUSTER, ORG_UUID};
 

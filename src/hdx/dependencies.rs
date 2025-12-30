@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 use tokio::fs;
 
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 use crate::hdx::{BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_NAME, PROJ_UUID};
 

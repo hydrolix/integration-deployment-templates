@@ -5,15 +5,14 @@ use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
 
-mod bundle;
 mod deploy;
 mod grafana;
 mod hdx;
-mod output;
+mod models;
 mod validate;
 
-use crate::bundle::Bundle;
-use crate::output::Output;
+use crate::models::bundle::Bundle;
+use crate::models::output::Output;
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =

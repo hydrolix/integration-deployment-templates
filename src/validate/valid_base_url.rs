@@ -1,4 +1,4 @@
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let check_base_url =

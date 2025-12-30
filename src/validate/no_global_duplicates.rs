@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
     // Checking for duplicated bundle names

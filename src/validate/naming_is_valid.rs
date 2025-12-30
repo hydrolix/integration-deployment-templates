@@ -1,4 +1,4 @@
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 pub async fn run(bundle: &Bundle) -> Result<(), String> {
     // Check method consistency

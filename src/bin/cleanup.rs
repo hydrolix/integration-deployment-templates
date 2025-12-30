@@ -7,8 +7,8 @@
 //   cargo run --bin cleanup -- --all <bundle-name>
 //   cargo run --bin cleanup -- --all <bundle-name> --dry-run
 
-use bundle_validator::bundle::Bundle;
 use bundle_validator::hdx;
+use bundle_validator::models::bundle::Bundle;
 use lazy_static::lazy_static;
 use serde_json::Value;
 use std::collections::HashSet;

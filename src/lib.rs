@@ -1,8 +1,8 @@
 // Library exports for bundle-validator
 // This allows other binaries (like cleanup) to use the core modules
 
-pub mod bundle;
 pub mod hdx;
+pub mod models;
 
 // Re-export commonly used items
-pub use bundle::Bundle;
+pub use models::bundle::Bundle;

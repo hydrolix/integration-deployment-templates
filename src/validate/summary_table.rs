@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::bundle::Bundle;
+use crate::models::bundle::Bundle;
 
 pub fn run(b: &Bundle) -> Result<(), String> {
     let summary_tables = match &b.summary_tables {

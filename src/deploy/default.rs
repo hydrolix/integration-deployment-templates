@@ -3,12 +3,12 @@ use tokio::fs;
 use tokio::time::sleep;
 use tokio::time::Duration;
 
-use crate::bundle::Bundle;
 use crate::grafana;
 use crate::hdx;
-use crate::output::Output;
-use crate::output::OutputTable;
-use crate::output::OutputTransformation;
+use crate::models::bundle::{Bundle, SummaryTable, Table};
+use crate::models::output::Output;
+use crate::models::output::OutputTable;
+use crate::models::output::OutputTransformation;
 use crate::BUNDLE_TESTING_CLUSTER;
 use crate::GRAFANA_LOCATION;
 
@@ -123,7 +123,7 @@ async fn process_table(
     base: &str,
     bearer_token: &str,
     project_name: &str,
-    table: &crate::bundle::Table,
+    table: &Table,
     output: &mut Output,
 ) -> Result<(), String> {
     println!("Creating table: {}", table.name);
@@ -205,7 +205,7 @@ async fn create_summary_table(
     base: &str,
     bearer_token: &str,
     project_name: &str,
-    summary: &crate::bundle::SummaryTable,
+    summary: &SummaryTable,
     dashboard_data: &mut String,
 ) -> Result<(), String> {
     let path = format!("{base}/{}", summary.sql.path);

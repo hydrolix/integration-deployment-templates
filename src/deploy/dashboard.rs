@@ -1,9 +1,9 @@
 use tokio::fs;
 use uuid::Uuid;
 
-use crate::bundle::Bundle;
 use crate::grafana;
-use crate::output::Output;
+use crate::models::bundle::Bundle;
+use crate::models::output::Output;
 
 use crate::GRAFANA_LOCATION;
 

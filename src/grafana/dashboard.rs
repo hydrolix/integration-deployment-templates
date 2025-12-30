@@ -2,8 +2,8 @@ use bundle_validator::hdx;
 use serde_json::Value;
 use tokio::fs;
 
-use crate::bundle::Bundle;
 use crate::grafana::http;
+use crate::models::bundle::Bundle;
 use crate::GRAFANA_LOCATION;
 
 pub async fn create(dashboard_data: &str) -> Result<String, String> {
