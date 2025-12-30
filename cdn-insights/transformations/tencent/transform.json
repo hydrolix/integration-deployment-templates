@@ -4,7 +4,7 @@
     "settings": {
         "is_default": true,
         "rate_limit": null,
-        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\n__SHARED_PROJECT___city_name(client_ip) as client_city,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\ncommons_city_name(client_ip) as client_city,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
         "null_values": [
             "-",
             "-1"
