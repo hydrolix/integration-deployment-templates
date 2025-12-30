@@ -1,10 +1,9 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-datazoom-mediatailor",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-datazoom-mediatailor",
   "beta": false,
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__",
-    "sha256": "59a890731fe562cc7c25e6c04fc1a490d2e2b25e5abd9b0c78e10de51c04ceca"
+    "project_var": "__PROJECT_NAME__"
   },
   "metadata": {
     "channel_type": "AWS",
@@ -22,8 +21,7 @@
       "transforms": [
         {
           "path": "transformations/current.json",
-          "sample": "transformations/sample_data_template.json",
-          "sha256": "74638150bb21f5587714ac693f9a6c9f3f3bbd2d0ee33a264959572caa4c1d79"
+          "sample": "transformations/sample_data_template.json"
         }
       ]
     }

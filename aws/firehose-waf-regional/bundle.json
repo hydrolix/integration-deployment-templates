@@ -1,10 +1,9 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-waf-regional",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-waf-regional",
   "beta": false,
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__",
-    "sha256": "dcf93a0d1ec5c0f8922ddad4859af4a2b9e3c4a069ce0f40ef7ca4fdb3b02de2"
+    "project_var": "__PROJECT_NAME__"
   },
   "metadata": {
     "channel_type": "AWS",
@@ -25,8 +24,7 @@
       "transforms": [
         {
           "path": "transformations/current.json",
-          "sample": "transformations/sample_data_template.json",
-          "sha256": "6e9346be3bc891b1cc59ab79fb2d400994628a515847e0715b3cf71564e6a96c"
+          "sample": "transformations/sample_data_template.json"
         }
       ]
     }

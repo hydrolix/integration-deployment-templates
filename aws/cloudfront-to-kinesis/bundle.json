@@ -3,8 +3,7 @@
   "beta": false,
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__",
-    "sha256": "65d22b569bb986a28e98246637bd41dad5ecf56220965d2cc3491577a160138b"
+    "project_var": "__PROJECT_NAME__"
   },
   "dependencies": {
     "data-sources": [],

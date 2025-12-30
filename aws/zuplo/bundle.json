@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/zuplo",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/zuplo",
   "beta": true,
   "dashboard": {
     "path": "dashboards/current.json",

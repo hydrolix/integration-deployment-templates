@@ -1,10 +1,9 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/firehose-waf-global",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-waf-global",
   "beta": false,
   "dashboard": {
     "path": "dashboards/current.json",
-    "project_var": "__PROJECT_NAME__",
-    "sha256": "3bde6735467903eb593046db00622213e18c3be379fe110123f5ba3a721bddfe"
+    "project_var": "__PROJECT_NAME__"
   },
   "metadata": {
     "channel_type": "AWS",
@@ -26,8 +25,7 @@
       "transforms": [
         {
           "path": "transformations/current.json",
-          "sample": "transformations/sample_data_template.json",
-          "sha256": "6e9346be3bc891b1cc59ab79fb2d400994628a515847e0715b3cf71564e6a96c"
+          "sample": "transformations/sample_data_template.json"
         }
       ]
     }
