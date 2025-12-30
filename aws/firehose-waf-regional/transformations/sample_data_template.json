@@ -1,0 +1,60 @@
+{
+  "action": "ALLOW",
+  "captchaResponse": {
+    "responseCode": "captcha-code",
+    "status": "PASSED"
+  },
+  "challengeResponse": {
+    "responseCode": "challenge-code",
+    "status": "PASSED"
+  },
+  "excludedRules": [
+    "excludedRule1"
+  ],
+  "formatVersion": "1.0",
+  "httpRequest": {
+    "args": "param1=value1&param2=value2",
+    "clientIp": "203.0.113.42",
+    "country": "US",
+    "headers": [
+      {
+        "host": "example.com"
+      },
+      {
+        "user-agent": "curl/7.68.0"
+      },
+      {
+        "accept": "*/*"
+      }
+    ],
+    "httpMethod": "GET",
+    "httpVersion": "HTTP/1.1",
+    "requestId": "abcd1234efgh5678",
+    "uri": "/example/path"
+  },
+  "httpSourceId": "example-source-id",
+  "ja3Fingerprint": "abc123ja3fingerprint",
+  "nonTerminatingMatchingRules": [
+    "rule1",
+    "rule2"
+  ],
+  "rateBasedRuleList": [
+    "rateRule1"
+  ],
+  "requestHeadersInserted": [
+    "header1: value1"
+  ],
+  "requestId": "abcd1234efgh5678",
+  "responseCodeSent": "200",
+  "ruleGroupList": [
+    "group1"
+  ],
+  "terminatingRuleId": "rule-terminate-123",
+  "terminatingRuleMatchDetails": [
+    "detail1",
+    "detail2"
+  ],
+  "terminatingRuleType": "REGULAR",
+  "timestamp": 1719684658,
+  "webaclId": "webacl-example-id"
+}

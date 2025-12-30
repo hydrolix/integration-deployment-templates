@@ -1,0 +1,4 @@
+{
+  "data_type": "cloudfront_real_time_log",
+  "tsv": "2025-11-17T16:00:00Z\t73.100.223.67\t\t0.065\t200\t904421\tGET\t/hls/The Starlit Signal S02E01 - Nightfall/1200k/segment000000.m4s\t\tcloudfront-media.hydrolix.io\t0.521\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://cloudfront-media.hydrolix.io\t\tMiss\tvideo/mp4\tUS\t0.0\t0.0"
+}

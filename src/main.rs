@@ -5,19 +5,14 @@ use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
 
-mod bundle_struct;
 mod deploy;
-mod deploy_only_dashboard;
 mod grafana;
 mod hdx;
-mod hdx_check_dependencies;
-mod hdx_shared;
-mod headless_browser;
-mod output_struct;
+mod models;
 mod validate;
 
-use crate::bundle_struct::Bundle;
-use crate::output_struct::Output;
+use crate::models::bundle::Bundle;
+use crate::models::output::Output;
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =
@@ -200,16 +195,14 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     // Production mode: Check that resources exist on remote cluster
     if *PRODUCTION_MODE {
         println!("Production mode: Checking remote cluster for required resources...");
-        match hdx::get_auth_token().await {
-            Ok(bearer_token) => {
-                match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base).await {
-                    Ok(_) => println!("✓ All required resources exist on remote cluster"),
-                    Err(e) => {
-                        eprintln!("ERROR: Production mode dependency check failed: {e}");
-                        return Err(format!("Production dependency check failed: {e}"));
-                    }
+        match hdx::auth::get_token().await {
+            Ok(bearer_token) => match hdx::dependencies::exist(&bearer_token, bundle, base).await {
+                Ok(_) => println!("✓ All required resources exist on remote cluster"),
+                Err(e) => {
+                    eprintln!("ERROR: Production mode dependency check failed: {e}");
+                    return Err(format!("Production dependency check failed: {e}"));
                 }
-            }
+            },
             Err(e) => {
                 eprintln!("ERROR: Failed to authenticate for production check: {e}");
                 return Err(format!("Production auth failed: {e}"));
@@ -229,12 +222,15 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        let dashboard_ids = match deploy_only_dashboard::run(base, bundle, &mut output).await {
+        let dashboard_ids = match deploy::dashboard::run(base, bundle, &mut output).await {
             Ok(v) => v,
             Err(e) => return Err(format!("Failed to deploy dashboard error={e}")),
         };
         println!("Dashboard IDs: {:?}", dashboard_ids);
-        println!("Primary dashboard_id={}", dashboard_ids.get(0).unwrap_or(&"N/A".to_string()));
+        println!(
+            "Primary dashboard_id={}",
+            dashboard_ids.first().unwrap_or(&"N/A".to_string())
+        );
     }
 
     if *IS_LOCAL {
@@ -249,7 +245,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        let dashboard_ids = match deploy::run(base, bundle, &mut output).await {
+        let dashboard_ids = match deploy::default::run(base, bundle, &mut output).await {
             Ok(v) => v,
             Err(e) => return Err(format!("Failed to deploy error={e}")),
         };
@@ -258,7 +254,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         println!("Dashboard IDs: {:?}", dashboard_ids);
 
         // Check for required Grafana plugins
-        match grafana::grafana_plugins_check::check_deployed_dashboards(&dashboard_ids, *STRICT_PLUGINS).await {
+        match grafana::plugins::check_deployed_dashboards(&dashboard_ids, *STRICT_PLUGINS).await {
             Ok(_) => (),
             Err(e) => {
                 if *STRICT_PLUGINS {
@@ -271,13 +267,13 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
 
         // Use primary dashboard for headless browser check
         let primary_dashboard_id = dashboard_ids
-            .get(0)
+            .first()
             .cloned()
             .unwrap_or_else(|| "".to_string());
 
         println!("Checking the Grafana dashboard with headless Chrome");
         let (datasource_error_count, nodata_error_count) =
-            match headless_browser::run(&primary_dashboard_id).await {
+            match grafana::headless_browser::run(&primary_dashboard_id).await {
                 Ok(v) => v,
                 Err(e) => return Err(format!("Failed to run headless browser error={e}")),
             };

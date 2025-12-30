@@ -1,7 +1,7 @@
 use serde_json::Value;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::models::bundle::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let mut dashboard_path_list: Vec<String> = vec![];
