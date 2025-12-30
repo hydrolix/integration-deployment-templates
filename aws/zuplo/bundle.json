@@ -1,0 +1,41 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/zuplo",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Zuplo",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "http_streaming-zuplo",
+  "source": "zuplo",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "zuplo",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http-Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "source": {
+      "full_title": "Zuplo",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
+    }
+  }
+}
