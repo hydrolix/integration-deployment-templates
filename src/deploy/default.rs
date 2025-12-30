@@ -6,7 +6,6 @@ use tokio::time::Duration;
 use crate::bundle::Bundle;
 use crate::grafana;
 use crate::hdx;
-use crate::hdx_shared;
 use crate::output::Output;
 use crate::output::OutputTable;
 use crate::output::OutputTransformation;
@@ -35,7 +34,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     // ========================================================================
 
     if let Err(e) =
-        hdx_shared::check_dicts_and_funcs(bundle, &project_name, base, &bearer_token).await
+        hdx::shared_proj::check_dicts_and_funcs(bundle, &project_name, base, &bearer_token).await
     {
         return Err(format!("shared project failed validation: {}", e));
     };
@@ -337,7 +336,7 @@ fn replace_transform_variables(transform_json: Value, project_name: &str) -> Val
     let mut transform = transform_json;
 
     // Get the shared project name
-    let shared_project_name = crate::hdx_shared::get_shared_project_name();
+    let shared_project_name = crate::hdx::shared_proj::get_name();
 
     // Check if there's a sql_transform field in settings
     if let Some(settings) = transform.get_mut("settings") {

@@ -1,9 +1,9 @@
+use bundle_validator::hdx;
 use serde_json::Value;
 use tokio::fs;
 
 use crate::bundle::Bundle;
 use crate::grafana::http;
-use crate::hdx_shared;
 use crate::GRAFANA_LOCATION;
 
 pub async fn create(dashboard_data: &str) -> Result<String, String> {
@@ -55,7 +55,7 @@ pub async fn create_others(
         Some(v) => v,
         None => return Ok(all_dashboard_uuids),
     };
-    let shared_project_name = hdx_shared::get_shared_project_name();
+    let shared_project_name = hdx::shared_proj::get_name();
 
     for d in dashboards {
         println!("Creating additional dashboard: {}", d.path);

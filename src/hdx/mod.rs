@@ -1,7 +1,10 @@
 pub mod auth;
+pub mod dependencies;
 pub mod dictionaries;
 pub mod functions;
+pub mod shared_proj;
 pub mod table;
+
 use lazy_static::lazy_static;
 use reqwest::Client;
 

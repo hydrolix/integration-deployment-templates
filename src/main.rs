@@ -9,8 +9,6 @@ mod bundle;
 mod deploy;
 mod grafana;
 mod hdx;
-mod hdx_check_dependencies;
-mod hdx_shared;
 mod output;
 mod validate;
 
@@ -199,17 +197,13 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     if *PRODUCTION_MODE {
         println!("Production mode: Checking remote cluster for required resources...");
         match hdx::auth::get_token().await {
-            Ok(bearer_token) => {
-                match hdx_check_dependencies::check_dependencies_exist(&bearer_token, bundle, base)
-                    .await
-                {
-                    Ok(_) => println!("✓ All required resources exist on remote cluster"),
-                    Err(e) => {
-                        eprintln!("ERROR: Production mode dependency check failed: {e}");
-                        return Err(format!("Production dependency check failed: {e}"));
-                    }
+            Ok(bearer_token) => match hdx::dependencies::exist(&bearer_token, bundle, base).await {
+                Ok(_) => println!("✓ All required resources exist on remote cluster"),
+                Err(e) => {
+                    eprintln!("ERROR: Production mode dependency check failed: {e}");
+                    return Err(format!("Production dependency check failed: {e}"));
                 }
-            }
+            },
             Err(e) => {
                 eprintln!("ERROR: Failed to authenticate for production check: {e}");
                 return Err(format!("Production auth failed: {e}"));

@@ -5,20 +5,10 @@ use std::collections::HashSet;
 use tokio::fs;
 
 use crate::bundle::Bundle;
-use crate::BUNDLE_TESTING_CLUSTER;
 
-const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6"; // markeplace-dev
-const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152"; // markeplace-dev cdn_test_project
+use crate::hdx::{BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_NAME, PROJ_UUID};
 
-// const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
-// const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
-const PROJ_NAME: &str = "cdn_test_project";
-
-pub async fn check_dependencies_exist(
-    bearer_token: &str,
-    bundle: &Bundle,
-    base_dir: &str,
-) -> Result<(), String> {
+pub async fn exist(bearer_token: &str, bundle: &Bundle, base_dir: &str) -> Result<(), String> {
     let mut missing_functions: Vec<String> = vec![];
     let mut missing_dictionaries: Vec<String> = vec![];
     let mut missing_files: Vec<String> = vec![];
