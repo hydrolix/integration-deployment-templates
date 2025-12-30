@@ -6,6 +6,8 @@ use serde_json::Value;
 use std::env;
 use tokio::fs;
 
+use crate::bundle_struct::Bundle;
+use crate::hdx;
 use crate::BUNDLE_TESTING_CLUSTER;
 
 // const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
@@ -22,109 +24,179 @@ lazy_static! {
     };
 }
 
-// ============================================================================
-// SHARED PROJECT CONTEXT
-// ============================================================================
+pub async fn check_dicts_and_funcs(
+    bundle: &Bundle,
+    name: &str,
+    base: &str,
+    bearer_token: &str,
+) -> Result<(), String> {
+    let deps = match &bundle.dependencies {
+        Some(v) => v,
+        None => return Ok(()),
+    };
+    if deps.hydrolix.is_none() {
+        return Ok(());
+    }
+    let project_uuid = match get_project_uuid(bearer_token).await {
+        Ok(v) => v,
+        Err(e) => return Err(format!("could not get project uuid: {}", e)),
+    };
+    let (bundle_funcs, funcs) = bundle.get_all_functions();
+    let (bundle_dicts, dicts) = bundle.get_all_dictionaries();
 
-pub struct SharedProject {
-    project_uuid: String,
-    pub dicts: Vec<String>,
-    pub funcs: Vec<String>,
-}
-
-impl SharedProject {
-    pub async fn new(
-        bearer_token: &str,
-        funcs: Vec<String>,
-        dicts: Vec<String>,
-    ) -> Result<Self, String> {
-        println!("Checking for shared project: {}...", *SHARED_PROJECT_NAME);
-
-        let list_url = format!(
-            "https://{}/config/v1/orgs/{}/projects/",
-            *BUNDLE_TESTING_CLUSTER, ORG_UUID
+    // Create SHARED functions first (they may be used by bundle-specific ones)
+    if !funcs.is_empty() {
+        println!(
+            "\n🔗 Processing {} EXPLICITLY DECLARED shared function(s) in {}...",
+            funcs.len(),
+            name
         );
 
-        let client = reqwest::Client::new();
-        eprintln!("DEBUG: Requesting projects list from: {}", list_url);
-        let response = match client
-            .get(&list_url)
-            .header("Authorization", format!("Bearer {}", bearer_token))
-            .send()
-            .await
-        {
-            Ok(r) => r,
-            Err(e) => {
-                return Err(format!(
-                    "Failed to list projects from URL {}: {}",
-                    list_url, e
-                ))
-            }
-        };
-
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_body = response
-                .text()
+        for function_name in &funcs {
+            match check_and_create_shared_function(&project_uuid, bearer_token, function_name, base)
                 .await
-                .unwrap_or_else(|_| "Could not read error response".to_string());
-            return Err(format!(
-                "failed to list projects: {} - URL: {} - Response: {}",
-                status, list_url, error_body
-            ));
+            {
+                Ok(_) => (),
+                Err(e) => return Err(format!("Failed to create shared function: {}", e)),
+            }
         }
+    }
 
-        let projects: Value = match response.json().await {
-            Ok(p) => p,
-            Err(e) => return Err(format!("failed to parse projects response: {}", e)),
-        };
+    // Create SHARED dictionaries (may be used by functions/transforms)
+    if !dicts.is_empty() {
+        println!(
+            "\n🔗 Processing {} EXPLICITLY DECLARED shared dictionar(y/ies) in {}...",
+            dicts.len(),
+            name
+        );
 
-        // Try multiple possible response structures
-        let empty_vec = vec![];
-        let existing = if projects.is_array() {
-            projects.as_array().unwrap()
-        } else if let Some(results) = projects.get("results") {
-            results.as_array().unwrap_or(&empty_vec)
-        } else if let Some(projects_data) = projects.get("projects") {
-            projects_data.as_array().unwrap_or(&empty_vec)
-        } else if let Some(data) = projects.get("data") {
-            data.as_array().unwrap_or(&empty_vec)
-        } else {
-            &empty_vec
-        };
+        for dictionary_name in &dicts {
+            match check_and_create_shared_dictionary(
+                &project_uuid,
+                bearer_token,
+                dictionary_name,
+                base,
+            )
+            .await
+            {
+                Ok(_) => (),
+                Err(e) => return Err(format!("Failed to create shared dictionary: {}", e)),
+            }
+        }
+    }
 
-        // Look for existing shared project
-        for project in existing {
-            if let Some(name) = project.get("name").and_then(|n| n.as_str()) {
-                if name == *SHARED_PROJECT_NAME {
-                    if let Some(uuid) = project.get("uuid").and_then(|u| u.as_str()) {
-                        let project_uuid = uuid.to_string();
-                        println!("  ✓ Shared project exists (uuid: {})", project_uuid);
-                        return Ok(Self {
-                            project_uuid,
-                            funcs,
-                            dicts,
-                        });
-                    }
+    if !bundle_funcs.is_empty() {
+        println!(
+            "\n📦 Processing {} bundle-specific function(s) in {}...",
+            bundle_funcs.len(),
+            name
+        );
+
+        for function_name in &bundle_funcs {
+            match hdx::check_and_create_function(bearer_token, function_name, base).await {
+                Ok(_) => (),
+                Err(e) => return Err(format!("Failed to create bundle-specific function: {}", e)),
+            }
+        }
+    }
+
+    if !bundle_dicts.is_empty() {
+        println!(
+            "\n📦 Processing {} bundle-specific dictionar(y/ies) in {}...",
+            bundle_dicts.len(),
+            name
+        );
+
+        for dictionary_name in &bundle_dicts {
+            match hdx::check_and_create_dictionary(bearer_token, dictionary_name, base).await {
+                Ok(_) => (),
+                Err(e) => {
+                    return Err(format!(
+                        "Failed to create bundle-specific dictionary: {}",
+                        e
+                    ))
                 }
             }
         }
+    }
+    Ok(())
+}
 
-        // Project doesn't exist - create it
-        println!("  Creating shared project: {}...", *SHARED_PROJECT_NAME);
-        let project_uuid = create_shared_project(bearer_token).await?;
-        println!("  ✓ Created shared project (uuid: {})", project_uuid);
+async fn get_project_uuid(bearer_token: &str) -> Result<String, String> {
+    println!("Checking for shared project: {}...", *SHARED_PROJECT_NAME);
 
-        Ok(Self {
-            project_uuid,
-            funcs,
-            dicts,
-        })
+    let list_url = format!(
+        "https://{}/config/v1/orgs/{}/projects/",
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+    );
+
+    let client = reqwest::Client::new();
+    eprintln!("DEBUG: Requesting projects list from: {}", list_url);
+    let response = match client
+        .get(&list_url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .send()
+        .await
+    {
+        Ok(r) => r,
+        Err(e) => {
+            return Err(format!(
+                "Failed to list projects from URL {}: {}",
+                list_url, e
+            ))
+        }
+    };
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let error_body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Could not read error response".to_string());
+        return Err(format!(
+            "failed to list projects: {} - URL: {} - Response: {}",
+            status, list_url, error_body
+        ));
     }
 
-    pub fn project_uuid(&self) -> &str {
-        &self.project_uuid
+    let projects: Value = match response.json().await {
+        Ok(p) => p,
+        Err(e) => return Err(format!("failed to parse projects response: {}", e)),
+    };
+
+    // Try multiple possible response structures
+    let empty_vec = vec![];
+    let existing = if projects.is_array() {
+        projects.as_array().unwrap()
+    } else if let Some(results) = projects.get("results") {
+        results.as_array().unwrap_or(&empty_vec)
+    } else if let Some(projects_data) = projects.get("projects") {
+        projects_data.as_array().unwrap_or(&empty_vec)
+    } else if let Some(data) = projects.get("data") {
+        data.as_array().unwrap_or(&empty_vec)
+    } else {
+        &empty_vec
+    };
+
+    // Look for existing shared project
+    for project in existing {
+        if let Some(name) = project.get("name").and_then(|n| n.as_str()) {
+            if name == *SHARED_PROJECT_NAME {
+                if let Some(uuid) = project.get("uuid").and_then(|u| u.as_str()) {
+                    let project_uuid = uuid.to_string();
+                    println!("  ✓ Shared project exists (uuid: {})", project_uuid);
+                    return Ok(project_uuid);
+                }
+            }
+        }
     }
+
+    // Project doesn't exist - create it
+    println!("  Creating shared project: {}...", *SHARED_PROJECT_NAME);
+    let project_uuid = create_shared_project(bearer_token).await?;
+    println!("  ✓ Created shared project (uuid: {})", project_uuid);
+
+    Ok(project_uuid)
 }
 
 async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
@@ -178,14 +250,12 @@ async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
 // ============================================================================
 
 pub async fn check_and_create_shared_function(
-    ctx: &SharedProject,
+    project_uuid: &str,
     bearer_token: &str,
     function_name: &str,
     base_dir: &str,
 ) -> Result<(), String> {
     println!("Checking shared function: {}...", function_name);
-
-    let project_uuid = ctx.project_uuid();
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
@@ -314,14 +384,12 @@ pub async fn check_and_create_shared_function(
 // ============================================================================
 
 pub async fn check_and_create_shared_dictionary(
-    ctx: &SharedProject,
+    project_uuid: &str,
     bearer_token: &str,
     dictionary_name: &str,
     base_dir: &str,
 ) -> Result<(), String> {
     println!("Checking shared dictionary: {}...", dictionary_name);
-
-    let project_uuid = ctx.project_uuid();
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",

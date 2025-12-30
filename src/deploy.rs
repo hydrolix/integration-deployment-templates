@@ -22,7 +22,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
-                "ERROR: {}.{} Failed to get HDX bearer token: {e}",
+                "ERROR: {}.{} failed to get HDX bearer token: {e}",
                 file!(),
                 line!()
             ));
@@ -30,122 +30,22 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     };
 
     let project_name = hdx::create_project_name();
-    let shared_project_name = hdx_shared::get_shared_project_name();
 
     // ========================================================================
     // PHASE 1: SHARED RESOURCES (commons project)
     // ========================================================================
 
-    if let Some(deps) = &bundle.dependencies {
-        if let Some(_hydrolix) = &deps.hydrolix {
-            let (bundle_funcs, shared_funcs) = bundle.get_all_functions();
-            let (bundle_dicts, shared_dicts) = bundle.get_all_dictionaries();
-
-            // Initialize shared project context if needed
-            let shared_proj =
-                match hdx_shared::SharedProject::new(&bearer_token, shared_funcs, shared_dicts)
-                    .await
-                {
-                    Ok(v) => v,
-                    Err(e) => return Err(format!("Failed to initialize shared project: {}", e)),
-                };
-
-            // Create SHARED functions first (they may be used by bundle-specific ones)
-            if !shared_proj.funcs.is_empty() {
-                println!(
-                    "\n🔗 Processing {} EXPLICITLY DECLARED shared function(s) in {}...",
-                    shared_proj.funcs.len(),
-                    shared_project_name
-                );
-
-                for function_name in &shared_proj.funcs {
-                    match hdx_shared::check_and_create_shared_function(
-                        &shared_proj,
-                        &bearer_token,
-                        function_name,
-                        base,
-                    )
-                    .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => return Err(format!("Failed to create shared function: {}", e)),
-                    }
-                }
-            }
-
-            // Create SHARED dictionaries (may be used by functions/transforms)
-            if !shared_proj.dicts.is_empty() {
-                println!(
-                    "\n🔗 Processing {} EXPLICITLY DECLARED shared dictionar(y/ies) in {}...",
-                    shared_proj.dicts.len(),
-                    shared_project_name
-                );
-
-                for dictionary_name in &shared_proj.dicts {
-                    match hdx_shared::check_and_create_shared_dictionary(
-                        &shared_proj,
-                        &bearer_token,
-                        dictionary_name,
-                        base,
-                    )
-                    .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => return Err(format!("Failed to create shared dictionary: {}", e)),
-                    }
-                }
-            }
-
-            // ========================================================================
-            // PHASE 2: BUNDLE-SPECIFIC RESOURCES (sample_project)
-            // ========================================================================
-
-            if !bundle_funcs.is_empty() {
-                println!(
-                    "\n📦 Processing {} bundle-specific function(s) in {}...",
-                    bundle_funcs.len(),
-                    project_name
-                );
-
-                for function_name in &bundle_funcs {
-                    match hdx::check_and_create_function(&bearer_token, function_name, base).await {
-                        Ok(_) => (),
-                        Err(e) => {
-                            return Err(format!("Failed to create bundle-specific function: {}", e))
-                        }
-                    }
-                }
-            }
-
-            if !bundle_dicts.is_empty() {
-                println!(
-                    "\n📦 Processing {} bundle-specific dictionar(y/ies) in {}...",
-                    bundle_dicts.len(),
-                    project_name
-                );
-
-                for dictionary_name in &bundle_dicts {
-                    match hdx::check_and_create_dictionary(&bearer_token, dictionary_name, base)
-                        .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => {
-                            return Err(format!(
-                                "Failed to create bundle-specific dictionary: {}",
-                                e
-                            ))
-                        }
-                    }
-                }
-            }
-        }
-    }
+    if let Err(e) =
+        hdx_shared::check_dicts_and_funcs(bundle, &project_name, base, &bearer_token).await
+    {
+        return Err(format!("shared project failed validation: {}", e));
+    };
 
     let datalink = match grafana::interface::create_datalink(&project_name).await {
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
-                "ERROR: {}.{} Failed to create datalink. {e}",
+                "ERROR: {}.{} failed to create datalink. {e}",
                 file!(),
                 line!()
             ));
@@ -201,7 +101,7 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         Ok(v) => v,
         Err(e) => {
             return Err(format!(
-                "ERROR: {}.{} Failed to create dashboard. {e}",
+                "ERROR: {}.{} failed to create dashboard. {e}",
                 file!(),
                 line!()
             ));
