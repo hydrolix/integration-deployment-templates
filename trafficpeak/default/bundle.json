@@ -21,7 +21,7 @@
     "channel_type": "AWS",
     "description": "Default Trafficpeak Bundle Description",
     "maintainer": "kevin.borkman@hydrolix.io",
-    "version": "1.0.5"
+    "version": "1.0.0"
   },
   "method": "multi_stream",
   "method_overrides": {
