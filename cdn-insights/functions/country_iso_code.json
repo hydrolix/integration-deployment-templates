@@ -1,5 +1,0 @@
-{
-    "description": "Country ISO Code",
-    "name": "country_iso_code",
-    "sql": "(ip) -> dictGetString (\n  'commons_geoip_city_locations_en',\n  'country_iso_code',\n  commons_geoname_id (assumeNotNull (ip))\n)"
-}
