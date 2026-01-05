@@ -8,7 +8,7 @@
   },
   "beta": true,
   "solution": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/feature/security",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/feature/security/security",
   "dashboard": {
     "path": "dashboards/DS2 Security Analysis.json",
     "project_var": "__PROJECT_NAME__"
