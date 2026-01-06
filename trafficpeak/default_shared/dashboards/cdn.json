@@ -2837,12 +2837,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT  \nIF('${table}' = '${ds2}', 'uniq (cliIP)', 'uniq_client_ip')",
+          "definition": "SELECT  \nIF(${table} = ${ds2}, 'uniq (cliIP)', 'uniq_client_ip')",
           "hide": 2,
           "includeAll": false,
           "name": "uniq_cliIP_var",
           "options": [],
-          "query": "SELECT  \nIF('${table}' = '${ds2}', 'uniq (cliIP)', 'uniq_client_ip')",
+          "query": "SELECT  \nIF(${table} = ${ds2}, 'uniq (cliIP)', 'uniq_client_ip')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2853,12 +2853,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT  \nIF('${table}' = '${ds2}', 'uniq (cliIP, UA)', 'uniq_session')",
+          "definition": "SELECT  \nIF(${table} = ${ds2}, 'uniq (cliIP, UA)', 'uniq_session')",
           "hide": 2,
           "includeAll": false,
           "name": "uniq_session_var",
           "options": [],
-          "query": "SELECT  \nIF('${table}' = '${ds2}', 'uniq (cliIP, UA)', 'uniq_session')",
+          "query": "SELECT  \nIF(${table} = ${ds2}, 'uniq (cliIP, UA)', 'uniq_session')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2870,12 +2870,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'count(*)', 'cnt_all')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'count(*)', 'cnt_all')",
           "description": "",
           "hide": 2,
           "name": "cnt_all_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'count(*)', 'cnt_all')",
+          "query": "SELECT IF(${table} = ${ds2}, 'count(*)', 'cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2886,12 +2886,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf (cacheStatus = 0)', 'cnt_originHits')\n",
+          "definition": "SELECT IF(${table} = ${ds2}, 'countIf (cacheStatus = 0)', 'cnt_originHits')\n",
           "description": "",
           "hide": 2,
           "name": "cnt_originHits_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'countIf (cacheStatus = 0)', 'cnt_originHits')\n",
+          "query": "SELECT IF(${table} = ${ds2}, 'countIf (cacheStatus = 0)', 'cnt_originHits')\n",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2903,12 +2903,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf (cacheStatus = 1)', 'cnt_edgeHits')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'countIf (cacheStatus = 1)', 'cnt_edgeHits')",
           "description": "",
           "hide": 2,
           "name": "cnt_edgeHits_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'countIf (cacheStatus = 1)', 'cnt_edgeHits')",
+          "query": "SELECT IF(${table} = ${ds2}, 'countIf (cacheStatus = 1)', 'cnt_edgeHits')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2919,12 +2919,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf (statusCode > 400)', 'cnt_errorHits')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'countIf (statusCode > 400)', 'cnt_errorHits')",
           "description": "",
           "hide": 2,
           "name": "cnt_errorHits_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'countIf (statusCode > 400)', 'cnt_errorHits')",
+          "query": "SELECT IF(${table} = ${ds2}, 'countIf (statusCode > 400)', 'cnt_errorHits')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2936,12 +2936,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', '${cnt_errorHits_var} / count() * 100', 'pct_errorRate') ",
+          "definition": "SELECT IF(${table} = ${ds2}, '${cnt_errorHits_var} / count() * 100', 'pct_errorRate') ",
           "description": "",
           "hide": 2,
           "name": "pct_errorRate_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', '${cnt_errorHits_var} / count() * 100', 'pct_errorRate') ",
+          "query": "SELECT IF(${table} = ${ds2}, '${cnt_errorHits_var} / count() * 100', 'pct_errorRate') ",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2953,12 +2953,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', '${sum_BytesEdge_var} / ${sum_totalBytes_var} * 100', 'pct_offLoadBytes')\n",
+          "definition": "SELECT IF(${table} = ${ds2}, '${sum_BytesEdge_var} / ${sum_totalBytes_var} * 100', 'pct_offLoadBytes')\n",
           "description": "",
           "hide": 2,
           "name": "pct_offLoadBytes_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', '${sum_BytesEdge_var} / ${sum_totalBytes_var} * 100', 'pct_offLoadBytes')\n",
+          "query": "SELECT IF(${table} = ${ds2}, '${sum_BytesEdge_var} / ${sum_totalBytes_var} * 100', 'pct_offLoadBytes')\n",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2970,12 +2970,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', '${cnt_edgeHits_var} / count() * 100 ', 'pct_offLoadHit')",
+          "definition": "SELECT IF(${table} = ${ds2}, '${cnt_edgeHits_var} / count() * 100 ', 'pct_offLoadHit')",
           "description": "",
           "hide": 2,
           "name": "pct_offLoadHit_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', '${cnt_edgeHits_var} / count() * 100 ', 'pct_offLoadHit')",
+          "query": "SELECT IF(${table} = ${ds2}, '${cnt_edgeHits_var} / count() * 100 ', 'pct_offLoadHit')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2987,11 +2987,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'sumIf (totalBytes, cacheStatus = 0)', 'sum_BytesOrigin')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'sumIf (totalBytes, cacheStatus = 0)', 'sum_BytesOrigin')",
           "hide": 2,
           "name": "sum_BytesOrigin_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'sumIf (totalBytes, cacheStatus = 0)', 'sum_BytesOrigin')",
+          "query": "SELECT IF(${table} = ${ds2}, 'sumIf (totalBytes, cacheStatus = 0)', 'sum_BytesOrigin')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3003,11 +3003,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'sumIf (totalBytes, cacheStatus = 1)', 'sum_BytesEdge')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'sumIf (totalBytes, cacheStatus = 1)', 'sum_BytesEdge')",
           "hide": 2,
           "name": "sum_BytesEdge_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'sumIf (totalBytes, cacheStatus = 1)', 'sum_BytesEdge')",
+          "query": "SELECT IF(${table} = ${ds2}, 'sumIf (totalBytes, cacheStatus = 1)', 'sum_BytesEdge')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3019,11 +3019,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'sum(totalBytes)', 'sum_totalBytes')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'sum(totalBytes)', 'sum_totalBytes')",
           "hide": 2,
           "name": "sum_totalBytes_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'sum(totalBytes)', 'sum_totalBytes')",
+          "query": "SELECT IF(${table} = ${ds2}, 'sum(totalBytes)', 'sum_totalBytes')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3035,11 +3035,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (turnAroundTimeMSec)', 'quantiles_turnAroundTimeMSec')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (turnAroundTimeMSec)', 'quantiles_turnAroundTimeMSec')",
           "hide": 2,
           "name": "quantiles_turnAroundTimeMSec_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (turnAroundTimeMSec)', 'quantiles_turnAroundTimeMSec')",
+          "query": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (turnAroundTimeMSec)', 'quantiles_turnAroundTimeMSec')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3051,11 +3051,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (transferTimeMSec)', 'quantiles_transferTimeMSec')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (transferTimeMSec)', 'quantiles_transferTimeMSec')",
           "hide": 2,
           "name": "quantiles_transferTimeMSec_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (transferTimeMSec)', 'quantiles_transferTimeMSec')",
+          "query": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (transferTimeMSec)', 'quantiles_transferTimeMSec')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3067,11 +3067,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (downloadTime)', 'quantiles_downloadTimeMSec')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (downloadTime)', 'quantiles_downloadTimeMSec')",
           "hide": 2,
           "name": "quantiles_downloadTimeMSec_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (downloadTime)', 'quantiles_downloadTimeMSec')",
+          "query": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (downloadTime)', 'quantiles_downloadTimeMSec')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3083,11 +3083,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (timeToFirstByte)', 'quantiles_timeToFirstByteMSec')",
+          "definition": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (timeToFirstByte)', 'quantiles_timeToFirstByteMSec')",
           "hide": 2,
           "name": "quantiles_timeToFirstByteMSec_var",
           "options": [],
-          "query": "SELECT IF('${table}' = '${ds2}', 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (timeToFirstByte)', 'quantiles_timeToFirstByteMSec')",
+          "query": "SELECT IF(${table} = ${ds2}, 'quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (timeToFirstByte)', 'quantiles_timeToFirstByteMSec')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3116,11 +3116,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT \n  IF('${table}' = '${ds2}', \n     'countIf(statusCode >= 100 AND statusCode < 200)', \n     'countMergeIf(`count()`, statusCode >= 100 AND statusCode < 200)')",
+          "definition": "SELECT \n  IF(${table} = ${ds2}, \n     'countIf(statusCode >= 100 AND statusCode < 200)', \n     'countMergeIf(`count()`, statusCode >= 100 AND statusCode < 200)')",
           "hide": 2,
           "name": "cnt_1xx_status_code",
           "options": [],
-          "query": "SELECT \n  IF('${table}' = '${ds2}', \n     'countIf(statusCode >= 100 AND statusCode < 200)', \n     'countMergeIf(`count()`, statusCode >= 100 AND statusCode < 200)')",
+          "query": "SELECT \n  IF(${table} = ${ds2}, \n     'countIf(statusCode >= 100 AND statusCode < 200)', \n     'countMergeIf(`count()`, statusCode >= 100 AND statusCode < 200)')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3132,11 +3132,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT \n  IF('${table}' = '${ds2}', \n     'countIf(statusCode >= 200 AND statusCode < 300)', \n     'countMergeIf(`count()`, statusCode >= 200 AND statusCode < 300)')",
+          "definition": "SELECT \n  IF(${table} = ${ds2}, \n     'countIf(statusCode >= 200 AND statusCode < 300)', \n     'countMergeIf(`count()`, statusCode >= 200 AND statusCode < 300)')",
           "hide": 2,
           "name": "cnt_2xx_status_code",
           "options": [],
-          "query": "SELECT \n  IF('${table}' = '${ds2}', \n     'countIf(statusCode >= 200 AND statusCode < 300)', \n     'countMergeIf(`count()`, statusCode >= 200 AND statusCode < 300)')",
+          "query": "SELECT \n  IF(${table} = ${ds2}, \n     'countIf(statusCode >= 200 AND statusCode < 300)', \n     'countMergeIf(`count()`, statusCode >= 200 AND statusCode < 300)')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3148,11 +3148,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 300 AND statusCode < 400)',\n     'countMergeIf(`count()`, statusCode >= 300 AND statusCode < 400)')",
+          "definition": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 300 AND statusCode < 400)',\n     'countMergeIf(`count()`, statusCode >= 300 AND statusCode < 400)')",
           "hide": 2,
           "name": "cnt_3xx_status_code",
           "options": [],
-          "query": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 300 AND statusCode < 400)',\n     'countMergeIf(`count()`, statusCode >= 300 AND statusCode < 400)')",
+          "query": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 300 AND statusCode < 400)',\n     'countMergeIf(`count()`, statusCode >= 300 AND statusCode < 400)')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3164,11 +3164,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 400 AND statusCode < 500)',\n     'countMergeIf(`count()`, statusCode >= 400 AND statusCode < 500)')",
+          "definition": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 400 AND statusCode < 500)',\n     'countMergeIf(`count()`, statusCode >= 400 AND statusCode < 500)')",
           "hide": 2,
           "name": "cnt_4xx_status_code",
           "options": [],
-          "query": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 400 AND statusCode < 500)',\n     'countMergeIf(`count()`, statusCode >= 400 AND statusCode < 500)')",
+          "query": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 400 AND statusCode < 500)',\n     'countMergeIf(`count()`, statusCode >= 400 AND statusCode < 500)')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -3180,12 +3180,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 500 AND statusCode < 600)',\n     'countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600)')",
+          "definition": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 500 AND statusCode < 600)',\n     'countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600)')",
           "description": "",
           "hide": 2,
           "name": "cnt_5xx_status_code",
           "options": [],
-          "query": "SELECT\n  IF('${table}' = '${ds2}',\n     'countIf(statusCode >= 500 AND statusCode < 600)',\n     'countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600)')",
+          "query": "SELECT\n  IF(${table} = ${ds2},\n     'countIf(statusCode >= 500 AND statusCode < 600)',\n     'countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600)')",
           "refresh": 2,
           "regex": "",
           "type": "query"

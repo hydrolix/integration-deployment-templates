@@ -1569,12 +1569,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
+          "definition": "SELECT\nIF(${table} = ${ds2}, 'count()', 'cnt_all')",
           "hide": 2,
           "includeAll": false,
           "name": "cnt_all_var",
           "options": [],
-          "query": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
+          "query": "SELECT\nIF(${table} = ${ds2}, 'count()', 'cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -1585,12 +1585,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT \nIF('${table}' = '${ds2}', 'countIf(statusCode>=400)/count(statusCode)', '(cnt_4xx_status_code+cnt_5xx_status_code)/cnt_all')",
+          "definition": "SELECT \nIF(${table} = ${ds2}, 'countIf(statusCode>=400)/count(statusCode)', '(cnt_4xx_status_code+cnt_5xx_status_code)/cnt_all')",
           "hide": 2,
           "includeAll": false,
           "name": "errorRate_var",
           "options": [],
-          "query": "SELECT \nIF('${table}' = '${ds2}', 'countIf(statusCode>=400)/count(statusCode)', '(cnt_4xx_status_code+cnt_5xx_status_code)/cnt_all')",
+          "query": "SELECT \nIF(${table} = ${ds2}, 'countIf(statusCode>=400)/count(statusCode)', '(cnt_4xx_status_code+cnt_5xx_status_code)/cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -1601,12 +1601,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT \nIF('${table}' = '${ds2}', 'countIf(isNotNull(errorCode))/count(*)', 'cnt_error/cnt_all')",
+          "definition": "SELECT \nIF(${table} = ${ds2}, 'countIf(isNotNull(errorCode))/count(*)', 'cnt_error/cnt_all')",
           "hide": 2,
           "includeAll": false,
           "name": "percentError_var",
           "options": [],
-          "query": "SELECT \nIF('${table}' = '${ds2}', 'countIf(isNotNull(errorCode))/count(*)', 'cnt_error/cnt_all')",
+          "query": "SELECT \nIF(${table} = ${ds2}, 'countIf(isNotNull(errorCode))/count(*)', 'cnt_error/cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -1617,12 +1617,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT  \nIF('${table}' = '${ds2}', 'uniq(reqPath)', 'uniq_req_path')",
+          "definition": "SELECT  \nIF(${table} = ${ds2}, 'uniq(reqPath)', 'uniq_req_path')",
           "hide": 2,
           "includeAll": false,
           "name": "uniq_reqPath_var",
           "options": [],
-          "query": "SELECT  \nIF('${table}' = '${ds2}', 'uniq(reqPath)', 'uniq_req_path')",
+          "query": "SELECT  \nIF(${table} = ${ds2}, 'uniq(reqPath)', 'uniq_req_path')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -1633,12 +1633,12 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT  \nIF('${table}' = '${ds2}', 'uniq(cliIP)', 'uniq_client_ip')",
+          "definition": "SELECT  \nIF(${table} = ${ds2}, 'uniq(cliIP)', 'uniq_client_ip')",
           "hide": 2,
           "includeAll": false,
           "name": "uniq_cliIP_var",
           "options": [],
-          "query": "SELECT  \nIF('${table}' = '${ds2}', 'uniq(cliIP)', 'uniq_client_ip')",
+          "query": "SELECT  \nIF(${table} = ${ds2}, 'uniq(cliIP)', 'uniq_client_ip')",
           "refresh": 2,
           "regex": "",
           "type": "query"
