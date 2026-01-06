@@ -18,7 +18,7 @@
     }
   },
   "metadata": {
-    "channel_type": "AWS",
+    "channel_type": "Akamai",
     "description": "Default Trafficpeak Bundle Description",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
@@ -28,7 +28,7 @@
     "region": "us-east-1",
     "stream_prefix": "aws-waf-logs-hdx"
   },
-  "name": "multi_stream_default_trafficpeak",
+  "name": "multi_stream_trafficpeak_default_shared",
   "other_dashboards": [
     {
       "path": "dashboards/cache.json",
@@ -56,7 +56,7 @@
     }
   ],
   "solution": true,
-  "source": "default_trafficpeak",
+  "source": "waf",
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
