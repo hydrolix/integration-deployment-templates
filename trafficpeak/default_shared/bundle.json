@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/default-trafficpeak",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/default-shared",
   "beta": true,
   "dashboard": {
     "path": "dashboards/home.json",
