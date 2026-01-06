@@ -29,7 +29,7 @@
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
-  "method": "multi_stream",
+  "method": "http_streaming"
   "method_overrides": {
     "region": "us-east-1",
     "stream_prefix": "aws-waf-logs-hdx"
