@@ -24,7 +24,7 @@
     }
   },
   "metadata": {
-    "channel_type": "Akamai",
+    "channel_type": "AWS",
     "description": "Default Trafficpeak Bundle Description",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
