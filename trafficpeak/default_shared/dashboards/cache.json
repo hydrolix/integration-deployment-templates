@@ -1826,27 +1826,27 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_DS2}",
-            "value": "${VAR_DS2}"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
           "name": "ds2",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_DS2}",
-              "value": "${VAR_DS2}"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ],
-          "query": "${VAR_DS2}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
           "description": "",
           "hide": 2,
@@ -1854,19 +1854,19 @@
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_HOUR}",
-              "value": "${VAR_SUMMARY_HOUR}"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "${VAR_SUMMARY_HOUR}",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_SUMMARY_DAY}",
-            "value": "${VAR_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
           },
           "description": "",
           "hide": 2,
@@ -1874,11 +1874,11 @@
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_DAY}",
-              "value": "${VAR_SUMMARY_DAY}"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "${VAR_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
