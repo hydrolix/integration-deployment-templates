@@ -62,7 +62,7 @@
     }
   ],
   "solution": true,
-  "source": "waf",
+  "source": "WAF",
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
