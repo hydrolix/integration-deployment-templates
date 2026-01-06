@@ -2033,11 +2033,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT\nIF(${table} = ${ds2}, 'count()', 'cnt_all')",
+          "definition": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
           "hide": 2,
           "name": "cnt_all_var",
           "options": [],
-          "query": "SELECT\nIF(${table} = ${ds2}, 'count()', 'cnt_all')",
+          "query": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2048,11 +2048,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
           "hide": 2,
           "name": "offload_var",
           "options": [],
-          "query": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2063,11 +2063,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
           "hide": 2,
           "name": "cnt_edgeHits_var",
           "options": [],
-          "query": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
           "refresh": 2,
           "regex": "",
           "type": "query"
@@ -2078,11 +2078,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=0)', 'cnt_originHits')",
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=0)', 'cnt_originHits')",
           "hide": 2,
           "name": "cnt_originHits_var",
           "options": [],
-          "query": "SELECT IF(${table} = ${ds2}, 'countIf(cacheStatus=0)', 'cnt_originHits')",
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=0)', 'cnt_originHits')",
           "refresh": 2,
           "regex": "",
           "type": "query"

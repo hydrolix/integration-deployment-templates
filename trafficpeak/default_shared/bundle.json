@@ -29,12 +29,8 @@
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
-  "method": "http_streaming"
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
-  "name": "multi_stream_trafficpeak_default_shared",
+  "method": "http_streaming",
+  "name": "trafficpeak_default_shared",
   "other_dashboards": [
     {
       "path": "dashboards/cache.json",
@@ -62,7 +58,7 @@
     }
   ],
   "solution": true,
-  "source": "trafficpeak_default_shared",
+  "source": "trafficpeak",
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
