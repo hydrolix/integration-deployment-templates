@@ -13,7 +13,13 @@
         "ua_cat_dict"
       ],
       "shared_functions": [
-        "breadcrumbs"
+        "breadcrumbs",
+        "cmcd_object_type",
+        "cmcd_query_param",
+        "cmcd_streaming_format",
+        "cmcd_stream_type",
+        "edge_worker",
+        "edge_worker_execution"
       ]
     }
   },
