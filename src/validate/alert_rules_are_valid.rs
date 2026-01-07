@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::models::bundle::Bundle;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct AlertRulesFile {
@@ -42,14 +42,12 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
 
     println!("Validating alert rules at {}...", alert_rules_path);
 
-    let content = fs::read_to_string(&alert_rules_path)
-        .await
-        .map_err(|e| {
-            format!(
-                "Failed to read alert rules file at {}: {}",
-                alert_rules_path, e
-            )
-        })?;
+    let content = fs::read_to_string(&alert_rules_path).await.map_err(|e| {
+        format!(
+            "Failed to read alert rules file at {}: {}",
+            alert_rules_path, e
+        )
+    })?;
 
     let alert_rules: AlertRulesFile = serde_json::from_str(&content).map_err(|e| {
         format!(
@@ -78,7 +76,10 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
 
         if group.interval.is_empty() {
-            return Err(format!("Group {} ({}): interval is required", i, group.name));
+            return Err(format!(
+                "Group {} ({}): interval is required",
+                i, group.name
+            ));
         }
 
         if group.rules.is_empty() {

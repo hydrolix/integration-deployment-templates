@@ -1,0 +1,51 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-medialive",
+  "beta": false,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Amazon Firehose MediaLive Itegration",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "firehose",
+  "name": "firehose-medialive",
+  "source": "medialive",
+  "tables": [
+    {
+      "dashboard_var": "__ENCODING_TABLE__",
+      "name": "medialive_encoding",
+      "transforms": [
+        {
+          "path": "transformations/encoding/current.json",
+          "sample": "transformations/encoding/sample_data_template.json"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__METRICS_TABLE__",
+      "name": "medialive_metrics",
+      "transforms": [
+        {
+          "path": "transformations/metrics/current.json",
+          "sample": "transformations/metrics/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "video",
+    "method": {
+      "full_title": "Amazon Data Firehose",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
+    },
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaLive.html",
+    "source": {
+      "full_title": "AWS Elemental MediaLive",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/medialive.png"
+    }
+  }
+}

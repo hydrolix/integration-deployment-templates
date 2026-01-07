@@ -1,0 +1,21 @@
+{
+  "records": [
+    {
+      "data": "2025-10-08T16:19:00Z\t73.100.223.67\t\t0.065\t200\t904421\tGET\t/hls/The Starlit Signal S02E01 — Nightfall/1200k/segment000000.m4s\t\tcloudfront-media.hydrolix.io\t0.521\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://cloudfront-media.hydrolix.io\t\tMiss\tvideo/mp4\tUS\t0.0\t0.0"
+    },
+    {
+      "data": "2025-10-08T16:19:00Z\t73.100.223.67\t\t0.024\t200\t1274\tGET\t/hls/The Starlit Signal S02E01 — Nightfall/800k/index.m3u8\t\thydrolix.io\t0.063\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://hydrolix.io\t\tHit\tapplication/vnd.apple.mpegurl\tUS\t0.0\t0.0"
+    },
+    {
+      "data": "2025-10-08T16:19:00Z\t73.100.223.67\t\t0.069\t200\t1225\tGET\t/hls/The Starlit Signal S02E01 — Nightfall/multivariant.m3u8\t\thydrolix.io\t0.061\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://hydrolix.io\t\tMiss\tapplication/vnd.apple.mpegurl\tUS\t0.0\t0.0"
+    },
+    {
+      "data": "2025-10-08T16:19:06Z\t73.100.223.67\t\t0.011\t200\t545222\tGET\t/hls/The Starlit Signal S02E01 — Nightfall/800k/segment000001.m4s\t\tcloudfront-media.hydrolix.io\t0.775\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://cloudfront-media.hydrolix.io\t\tHit\tvideo/mp4\tUS\t0.0\t0.0"
+    },
+    {
+      "data": "2025-10-08T16:19:12Z\t73.100.223.67\t\t0.012\t200\t644581\tGET\t/hls/The Starlit Signal S02E01 — Nightfall/800k/segment000002.m4s\t\tcloudfront-media.hydrolix.io\t0.918\tMozilla/5.0 (Linux; Android 12; BRAVIA 4K) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36\thttps://cloudfront-media.hydrolix.io\t\tHit\tvideo/mp4\tUS\t0.0\t0.0"
+    }
+  ],
+  "requestId": "f578af01-027d-4174-8c1b-e85b45809992",
+  "timestamp": 1759940715104
+}

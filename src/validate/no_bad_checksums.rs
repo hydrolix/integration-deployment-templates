@@ -1,7 +1,7 @@
 use sha2::Digest;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::models::bundle::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let full_path = format!("{base}/{}", bundle.dashboard.path);

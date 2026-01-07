@@ -1,0 +1,44 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-waf-regional",
+  "beta": false,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Amazon WAF Regional Data Firehose",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "firehose",
+  "method_overrides": {
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
+  "name": "firehose-waf",
+  "source": "waf",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "waf_firehose_regional",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Amazon Data Firehose",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
+    },
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Waf.html",
+    "source": {
+      "full_title": "AWS WAF (Regional)",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/waf.png"
+    }
+  }
+}

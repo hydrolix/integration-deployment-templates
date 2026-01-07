@@ -1,0 +1,41 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/firehose-datazoom-mediatailor",
+  "beta": false,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "AWS MediaTailor Firehose",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "firehose",
+  "name": "firehose-datazoom-mediatailor",
+  "source": "mediatailor",
+  "tables": [
+    {
+      "dashboard_var": "__MEDIATAILOR_COMBINED_TABLE__",
+      "name": "mediatailor_datazoom",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "video",
+    "method": {
+      "full_title": "Amazon Data Firehose",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
+    },
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaTailor.html",
+    "source": {
+      "full_title": "AWS Elemental MediaTailor & DataZoom",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediatailor.png"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cloudfront-to-kinesis",
+  "beta": false,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "data-sources": [],
+    "grafana": {
+      "plugins": [
+        {
+          "name": "grafana-clickhouse-datasource",
+          "version": "^4.10.1"
+        }
+      ],
+      "version": "^12.1.0"
+    },
+    "hydrolix": {
+      "cluster_version": "^5.4.0",
+      "required_dictionaries": [],
+      "required_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Amazon Kinesis Cloudfront",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "kinesis",
+  "name": "kinesis-cloudfront",
+  "source": "cloudfront",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "cloudfront_kinesis",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "cdn",
+    "method": {
+      "full_title": "Amazon Kinesis",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/kinesis.png"
+    },
+    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/Cloudfront.html",
+    "source": {
+      "full_title": "Amazon CloudFront",
+      "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/cloudfront.png"
+    }
+  }
+}

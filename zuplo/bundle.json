@@ -1,43 +1,41 @@
 {
-    "name": "http_streaming-zuplo",
-    "source": "zuplo",
-    "method": "http_streaming",
-    "beta": true,
-    "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/zuplo",
-    "dashboard": {
-      "path": "dashboards/current.json",
-      "project_var": "__PROJECT_NAME__",
-      "sha256": "70087efc3e8dcc78d7cae0e618a95ddcb5854df0e1738d98ee43c44ba1cd9f11"
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/zuplo",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/current.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Zuplo",
+    "maintainer": "jgoodson@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "http_streaming-zuplo",
+  "source": "zuplo",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "zuplo",
+      "transforms": [
+        {
+          "path": "transformations/current.json",
+          "sample": "transformations/sample_data_template.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http-Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "tables": [
-      {
-        "dashboard_var": "__TABLE_NAME__",
-        "name": "zuplo",
-        "transforms": [
-          {
-            "path": "transformations/current.json",
-	        "sha256": "f910d6a62c8332da1843b5f4f474573e9c267bbd9ff5180ae3933cfc5414f6b5",
-		    "sample": "transformations/sample_data_template.json"
-          }
-        ]
-      }
-    ],
-    "ui": {
-      "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
-      "method": {
-        "full_title": "Http-Streaming",
-        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png" 
-      },
-      "source": {
-        "full_title": "Zuplo",
-        "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
-      },
-      "data_category": "security"
-    },
-    "metadata": {
-      "version": "1.0.0",
-      "maintainer": "jgoodson@hydrolix.io",
-      "description": "Zuplo",
-      "channel_type": "AWS"
+    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "source": {
+      "full_title": "Zuplo",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
     }
   }
+}

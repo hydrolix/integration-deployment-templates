@@ -1,0 +1,268 @@
+{
+  "created": "2025-02-23T22:24:42.186874Z",
+  "description": "",
+  "modified": "2025-02-23T22:24:42.186884Z",
+  "name": "tsf_aws_mediapackage_metrics",
+  "settings": {
+    "compression": "none",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      },
+      "subtype": "firehose"
+    },
+    "is_default": true,
+    "null_values": [],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "ms",
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.timestamp"
+            ]
+          },
+          "suppress": false,
+          "type": "epoch",
+          "virtual": true
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "catchall"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/dimensions"
+            ]
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "labels"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": false,
+              "type": "double"
+            }
+          ],
+          "format": null,
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/value"
+            ]
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "value"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "account_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "metric_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "metric_stream_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "namespace"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "region"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "unit"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": {
+      "records": [
+        {
+          "data": "ewogICJtZXRyaWNfc3RyZWFtX25hbWUiOiAiTWVkaWFQYWNrYWdlLUZpcmVob3NlLVN0cmVhbSIsCiAgImFjY291bnRfaWQiOiAiMTExMTExMTExMTExIiwKICAicmVnaW9uIjogInVzLWVhc3QtMSIsCiAgIm5hbWVzcGFjZSI6ICJBV1MvTWVkaWFMaXZlIiwKICAibWV0cmljX25hbWUiOiAiSW5wdXRWaWRlb0ZyYW1lUmF0ZSIsCiAgImRpbWVuc2lvbnMiOiB7CiAgICAiQWN0aXZlSW5wdXRGYWlsb3ZlckxhYmVsIjogInByaW1hcnkiLAogICAgIkNoYW5uZWxJZCI6ICI2OTU1MDQ3IiwKICAgICJQaXBlbGluZSI6ICIwIgogIH0sCiAgInRpbWVzdGFtcCI6IDE3NDAxMDU4NDAwMDAsCiAgInZhbHVlIjogewogICAgIm1heCI6IDIzLjk5MiwKICAgICJtaW4iOiAyMy45OSwKICAgICJzdW0iOiAxNDM5LjQzOTk5OTk5OTk5OTgsCiAgICAiY291bnQiOiA2MC4wCiAgfSwKICAidW5pdCI6ICJDb3VudC9TZWNvbmQiCn0="
+        }
+      ],
+      "requestId": "1c568c93-33ba-4c8a-b18b-a8e8b1a40f3b",
+      "timestamp": 1740106044100
+    },
+    "sql_transform": null,
+    "wurfl": null
+  },
+  "type": "json"
+}

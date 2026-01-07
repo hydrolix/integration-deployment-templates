@@ -1,0 +1,233 @@
+{
+  "created": "2025-03-23T04:39:01.625018Z",
+  "description": "",
+  "modified": "2025-03-23T04:39:01.625029Z",
+  "name": "tsf_ele_medialive_encoder_logs",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      },
+      "subtype": "firehose"
+    },
+    "is_default": true,
+    "null_values": [],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "2006-01-02T15:04:05.999999",
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/data.timestamp"
+            ]
+          },
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "int8"
+        },
+        "name": "encoder_pipeline"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "logger_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "message"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "level"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "channel_arn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "region"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "account_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "channel_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/severity"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "severity"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": {
+      "records": [
+        {
+          "data": "CnsKICAiY2hhbm5lbF9hcm4iOiAiYXJuOmF3czptZWRpYWxpdmU6dXMtZWFzdC0xOjFhMWExYTFhMWExYTpjaGFubmVsOjFhMWExYTEiLAogICJlbmNvZGVyX3BpcGVsaW5lIjogMCwKICAibG9nZ2VyX25hbWUiOiAiIiwKICAibWVzc2FnZSI6ICJjbWFmX2luZ2VzdF9vdXRwdXQuZW5hYmxlX2VidXR0ZCBzZXR0aW5nIGlnbm9yZWQ6IGluc3RhbmNlLmNtYWZfaW5nZXN0X291dHB1dCBhZGRpdGlvbmFsUHJvcGVydHkgXCJlbmFibGVfZWJ1dHRkXCIgZXhpc3RzIGluIGluc3RhbmNlIHdoZW4gbm90IGFsbG93ZWQiLAogICJzZXZlcml0eSI6ICJXIiwKICAidGltZXN0YW1wIjogIjIwMjUtMDItMTBUMDE6MDQ6MDIuNjcxODgyIgp9Cg=="
+        }
+      ],
+      "requestId": "608d6059-83fd-45b7-85fc-15ad612f1ed3",
+      "timestamp": 1739149516062
+    },
+    "sql_transform": "SELECT \n    splitByChar(':', assumeNotNull(channel_arn))[4] as region,\n    splitByChar(':', assumeNotNull(channel_arn))[5] as account_id,\n    splitByChar(':', assumeNotNull(channel_arn))[7] as channel_id,\n    multiIf(\n        severity='D' , 'debug',\n        severity='I' , 'info',\n        severity='W' , 'warning',\n        severity='E' , 'error',\n        'unknown') AS level,\n    *\nFROM { STREAM }",
+    "wurfl": null
+  },
+  "type": "json"
+}

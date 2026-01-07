@@ -1,3 +1,6 @@
 pub mod container;
-pub mod grafana_plugins_check;
-pub mod interface;
+pub mod dashboard;
+pub mod datasource;
+pub mod headless_browser;
+mod http;
+pub mod plugins;

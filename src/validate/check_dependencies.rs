@@ -5,7 +5,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 use tokio::fs;
 
-use crate::bundle_struct::Bundle;
+use crate::models::bundle::Bundle;
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let mut declared_functions: HashSet<String> = HashSet::new();
@@ -91,6 +91,10 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let mut used_functions: HashSet<String> = HashSet::new();
     let mut used_dictionaries: HashSet<String> = HashSet::new();
 
+    // Compile regex once outside the loop
+    let dict_get_pattern =
+        Regex::new(r#"dict(?:Get|GetString|GetOrDefault)\s*\(\s*['"]([^'"]+)['"]"#).unwrap();
+
     for table in &bundle.tables {
         for transform in &table.transforms {
             let full_path = format!("{}/{}", base, transform.path);
@@ -124,10 +128,6 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
 
             // Check for dictGet/dictGetString calls
-            let dict_get_pattern = Regex::new(
-                r#"dict(?:Get|GetString|GetOrDefault)\s*\(\s*['"]([^'"]+)['"]"#,
-            )
-            .unwrap();
 
             for cap in dict_get_pattern.captures_iter(sql_str) {
                 if let Some(dict_name_match) = cap.get(1) {
