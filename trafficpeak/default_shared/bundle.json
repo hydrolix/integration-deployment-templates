@@ -30,7 +30,7 @@
     "version": "1.0.0"
   },
   "method": "http_streaming",
-  "name": "http_streaming_trafficpeak_default_shared",
+  "name": "trafficpeak_default_shared",
   "other_dashboards": [
     {
       "path": "dashboards/cache.json",
@@ -88,7 +88,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "default_trafficpeak",
+      "name": "logs",
       "transforms": [
         {
           "method": "http_streaming",
