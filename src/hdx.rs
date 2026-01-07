@@ -8,9 +8,12 @@ use uuid::Uuid;
 // These are static but not secret
 const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
 const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+const ORG_UUID_DEMO: &str = "2b8cbbf8-dcb8-4c28-bd94-cb46147296d1"; // demo.aws.hydrolix.live
 const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
 const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
-const PROJ_NAME: &str = "cdn_test_project";
+const PROJ_UUID_DEMO: &str = "6debffd1-3c88-4d5e-afc8-9e1a770f6a7a"; // demo.aws.hydrolix.live
+//const PROJ_NAME: &str = "cdn_test_project";
+const PROJ_NAME: &str = "bundle_verification";
 const HTTP_TIMEOUT: u64 = 120;
 
 lazy_static! {
@@ -285,7 +288,7 @@ hdx_primary_key='minute'"
 
 pub async fn verify_table_exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -361,7 +364,7 @@ pub async fn create_summary_table(
     });
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -441,7 +444,7 @@ pub async fn create_table(bearer_token: &str, table_name: &str) -> Result<String
     };
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -530,7 +533,7 @@ pub async fn add_transform_to_table(
     };
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables/{table_uuid}/transforms/",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables/{table_uuid}/transforms/",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -785,7 +788,7 @@ pub fn create_project_name() -> String {
 #[allow(dead_code)]
 pub async fn get_table_list(bearer_token: &str, debug_mode: bool) -> Result<String, String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -827,7 +830,7 @@ pub async fn get_table_list(bearer_token: &str, debug_mode: bool) -> Result<Stri
 #[allow(dead_code)]
 pub async fn delete_a_table(bearer_token: &str, uuid: &str) -> Result<(), String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables/{uuid}",
+        "https://{}/config/v1/orgs/{ORG_UUID_DEMO}/projects/{PROJ_UUID_DEMO}/tables/{uuid}",
         *BUNDLE_TESTING_CLUSTER
     );
 
@@ -870,7 +873,7 @@ pub async fn check_and_create_function(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
     let expected_name = format!("{}_{}", PROJ_NAME, function_name);
 
@@ -946,7 +949,7 @@ pub async fn check_and_create_function(
 
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     println!(
@@ -1031,7 +1034,7 @@ pub async fn check_and_create_dictionary(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
     let expected_name = format!("{}_{}", PROJ_NAME, dictionary_name);
 
@@ -1108,7 +1111,7 @@ async fn upload_dictionary_file(
 ) -> Result<(), String> {
     let files_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/files/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     let base_file_name = file_name
@@ -1204,7 +1207,7 @@ async fn create_dictionary_definition(
 ) -> Result<(), String> {
     let dict_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     let expected_name = format!("{}_{}", PROJ_NAME, dictionary_name);

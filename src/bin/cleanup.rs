@@ -15,9 +15,12 @@ use std::collections::HashSet;
 
 const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
 const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+const ORG_UUID_DEMO: &str = "2b8cbbf8-dcb8-4c28-bd94-cb46147296d1"; // demo.aws.hydrolix.live
 const PROJ_UUID: &str = "67e79a3c-f7d6-4b33-a207-fef4579a3152";  // markeplace-dev cdn_test_project
 const PROJ_UUID_SAND: &str = "469dbd34-6f06-4dfe-8fd1-9adf82123ecf";  // partnersandbox
-const PROJ_NAME: &str = "cdn_test_project";
+const PROJ_UUID_DEMO: &str = "6debffd1-3c88-4d5e-afc8-9e1a770f6a7a"; // demo.aws.hydrolix.live
+//const PROJ_NAME: &str = "cdn_test_project";
+const PROJ_NAME: &str = "bundle_verification";
 
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =
@@ -179,7 +182,7 @@ async fn delete_functions_impl(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     let client = reqwest::Client::new();
@@ -281,7 +284,7 @@ async fn delete_dictionaries_impl(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     let client = reqwest::Client::new();
@@ -406,7 +409,7 @@ async fn delete_dictionary_files_impl(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/files/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, PROJ_UUID_DEMO
     );
 
     let client = reqwest::Client::new();

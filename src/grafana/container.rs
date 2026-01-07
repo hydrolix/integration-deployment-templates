@@ -74,6 +74,8 @@ pub async fn start() -> Result<(), String> {
             "-d",
             "-p",
             "3000:3000",
+            "-e",
+            "GF_INSTALL_PLUGINS=marcusolsson-treemap-panel",
             "javiani/grafana:latest",
         ])
         .stdout(Stdio::null())

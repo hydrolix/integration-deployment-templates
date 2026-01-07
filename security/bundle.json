@@ -38,9 +38,6 @@
         "edgeworker_status",
         "extract_key_pair",
         "siem_extract"
-      ],
-      "shared_dictionaries": [
-        "fake_dict"
       ]
     }
   },

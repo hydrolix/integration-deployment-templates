@@ -12,6 +12,8 @@ use crate::BUNDLE_TESTING_CLUSTER;
 
 const ORG_UUID: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
 const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
+const ORG_UUID_DEMO: &str = "2b8cbbf8-dcb8-4c28-bd94-cb46147296d1"; // demo.aws.hydrolix.live
+
 const HTTP_TIMEOUT_SECS: u64 = 120;
 
 static SHARED_PROJECT_UUID: OnceCell<Mutex<Option<String>>> = OnceCell::new();
@@ -42,7 +44,7 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO
     );
 
     let client = reqwest::Client::new();
@@ -108,7 +110,7 @@ pub async fn ensure_shared_project_exists(bearer_token: &str) -> Result<String, 
 async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO
     );
 
     let payload = serde_json::json!({
@@ -166,7 +168,7 @@ pub async fn check_and_create_shared_function(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, function_name);
@@ -246,7 +248,7 @@ pub async fn check_and_create_shared_function(
 
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, project_uuid
     );
 
     println!(
@@ -301,7 +303,7 @@ pub async fn check_and_create_shared_dictionary(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, dictionary_name);
@@ -415,7 +417,7 @@ async fn upload_shared_dictionary_file(
 
     let files_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/files/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, project_uuid
     );
 
     let base_file_name = file_name
@@ -509,7 +511,7 @@ async fn create_shared_dictionary_definition(
 
     let dict_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID_DEMO, project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, dictionary_name);
