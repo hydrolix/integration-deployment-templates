@@ -54,7 +54,8 @@
       "transforms": [
         {
           "method": "http_streaming",
-          "path": "transformations/siem/transform.json"
+          "path": "transformations/siem/transform.json",
+          "sample": "transformations/siem/sample_data.json"
         }
       ]
     },
@@ -64,7 +65,8 @@
       "transforms": [
         {
           "method": "http_streaming",
-          "path": "transformations/akamai_default_datastream/transform.json"
+          "path": "transformations/akamai_default_datastream/transform.json",
+          "sample": "transformations/akamai_default_datastream/sample_data.json"
         }
       ]
     }

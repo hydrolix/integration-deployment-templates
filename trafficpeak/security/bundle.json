@@ -54,7 +54,8 @@
       "transforms": [
         {
           "method": "http_streaming",
-          "path": "transformations/akamai_default_datastream.json"
+          "path": "transformations/akamai_default_datastream.json",
+          "sample": "transformations/sample_data.json"
         }
       ]
     }
