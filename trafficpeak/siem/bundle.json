@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/solution-bundles/blob/main/trafficpeak/siem",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/siem",
   "beta": true,
   "dashboard": {
     "path": "dashboards/Akamai SIEM.json",

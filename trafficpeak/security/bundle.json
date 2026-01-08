@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/main/trafficpeak/security",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/security",
   "beta": true,
   "dashboard": {
     "path": "dashboards/DS2 Security Analysis.json",
