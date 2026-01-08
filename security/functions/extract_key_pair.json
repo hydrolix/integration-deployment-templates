@@ -1,5 +1,0 @@
-{
-    "description": "Extract Key Pair",
-    "name": "extract_key_pair",
-    "sql": "(string, pair_delimiters, key_value_pair_delimiter) -> CAST((arrayMap(y -> trimLeft((y[1])), arrayMap(v -> splitByChar(key_value_pair_delimiter, v), flatten(extractAllGroups(assumeNotNull(string), concat('([^', pair_delimiters, ']+)'))))), arrayMap(y -> trimLeft((y[2])), arrayMap(v -> splitByChar(key_value_pair_delimiter, v), flatten(extractAllGroups(assumeNotNull(string), concat('([^', pair_delimiters, ']+)')))))), 'Map(String, String)')"
-}
