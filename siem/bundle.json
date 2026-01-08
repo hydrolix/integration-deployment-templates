@@ -36,7 +36,8 @@
         "edge_worker_execution",
         "edge_worker",
         "extract_key_pair",
-        "siem_extract"
+        "siem_extract",
+        "siem_trim_array"
       ]
     }
   },
@@ -46,7 +47,7 @@
       "name": "siem",
       "transforms": [
         {
-          "path": "transformations/siem.json",
+          "path": "transformations/siem/transform.json",
           "method": "http_streaming"
         }
       ]
@@ -56,7 +57,7 @@
       "name": "logs",
       "transforms": [
         {
-          "path": "transformations/akamai_default_datastream.json",
+          "path": "transformations/akamai_default_datastream/transform.json",
           "method": "http_streaming"
         }
       ]
