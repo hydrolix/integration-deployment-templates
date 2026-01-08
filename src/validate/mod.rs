@@ -1,11 +1,16 @@
 pub mod alert_rules_are_valid;
 pub mod check_dependencies;
 pub mod dashboard_is_valid;
+pub mod datasource_uid_consistency;
 pub mod naming_is_valid;
 pub mod no_bad_checksums;
 pub mod no_duplicate_tokens;
 pub mod no_global_duplicates;
 pub mod sample_data_exists;
+pub mod summary_column_schema;
 pub mod summary_table;
+pub mod summary_table_references;
+pub mod template_variable_consistency;
+pub mod template_variable_datasource;
 pub mod transforms_are_valid;
 pub mod valid_base_url;
