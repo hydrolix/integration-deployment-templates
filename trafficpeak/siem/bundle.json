@@ -1,5 +1,5 @@
 {
-  "name": "multi_stream_tp_siem",
+  "name": "tp_siem",
   "source": "tp_siem",
   "method": "multi_stream",
   "method_overrides": {
