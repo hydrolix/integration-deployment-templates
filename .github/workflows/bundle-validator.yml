@@ -9,40 +9,53 @@ on:
 jobs:
   bundle-validator:
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: rust:latest
     environment: bundle-validator-env
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: stable
-    
-    - name: Cache Rust dependencies
-      if: ${{ !env.ACT }}  # Skip cache when running locally with act
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-          target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-
-    
-    - name: Build bundle validator
-      run: |
-        cargo build --release --bin bundle-validator
-    
-    - name: Run bundle-validator
-      run: ./target/release/bundle-validator
-      env:
-        BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
-        BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
-        BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+      - name: Install Docker inside container
+        run: |
+          apt-get update
+          apt-get install -y docker.io docker-compose-plugin
+
+      - name: Verify Docker works
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        if: ${{ !env.ACT }}  # Skip cache when running locally with act
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build bundle validator
+        run: |
+          cargo build --release --bin bundle-validator
+
+      - name: Run bundle-validator
+        run: ./target/release/bundle-validator
+        env:
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+
+      - name: Run regression tests
+        run: cargo run -- --local
         
         
