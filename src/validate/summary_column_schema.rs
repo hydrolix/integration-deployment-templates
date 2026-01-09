@@ -1,4 +1,4 @@
-// Validation: Check that summary tables output required columns (especially 'timestamp')
+// Validation: Check that summary tables' hdx_primary_key references an actual output column
 
 use regex::Regex;
 use std::collections::HashSet;
@@ -37,17 +37,24 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         // Parse SELECT clause to extract output column names
         let output_columns = parse_select_columns(&sql_content)?;
 
-        // Verify it outputs 'timestamp' column (standard for summary tables)
-        if !output_columns.contains("timestamp") {
-            return Err(format!(
-                "ERROR: {}.{} Summary table {} does not output 'timestamp' column.\n  \
-                 Summary tables should always have a timestamp column for time-range filtering.\n  \
-                 Add 'timestamp' column or alias the time column as 'timestamp' in the SELECT clause.\n",
-                file!(),
-                line!(),
-                summary_table.name
-            ));
+        // Parse hdx_primary_key from SETTINGS clause
+        if let Some(primary_key) = parse_primary_key(&sql_content) {
+            // Verify the primary key column exists in the output
+            if !output_columns.contains(&primary_key) {
+                return Err(format!(
+                    "ERROR: {}.{} Summary table {} has hdx_primary_key='{}' but this column is not in the SELECT output.\n  \
+                     Available columns: {}\n  \
+                     Fix: Either add '{}' to the SELECT clause or change hdx_primary_key to match an existing column.\n",
+                    file!(),
+                    line!(),
+                    summary_table.name,
+                    primary_key,
+                    output_columns.iter().cloned().collect::<Vec<_>>().join(", "),
+                    primary_key
+                ));
+            }
         }
+        // If no hdx_primary_key is specified, that's okay - ClickHouse will use defaults
     }
 
     Ok(())
@@ -80,7 +87,7 @@ fn parse_select_columns(sql: &str) -> Result<HashSet<String>, String> {
             let alias = part[alias_pos + 4..].trim();
             columns.insert(alias.to_string());
         } else {
-            // No alias - extract column name
+            // No alias - extract column name (last token before any function calls)
             let col = part.split_whitespace().last().unwrap_or(part).trim();
             if !col.is_empty() && !col.contains('(') {
                 columns.insert(col.to_string());
@@ -89,6 +96,19 @@ fn parse_select_columns(sql: &str) -> Result<HashSet<String>, String> {
     }
 
     Ok(columns)
+}
+
+fn parse_primary_key(sql: &str) -> Option<String> {
+    // Remove comments
+    let sql = remove_sql_comments(sql);
+
+    // Look for SETTINGS hdx_primary_key = 'value' or hdx_primary_key='value'
+    let pk_regex = Regex::new(r#"(?i)hdx_primary_key\s*=\s*['"]([^'"]+)['"]"#).unwrap();
+
+    pk_regex
+        .captures(&sql)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
 }
 
 fn remove_sql_comments(sql: &str) -> String {
@@ -139,20 +159,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_select_with_timestamp() {
-        let sql = "SELECT toStartOfMinute(reqTimeSec) as timestamp, count() as cnt FROM table";
+    fn test_parse_primary_key() {
+        let sql = "SELECT timestamp FROM table SETTINGS hdx_primary_key = 'timestamp'";
+        assert_eq!(parse_primary_key(sql), Some("timestamp".to_string()));
+
+        let sql2 = "SELECT reqTimeSec FROM table SETTINGS hdx_primary_key='reqTimeSec'";
+        assert_eq!(parse_primary_key(sql2), Some("reqTimeSec".to_string()));
+    }
+
+    #[test]
+    fn test_parse_select_with_alias() {
+        let sql = "SELECT toStartOfMinute(reqTimeSec) as timestamp_min, count() as cnt FROM table";
         let columns = parse_select_columns(sql).unwrap();
 
-        assert!(columns.contains("timestamp"));
+        assert!(columns.contains("timestamp_min"));
         assert!(columns.contains("cnt"));
     }
 
     #[test]
-    fn test_parse_select_without_timestamp() {
-        let sql = "SELECT count() as cnt FROM table";
-        let columns = parse_select_columns(sql).unwrap();
+    fn test_matching_primary_key() {
+        let sql = "SELECT toStartOfHour(reqTimeSec) AS reqTimeSec FROM t GROUP BY reqTimeSec SETTINGS hdx_primary_key = 'reqTimeSec'";
 
-        assert!(!columns.contains("timestamp"));
-        assert!(columns.contains("cnt"));
+        let columns = parse_select_columns(sql).unwrap();
+        let pk = parse_primary_key(sql).unwrap();
+
+        assert!(columns.contains(&pk));
     }
 }
