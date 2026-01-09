@@ -1,5 +1,5 @@
 {
-  "name": "multi_stream_tp_security",
+  "name": "tp_security",
   "source": "tp_security",
   "method": "multi_stream",
   "method_overrides": {
