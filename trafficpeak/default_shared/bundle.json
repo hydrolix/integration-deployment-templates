@@ -63,7 +63,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "table_summary",
-      "parent_table_name": "default_trafficpeak",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/table_summary.sql"
       }
@@ -71,7 +71,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "table_summary_hour_defaults",
-      "parent_table_name": "default_trafficpeak",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/table_summary_hour_defaults.sql"
       }
@@ -79,7 +79,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
       "name": "table_summary_sampled_day_defaults",
-      "parent_table_name": "default_trafficpeak",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/table_summary_sampled_day_defaults.sql"
       }
