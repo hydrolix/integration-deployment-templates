@@ -1,0 +1,2197 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "id": "grafana",
+        "name": "Grafana",
+        "type": "grafana",
+        "version": "12.0.2"
+      },
+      {
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "type": "datasource",
+        "version": "0.6.0"
+      },
+      {
+        "id": "marcusolsson-treemap-panel",
+        "name": "Treemap",
+        "type": "panel",
+        "version": "2.0.1"
+      },
+      {
+        "id": "piechart",
+        "name": "Pie chart",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "stat",
+        "name": "Stat",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "table",
+        "name": "Table",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "text",
+        "name": "Text",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "timeseries",
+        "name": "Time series",
+        "type": "panel",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "dashboard",
+        "includeVars": false,
+        "keepTime": true,
+        "tags": [],
+        "targetBlank": false,
+        "title": "Reset All Variables",
+        "tooltip": "Reset all template variables back to default value",
+        "type": "link",
+        "url": "/d/fed820d2-e36b-4cfd-9570-8bd44ca92eea/cache-analysis-treemap?var-timestamp=reqTimeSec&var-duration=48&var-table=akamai.summary_hour&var-lineChartGrouping=reqHost&var-aggregation=avg&var-treemapCells=500&var-sampledFields_banner=Cache%20Analysis%20Treemap%0AAllows%20quick%20identification%20of%20low%20cache%20utilization%20rates%20and%20their%20impact.&var-filter=&var-cnt_all_var=cnt_all&var-offload_var=cnt_edgeHits%2Fcnt_all&var-cnt_edgeHits_var=cnt_edgeHits&var-cnt_originHits_var=cnt_originHits&var-avg_totalBytes_var=sum_totalBytes%2Fcnt_all&var-cached_turnAroundTimeMSec_var=avg_cached_turnAroundTimeMSec&var-uncached_turnAroundTimeMSec_var=avg_uncached_turnAroundTimeMSec&var-cached_transferTimeMSec_var=avg_cached_transferTimeMSec&var-uncached_transferTimeMSec_var=avg_uncached_transferTimeMSec"
+      }
+    ],
+    "panels": [
+      {
+        "gridPos": {
+          "h": 2,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 42,
+        "options": {
+          "code": {
+            "language": "html",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "#### ${sampledFields_banner}",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.0.2",
+        "type": "text"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 32,
+        "panels": [],
+        "title": "Summary Panels",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "datasource",
+          "uid": "-- Dashboard --"
+        },
+        "description": "Shows top of selected domains. Summary tables only allow grouping by Hostname, Country, state, region, statusCode and errorCode.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 4,
+          "x": 0,
+          "y": 3
+        },
+        "id": 43,
+        "interval": "1m",
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "datasource",
+              "uid": "-- Dashboard --"
+            },
+            "panelId": 39,
+            "refId": "A",
+            "withTransforms": false
+          }
+        ],
+        "title": "Total requests",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "reducers": [
+                "sum"
+              ]
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows count for selected domains. Summary tables only allow grouping by Hostname, Country, state, region, statusCode and errorCode. This is using the hourly summary",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 20,
+          "x": 4,
+          "y": 3
+        },
+        "id": 39,
+        "interval": "1m",
+        "options": {
+          "legend": {
+            "calcs": [
+              "sum"
+            ],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "width": 400
+          },
+          "timezone": [
+            ""
+          ],
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 0,
+            "rawSql": "SELECT ${lineChartGrouping} AS item,\n${cnt_all_var} AS count,\n$__timeInterval(${timestamp}) AS time\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter() \nGROUP BY time, item\nORDER BY time ASC, count DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Requests Over Time per Hostname - Summary; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Requests Over Time per ${lineChartGrouping} ",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 10
+        },
+        "id": 31,
+        "panels": [],
+        "title": "Offload over time",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Average percentage of Edge hits",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "offload"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percentunit"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 4,
+          "x": 0,
+          "y": 11
+        },
+        "id": 30,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT ${offload_var} AS offload\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter() \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Overall Offload; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Overall Offload",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "offload"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percentunit"
+                }
+              ]
+            },
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "offload"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 20,
+          "x": 4,
+          "y": 11
+        },
+        "id": 29,
+        "interval": "10m",
+        "options": {
+          "legend": {
+            "calcs": [
+              "mean"
+            ],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "width": 400
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 0,
+            "rawSql": "SELECT  \nreqHost AS hostname, \n${offload_var} AS offload,\n$__timeInterval(${timestamp}) AS time\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter() \nGROUP BY hostname, time\nORDER BY time ASC, hostname DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Offload by Hostname",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "offload (.*)",
+              "renamePattern": "$1"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 18
+        },
+        "id": 27,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "description": "Offload rate broken out by hostname",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "displayName": "Offload by Resource Name",
+                "links": [
+                  {
+                    "title": "Filter to Hostname",
+                    "url": "/d/${__dashboard.uid}﻿﻿﻿﻿﻿/${__dashboard}﻿﻿﻿﻿﻿/?${__all_variables}&﻿﻿﻿﻿&﻿﻿﻿&var-filter=reqHost|=|${__data.fields.hostname}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "View Raw Logs",
+                    "url": "/d/7364-d508-4b77-b8a1-d7cb0786scad9/raw-logs?﻿﻿﻿${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=reqHost|=|${__data.fields.hostname}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red"
+                    },
+                    {
+                      "color": "dark-red",
+                      "value": 0
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 0.2
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.4
+                    },
+                    {
+                      "color": "light-red",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "dark-orange",
+                      "value": 0.7
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.75
+                    },
+                    {
+                      "color": "dark-yellow",
+                      "value": 0.8
+                    },
+                    {
+                      "color": "super-light-yellow",
+                      "value": 0.85
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.9
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 0.99
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "offload"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "percentunit"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 17,
+              "w": 24,
+              "x": 0,
+              "y": 19
+            },
+            "id": 3,
+            "options": {
+              "colorByField": "offload",
+              "labelFields": [
+                "offloadRate"
+              ],
+              "sizeField": "offload",
+              "textField": "hostname",
+              "tiling": "treemapSquarify"
+            },
+            "pluginVersion": "2.0.1",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \nreqHost AS hostname, \n${offload_var} AS offload,\n$__timeInterval(${timestamp}) AS time\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\nAND $__adHocFilter() \nAND hostname NOT IN '~~~SAMPLED_OUT~~~'\nGROUP BY hostname, time\nORDER BY time ASC, hostname DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Offload by Hostname",
+            "type": "marcusolsson-treemap-panel"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "description": "Offload rate broken out by content-type",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "displayName": "Offload by Resource Name",
+                "links": [
+                  {
+                    "title": "Filter to Content Type",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=rspContentType|=|${__data.fields.ContentType:percentencode}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "View Raw Logs",
+                    "url": "/d/7364-d508-4b77-b8a1-d7cb0786scad9/raw-logs?﻿﻿﻿${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=rspContentType|=|${__data.fields.ContentType:percentencode}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red"
+                    },
+                    {
+                      "color": "dark-red",
+                      "value": 0
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 0.2
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.4
+                    },
+                    {
+                      "color": "light-red",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "dark-orange",
+                      "value": 0.7
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.75
+                    },
+                    {
+                      "color": "dark-yellow",
+                      "value": 0.8
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.85
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.9
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 0.99
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "offloadRate"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "percentunit"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 18,
+              "w": 24,
+              "x": 0,
+              "y": 36
+            },
+            "id": 23,
+            "options": {
+              "colorByField": "offloadRate",
+              "labelFields": [
+                "offloadRate"
+              ],
+              "sizeField": "count",
+              "textField": "ContentType",
+              "tiling": "treemapSquarify"
+            },
+            "pluginVersion": "2.0.1",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \n  ifNull(rspContentType,'-') AS ContentType,\n  ${offload_var} AS offloadRate,\n  ${cnt_all_var} AS count\nFROM ${table}\n  WHERE $__timeFilter(${timestamp})\n    AND $__adHocFilter() \nGROUP BY ContentType \nORDER BY count DESC\nLIMIT ${treemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Content-Type; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Offload by Content-Type",
+            "type": "marcusolsson-treemap-panel"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "description": "Offload rate broken out by URL",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "displayName": "Offload by Resource Name",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Open URL in new tab",
+                    "url": "https://${__data.fields.url}"
+                  },
+                  {
+                    "targetBlank": false,
+                    "title": "Filter to this url",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=reqPath|=|${__data.fields.reqPath}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "View Raw Logs",
+                    "url": "/d/7364-d508-4b77-b8a1-d7cb0786scad9/raw-logs?﻿﻿﻿${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=reqPath|=|${__data.fields.reqPath}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red"
+                    },
+                    {
+                      "color": "dark-red",
+                      "value": 0
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 0.2
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.4
+                    },
+                    {
+                      "color": "light-red",
+                      "value": 0.6
+                    },
+                    {
+                      "color": "dark-orange",
+                      "value": 0.7
+                    },
+                    {
+                      "color": "orange",
+                      "value": 0.75
+                    },
+                    {
+                      "color": "dark-yellow",
+                      "value": 0.8
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.85
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.9
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.95
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 0.99
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "offloadRate"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "percentunit"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "count"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 20,
+              "w": 24,
+              "x": 0,
+              "y": 54
+            },
+            "id": 22,
+            "options": {
+              "colorByField": "offloadRate",
+              "labelFields": [
+                "offloadRate"
+              ],
+              "sizeField": "count",
+              "textField": "url",
+              "tiling": "treemapSquarify"
+            },
+            "pluginVersion": "2.0.1",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \n  ifNull(concat(reqHost,reqPath),'-') AS url,\n  reqHost,\n  reqPath,\n  ${offload_var} AS offloadRate,\n  ${cnt_all_var} AS count\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter() \n  AND reqHost NOT IN '~~~SAMPLED_OUT~~~'\n  AND reqPath NOT IN '~~~SAMPLED_OUT~~~'\nGROUP BY url,reqHost,reqPath\nORDER BY count DESC\nLIMIT ${treemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Resource; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Offload by Resource",
+            "type": "marcusolsson-treemap-panel"
+          }
+        ],
+        "title": "Treemaps",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "id": 44,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": false,
+                  "inspect": false
+                },
+                "mappings": [
+                  {
+                    "options": {
+                      "NaN": {
+                        "index": 0,
+                        "text": "-"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "count"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 83
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "totalPercentImprovement"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "percentunit"
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "transparent"
+                          },
+                          {
+                            "color": "dark-red",
+                            "value": -10000
+                          },
+                          {
+                            "color": "dark-red",
+                            "value": -0.8
+                          },
+                          {
+                            "color": "semi-dark-red",
+                            "value": -0.6
+                          },
+                          {
+                            "color": "red",
+                            "value": -0.4
+                          },
+                          {
+                            "color": "light-red",
+                            "value": -0.2
+                          },
+                          {
+                            "color": "super-light-red",
+                            "value": -0.1
+                          },
+                          {
+                            "color": "transparent",
+                            "value": 0
+                          },
+                          {
+                            "color": "super-light-green",
+                            "value": 0.1
+                          },
+                          {
+                            "color": "light-green",
+                            "value": 0.2
+                          },
+                          {
+                            "color": "green",
+                            "value": 0.4
+                          },
+                          {
+                            "color": "semi-dark-green",
+                            "value": 0.6
+                          },
+                          {
+                            "color": "dark-green",
+                            "value": 0.8
+                          },
+                          {
+                            "color": "dark-green",
+                            "value": 1000
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 200
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "cachedTurnAroundTimeMSec"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "ms"
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 220
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "super-light-blue"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "uncachedTurnAroundTimeMSec"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "ms"
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "super-light-blue"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "mode": "basic",
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "super-light-blue"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 220
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "totalImprovement"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "ms"
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "transparent"
+                          },
+                          {
+                            "color": "dark-red",
+                            "value": -10000
+                          },
+                          {
+                            "color": "dark-red",
+                            "value": -120
+                          },
+                          {
+                            "color": "semi-dark-red",
+                            "value": -90
+                          },
+                          {
+                            "color": "red",
+                            "value": -60
+                          },
+                          {
+                            "color": "light-red",
+                            "value": -30
+                          },
+                          {
+                            "color": "super-light-red",
+                            "value": -0.1
+                          },
+                          {
+                            "color": "transparent",
+                            "value": 0
+                          },
+                          {
+                            "color": "super-light-green",
+                            "value": 0.1
+                          },
+                          {
+                            "color": "light-green",
+                            "value": 30
+                          },
+                          {
+                            "color": "green",
+                            "value": 60
+                          },
+                          {
+                            "color": "semi-dark-green",
+                            "value": 90
+                          },
+                          {
+                            "color": "dark-green",
+                            "value": 120
+                          },
+                          {
+                            "color": "dark-green",
+                            "value": 1000
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 140
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "url"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 377
+                    },
+                    {
+                      "id": "links",
+                      "value": [
+                        {
+                          "targetBlank": true,
+                          "title": "Open resource in new tab",
+                          "url": "https://${__data.fields.url}"
+                        },
+                        {
+                          "targetBlank": false,
+                          "title": "Filter to this url",
+                          "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=reqPath|=|${__data.fields.reqPath}&var-filter=reqHost|=|${__data.fields.reqHost}"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "cachedTransferTimeMSec"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "ms"
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "mode": "basic",
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "super-light-purple"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 200
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "offload"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 105
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "dark-red"
+                          },
+                          {
+                            "color": "red",
+                            "value": 0.6
+                          },
+                          {
+                            "color": "orange",
+                            "value": 0.7
+                          },
+                          {
+                            "color": "#EAB839",
+                            "value": 0.8
+                          },
+                          {
+                            "color": "green",
+                            "value": 0.9
+                          },
+                          {
+                            "color": "dark-green",
+                            "value": 0.95
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "avgBytes"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 110
+                    },
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "uncachedTransferTimeMSec"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "ms"
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "mode": "basic",
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "color": "super-light-purple"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 220
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "offload"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "percentunit"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 14,
+              "w": 24,
+              "x": 0,
+              "y": 130
+            },
+            "id": 24,
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true,
+              "sortBy": []
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \n  concat(reqHost,reqPath) AS url,\n  ${cnt_all_var} AS count,\n  ${offload_var} AS offload,\n  ${avg_totalBytes_var} AS avgBytes,\n  ${cached_turnAroundTimeMSec_var} AS cachedTurnAroundTimeMSec,\n  ${uncached_turnAroundTimeMSec_var} AS uncachedTurnAroundTimeMSec,\n  ${cached_transferTimeMSec_var} AS cachedTransferTimeMSec,\n  ${uncached_transferTimeMSec_var} AS uncachedTransferTimeMSec, \n  (uncachedTurnAroundTimeMSec-cachedTurnAroundTimeMSec)+(uncachedTransferTimeMSec-cachedTransferTimeMSec) AS totalImprovement,\n  (1-(cachedTurnAroundTimeMSec+cachedTransferTimeMSec)/(uncachedTurnAroundTimeMSec+uncachedTransferTimeMSec)) AS totalPercentImprovement,\n  reqHost,\n  reqPath\nFROM ${table}\n  WHERE $__timeFilter(${timestamp})\n   AND $__adHocFilter()\n   AND isNotNull(reqHost)\n   AND reqHost NOT IN '~~~SAMPLED_OUT~~~'\n   AND reqPath NOT IN '~~~SAMPLED_OUT~~~'\nGROUP BY url,reqHost,reqPath\nORDER BY count DESC\nLIMIT 50\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Caching Impact ; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Caching Impact (${aggregation})",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "links": [
+                  {
+                    "title": "Filter to this status code",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=statusCode|=|${__data.fields.status_code}"
+                  }
+                ],
+                "mappings": []
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "count"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 144
+            },
+            "id": 26,
+            "options": {
+              "displayLabels": [
+                "name"
+              ],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "values": [
+                  "value",
+                  "percent"
+                ],
+                "width": 220
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "first"
+                ],
+                "fields": "/^count$/",
+                "values": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \n  toString(statusCode) AS status_code,\n  ${cnt_edgeHits_var} AS count\nFROM  ${table}\n  WHERE $__timeFilter(${timestamp})\n    AND $__adHocFilter()\nGROUP BY status_code\nORDER BY count DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Cached Status Codes; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Cached Status Codes",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "links": [
+                  {
+                    "title": "Filter to this status code",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=statusCode|=|${__data.fields.status_code}"
+                  }
+                ],
+                "mappings": []
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "count"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 144
+            },
+            "id": 25,
+            "options": {
+              "displayLabels": [
+                "name"
+              ],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "values": [
+                  "value",
+                  "percent"
+                ],
+                "width": 220
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "first"
+                ],
+                "fields": "/^count$/",
+                "values": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT  \ntoString(statusCode) AS status_code,\n${cnt_originHits_var} AS count\nFROM  ${table}\nWHERE $__timeFilter(${timestamp})\nAND $__adHocFilter()\nGROUP BY status_code\nORDER BY count DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Uncached Status Codes; du=${__user.login}'\n",
+                "refId": "A"
+              }
+            ],
+            "title": "Uncached Status Codes",
+            "type": "piechart"
+          }
+        ],
+        "title": "Caching Impact / Status Codes",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 20
+        },
+        "id": 45,
+        "panels": [
+          {
+            "description": "",
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 263
+            },
+            "id": 46,
+            "options": {
+              "code": {
+                "language": "plaintext",
+                "showLineNumbers": false,
+                "showMiniMap": false
+              },
+              "content": "<h1 style=\"color:orange;\"> Using Cache Analysis Treemap Dashboard </h1>\n<h2> Usage Overview</h2>\nThe Cache Analysis Treemap dashboard helps users quickly find and remediate caching issues: <ol>\n  <li>In the 'Summary' panels, use the 'lineChartGrouping' variable to decide how you'd like to see the data grouped. \n    Then drag a rectangle around a time period of interest to 'zoom in' to that time period. Usually, select no more than 6 to 24 hrs time period. </li>\n<ul>\n  <li> Use the 'lineChartGrouping' filter to select what the different lines are (hostname, statusCode, country etc) </li>\n  <li> You can apply filters from the top and they will apply to the line chart. For example, if you're set to 'lineChartGrouping of 'hostname' and you filter to 'statusCode=500' you will see the count per hostname of all the 500 errors </li>\n  <li> Filters for high cardinality items like 'Path', 'User Agent', 'Query String' and 'Referrer' will not apply to the summary panels.</li>\n  </ul>\n  <li>After you've 'zoomed in', expand the other 'rows' in the dashboard to use the raw data panels for deeper analysis. </li>\n  <ul>\n    <li> For the Treemaps, color coding indicates caching level measured as 'edge caching' (what percent of requests were available to serve from the dge cache) </li>\n    <ul>\n      <li> Green : 90% </li>\n      <li> Yellow: 80%-90% </li>\n      <li> Orange : 70%-80% </li>\n      <li> Red : <60^ </li>\n      </ul>\n    <li> In some situations a resource may be available in the edge cache, even though edge cache is not used (such as if authentication is required to serve the resource) </li>\n    \n</ol>\n\n<h2> Summary Tables</h2>\nThe top two panels in the dashboard are using 'Summary' tables. \nSummary tables have pre-aggregated counts for a variety of dimensions which allow \nfor fast querying and querying over longer time periods. \nSummary tables are pre-aggregated using the following dimensions:\n<ul>\n  <li> Hostname </li>\n  <li> Country </li>\n  <li> State </li>\n  <li> City </li>\n  <li> Status Code </li>\n  <li> Error Code </li>\n  <li> Request Method </li>\n  <li> Content Type </li>\n  <li> Protocol </li>\n  <li> Cache Status </li>\n  <li> CP Code </li>\n  </ul>\n<br>\n\n<h2> Raw Data Tables </h2>\nMost Error Analysis dashboard panels use the raw data tables, \nwhich contains around 100 available data fields for every Akamai request. Field definitions are available <a href=\"https://techdocs.akamai.com/datastream2/v3/docs/choose-data-parameters#\" target = \"_blank\"> here </a>\n\n<table border='1' style='border-collapse: collapse;'><tr><td colspan='6' style='text-align:center; font-size:16px; padding:8px;'>Akamai Raw Data Fields</td></tr><tr><td style='background-color: purple; padding: 5px;'>CloudWrapper_ASN</td><td style='background-color: purple; padding: 5px;'>CloudWrapper_DNSLookupTime</td><td style='background-color: purple; padding: 5px;'>CloudWrapper_GeoInfo</td><td style='background-color: purple; padding: 5px;'>CloudWrapper_IP</td><td style='background-color: purple; padding: 5px;'>CloudWrapper_RequestEndTime</td><td style='background-color: purple; padding: 5px;'>CloudWrapper_RequestID</td></tr><tr><td style='background-color: purple; padding: 5px;'>CloudWrapper_TurnAroundTime</td><td style='background-color: purple; padding: 5px;'>Edge_ASN</td><td style='background-color: purple; padding: 5px;'>Edge_DNSLookupTime</td><td style='background-color: purple; padding: 5px;'>Edge_GeoInfo</td><td style='background-color: purple; padding: 5px;'>Edge_IP</td><td style='background-color: purple; padding: 5px;'>Edge_RequestEndTime</td></tr><tr><td style='background-color: purple; padding: 5px;'>Edge_RequestID</td><td style='background-color: purple; padding: 5px;'>Edge_TurnAroundTime</td><td style='background-color: purple; padding: 5px;'>Origin_ASN</td><td style='background-color: purple; padding: 5px;'>Origin_DNSLookupTime</td><td style='background-color: purple; padding: 5px;'>Origin_GeoInfo</td><td style='background-color: purple; padding: 5px;'>Origin_IP</td></tr><tr><td style='background-color: purple; padding: 5px;'>Origin_IP_asn</td><td style='background-color: purple; padding: 5px;'>Origin_IP_city</td><td style='background-color: purple; padding: 5px;'>Origin_IP_country</td><td style='background-color: purple; padding: 5px;'>Origin_IP_org</td><td style='background-color: purple; padding: 5px;'>Origin_IP_subdivision1</td><td style='background-color: purple; padding: 5px;'>Origin_RequestEndTime</td></tr><tr><td style='background-color: purple; padding: 5px;'>Origin_RequestID</td><td style='background-color: purple; padding: 5px;'>Origin_TurnAroundTime</td><td style='background-color: purple; padding: 5px;'>Parent_ASN</td><td style='background-color: purple; padding: 5px;'>Parent_DNSLookupTime</td><td style='background-color: purple; padding: 5px;'>Parent_GeoInfo</td><td style='background-color: purple; padding: 5px;'>Parent_IP</td></tr><tr><td style='background-color: purple; padding: 5px;'>Parent_RequestEndTime</td><td style='background-color: purple; padding: 5px;'>Parent_RequestID</td><td style='background-color: purple; padding: 5px;'>Parent_TurnAroundTime</td><td style='background-color: purple; padding: 5px;'>Peer_ASN</td><td style='background-color: purple; padding: 5px;'>Peer_DNSLookupTime</td><td style='background-color: purple; padding: 5px;'>Peer_GeoInfo</td></tr><tr><td style='background-color: purple; padding: 5px;'>Peer_IP</td><td style='background-color: purple; padding: 5px;'>Peer_RequestEndTime</td><td style='background-color: purple; padding: 5px;'>Peer_RequestID</td><td style='background-color: purple; padding: 5px;'>Peer_TurnAroundTime</td><td style='background-color: green; padding: 5px;'>UA</td><td style='background-color: green; padding: 5px;'>accLang</td></tr><tr><td style='background-color: green; padding: 5px;'>akamaiHints</td><td style='background-color: green; padding: 5px;'>akamaiHintsBytes</td><td style='background-color: green; padding: 5px;'>asn</td><td style='background-color: green; padding: 5px;'>billingRegion</td><td style='background-color: green; padding: 5px;'>breadcrumbs</td><td style='background-color: green; padding: 5px;'>brotliStatus</td></tr><tr><td style='background-color: green; padding: 5px;'>bytes</td><td style='background-color: green; padding: 5px;'>cacheStatus</td><td style='background-color: green; padding: 5px;'>cacheable</td><td style='background-color: green; padding: 5px;'>city</td><td style='background-color: green; padding: 5px;'>cliIP</td><td style='background-color: blue; padding: 5px;'>cmcd</td></tr><tr><td style='background-color: blue; padding: 5px;'>cmcd_buffer_length</td><td style='background-color: blue; padding: 5px;'>cmcd_buffer_starvation</td><td style='background-color: blue; padding: 5px;'>cmcd_content_id</td><td style='background-color: blue; padding: 5px;'>cmcd_deadline</td><td style='background-color: blue; padding: 5px;'>cmcd_encoded_bitrate</td><td style='background-color: blue; padding: 5px;'>cmcd_measured_throughput</td></tr><tr><td style='background-color: blue; padding: 5px;'>cmcd_next_object_requests</td><td style='background-color: blue; padding: 5px;'>cmcd_next_range_request</td><td style='background-color: blue; padding: 5px;'>cmcd_object_duration</td><td style='background-color: blue; padding: 5px;'>cmcd_object_type</td><td style='background-color: blue; padding: 5px;'>cmcd_playback_duration</td><td style='background-color: blue; padding: 5px;'>cmcd_playback_rate</td></tr><tr><td style='background-color: blue; padding: 5px;'>cmcd_requested_max_throughput</td><td style='background-color: blue; padding: 5px;'>cmcd_session_id</td><td style='background-color: blue; padding: 5px;'>cmcd_startup</td><td style='background-color: blue; padding: 5px;'>cmcd_stream_type</td><td style='background-color: blue; padding: 5px;'>cmcd_streaming_format</td><td style='background-color: blue; padding: 5px;'>cmcd_top_bitrate</td></tr><tr><td style='background-color: blue; padding: 5px;'>cmcd_version</td><td style='background-color: green; padding: 5px;'>complete_device_name</td><td style='background-color: green; padding: 5px;'>cookie</td><td style='background-color: green; padding: 5px;'>country</td><td style='background-color: green; padding: 5px;'>cp</td><td style='background-color: green; padding: 5px;'>customField</td></tr><tr><td style='background-color: green; padding: 5px;'>deliveryFormat</td><td style='background-color: green; padding: 5px;'>deliveryType</td><td style='background-color: green; padding: 5px;'>denied</td><td style='background-color: green; padding: 5px;'>denyGroup</td><td style='background-color: green; padding: 5px;'>denyRule</td><td style='background-color: green; padding: 5px;'>dnsLookupTimeMSec</td></tr><tr><td style='background-color: green; padding: 5px;'>downloadInitiated</td><td style='background-color: green; padding: 5px;'>downloadTime</td><td style='background-color: green; padding: 5px;'>downloadsCompleted</td><td style='background-color: green; padding: 5px;'>edgeAttempts</td><td style='background-color: green; padding: 5px;'>edgeIP</td><td style='background-color: green; padding: 5px;'>epd_ActionName</td></tr><tr><td style='background-color: green; padding: 5px;'>epd_Category</td><td style='background-color: green; padding: 5px;'>epd_Match</td><td style='background-color: green; padding: 5px;'>errorCode</td><td style='background-color: green; padding: 5px;'>ewExecutionInfo</td><td style='background-color: green; padding: 5px;'>ewUsageInfo</td><td style='background-color: green; padding: 5px;'>ew_ID</td></tr><tr><td style='background-color: green; padding: 5px;'>ew_cpuFlits</td><td style='background-color: green; padding: 5px;'>ew_edgeServerFlow</td><td style='background-color: green; padding: 5px;'>ew_errorCode</td><td style='background-color: green; padding: 5px;'>ew_eventHandler</td><td style='background-color: green; padding: 5px;'>ew_httpStatus</td><td style='background-color: green; padding: 5px;'>ew_logicExecuted</td></tr><tr><td style='background-color: green; padding: 5px;'>ew_metrics</td><td style='background-color: green; padding: 5px;'>ew_offReason</td><td style='background-color: green; padding: 5px;'>ew_processTime</td><td style='background-color: green; padding: 5px;'>ew_revisionID</td><td style='background-color: green; padding: 5px;'>ew_stageInformation</td><td style='background-color: green; padding: 5px;'>ew_status</td></tr><tr><td style='background-color: green; padding: 5px;'>ew_tierID</td><td style='background-color: green; padding: 5px;'>ew_totalStageTime</td><td style='background-color: green; padding: 5px;'>ew_totalTime</td><td style='background-color: green; padding: 5px;'>ew_uID</td><td style='background-color: green; padding: 5px;'>ew_usedMemory</td><td style='background-color: green; padding: 5px;'>ew_version</td></tr><tr><td style='background-color: green; padding: 5px;'>fileSizeBucket</td><td style='background-color: green; padding: 5px;'>hdx_source_latency</td><td style='background-color: green; padding: 5px;'>isMidgress</td><td style='background-color: green; padding: 5px;'>lastByte</td><td style='background-color: green; padding: 5px;'>latency</td><td style='background-color: green; padding: 5px;'>maxAgeSec</td></tr><tr><td style='background-color: green; padding: 5px;'>mediaEncryption</td><td style='background-color: green; padding: 5px;'>model_name</td><td style='background-color: green; padding: 5px;'>objSize</td><td style='background-color: green; padding: 5px;'>originContentLen</td><td style='background-color: green; padding: 5px;'>overheadBytes</td><td style='background-color: green; padding: 5px;'>policy</td></tr><tr><td style='background-color: green; padding: 5px;'>prefetchMidgressHits</td><td style='background-color: green; padding: 5px;'>proto</td><td style='background-color: green; padding: 5px;'>queryStr</td><td style='background-color: green; padding: 5px;'>range</td><td style='background-color: green; padding: 5px;'>referer</td><td style='background-color: green; padding: 5px;'>reqEndTimeMSec</td></tr><tr><td style='background-color: green; padding: 5px;'>reqHost</td><td style='background-color: green; padding: 5px;'>reqId</td><td style='background-color: green; padding: 5px;'>reqMethod</td><td style='background-color: green; padding: 5px;'>reqPath</td><td style='background-color: green; padding: 5px;'>reqPort</td><td style='background-color: green; padding: 5px;'>reqTimeSec</td></tr><tr><td style='background-color: green; padding: 5px;'>rspContentLen</td><td style='background-color: green; padding: 5px;'>rspContentType</td><td style='background-color: green; padding: 5px;'>securityRules</td><td style='background-color: green; padding: 5px;'>serverCountry</td><td style='background-color: green; padding: 5px;'>startupError</td><td style='background-color: green; padding: 5px;'>state</td></tr><tr><td style='background-color: green; padding: 5px;'>statusCode</td><td style='background-color: green; padding: 5px;'>streamId</td><td style='background-color: green; padding: 5px;'>throughput</td><td style='background-color: green; padding: 5px;'>timeToFirstByte</td><td style='background-color: green; padding: 5px;'>tlsOverheadTimeMSec</td><td style='background-color: green; padding: 5px;'>tlsVersion</td></tr><tr><td style='background-color: green; padding: 5px;'>totalBytes</td><td style='background-color: green; padding: 5px;'>transferTimeMSec</td><td style='background-color: green; padding: 5px;'>turnAroundTimeMSec</td><td style='background-color: green; padding: 5px;'>uncompressedSize</td><td style='background-color: green; padding: 5px;'>unknown</td><td style='background-color: green; padding: 5px;'>userHints</td></tr><tr><td style='background-color: green; padding: 5px;'>userHintsBytes</td><td style='background-color: green; padding: 5px;'>version</td><td style='background-color: green; padding: 5px;'>xForwardedFor</td><td style='background-color: green; padding: 5px;'></td><td style='background-color: green; padding: 5px;'></td><td style='background-color: green; padding: 5px;'></td></tr></table>\nLegend:\n<ul>\n<li> Green: General Data Stream Field </li>\n <li>Purple: Requires 'BreadCrumbs' behavior in property </li>\n <li> Blue: Only available for streaming medai which applies cmcd headers</li>\n </ul> \n<h2> FAQ </h2>\n<ul>\n  <li> <h3> Can I add fields to TrafficPeak? </h3></li>\n  <li> Yes. You can pass up to 1000 characters into the custom field. This would allow you to pass in various values. You can parse out the values in SQL </li>\n  <li> <h3> Can I get an overview of the fields and sample values</h3> </li>\n  <li> Yes. Open the 'Explore Data' Dashboard. Select the table 'logs' for DS2 data or 'SIEM' for SIEM data.  Click on a field name to see sample values. Click the '+/-' fields next to a value to filter to just that value. </li>\n  <li> <h3> How do I make sure the 'rows' are collapsed when I open the dashboard? </h3> </li>\n  <li> Collapse all the rows except for the 'summary' row. Then save the dashboard and select the option 'Save current dashboard variables as dashboard default'.\n  </ul>\n  \n",
+              "mode": "html"
+            },
+            "pluginVersion": "12.0.0",
+            "title": "Cache Analysis Treemap Dashboard",
+            "type": "text"
+          },
+          {
+            "description": "",
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 263
+            },
+            "id": 47,
+            "options": {
+              "code": {
+                "language": "plaintext",
+                "showLineNumbers": false,
+                "showMiniMap": false
+              },
+              "content": "<h1 style=\"color:orange;\"> All TrafficPeak VIDS </h1>\n<table>\n  <tr>\n    <td> Video </td>\n    <td> Description </td>\n  </tr>\n  <tr>\n    <td> <a href=\"https://youtu.be/xofU9fJZY0c?si=LSumL_RhgD9tuFP8\" target=\"_blank\">\n      <img src=\"https://img.youtube.com/vi/xofU9fJZY0c/mqdefault.jpg\" alt=\"Watch Error Analysis Video\" style=\"width: 100%; min-width: 300px; height: auto; border: 3px solid #ccc; border-radius: 15px;\">\n      </a>\n    </td>\n    <td>\n      TrafficPeak Error Analysis Video <a href=\"https://youtu.be/xofU9fJZY0c?si=LSumL_RhgD9tuFP8\" target=\"_blank\">(here)</a> (10 min) An overview on how to use the Error Analysis Dashboard to find errors that users are experiencing when requesting content.\n    </td>\n  </tr>\n   <tr>\n    <td> <a href=\"https://www.youtube.com/watch?v=3CTwE24Izic\" target=\"_blank\">\n      <img src=\"https://img.youtube.com/vi/3CTwE24Izic/mqdefault.jpg\" alt=\"Watch Error Analysis Video\" style=\"width: 100%; min-width: 300px; height: auto; border: 3px solid #ccc; border-radius: 15px;\">\n      </a>\n    </td>\n    <td>\n      Cache & URL Analysis Video <a href=\"https://www.youtube.com/watch?v=3CTwE24Izic\" target=\"_blank\">(here)</a> (14 min) An overview on how to use TrafficPeak to identify resources which are having low caching rates.\n    </td>\n  </tr>\n  <tr>\n    <td> <a href=\"https://www.youtube.com/watch?v=6yOL59ARuSQ\" target=\"_blank\">\n      <img src=\"https://img.youtube.com/vi/6yOL59ARuSQ/mqdefault.jpg\" alt=\"Creating and Customizing TrafficPeak Dashboards\" style=\"width: 100%; min-width: 300px; height: auto; border: 3px solid #ccc; border-radius: 15px;\">\n      </a>\n    </td>\n    <td>\n      Creating and Customizing TrafficPeak Dashboards Video <a href=\"https://www.youtube.com/watch?v=6yOL59ARuSQ\" target=\"_blank\">(here)</a> (37 min) An overview on how to create and customize TrafficPeak Dashboards.\n    </td>\n  </tr>\n  <tr>\n    <td> <a href=\"https://www.youtube.com/watch?v=WcxWl_IBklM\" target=\"_blank\">\n      <img src=\"https://img.youtube.com/vi/WcxWl_IBklM/mqdefault.jpg\" alt=\"Creating and Customizing TrafficPeak Dashboards\" style=\"width: 100%; min-width: 300px; height: auto; border: 3px solid #ccc; border-radius: 15px;\">\n      </a>\n    </td>\n    <td>\n      Sending DataStream data to TrafficPeak <a href=\"https://www.youtube.com/watch?v=WcxWl_IBklM\" target=\"_blank\">(here)</a> (10 min) An overview on how to set Akamai DataStream and properties to send data to TrafficPeak.\n    </td>\n  </tr>\n \n</table>\n\n",
+              "mode": "html"
+            },
+            "pluginVersion": "12.0.0",
+            "title": "All TrafficPeak Videos",
+            "type": "text"
+          }
+        ],
+        "title": "Help and Info",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [
+      "Required tables: summary_hour/summary_sampled_day",
+      "v1.1"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "reqTimeSec",
+            "value": "reqTimeSec"
+          },
+          "hide": 2,
+          "name": "timestamp",
+          "options": [
+            {
+              "selected": true,
+              "text": "reqTimeSec",
+              "value": "reqTimeSec"
+            }
+          ],
+          "query": "reqTimeSec",
+          "type": "custom"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
+          "hide": 2,
+          "name": "duration",
+          "options": [],
+          "query": "SELECT datediff('h', $__fromTime, $__toTime)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "ds2",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+          },
+          "description": "",
+          "hide": 2,
+          "name": "summary_hour",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+          },
+          "description": "",
+          "hide": 2,
+          "name": "summary_day",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT  CASE\nWHEN ${duration} < 6 THEN '${ds2}'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN '${summary_hour}'\nWHEN ${duration} >= 72 THEN '${summary_day}'\nEND",
+          "hide": 2,
+          "label": "Table used",
+          "name": "table",
+          "options": [],
+          "query": "SELECT  CASE\nWHEN ${duration} < 6 THEN '${ds2}'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN '${summary_hour}'\nWHEN ${duration} >= 72 THEN '${summary_day}'\nEND",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "reqHost",
+            "value": "reqHost"
+          },
+          "description": "Select the GroupBy option for the \"Summary Panels\".",
+          "includeAll": false,
+          "label": "lineChartGrouping",
+          "name": "lineChartGrouping",
+          "options": [
+            {
+              "selected": true,
+              "text": "Hostname",
+              "value": "reqHost"
+            },
+            {
+              "selected": false,
+              "text": "Country",
+              "value": "country"
+            },
+            {
+              "selected": false,
+              "text": "State",
+              "value": "state"
+            },
+            {
+              "selected": false,
+              "text": "Status Code",
+              "value": "toString(statusCode)"
+            },
+            {
+              "selected": false,
+              "text": "Error Code",
+              "value": "errorCode"
+            }
+          ],
+          "query": "Hostname : reqHost , Country : country , State : state , Status Code : toString(statusCode) , Error Code : errorCode",
+          "type": "custom"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "avg",
+            "value": "avg"
+          },
+          "description": "Select the aggregation type for the \"Caching Impact\" panel.",
+          "includeAll": false,
+          "label": "Aggregation",
+          "name": "aggregation",
+          "options": [
+            {
+              "selected": true,
+              "text": "Average",
+              "value": "avg"
+            },
+            {
+              "selected": false,
+              "text": "Median",
+              "value": "Median"
+            },
+            {
+              "selected": false,
+              "text": "P75",
+              "value": "P75"
+            },
+            {
+              "selected": false,
+              "text": "P90",
+              "value": "P90"
+            },
+            {
+              "selected": false,
+              "text": "P95",
+              "value": "P95"
+            },
+            {
+              "selected": false,
+              "text": "P99",
+              "value": "P99"
+            }
+          ],
+          "query": "Average : avg , Median : Median , P75 : P75 , P90 : P90 , P95 : P95 , P99 : P99",
+          "type": "custom"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {
+            "text": "500",
+            "value": "500"
+          },
+          "hide": 2,
+          "name": "treemapCells",
+          "options": [
+            {
+              "selected": true,
+              "text": "500",
+              "value": "500"
+            }
+          ],
+          "query": "500",
+          "type": "custom"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${summary_day}', 'Please note: \nDue to the current time range selection (>= 3 days), the fields asn, cliIP, referer, reqPath and UA have been sampled.', 'Cache Analysis Treemap\nAllows quick identification of low cache utilization rates and their impact.')",
+          "description": "Show banner that indicates sampling has been enabled for some fields when querying the summary_sampled_day table.",
+          "hide": 2,
+          "name": "sampledFields_banner",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${summary_day}', 'Please note: \nDue to the current time range selection (>= 3 days), the fields asn, cliIP, referer, reqPath and UA have been sampled.', 'Cache Analysis Treemap\nAllows quick identification of low cache utilization rates and their impact.')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
+          "hide": 2,
+          "name": "cnt_all_var",
+          "options": [],
+          "query": "SELECT\nIF('${table}' = '${ds2}', 'count()', 'cnt_all')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
+          "hide": 2,
+          "name": "offload_var",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)/count(cacheStatus)', 'cnt_edgeHits/cnt_all')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
+          "hide": 2,
+          "name": "cnt_edgeHits_var",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=1)', 'cnt_edgeHits')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=0)', 'cnt_originHits')",
+          "hide": 2,
+          "name": "cnt_originHits_var",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${ds2}', 'countIf(cacheStatus=0)', 'cnt_originHits')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${ds2}', 'avg(totalBytes)', 'sum_totalBytes/cnt_all')",
+          "hide": 2,
+          "name": "avg_totalBytes_var",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${ds2}', 'avg(totalBytes)', 'sum_totalBytes/cnt_all')",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_cached_turnAroundTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_cached_turnAroundTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_cached_turnAroundTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_cached_turnAroundTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_cached_turnAroundTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_cached_turnAroundTimeMSec[6]'\n  END",
+          "description": "",
+          "hide": 2,
+          "name": "cached_turnAroundTimeMSec_var",
+          "options": [],
+          "query": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(turnAroundTimeMSec, cacheStatus=1)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_cached_turnAroundTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_cached_turnAroundTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_cached_turnAroundTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_cached_turnAroundTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_cached_turnAroundTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_cached_turnAroundTimeMSec[6]'\n  END",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_uncached_turnAroundTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_uncached_turnAroundTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_uncached_turnAroundTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_uncached_turnAroundTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_uncached_turnAroundTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_uncached_turnAroundTimeMSec[6]'\n  END",
+          "description": "",
+          "hide": 2,
+          "name": "uncached_turnAroundTimeMSec_var",
+          "options": [],
+          "query": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(turnAroundTimeMSec, cacheStatus=0)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_uncached_turnAroundTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_uncached_turnAroundTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_uncached_turnAroundTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_uncached_turnAroundTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_uncached_turnAroundTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_uncached_turnAroundTimeMSec[6]'\n  END",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_cached_transferTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_cached_transferTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_cached_transferTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_cached_transferTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_cached_transferTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_cached_transferTimeMSec[6]'\n  END",
+          "description": "",
+          "hide": 2,
+          "name": "cached_transferTimeMSec_var",
+          "options": [],
+          "query": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(transferTimeMSec, cacheStatus=1)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_cached_transferTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_cached_transferTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_cached_transferTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_cached_transferTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_cached_transferTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_cached_transferTimeMSec[6]'\n  END",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_uncached_transferTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_uncached_transferTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_uncached_transferTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_uncached_transferTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_uncached_transferTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_uncached_transferTimeMSec[6]'\n  END",
+          "description": "",
+          "hide": 2,
+          "name": "uncached_transferTimeMSec_var",
+          "options": [],
+          "query": "SELECT\n  CASE\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'avg' THEN 'avgIf(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'Median' THEN 'quantileIf(0.5)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P75' THEN 'quantileIf(0.75)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P90' THEN 'quantileIf(0.90)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P95' THEN 'quantileIf(0.95)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' = '${ds2}' AND '${aggregation}' = 'P99' THEN 'quantileIf(0.99)(transferTimeMSec, cacheStatus=0)'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'avg' THEN 'avg_uncached_transferTimeMSec'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' = 'Median' THEN 'quantiles_uncached_transferTimeMSec[2]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P75' THEN 'quantiles_uncached_transferTimeMSec[3]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P90' THEN 'quantiles_uncached_transferTimeMSec[4]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P95' THEN 'quantiles_uncached_transferTimeMSec[5]'\n    WHEN '${table}' IN ('${summary_hour}','${summary_day}') AND '${aggregation}' ='P99' THEN 'quantiles_uncached_transferTimeMSec[6]'\n  END",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "timepicker": {
+      "nowDelay": "1m",
+      "refresh_intervals": [
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "utc",
+    "title": "Cache Analysis Treemap",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 5,
+    "weekStart": ""
+  }
+}

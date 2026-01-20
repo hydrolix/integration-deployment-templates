@@ -1,0 +1,108 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/bot-detection",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/Bot Detection Summary.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [
+        "geoip_asn_blocks_ipv4",
+        "geoip_asn_blocks_ipv6",
+        "ua_cat_dict"
+      ],
+      "shared_functions": [
+        "city_name",
+        "breadcrumbs"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Bot Detection Description",
+    "maintainer": "kevin.borkman@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "multi_stream",
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
+  "name": "multi_stream_bot_detection",
+  "solution": true,
+  "source": "bot_detection",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "bot_summary_day",
+      "parent_table_name": "bot_detection",
+      "sql": {
+        "path": "summaries/bot_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "bot_summary_hour",
+      "parent_table_name": "bot_detection",
+      "sql": {
+        "path": "summaries/bot_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
+      "name": "bot_summary_month",
+      "parent_table_name": "bot_detection",
+      "sql": {
+        "path": "summaries/bot_summary_month.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "bot_detection",
+      "transforms": [
+        {
+          "method": "http_streaming",
+          "path": "transformations/akamai_ds2/transform.json",
+          "sample": "transformations/akamai_ds2/sample_data.json"
+        },
+        {
+          "method": "http_streaming",
+          "path": "transformations/cloudflare/transform.json",
+          "sample": "transformations/cloudflare/sample_data.json"
+        },
+        {
+          "method": "firehose",
+          "path": "transformations/cloudfront_firehose/transform.json",
+          "sample": "transformations/cloudfront_firehose/sample_data.json"
+        },
+        {
+          "method": "http_streaming",
+          "path": "transformations/fastly/transform.json",
+          "sample": "transformations/fastly/sample_data.json"
+        },
+        {
+          "method": "http_streaming",
+          "path": "transformations/default/transform.json",
+          "sample": "transformations/default/sample_data.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/bot-detection",
+    "source": {
+      "full_title": "Bot Detection",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
+    }
+  }
+}
