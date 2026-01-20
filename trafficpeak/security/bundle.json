@@ -1,28 +1,14 @@
 {
-  "name": "multi_stream_tp_security",
-  "source": "tp_security",
-  "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/security",
   "beta": true,
-  "solution": true,
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/feature/security/security",
   "dashboard": {
     "path": "dashboards/DS2 Security Analysis.json",
     "project_var": "__PROJECT_NAME__"
   },
-  "other_dashboards": [
-    {
-      "path": "dashboards/DS2 Web Security.json",
-      "project_var": "__PROJECT_NAME__"
-    }
-  ],
   "dependencies": {
     "hydrolix": {
-      "required_functions": [],
       "required_dictionaries": [],
+      "required_functions": [],
       "shared_functions": [
         "breadcrumbs",
         "cmcd_object_type",
@@ -41,34 +27,49 @@
       ]
     }
   },
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Security TP Description",
+    "maintainer": "kcorbett@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "multi_stream",
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
+  "name": "multi_stream_tp_security",
+  "other_dashboards": [
+    {
+      "path": "dashboards/DS2 Web Security.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "tp_security",
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
       "name": "logs",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/akamai_default_datastream.json",
-          "method": "http_streaming"
+          "sample": "transformations/sample_data.json"
         }
       ]
     }
   ],
   "ui": {
-    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
+    "data_category": "security",
     "method": {
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
+    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "source": {
       "full_title": "TP Security",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
-    },
-    "data_category": "security"
-  },
-  "metadata": {
-    "version": "1.0.0",
-    "maintainer": "kcorbett@hydrolix.io",
-    "description": "Security TP Description",
-    "channel_type": "AWS"
+    }
   }
 }
