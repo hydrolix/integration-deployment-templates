@@ -33,12 +33,8 @@
     "maintainer": "kcorbett@hydrolix.io",
     "version": "1.0.0"
   },
-  "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
-  "name": "multi_stream_tp_security",
+  "method": "http_streaming",
+  "name": "tp_security",
   "other_dashboards": [
     {
       "path": "dashboards/DS2 Web Security.json",
