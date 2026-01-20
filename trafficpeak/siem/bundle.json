@@ -1,12 +1,5 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/siem",
-  "name": "tp_siem",
-  "source": "tp_siem",
-  "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
   "beta": true,
   "dashboard": {
     "path": "dashboards/Akamai SIEM.json",
@@ -37,11 +30,7 @@
     "version": "1.0.0"
   },
   "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
-  "name": "multi_stream_tp_siem",
+  "name": "tp_siem",
   "other_dashboards": [
     {
       "path": "dashboards/Security Analysis.json",
@@ -53,7 +42,7 @@
     }
   ],
   "solution": true,
-  "source": "tp_siem",
+  "source": "siem",
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME_SIEM__",
