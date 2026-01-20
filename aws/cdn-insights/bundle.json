@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/cdn-insights",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
   "beta": true,
   "dashboard": {
     "path": "dashboards/default.json",
@@ -32,11 +32,7 @@
     "version": "1.0.5"
   },
   "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
-  "name": "multi_stream_cdn_insights",
+  "name": "cdn_insights",
   "other_dashboards": [
     {
       "path": "dashboards/global.json",

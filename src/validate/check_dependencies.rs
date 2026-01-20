@@ -145,25 +145,6 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
     }
 
-    // Report declared but unused dependencies
-    for fn_name in &declared_functions {
-        if !used_functions.contains(fn_name) {
-            eprintln!(
-                "  ⚠️  INFO: Function '{}' is declared but not used in any transforms",
-                fn_name
-            );
-        }
-    }
-
-    for dict_name in &declared_dictionaries {
-        if !used_dictionaries.contains(dict_name) {
-            eprintln!(
-                "  ⚠️  INFO: Dictionary '{}' is declared but not used in any transforms",
-                dict_name
-            );
-        }
-    }
-
     println!("✓ Dependency validation complete");
     Ok(())
 }
