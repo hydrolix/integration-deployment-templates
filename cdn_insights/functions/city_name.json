@@ -1,5 +1,0 @@
-{
-  "description": "City Name",
-  "name": "city_name",
-  "sql": "(ip) -> dictGetString (\n  '__SHARED_PROJECT___geoip_city_locations_en',\n  'city_name',\n  __SHARED_PROJECT___geoname_id(assumeNotNull (ip))\n)"
-}

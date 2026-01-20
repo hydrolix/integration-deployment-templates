@@ -1,8 +1,0 @@
-{
-  "channel_arn": "arn:aws:medialive:us-east-1:1a1a1a1a1a1a:channel:1a1a1a1",
-  "encoder_pipeline": 0,
-  "logger_name": "",
-  "message": "cmaf_ingest_output.enable_ebuttd setting ignored: instance.cmaf_ingest_output additionalProperty \"enable_ebuttd\" exists in instance when not allowed",
-  "severity": "W",
-  "timestamp": "2025-02-10T01:04:02.671882"
-}
