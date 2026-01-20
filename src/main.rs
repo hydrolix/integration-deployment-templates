@@ -305,7 +305,7 @@ fn find_bundle_files() -> Vec<std::path::PathBuf> {
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
 
     WalkDir::new(search_path)
-        .max_depth(2)
+        .max_depth(3)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_name() == "bundle.json")
