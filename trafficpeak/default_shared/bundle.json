@@ -61,14 +61,6 @@
   "source": "trafficpeak",
   "summary_tables": [
     {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "table_summary",
-      "parent_table_name": "logs",
-      "sql": {
-        "path": "summaries/table_summary.sql"
-      }
-    },
-    {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "table_summary_hour_defaults",
       "parent_table_name": "logs",
