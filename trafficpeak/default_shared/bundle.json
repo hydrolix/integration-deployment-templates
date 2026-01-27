@@ -9,9 +9,7 @@
     "hydrolix": {
       "required_dictionaries": [],
       "required_functions": [],
-      "shared_dictionaries": [
-        "ua_cat_dict"
-      ],
+      "shared_dictionaries": [],
       "shared_functions": [
         "breadcrumbs",
         "cmcd_object_type",
