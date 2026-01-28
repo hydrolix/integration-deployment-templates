@@ -1,0 +1,5 @@
+{
+    "name": "edge_worker",
+    "sql": "(ewUsageInfo) -> array(arrayMap(y -> (y[1]), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (y[2]), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (__SHARED_PROJECT___edgeworker_eventhandler(y[3])), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (__SHARED_PROJECT___edgeworker_offreason(y[4])), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (y[5]), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (__SHARED_PROJECT___edgeworker_status(y[6])), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (y[7]), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))),arrayMap(y -> (y[8]), arrayMap(x -> splitByChar('/', x), arrayPopFront(splitByString('//', ewUsageInfo)))))"
+
+}
