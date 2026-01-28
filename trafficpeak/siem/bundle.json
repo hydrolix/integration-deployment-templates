@@ -70,7 +70,7 @@
   "ui": {
     "data_category": "security",
     "method": {
-      "full_title": "Http Streaming",
+      "full_title": "Security",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
     "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
