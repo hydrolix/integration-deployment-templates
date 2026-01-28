@@ -123,7 +123,7 @@ async fn main() {
     }
 
     println!("Final check on all of the bundles for duplicated tokens...");
-    match validate::no_global_duplicates::run(&all_bundle_list) {
+    match validate::no_global_duplicates::run(&final_bundle_list) {
         Ok(_) => (),
         Err(e) => {
             eprintln!("ERROR: Failed bundle validation: {e}");
@@ -184,6 +184,43 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     match validate::alert_rules_are_valid::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Alert rules validation failed: error={e}")),
+    }
+
+    match validate::datasource_uid_consistency::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Datasource UID consistency failed: error={e}")),
+    }
+
+    match validate::summary_column_schema::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => {
+            return Err(format!(
+                "Summary column schema validation failed: error={e}"
+            ))
+        }
+    }
+
+    match validate::summary_table_references::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => {
+            return Err(format!(
+                "Summary table references validation failed: error={e}"
+            ))
+        }
+    }
+
+    match validate::template_variable_consistency::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Template variable consistency failed: error={e}")),
+    }
+
+    match validate::template_variable_datasource::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => {
+            return Err(format!(
+                "Template variable datasource validation failed: error={e}"
+            ))
+        }
     }
 
     // Check dependencies (warnings only, doesn't fail validation)
@@ -305,7 +342,7 @@ fn find_bundle_files() -> Vec<std::path::PathBuf> {
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
 
     WalkDir::new(search_path)
-        .max_depth(2)
+        .max_depth(3)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_name() == "bundle.json")

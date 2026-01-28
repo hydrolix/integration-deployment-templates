@@ -1,5 +1,0 @@
-{
-    "description": "Geoname ID",
-    "name": "geoname_id",
-    "sql": "(ip) -> toUInt64 (\n  multiIf (\n    isIPv4String (ip),\n    dictGetUInt32 (\n      '__PROJECT_NAME___geoip_city_blocks_ipv4',\n      'geoname_id',\n      tuple (\n        IPv4StringToNumOrDefault (toString (assumeNotNull (ip)))\n      )\n    ),\n    isIPv6String (ip),\n    dictGetUInt32 (\n      '__PROJECT_NAME___geoip_city_blocks_ipv6',\n      'geoname_id',\n      tuple (\n        IPv6StringToNumOrDefault (toString (assumeNotNull (ip)))\n      )\n    ),\n    0\n  )\n)"
-}

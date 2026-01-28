@@ -1,8 +1,8 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/bot-detection",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
   "beta": true,
   "dashboard": {
-    "path": "dashboards/Bot Detection Summary.json",
+    "path": "dashboards/default.json",
     "project_var": "__PROJECT_NAME__"
   },
   "dependencies": {
@@ -12,58 +12,61 @@
       "shared_dictionaries": [
         "geoip_asn_blocks_ipv4",
         "geoip_asn_blocks_ipv6",
+        "geoip_city_blocks_ipv4",
+        "geoip_city_blocks_ipv6",
+        "geoip_city_locations_en",
         "ua_cat_dict"
       ],
       "shared_functions": [
         "city_name",
-        "breadcrumbs"
+        "breadcrumbs",
+        "country_iso_code",
+        "geoname_id"
       ]
     }
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Bot Detection Description",
+    "description": "Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers into a single unified view via interactive dashboards",
     "maintainer": "kevin.borkman@hydrolix.io",
-    "version": "1.0.0"
+    "version": "1.0.5"
   },
   "method": "multi_stream",
-  "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
-  },
-  "name": "multi_stream_bot_detection",
+  "name": "cdn_insights",
+  "other_dashboards": [
+    {
+      "path": "dashboards/global.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/raw.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
   "solution": true,
-  "source": "bot_detection",
+  "source": "cdn_insights",
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "bot_summary_day",
-      "parent_table_name": "bot_detection",
+      "name": "mcdn_summary_min",
+      "parent_table_name": "cdn_insights_logs",
       "sql": {
-        "path": "summaries/bot_summary_day.sql"
+        "path": "summaries/mcdn_summary_min.sql"
       }
     },
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
-      "name": "bot_summary_hour",
-      "parent_table_name": "bot_detection",
+      "name": "mcdn_summary_hour",
+      "parent_table_name": "cdn_insights_logs",
       "sql": {
-        "path": "summaries/bot_summary_hour.sql"
-      }
-    },
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
-      "name": "bot_summary_month",
-      "parent_table_name": "bot_detection",
-      "sql": {
-        "path": "summaries/bot_summary_month.sql"
+        "path": "summaries/mcdn_summary_hour.sql"
       }
     }
   ],
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "bot_detection",
+      "name": "cdn_insights_logs",
       "transforms": [
         {
           "method": "http_streaming",
@@ -87,8 +90,8 @@
         },
         {
           "method": "http_streaming",
-          "path": "transformations/default/transform.json",
-          "sample": "transformations/default/sample_data.json"
+          "path": "transformations/tencent/transform.json",
+          "sample": "transformations/tencent/sample_data.json"
         }
       ]
     }
@@ -96,12 +99,12 @@
   "ui": {
     "data_category": "security",
     "method": {
-      "full_title": "Http Streaming",
+      "full_title": "Http Streaming, Firehose",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/bot-detection",
+    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "source": {
-      "full_title": "Bot Detection",
+      "full_title": "CDN Insights",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
     }
   }
