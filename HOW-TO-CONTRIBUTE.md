@@ -6,7 +6,11 @@ This guide outlines the process for external teams to contribute integration ass
 
 ### 1. Create a Jira Ticket
 
-Create a Jira ticket for your integration request. Include the following information:
+Create a Jira ticket in the **LOTC (Line of the Code)** project for your integration request.
+
+**Jira Project**: [LOTC Board](https://hydrolix.atlassian.net/jira/software/projects/LOTC/boards/635)
+
+Include the following information in your ticket:
 
 #### Required Information
 
@@ -29,6 +33,8 @@ Create a Jira ticket for your integration request. Include the following informa
 **Technical Details**
 - **Ingestion method**: How data will be ingested (e.g., `http_streaming`, `firehose`, `multi_stream`)
 - **Dependencies**: Any shared dictionaries or functions required (e.g., GeoIP, user-agent parsing)
+- **New or updated dictionaries**: If providing new dictionaries or updates to existing ones, specify the dictionary names and describe the changes
+- **New or updated functions**: If providing new functions or updates to existing ones, specify the function names and describe their purpose
 - **Sample data**: Representative data samples for each transformation
 
 #### Optional Information
