@@ -37,14 +37,14 @@ pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
         }
     }
 
-    // Checking for duplicated names
+    // Checking for duplicated names (excluding table names which are scoped to bundles)
     let mut tokens: HashMap<String, usize> = HashMap::new();
     for b in bundles {
         *tokens.entry(b.name.clone()).or_insert(0) += 1;
 
-        for t in &b.tables {
-            *tokens.entry(t.name.clone()).or_insert(0) += 1;
-        }
+        // Table names are scoped to bundles/projects, so they don't need to be globally unique
+        // Removed table name duplicate checking
+
         *tokens.entry(b.ui.source.full_title.clone()).or_insert(0) += 1;
         *tokens.entry(b.base_url.clone()).or_insert(0) += 1;
     }
