@@ -1,4 +1,4 @@
 {
     "name": "siem_extract",
-    "sql": "string -> __SHARED_PROJECT___siem_trim_array (arrayMap (x -> base64Decode (x), splitByChar (';', decodeURLComponent (assumeNotNull (string)))))"
+    "sql": "string -> akamai_siem_trim_array (arrayMap (x -> base64Decode (x), splitByChar (';', decodeURLComponent (assumeNotNull (string)))))"
 }
