@@ -39,19 +39,6 @@ pub async fn run(bundle: &Bundle) -> Result<(), String> {
         ));
     }
 
-    // Check name consistency with source and method
-    let name = &bundle.name;
-
-    if !name.to_lowercase().contains(&source.to_lowercase())
-        || !name.to_lowercase().contains(&method.to_lowercase())
-    {
-        return Err(format!(
-            "ERROR: {}.{} Name '{name}' must include '{source}' and '{method}'",
-            file!(),
-            line!()
-        ));
-    }
-
     // Check version format (basic semantic versioning)
     let version = &bundle.metadata.version;
     if version.matches('.').count() != 2 {

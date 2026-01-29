@@ -70,6 +70,12 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         }
     }
 
+    // Wait for tables to propagate to ClickHouse before creating summary tables
+    if bundle.summary_tables.is_some() && !bundle.tables.is_empty() {
+        println!("Waiting for tables to propagate to ClickHouse...");
+        tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
+    }
+
     // Create summary tables if present (will actively verify parent tables exist)
     if let Some(summary_tables) = &bundle.summary_tables {
         for summary in summary_tables {
