@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: rust:latest
+    environment: bundle-validator-env
 
     steps:
     - uses: actions/checkout@v4
@@ -21,6 +22,7 @@ jobs:
         toolchain: stable
 
     - name: Cache Rust dependencies
+      if: ${{ !env.ACT }}  # Skip cache when running locally with act
       uses: actions/cache@v3
       with:
         path: |
