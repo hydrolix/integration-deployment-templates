@@ -1,0 +1,1324 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "id": "geomap",
+        "name": "Geomap",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "grafana",
+        "name": "Grafana",
+        "type": "grafana",
+        "version": "12.2.3"
+      },
+      {
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "type": "datasource",
+        "version": "0.7.0"
+      },
+      {
+        "id": "table",
+        "name": "Table",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "text",
+        "name": "Text",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "timeseries",
+        "name": "Time series",
+        "type": "panel",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Akamai SIEM powered by Hydrolix dashboard for security analytics\r\n",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "dashboard",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "SIEM RawLogs"
+        ],
+        "targetBlank": true,
+        "title": "Raw Logs",
+        "tooltip": "",
+        "type": "dashboards",
+        "url": ""
+      }
+    ],
+    "panels": [
+      {
+        "gridPos": {
+          "h": 2,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 14,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "#### ${sampledFields_banner}",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.2.3",
+        "type": "text"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 13,
+        "panels": [],
+        "title": "Summary",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 3
+        },
+        "id": 1,
+        "options": {
+          "legend": {
+            "calcs": [
+              "sum",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Total",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT arrayJoin(ruleActions) as ruleAction,\ncount(),\n$__timeInterval(timestamp) as time\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY time, ruleAction\nORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=SIEM Logs Count; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "SIEM Logs Count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "showValues": false,
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 3
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [
+              "max",
+              "sum"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT toString(status) as status_code, count(),\n$__timeInterval(timestamp) as time\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY time, status_code\nORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=SIEM Logs per Status Code; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "SIEM Logs per Status Code",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count()"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 82
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "message"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 456
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "message"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "Filter",
+                      "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}?${__all_variables}&var-message=${__data.fields[1]:percentencode}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 4,
+          "x": 0,
+          "y": 11
+        },
+        "id": 5,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT count(),\narrayJoin(ruleMessages) AS message\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY message\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 100 Message; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top 100 Message",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count()"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 82
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "tags"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 456
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "Filter",
+                      "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}?${__all_variables}&var-tags=${__data.fields[1]:percentencode}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 5,
+          "x": 4,
+          "y": 11
+        },
+        "id": 8,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT count(),\narrayJoin(ruleTags) AS tags\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY tags\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 100 Tags; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top 100 Tags",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count()"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 82
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "path"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 731
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "Filter",
+                      "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}?${__all_variables}&var-path=${__data.fields[1]:percentencode}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 6,
+          "x": 9,
+          "y": 11
+        },
+        "id": 11,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT count(),\npath\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND path != '~~~SAMPLED_OUT~~~'\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY path\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 100 Path; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top 100 Path",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count()"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 82
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "clientIP"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "",
+                      "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}?${__all_variables}&var-clientIP=${__data.fields[1]:percentencode}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 4,
+          "x": 15,
+          "y": 11
+        },
+        "id": 6,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT count(),\nclientIP\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND clientIP != '~~~SAMPLED_OUT~~~'\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY clientIP\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 100 Client IP; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top 100 Client IP",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "footer": {
+                "reducers": []
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count()"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 82
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "host"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "",
+                      "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}?${__all_variables}&var-host=${__data.fields[1]:percentencode}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 5,
+          "x": 19,
+          "y": 11
+        },
+        "id": 10,
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "expand": true,
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 100,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT count(),\nhost\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND host != '~~~SAMPLED_OUT~~~'\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY host\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 100 Host; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top 100 Host",
+        "type": "table"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 22
+        },
+        "id": 9,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": [],
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 19,
+              "w": 24,
+              "x": 0,
+              "y": 23
+            },
+            "id": 7,
+            "options": {
+              "basemap": {
+                "config": {},
+                "name": "Layer 0",
+                "type": "default"
+              },
+              "controls": {
+                "mouseWheelZoom": true,
+                "showAttribution": true,
+                "showDebug": false,
+                "showMeasure": false,
+                "showScale": false,
+                "showZoom": true
+              },
+              "layers": [
+                {
+                  "config": {
+                    "blur": 15,
+                    "radius": 10,
+                    "weight": {
+                      "fixed": 1,
+                      "max": 1,
+                      "min": 0
+                    }
+                  },
+                  "filterData": {
+                    "id": "byRefId",
+                    "options": "A"
+                  },
+                  "location": {
+                    "gazetteer": "public/gazetteer/countries.json",
+                    "lookup": "country",
+                    "mode": "lookup"
+                  },
+                  "name": "Layer 1",
+                  "opacity": 1,
+                  "tooltip": true,
+                  "type": "heatmap"
+                }
+              ],
+              "tooltip": {
+                "mode": "details"
+              },
+              "view": {
+                "allLayers": true,
+                "id": "zero",
+                "lat": 0,
+                "lon": 0,
+                "noRepeat": false,
+                "zoom": 1
+              }
+            },
+            "pluginVersion": "12.2.3",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "editorType": "sql",
+                "format": 1,
+                "meta": {
+                  "builderOptions": {
+                    "columns": [],
+                    "database": "",
+                    "limit": 100,
+                    "mode": "list",
+                    "queryType": "table",
+                    "table": ""
+                  }
+                },
+                "pluginVersion": "4.0.6",
+                "queryType": "table",
+                "rawSql": "SELECT country, count()\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__adHocFilter()\nAND $__conditionalAll(hasAny([${attackTypes:sqlstring}], attackTypes), $attackTypes)\nAND $__conditionalAll(hasAny([${ruleActions:sqlstring}], ruleActions), $ruleActions)\nAND $__conditionalAll(hasAny([${ruleTags:sqlstring}], ruleTags), $ruleTags)\nAND $__conditionalAll(hasAny([${ruleMessages:sqlstring}], ruleMessages), $ruleMessages)\nAND $__conditionalAll(hasAny([${rulesID:sqlstring}], rules), $rulesID)\nAND $__conditionalAll(hasAny([${ruleData:sqlstring}], ruleData), $ruleData)\nAND $__conditionalAll(hasAny([${ruleSelectors:sqlstring}], ruleSelectors), $ruleSelectors)\nAND $__conditionalAll(path ILIKE '%${path}%', $path)\nGROUP BY country\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Geo Map; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Geo Map",
+            "type": "geomap"
+          }
+        ],
+        "title": "Geo Map",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 42,
+    "tags": [
+      "v0.9",
+      "Security",
+      "SIEM"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "siem",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+          },
+          "hide": 2,
+          "name": "siem_summary_hour",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+          },
+          "hide": 2,
+          "name": "siem_summary_day",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
+          "hide": 2,
+          "name": "duration",
+          "options": [],
+          "query": "SELECT datediff('h', $__fromTime, $__toTime)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT  CASE\nWHEN ${duration} < 6 THEN '${siem}'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN '${siem_summary_hour}'\nWHEN ${duration} >= 72 THEN '${siem_summary_day}'\nEND",
+          "hide": 2,
+          "label": "Table used",
+          "name": "table",
+          "options": [],
+          "query": "SELECT  CASE\nWHEN ${duration} < 6 THEN '${siem}'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN '${siem_summary_hour}'\nWHEN ${duration} >= 72 THEN '${siem_summary_day}'\nEND",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "General Filters",
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(attackTypes) as type\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY type\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=attackTypes; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Attack Types",
+          "multi": true,
+          "name": "attackTypes",
+          "options": [],
+          "query": "SELECT arrayJoin(attackTypes) as type\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY type\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=attackTypes; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(ruleActions) as ruleActions\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleActions\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleActions; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule Action",
+          "multi": true,
+          "name": "ruleActions",
+          "options": [],
+          "query": "SELECT arrayJoin(ruleActions) as ruleActions\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleActions\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleActions; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(ruleData) as ruleData\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleData\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleData; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule Data",
+          "multi": true,
+          "name": "ruleData",
+          "options": [],
+          "query": "SELECT arrayJoin(ruleData) as ruleData\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleData\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleData; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(ruleTags) as ruleTags\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleTags\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleTags; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule Tags",
+          "multi": true,
+          "name": "ruleTags",
+          "options": [],
+          "query": "SELECT arrayJoin(ruleTags) as ruleTags\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleTags\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleTags; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(ruleMessages) as ruleMessages\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleMessages\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleMessages; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule Messages",
+          "multi": true,
+          "name": "ruleMessages",
+          "options": [],
+          "query": "SELECT arrayJoin(ruleMessages) as ruleMessages\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleMessages\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleMessages; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(rules) as rules\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY rules\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=rulesID; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule ID",
+          "multi": true,
+          "name": "rulesID",
+          "options": [],
+          "query": "SELECT arrayJoin(rules) as rules\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY rules\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=rulesID; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT arrayJoin(ruleSelectors) as ruleSelectors\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleSelectors\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleSelectors; du=${__user.login}'",
+          "includeAll": true,
+          "label": "Rule Selectors",
+          "multi": true,
+          "name": "ruleSelectors",
+          "options": [],
+          "query": "SELECT arrayJoin(ruleSelectors) as ruleSelectors\nFROM ${table}\nWHERE timestamp >= $__fromTime\nAND timestamp < $__toTime\nGROUP BY ruleSelectors\nORDER BY count() DESC\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; var=ruleSelectors; du=${__user.login}'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "description": "Enter a keyword to search (partial match allowed, e.g. \"error\" will match \"critical error\").",
+          "label": "Path",
+          "name": "path",
+          "options": [
+            {
+              "selected": true,
+              "text": "",
+              "value": ""
+            }
+          ],
+          "query": "",
+          "type": "textbox"
+        },
+        {
+          "allowCustomValue": false,
+          "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "definition": "SELECT IF('${table}' = '${siem_summary_hour}' OR '${table}' = '${siem_summary_day}', \n    'Please note: \nDue to the current time range selection (>= 6 hours), the fields clientIP, host and path have been sampled.', \n    'Akamai SIEM:\nReal-time security event monitoring for Akamai infrastructure, including DDoS mitigation, bot detection, and firewall rule analysis.'\n)",
+          "description": "Show banner that indicates sampling has been enabled for some fields when querying the siem_hourly_summary & siem_daily_summarytable.",
+          "hide": 2,
+          "name": "sampledFields_banner",
+          "options": [],
+          "query": "SELECT IF('${table}' = '${siem_summary_hour}' OR '${table}' = '${siem_summary_day}', \n    'Please note: \nDue to the current time range selection (>= 6 hours), the fields clientIP, host and path have been sampled.', \n    'Akamai SIEM:\nReal-time security event monitoring for Akamai infrastructure, including DDoS mitigation, bot detection, and firewall rule analysis.'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "2026-01-29T19:36:48.850Z",
+      "to": "2026-01-30T19:36:48.850Z"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Akamai SIEM",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 4,
+    "weekStart": ""
+  }
+}
