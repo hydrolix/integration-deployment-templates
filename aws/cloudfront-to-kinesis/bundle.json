@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cloudfront-to-kinesis",
-  "beta": false,
+  "beta": true,
   "dashboard": {
     "path": "dashboards/current.json",
     "project_var": "__PROJECT_NAME__"
