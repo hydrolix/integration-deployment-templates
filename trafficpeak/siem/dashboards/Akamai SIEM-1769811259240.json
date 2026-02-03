@@ -1077,38 +1077,38 @@
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "name": "siem_summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "name": "siem_summary_day",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },

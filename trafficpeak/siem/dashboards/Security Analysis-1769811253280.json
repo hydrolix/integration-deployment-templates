@@ -2784,19 +2784,19 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_TIMESTAMP}",
-            "value": "${VAR_TIMESTAMP}"
+            "text": "timestamp",
+            "value": "timestamp"
           },
           "hide": 2,
           "name": "timestamp",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_TIMESTAMP}",
-              "value": "${VAR_TIMESTAMP}"
+              "text": "timestamp",
+              "value": "timestamp"
             }
           ],
-          "query": "${VAR_TIMESTAMP}",
+          "query": "timestamp",
           "skipUrlSync": true,
           "type": "constant"
         },
