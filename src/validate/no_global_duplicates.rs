@@ -37,14 +37,15 @@ pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
         }
     }
 
-    // Checking for duplicated names
+    // Checking for duplicated names (excluding table names which are scoped to bundles)
     let mut tokens: HashMap<String, usize> = HashMap::new();
     for b in bundles {
         *tokens.entry(b.name.clone()).or_insert(0) += 1;
 
-        for t in &b.tables {
-            *tokens.entry(t.name.clone()).or_insert(0) += 1;
-        }
+        // The same table can be referenced by multiple bundles. If the same table is referenced, it means
+        // that the bundle will either create the table if it doesn't exist, or add the transform to the table if it
+        // already exists.
+
         *tokens.entry(b.ui.source.full_title.clone()).or_insert(0) += 1;
         *tokens.entry(b.base_url.clone()).or_insert(0) += 1;
     }

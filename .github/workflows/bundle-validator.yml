@@ -9,7 +9,7 @@ on:
 jobs:
   bundle-validator:
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: rust:latest
     environment: bundle-validator-env
 
@@ -20,7 +20,7 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         toolchain: stable
-    
+
     - name: Cache Rust dependencies
       if: ${{ !env.ACT }}  # Skip cache when running locally with act
       uses: actions/cache@v3
@@ -33,16 +33,14 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-
-    
+
     - name: Build bundle validator
       run: |
         cargo build --release --bin bundle-validator
-    
+
     - name: Run bundle-validator
       run: ./target/release/bundle-validator
       env:
         BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
         BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
         BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
-        
-        
