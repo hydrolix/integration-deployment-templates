@@ -75,7 +75,7 @@
     },
     "primary_url": "https://docs.hydrolix.io/docs/siem_trafficpeak-integration",
     "source": {
-      "full_title": "Trafficpeak",
+      "full_title": "SIEM",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }
