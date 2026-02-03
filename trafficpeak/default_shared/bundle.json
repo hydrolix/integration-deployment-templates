@@ -9,9 +9,7 @@
     "hydrolix": {
       "required_dictionaries": [],
       "required_functions": [],
-      "shared_dictionaries": [
-        "ua_cat_dict"
-      ],
+      "shared_dictionaries": [],
       "shared_functions": [
         "breadcrumbs",
         "cmcd_object_type",
@@ -60,14 +58,6 @@
   "solution": true,
   "source": "trafficpeak",
   "summary_tables": [
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "table_summary",
-      "parent_table_name": "logs",
-      "sql": {
-        "path": "summaries/table_summary.sql"
-      }
-    },
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "table_summary_hour_defaults",
