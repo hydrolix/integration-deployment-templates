@@ -1,0 +1,4 @@
+{
+  "name": "edgeworker_eventhandler",
+  "sql": "(edgeworker_eventhandler) -> multiIf (edgeworker_eventhandler = '-', 'No event handler was executed', edgeworker_eventhandler = '1', 'onClientRequest', edgeworker_eventhandler = '2', 'onOriginRequest', edgeworker_eventhandler = '3', 'onOriginResponse', edgeworker_eventhandler = '4', 'onClientResponse', edgeworker_eventhandler = '5', 'responseProvider', edgeworker_eventhandler)"
+}
