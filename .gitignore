@@ -8,4 +8,7 @@ Cargo.lock
 .env.local
 .DS_Store
 
-
+# Claude Code local settings (keep skills and README)
+.claude/settings.local.json
+.claude/chat_history/
+.claude/state/
