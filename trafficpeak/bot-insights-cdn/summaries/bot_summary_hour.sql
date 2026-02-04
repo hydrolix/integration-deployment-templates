@@ -15,7 +15,7 @@ SELECT
   count() as cnt_all,
   sum(response_total_bytes) as response_total_bytes
 FROM
-  bundle_verification.bot_detection
+  __PROJECT_NAME__.__TABLE_NAME__
 GROUP BY
   timestamp,
   cache_was_cached,

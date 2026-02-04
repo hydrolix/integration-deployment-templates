@@ -1,8 +1,6 @@
 {
-  "created": "2026-01-08T22:17:01.886704Z",
   "description": "Version v1.0",
-  "modified": "2026-01-08T22:17:01.886717Z",
-  "name": "cloudfront_firehose",
+  "name": "default",
   "settings": {
     "compression": "",
     "format_details": {
@@ -17,63 +15,20 @@
           "left": "",
           "right": ""
         }
-      },
-      "subtype": "firehose"
+      }
     },
-    "is_default": false,
-    "null_values": [
-      "-",
-      "^",
-      "(null)"
-    ],
+    "is_default": true,
+    "null_values": [],
     "output_columns": [
       {
         "datatype": {
           "default": null,
-          "format": null,
-          "index": false,
-          "primary": false,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "requestId"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "request_id"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": "ms",
-          "index": false,
-          "primary": false,
-          "resolution": "ms",
-          "script": null,
-          "source": {
-            "from_input_field": "timestamp"
-          },
-          "suppress": true,
-          "type": "epoch"
-        },
-        "name": "firehose_timestamp"
-      },
-      {
-        "datatype": {
-          "default": null,
           "format": "s",
-          "ignore": false,
           "index": false,
-          "index_options": {
-            "fulltext": false
-          },
           "primary": true,
           "resolution": "ms",
           "script": null,
-          "source": {
-            "from_input_field": "data.timestamp"
-          },
+          "source": null,
           "suppress": false,
           "type": "epoch"
         },
@@ -86,39 +41,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "x-edge-result-type"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "result_type"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "x-edge-detailed-result-type"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "detailed_result_type"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "boolean"
         },
@@ -131,9 +54,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sc-bytes"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
@@ -146,9 +67,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sc-status"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -158,27 +77,10 @@
         "datatype": {
           "default": null,
           "format": null,
-          "index": false,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time-to-first-byte"
-          },
-          "suppress": true,
-          "type": "double"
-        },
-        "name": "response_time_to_first_byte_sec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
@@ -188,27 +90,10 @@
         "datatype": {
           "default": null,
           "format": null,
-          "index": false,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time-taken"
-          },
-          "suppress": true,
-          "type": "double"
-        },
-        "name": "response_time_to_last_byte_sec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
@@ -221,9 +106,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sc-content-type"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -236,9 +119,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "cs-method"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -251,9 +132,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "x-host-header"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -266,9 +145,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "cs-uri-query"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -281,9 +158,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "cs(Referer)"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -296,28 +171,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "cs-uri-stem"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
         "name": "request_path"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs(User-Agent)"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "user_agent"
       },
       {
         "datatype": {
@@ -357,8 +215,49 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "c-ip"
+            "from_input_field": "sql_transform"
           },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ai_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "is_bot_traffic"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "user_agent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -371,9 +270,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "s-ip"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -399,24 +296,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "origin-fbl"
-          },
-          "suppress": true,
-          "type": "uint64"
-        },
-        "name": "origin_time_to_first_byte_sec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
@@ -429,24 +309,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "origin-lbl"
-          },
-          "suppress": true,
-          "type": "uint64"
-        },
-        "name": "origin_time_to_last_byte_sec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
@@ -459,9 +322,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "c-country"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -474,9 +335,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -489,9 +348,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -504,28 +361,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "x-edge-location"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
         "name": "edge_pop"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "boolean"
-        },
-        "name": "is_bot_traffic"
       },
       {
         "datatype": {
@@ -544,7 +384,7 @@
       },
       {
         "datatype": {
-          "default": "CloudFront",
+          "default": null,
           "format": null,
           "index": true,
           "resolution": null,
@@ -557,7 +397,7 @@
       },
       {
         "datatype": {
-          "default": "CloudFront FH multi cdn",
+          "default": "multicdn template",
           "format": null,
           "index": true,
           "resolution": null,
@@ -596,21 +436,12 @@
     "rate_limit": null,
     "sample_data": [
       {
-        "records": [
-          {
-            "data": "ewogICJ4LWVkZ2UtbG9jYXRpb24iOiAiU0ZPNTMtUDkiLAogICJzYy1ieXRlcyI6ICI5OTI2MCIsCiAgImMtaXAiOiAiMjYwMToyMDY6ODEwMDoyYzpjODM3OjUxYzc6Y2RjZDplOTYxIiwKICAiY3MtbWV0aG9kIjogIkdFVCIsCiAgImNzKEhvc3QpIjogImQzbWU3dzU1ZDRmZmJjLmNsb3VkZnJvbnQubmV0IiwKICAiY3MtdXJpLXN0ZW0iOiAiL21lZGlhL3NlZ21lbnRfMTkyMHAxMDgwXzEyOS50cyIsCiAgInNjLXN0YXR1cyI6ICIyMDYiLAogICJjcyhSZWZlcmVyKSI6ICJodHRwczovL2JiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzLyIsCiAgImNzKFVzZXItQWdlbnQpIjogIk1vemlsbGEvNS4wJTIwKE1hY2ludG9zaDslMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzcpJTIwQXBwbGVXZWJLaXQvNTM3LjM2JTIwKEtIVE1MLCUyMGxpa2UlMjBHZWNrbyklMjBDaHJvbWUvMTQyLjAuMC4wJTIwU2FmYXJpLzUzNy4zNiIsCiAgImNzLXVyaS1xdWVyeSI6ICItIiwKICAiY3MoQ29va2llKSI6ICItIiwKICAieC1lZGdlLXJlc3VsdC10eXBlIjogIkVycm9yIiwKICAieC1lZGdlLXJlcXVlc3QtaWQiOiAiSUhMSEdiZ2JGbHpOd1A4OVhCWE9rVjBQZ1FHVmZNdTRUM2Q5cmVGR0RCWjFoaHd2ajRnc1R3PT0iLAogICJ4LWhvc3QtaGVhZGVyIjogImJiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzIiwKICAiY3MtcHJvdG9jb2wiOiAiaHR0cHMiLAogICJjcy1ieXRlcyI6ICI0OSIsCiAgInRpbWUtdGFrZW4iOiAiMC40MTAiLAogICJ4LWZvcndhcmRlZC1mb3IiOiAiLSIsCiAgInNzbC1wcm90b2NvbCI6ICJUTFN2MS4zIiwKICAic3NsLWNpcGhlciI6ICJUTFNfQUVTXzEyOF9HQ01fU0hBMjU2IiwKICAieC1lZGdlLXJlc3BvbnNlLXJlc3VsdC10eXBlIjogIk1pc3MiLAogICJjcy1wcm90b2NvbC12ZXJzaW9uIjogIkhUVFAvMi4wIiwKICAiZmxlLXN0YXR1cyI6ICItIiwKICAiZmxlLWVuY3J5cHRlZC1maWVsZHMiOiAiLSIsCiAgImMtcG9ydCI6ICI1ODA2MCIsCiAgInRpbWUtdG8tZmlyc3QtYnl0ZSI6ICIwLjIzOSIsCiAgIngtZWRnZS1kZXRhaWxlZC1yZXN1bHQtdHlwZSI6ICJDbGllbnRDb21tRXJyb3IiLAogICJzYy1jb250ZW50LXR5cGUiOiAidmlkZW8vbXAydCIsCiAgInNjLWNvbnRlbnQtbGVuIjogIjI4MjcxNDQiLAogICJzYy1yYW5nZS1zdGFydCI6ICIwIiwKICAic2MtcmFuZ2UtZW5kIjogIjI4MjcxNDMiLAogICJ0aW1lc3RhbXAiOiAiMTc2MzQ5MzgxMCIsCiAgImMtY291bnRyeSI6ICJVUyIKfQo="
-          }
-        ],
-        "requestId": "f578af01-027d-4174-8c1b-e85b45809992",
-        "timestamp": 1759940715104
+        "timestamp": 1725353165
       }
     ],
     "shadow_table": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nround(response_time_to_first_byte_sec * 1000) AS response_time_to_first_byte_ms,\nround(response_time_to_last_byte_sec * 1000) AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('reference_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('reference_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n reference_city_name(client_ip) as client_city,\n multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT \ndatediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('akamai_ua_cat_dict', 'ai_category', assumeNotNull(user_agent)) AS ai_category,\ndictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
     "wurfl": null
   },
-  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
-  "type": "json",
-  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/58252d30-74a8-45a7-b317-9e22ebf36158",
-  "uuid": "58252d30-74a8-45a7-b317-9e22ebf36158"
+  "type": "json"
 }

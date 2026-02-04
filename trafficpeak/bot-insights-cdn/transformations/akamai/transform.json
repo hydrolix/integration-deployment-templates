@@ -1,8 +1,6 @@
 {
-  "created": "2026-01-08T22:17:03.078481Z",
   "description": "Version v1.0",
-  "modified": "2026-01-08T22:17:03.078492Z",
-  "name": "default",
+  "name": "akamai",
   "settings": {
     "compression": "",
     "format_details": {
@@ -19,8 +17,12 @@
         }
       }
     },
-    "is_default": true,
-    "null_values": [],
+    "is_default": false,
+    "null_values": [
+      "-",
+      "-1",
+      "^"
+    ],
     "output_columns": [
       {
         "datatype": {
@@ -30,7 +32,11 @@
           "primary": true,
           "resolution": "ms",
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/reqTimeSec"
+            ]
+          },
           "suppress": false,
           "type": "epoch"
         },
@@ -43,7 +49,26 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/cacheStatus"
+            ]
+          },
+          "suppress": true,
+          "type": "boolean"
+        },
+        "name": "cacheStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "boolean"
         },
@@ -56,7 +81,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/totalBytes"
+            ]
+          },
           "suppress": false,
           "type": "uint64"
         },
@@ -69,7 +98,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/statusCode"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -82,7 +115,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/timeToFirstByte"
+            ]
+          },
           "suppress": false,
           "type": "uint64"
         },
@@ -95,7 +132,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/transferTimeMSec"
+            ]
+          },
           "suppress": false,
           "type": "uint64"
         },
@@ -108,7 +149,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/rspContentType"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -121,7 +166,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/reqMethod"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -134,7 +183,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/reqHost"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -147,7 +200,26 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/queryStr"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "queryStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "string"
         },
@@ -160,7 +232,26 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/referer"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "string"
         },
@@ -173,11 +264,47 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/reqPath"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
         "name": "request_path"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/UA"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "is_bot_traffic"
       },
       {
         "datatype": {
@@ -222,34 +349,6 @@
           "suppress": false,
           "type": "string"
         },
-        "name": "ai_category"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "boolean"
-        },
-        "name": "is_bot_traffic"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
         "name": "user_agent"
       },
       {
@@ -259,7 +358,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/cliIP"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -272,7 +375,9 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "string"
         },
@@ -285,7 +390,9 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "string"
         },
@@ -298,7 +405,9 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "uint64"
         },
@@ -311,7 +420,9 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "uint64"
         },
@@ -324,7 +435,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/country"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -337,7 +452,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/city"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -350,7 +469,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/asn"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -363,11 +486,26 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
           "suppress": false,
           "type": "string"
         },
         "name": "edge_pop"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
       },
       {
         "datatype": {
@@ -386,7 +524,7 @@
       },
       {
         "datatype": {
-          "default": null,
+          "default": "Akamai",
           "format": null,
           "index": true,
           "resolution": null,
@@ -399,7 +537,7 @@
       },
       {
         "datatype": {
-          "default": "multicdn template",
+          "default": "Akamai multi cdn",
           "format": null,
           "index": true,
           "resolution": null,
@@ -438,15 +576,30 @@
     "rate_limit": null,
     "sample_data": [
       {
-        "timestamp": 1725353165
+        "Asnum": "7922",
+        "UA": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/124.0.0.0 Mobile/15E148 Safari/604.1",
+        "breadcrumbs": "",
+        "cacheStatus": 1,
+        "city": "New Haven",
+        "cliIP": "73.142.98.77",
+        "country": "US",
+        "origin_ip": "52.75.0.13",
+        "queryStr": "",
+        "referer": "https://hydrolix.io",
+        "reqHost": "hydrolix.io",
+        "reqMethod": "GET",
+        "reqPath": "/hls/Crimson Arcade S03E08 — Garden Doors/multivariant.m3u8",
+        "reqTimeSec": 1759940340,
+        "rspContentType": "application/vnd.apple.mpegurl",
+        "statusCode": 200,
+        "timeToFirstByte": 83,
+        "totalBytes": 1268,
+        "transferTimeMSec": 199
       }
     ],
     "shadow_table": null,
-    "sql_transform": "SELECT \ndatediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\ndictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('reference_ua_cat_dict', 'ai_category', assumeNotNull(user_agent)) AS ai_category,\ndictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)') as origin_time_to_last_byte_ms,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'n=([^,\\]]+)') as edge_pop,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'a=([^,\\]]+)') AS origin_ip,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'l=([^,\\]]+)') AS origin_time_to_first_byte_ms,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'a=([^,\\]]+)') as edge_ip,\nmultiIf(\ncacheStatus=1,1,\nbreadcrumbs IS NULL OR empty(breadcrumbs),0,\norigin_ip IS NULL OR empty(origin_ip) OR origin_ip = '127.0.0.1',1,0\n) AS cache_was_cached,\ndecodeURLComponent(assumeNotNull(queryStr)) AS request_query_string,\nconcat('/', assumeNotNull(request_path)) as request_path,\ndecodeURLComponent(assumeNotNull(referer)) AS request_referer,\ndecodeURLComponent(assumeNotNull(UA)) as user_agent,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
     "wurfl": null
   },
-  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
-  "type": "json",
-  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/a52f19e1-a8f5-4931-96d8-f5aef1571dbb",
-  "uuid": "a52f19e1-a8f5-4931-96d8-f5aef1571dbb"
+  "type": "json"
 }
