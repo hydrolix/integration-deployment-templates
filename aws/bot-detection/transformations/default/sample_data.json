@@ -1,5 +1,4 @@
-[
-  {
+{
     "timestamp": 1725353195,
     "cache_was_cached": false,
     "response_total_bytes": 8192,
@@ -23,5 +22,4 @@
     "client_asn": "AS13335",
     "edge_pop": "AMS",
     "hdx_cdn": "akamai"
-  }
-]
+}
