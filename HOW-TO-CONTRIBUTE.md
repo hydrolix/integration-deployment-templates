@@ -121,7 +121,7 @@ git push origin TICKET-123-integration-name
 
 ### 5. Assign to Integration Engineer
 
-Update your Jira ticket and assign it to the Integration Engineer team. The team will:
+Update your Jira ticket and assign it to and integration engineer on the SaaS Engineering team. The team will:
 - Review your submitted assets
 - Create the `bundle.json` configuration file
 - Adapt assets for validation and deployment
