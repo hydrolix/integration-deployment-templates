@@ -173,5 +173,5 @@ Once all issues are resolved:
 
 If you have questions or need assistance:
 - Comment on your Jira ticket
-- Contact the Integration Engineer team
+- Contact an integration engineer on the SaaS engineering team (Slack: @eng-marketplace)
 - Refer to existing integrations in the repository for examples
