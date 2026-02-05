@@ -6,7 +6,7 @@ This guide outlines the process for external teams to contribute integration ass
 
 ### 1. Create a Jira Ticket
 
-Create a Jira ticket in the **LOTC (Line of the Code)** project for your integration request.
+Create a Jira ticket in the **LOTC** project for your integration request.
 
 **Jira Project**: [LOTC Board](https://hydrolix.atlassian.net/jira/software/projects/LOTC/boards/635)
 
