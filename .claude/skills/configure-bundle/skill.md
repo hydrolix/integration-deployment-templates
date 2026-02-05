@@ -568,7 +568,7 @@ After:
    ]
    ```
 
-## Phase 6: Validation Summary
+## Phase 7: Validation Summary
 
 After making all changes, provide a summary:
 
