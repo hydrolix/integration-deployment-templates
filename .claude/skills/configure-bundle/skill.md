@@ -303,6 +303,9 @@ If bundle.json doesn't exist, create with this structure:
     "maintainer": "{email}",
     "version": "1.0.0"
   },
+
+  NOTE: channel_type valid values are: "AWS" | "Azure" | "GCP" | "3rdParty" | "Internal"
+        Default to "AWS" for most bundles unless specifically required otherwise.
   "method": "http_streaming", /* or multi_stream */
   "name": "{source}_{bundle_name}",
   "other_dashboards": [],
@@ -362,8 +365,11 @@ For each `.sql` file in `summaries/`:
 
 For EACH dashboard JSON file:
 
-### 5a. Check Dashboard Wrapper
-**Required structure:**
+### 5a. Fix Dashboard Wrapper and Structure
+
+**Step 1: Add dashboard wrapper if missing**
+
+Required structure:
 ```json
 {
   "dashboard": {
@@ -375,6 +381,39 @@ For EACH dashboard JSON file:
 ```
 
 If missing the top-level `"dashboard"` wrapper, add it.
+
+**Step 2: Populate __elements with datasource model**
+
+The `__elements` object must contain the datasource model:
+```json
+"__elements": {
+  "model": {
+    "datasource": {
+      "type": "hydrolix-hydrolix-datasource",
+      "uid": "__DATASOURCE__"
+    }
+  }
+}
+```
+
+If `__elements` is empty (`{}`), populate it with this structure.
+
+**Step 3: Remove __inputs array**
+
+If the dashboard contains an `__inputs` array (typically after `__elements`), **remove it entirely**. This is an artifact from dashboard export that should not be in the final bundle.
+
+Example of what to remove:
+```json
+"__inputs": [
+  {
+    "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+    "pluginId": "hydrolix-hydrolix-datasource",
+    ...
+  }
+]
+```
+
+The `__requires` array should remain - only remove `__inputs`.
 
 ### 5b. Update Dashboard UID
 Find the UID at the bottom of the dashboard:
@@ -435,7 +474,76 @@ The Hydrolix validator code processes dashboards differently:
 - **Primary dashboard:** Variables replaced in `deploy/default.rs` where `__SUMMARY_TABLE_NAME_X__` becomes full path `project.table`
 - **Other dashboards:** Variables replaced in `grafana/dashboard.rs` where `__SUMMARY_TABLE_NAME_X__` becomes just `table_name`, so you need the `__PROJECT_NAME__.` prefix
 
-### 5d. Choose Primary Dashboard
+**REQUIRED: Add raw_table variable for validation**
+
+The validator requires `__PROJECT_NAME__` to appear somewhere in the dashboard. Add this hidden variable to `templating.list`:
+
+```json
+{
+  "current": {
+    "selected": false,
+    "text": "__PROJECT_NAME__.__TABLE_NAME__",
+    "value": "__PROJECT_NAME__.__TABLE_NAME__"
+  },
+  "hide": 2,
+  "name": "raw_table",
+  "options": [
+    {
+      "selected": false,
+      "text": "__PROJECT_NAME__.__TABLE_NAME__",
+      "value": "__PROJECT_NAME__.__TABLE_NAME__"
+    }
+  ],
+  "query": "__PROJECT_NAME__.__TABLE_NAME__",
+  "skipUrlSync": true,
+  "type": "constant"
+}
+```
+
+This variable is hidden (hide: 2) and ensures the validator can find the required `__PROJECT_NAME__` pattern.
+
+### 5d. Update Datasource UIDs Throughout Dashboard
+
+**Replace all datasource UID references with the template variable:**
+
+Dashboards exported from Grafana contain hardcoded datasource UIDs like:
+- `"uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"`
+- `"uid": "beydc3kqc3ksge"` (or other random UIDs)
+
+These must ALL be replaced with: `"uid": "__DATASOURCE__"`
+
+**Where to find these UIDs:**
+1. **Panel datasources** - In each panel's `datasource` object
+2. **Target datasources** - In each panel's `targets[].datasource` object
+3. **Template variable datasources** - In adhoc filter variables (already handled in 5c)
+
+**Example replacements:**
+
+Before:
+```json
+"datasource": {
+  "type": "hydrolix-hydrolix-datasource",
+  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+}
+```
+
+After:
+```json
+"datasource": {
+  "type": "hydrolix-hydrolix-datasource",
+  "uid": "__DATASOURCE__"
+}
+```
+
+**Important:** Keep the `"type": "hydrolix-hydrolix-datasource"` field - only replace the UID value.
+
+**How to do this efficiently:**
+- Use a global find/replace across the dashboard JSON file
+- Search for: `"uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"`
+- Replace with: `"uid": "__DATASOURCE__"`
+- Also search for any other hardcoded datasource UIDs and replace them
+
+## Phase 6: Update bundle.json with Dashboard Paths
 
 1. **Identify the primary dashboard** (usually the main overview/analysis dashboard)
 2. **Add to bundle.json:**
