@@ -21,7 +21,7 @@
     }
   },
   "metadata": {
-    "channel_type": "TrafficPeak",
+    "channel_type": "AWS",
     "description": "Multi-CDN bot insights and analytics for Akamai, Cloudflare, CloudFront, Fastly and other CDN providers",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"

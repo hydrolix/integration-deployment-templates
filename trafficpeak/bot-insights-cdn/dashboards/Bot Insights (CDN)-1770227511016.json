@@ -1,37 +1,13 @@
 {
   "dashboard": {
-    "__elements": {},
-    "__inputs": [
-      {
-        "description": "",
-        "label": "hydrolix-hydrolix-datasource",
-        "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
-        "pluginId": "hydrolix-hydrolix-datasource",
-        "pluginName": "Hydrolix",
-        "type": "datasource"
-      },
-      {
-        "description": "",
-        "label": "summary_hour",
-        "name": "VAR_SUMMARY_HOUR",
-        "type": "constant",
-        "value": "__SUMMARY_TABLE_NAME_1__"
-      },
-      {
-        "description": "",
-        "label": "summary_day",
-        "name": "VAR_SUMMARY_DAY",
-        "type": "constant",
-        "value": "__SUMMARY_TABLE_NAME_2__"
-      },
-      {
-        "description": "",
-        "label": "summary_month",
-        "name": "VAR_SUMMARY_MONTH",
-        "type": "constant",
-        "value": "__SUMMARY_TABLE_NAME_3__"
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
       }
-    ],
+    },
     "__requires": [
       {
         "id": "grafana",
@@ -147,7 +123,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "__DATASOURCE__"
         },
         "description": "Understand how much of total request volume is originating from all bots as well as AI bots specifically",
         "fieldConfig": {
@@ -198,7 +174,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
             "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
@@ -211,7 +187,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "__DATASOURCE__"
         },
         "description": "What percentage of bot requests are served cached content from the CDN?",
         "fieldConfig": {
@@ -273,7 +249,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
             "rawSql": "SELECT \n  countMergeIf(`count()`, cache_was_cached AND is_bot_traffic) / countMergeIf(`count()`, is_bot_traffic) as cache_hit_rate\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
@@ -286,7 +262,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "__DATASOURCE__"
         },
         "description": "What percentage of origin requests originate from bots?",
         "fieldConfig": {
@@ -338,7 +314,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
             "rawSql": "SELECT \n   countMergeIf(`count()`, is_bot_traffic AND NOT cache_was_cached) / countMergeIf(`count()`, not cache_was_cached) AS bot_origin_load\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
@@ -351,7 +327,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "__DATASOURCE__"
         },
         "description": "Understand the volume of requests from bots, broken down by category",
         "fieldConfig": {
@@ -422,7 +398,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
             "rawSql": "SELECT \n    user_agent_category,\n    cnt_all\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY user_agent_category\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; Bot traffic percentage per category; du=${__user.login}'",
@@ -435,7 +411,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "__DATASOURCE__"
         },
         "description": "Understand the volume of requests from bots, broken down by category over time",
         "fieldConfig": {
@@ -523,7 +499,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "format": 1,
             "rawSql": "SELECT \n    timestamp,\n    cnt_all as \"All Bot Requests\",\n    user_agent_category    \nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY \n    timestamp, user_agent_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic; du=${__user.login}'",
@@ -554,7 +530,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "description": "Understand AI bot request volume by major vendors over time",
             "fieldConfig": {
@@ -644,7 +620,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                  "uid": "__DATASOURCE__"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    ai_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, ai_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
@@ -679,7 +655,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "description": "Understand the files bots are requesting",
             "fieldConfig": {
@@ -780,7 +756,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                  "uid": "__DATASOURCE__"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n    ai_category as \"AI Category\",\n    resource_category as \"Resource category\",\n    cnt_all as \"Count\"\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    ai_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
@@ -793,7 +769,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              "uid": "__DATASOURCE__"
             },
             "description": "Understand the files bots are requesting and how they're changing over time",
             "fieldConfig": {
@@ -892,7 +868,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                  "uid": "__DATASOURCE__"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n    timestamp,\n    ai_category,\n    resource_category,\n    cnt_all as count\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, ai_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
@@ -1014,6 +990,25 @@
           "refresh": 2,
           "regex": "",
           "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         }
       ]
     },
