@@ -1,6 +1,6 @@
 SELECT
   toStartOfDay (timestamp) as timestamp,
-  cache_was_cached,
+  cacheStatus,
   response_status_code,
   request_host,
   client_country_iso_code,
@@ -17,7 +17,7 @@ FROM
   __PROJECT_NAME__.__TABLE_NAME__
 GROUP BY
   timestamp,
-  cache_was_cached,
+  cacheStatus,
   response_status_code,
   request_host,
   client_country_iso_code,

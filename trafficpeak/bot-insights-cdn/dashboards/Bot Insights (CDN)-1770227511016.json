@@ -252,7 +252,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT \n  countMergeIf(`count()`, cache_was_cached AND is_bot_traffic) / countMergeIf(`count()`, is_bot_traffic) as cache_hit_rate\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+            "rawSql": "SELECT \n  countMergeIf(`count()`, cacheStatus AND is_bot_traffic) / countMergeIf(`count()`, is_bot_traffic) as cache_hit_rate\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -317,7 +317,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT \n   countMergeIf(`count()`, is_bot_traffic AND NOT cache_was_cached) / countMergeIf(`count()`, not cache_was_cached) AS bot_origin_load\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
+            "rawSql": "SELECT \n   countMergeIf(`count()`, is_bot_traffic AND NOT cacheStatus) / countMergeIf(`count()`, not cacheStatus) AS bot_origin_load\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
             "refId": "A"
           }
         ],
