@@ -148,7 +148,7 @@ Remove these metadata fields if present:
 
 ### 2e. Analyze SQL Transform and Fix Prefixes
 
-**For EACH transform file:**
+**For EACH transform file (transform.json), analyze the `sql_transform` field:**
 
 1. **Determine correct prefix based on bundle location:**
    - If bundle path contains `aws/` → correct prefix = `commons`
@@ -162,10 +162,11 @@ Remove these metadata fields if present:
    **Dictionary calls pattern:** `dictGet\('(reference|commons|akamai|[a-z_]+)_([a-z_]+)'`
    - Examples: `dictGet('reference_ua_cat_dict'`, `dictGet('commons_geoip_asn_blocks_ipv4'`
 
-3. **Extract base names** (without prefix):
+3. **Extract base names from the sql_transform field** (without prefix):
    - `reference_breadcrumbs` → base: `breadcrumbs`
    - `commons_ua_cat_dict` → base: `ua_cat_dict`
    - `akamai_city_name` → base: `city_name`
+   - Extract from ANY function/dictionary matching the pattern, regardless of prefix
 
 4. **Replace prefixes in sql_transform:**
    - Replace ALL instances of `(reference|commons|akamai)_` with `{correct_prefix}_`
@@ -175,8 +176,11 @@ Remove these metadata fields if present:
      - `commons_city_name(` → `akamai_city_name(`
 
 5. **Collect unique base names for bundle.json:**
-   - Create lists of unique function and dictionary base names (without prefixes)
-   - These will populate bundle.json dependencies later
+   - Scan ONLY the `sql_transform` field for ALL function calls and dictionary lookups
+   - Extract the unique base names (without prefixes) from what you find
+   - **IMPORTANT:** Ignore any `functions/` or `dictionaries/` folders in the bundle - only scan the SQL
+   - There may be many functions and dictionaries - collect all of them
+   - These base names will populate `shared_functions` and `shared_dictionaries` in bundle.json
 
 **Example transformation for trafficpeak bundle:**
 
@@ -274,6 +278,25 @@ Using the base names collected from Phase 2e:
   }
 }
 ```
+
+**IMPORTANT - Dependency Protocol:**
+
+1. **All functions and dictionaries found in the sql_transform go into `shared_functions` and `shared_dictionaries`**
+   - These are "shared" because we assume they will already exist on the target cluster when the bundle is deployed
+   - The bundle.json is declaring: "This bundle requires these functions/dictionaries to exist on the cluster"
+   - There may be many functions and dictionaries - include all base names found in the SQL
+
+2. **Always leave `required_functions` and `required_dictionaries` as empty arrays `[]`**
+   - These fields are not used in the current bundle configuration workflow
+
+3. **Ignore the `functions/` and `dictionaries/` folders**
+   - Even if the bundle contains a `functions/` or `dictionaries/` directory, do NOT use these to populate dependencies
+   - Only scan the `sql_transform` field to determine what functions/dictionaries are actually used
+   - These folders may contain extra files that aren't referenced in the transform
+
+4. **Validation happens separately**
+   - A separate validator tool will check if the declared functions/dictionaries exist on the target cluster
+   - Missing ones can be added manually by the operator
 
 **Note:** List base names only (without prefixes). The actual prefixes are in the sql_transform.
 
@@ -588,10 +611,11 @@ After making all changes, provide a summary:
    - dashboards/{primary}.json (primary)
    - dashboards/{other}.json (other dashboards)
 
-✅ Dependencies Populated:
+✅ Dependencies Populated (scanned from sql_transform):
    - shared_functions: [{list}]
    - shared_dictionaries: [{list}]
    - All prefixes corrected for {aws/trafficpeak} bundle
+   - Note: functions/ and dictionaries/ folders ignored per protocol
 
 ✅ Template Variables Configured:
    - __PROJECT_NAME__ → project name
