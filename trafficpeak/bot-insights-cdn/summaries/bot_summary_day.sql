@@ -8,7 +8,6 @@ SELECT
   client_asn,
   edge_pop,
   user_agent_category,
-  ai_category,
   resource_category,
   hdx_cdn,
   is_bot_traffic,
@@ -26,7 +25,6 @@ GROUP BY
   client_asn,
   edge_pop,
   user_agent_category,
-  ai_category,
   resource_category,
   is_bot_traffic,
   hdx_cdn SETTINGS hdx_primary_key = 'timestamp'

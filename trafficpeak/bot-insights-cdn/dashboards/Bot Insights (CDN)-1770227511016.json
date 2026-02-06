@@ -571,7 +571,7 @@
                     "mode": "off"
                   }
                 },
-                "displayName": "${__field.labels.ai_category}",
+                "displayName": "${__field.labels.user_agent_category}",
                 "links": [],
                 "mappings": [],
                 "thresholds": {
@@ -623,7 +623,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    ai_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, ai_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
+                "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    user_agent_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, user_agent_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
                 "refId": "A"
               }
             ],
@@ -759,7 +759,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT \n    ai_category as \"AI Category\",\n    resource_category as \"Resource category\",\n    cnt_all as \"Count\"\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    ai_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
+                "rawSql": "SELECT \n    user_agent_category as \"AI Category\",\n    resource_category as \"Resource category\",\n    cnt_all as \"Count\"\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    user_agent_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
                 "refId": "A"
               }
             ],
@@ -834,7 +834,7 @@
                   "properties": [
                     {
                       "id": "displayName",
-                      "value": "${__field.labels.ai_category} - ${__field.labels.resource_category}"
+                      "value": "${__field.labels.user_agent_category} - ${__field.labels.resource_category}"
                     }
                   ]
                 }
@@ -871,7 +871,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT \n    timestamp,\n    ai_category,\n    resource_category,\n    cnt_all as count\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, ai_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
+                "rawSql": "SELECT \n    timestamp,\n    user_agent_category,\n    resource_category,\n    cnt_all as count\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, user_agent_category, resource_category\nORDER BY\n    cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
