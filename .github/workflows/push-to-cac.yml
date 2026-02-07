@@ -1,0 +1,26 @@
+name: push-to-cac
+
+on:
+    pull_request:
+        types: [closed]
+        branches: [main]
+
+jobs:
+    bundle-export:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Checkout Integrations Repo
+              uses: actions/checkout@v3
+              with:
+                path: 'integrations-deployment-template'
+            # checkout integrations repo
+            # checkout cac repo
+            # run python env
+            # run export script
+            # commit and push to cac repo
+
+        env:
+            GITHUB_TOKEN: ${{ secrets.PUSH_TO_CAC_TOKEN }}
+            CAC_REPO: 'https://github.com/hydrolix/cac-tools-test'
