@@ -119,17 +119,34 @@ git commit -m "Add [integration name] assets for TICKET-123"
 git push origin TICKET-123-integration-name
 ```
 
-### 5. Assign to Integration Engineer
+### 5. Create a Pull Request
 
-Update your Jira ticket and assign it to and integration engineer on the SaaS Engineering team. The team will:
-- Review your submitted assets
+Create a pull request to the `main` branch for asset review:
+
+1. Go to the repository on GitHub
+2. Create a new Pull Request from your branch to `main`
+3. Use the title format: `[TICKET-123] Integration Name`
+4. In the PR description:
+   - Link to your Jira ticket
+   - Summarize the integration and assets provided
+   - Note any dependencies or special considerations
+5. Request review from the Integration Engineer
+
+**Note**: This PR will remain open throughout the process. The Integration Engineer will add bundling configuration and validation to your branch before merging. The PR will only be merged once the complete integration (assets + bundling) is tested and validated.
+
+### 6. Assign to Integration Engineer
+
+Update your Jira ticket and assign it to an integration engineer on the SaaS Engineering team. The team will:
+- Review your submitted assets via the PR
+- Provide feedback through PR comments and Jira
+- Once assets are approved, add bundling work to your branch
 - Create the `bundle.json` configuration file
 - Adapt assets for validation and deployment
 - Run validation checks
 
-### 6. Wait for Feedback
+### 7. Wait for Feedback
 
-The Integration Engineer will provide feedback through the Jira ticket. You may receive:
+The Integration Engineer will provide feedback through both the Pull Request and Jira ticket. You may receive:
 
 **Technical Validation Feedback**
 - Asset format issues
@@ -141,7 +158,7 @@ The Integration Engineer will provide feedback through the Jira ticket. You may 
 - Data processing issues
 - Integration compatibility problems
 
-### 7. Update Assets Based on Feedback
+### 8. Update Assets Based on Feedback
 
 If issues are identified with the provided assets:
 
@@ -152,14 +169,19 @@ git add .
 git commit -m "Update assets based on feedback for TICKET-123"
 git push origin TICKET-123-integration-name
 ```
-3. Comment on the Jira ticket to notify the Integration Engineer
+3. Comment on the PR and/or Jira ticket to notify the Integration Engineer
+4. The PR will automatically update with your new commits
 
-### 8. Validation and Deployment
+### 9. Bundling and Final Validation
 
-Once all issues are resolved:
-- The Integration Engineer will complete the bundle validation
-- Assets will be deployed to the appropriate environment
-- You will receive confirmation via the Jira ticket
+Once your assets are approved:
+- The Integration Engineer will continue work on **your branch**
+- They will add bundling configuration (`bundle.json`) and any necessary adaptations
+- Additional commits will appear in your PR from the Integration Engineer
+- The Integration Engineer will run validation and testing
+- The PR will be merged to `main` only when the complete integration is validated and ready for deployment
+
+You will receive confirmation via the PR and Jira ticket when the integration is complete.
 
 ## Best Practices
 
@@ -168,6 +190,8 @@ Once all issues are resolved:
 - **Document dependencies**: Note any external dependencies or data requirements
 - **Provide examples**: Include sample data or usage examples where applicable
 - **Respond promptly**: Address feedback quickly to expedite the integration process
+- **Use PR comments**: Ask questions and clarify feedback directly on the PR for better context
+- **Monitor your branch**: The Integration Engineer will add commits to your branch—this is expected and part of the workflow
 
 ## Need Help?
 
