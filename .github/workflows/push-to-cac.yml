@@ -4,6 +4,8 @@ on:
     pull_request:
         types: [closed]
         branches: [main]
+    push:
+        branches: [push-to-cac]  # Temporary: for testing only
     workflow_dispatch:
         inputs:
             pr_number:
@@ -13,7 +15,7 @@ on:
 
 jobs:
     bundle-export:
-        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
         runs-on: ubuntu-latest
 
         steps:
@@ -105,8 +107,8 @@ jobs:
                   echo "Changes detected, creating PR..."
 
                   # set PR number and commit SHA based on trigger type
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-                    PR_NUMBER="${{ github.event.inputs.pr_number }}"
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "push" ]; then
+                    PR_NUMBER="${{ github.event.inputs.pr_number || 'test' }}"
                     COMMIT_SHA="${{ github.sha }}"
                     TRIGGERED_BY="${{ github.actor }}"
                     TEST_PREFIX="[TEST] "
