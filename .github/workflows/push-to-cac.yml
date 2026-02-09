@@ -29,22 +29,70 @@ jobs:
                 token: ${{ secrets.PUSH_TO_CAC_TOKEN }}
                 path: 'cac-tools-test'
 
-            - name: Export Bundles to CAC
+            - name: Detect Changed Bundles
+              id: detect-bundles
               run: |
-                # copy bundle directories from integration templates to CAC repo
-                echo "Exporting bundles to CAC repository..."
+                cd integrations-deployment-templates
 
-                # copy AWS bundles
-                mkdir -p cac-tools-test/bundles/aws
-                cp -r integrations-deployment-templates/aws/* cac-tools-test/bundles/aws/
+                # Fetch main branch for comparison
+                git fetch origin main
 
-                # copy TrafficPeak bundles
-                mkdir -p cac-tools-test/bundles/trafficpeak
-                cp -r integrations-deployment-templates/trafficpeak/* cac-tools-test/bundles/trafficpeak/
+                # Get list of changed files
+                CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+                echo "Changed files:"
+                echo "$CHANGED_FILES"
+
+                # Extract unique bundle directories (first two path components)
+                BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
+
+                if [ -z "$BUNDLE_DIRS" ]; then
+                  echo "No bundle directories changed"
+                  echo "has_changes=false" >> $GITHUB_OUTPUT
+                  echo "bundle_list=" >> $GITHUB_OUTPUT
+                else
+                  echo "Changed bundle directories:"
+                  echo "$BUNDLE_DIRS"
+
+                  # Format bundle list for display
+                  BUNDLE_LIST=$(echo "$BUNDLE_DIRS" | sed 's/^/  - /')
+
+                  echo "has_changes=true" >> $GITHUB_OUTPUT
+                  echo "bundle_dirs<<EOF" >> $GITHUB_OUTPUT
+                  echo "$BUNDLE_DIRS" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+                  echo "bundle_list<<EOF" >> $GITHUB_OUTPUT
+                  echo "$BUNDLE_LIST" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+                fi
+
+            - name: Export Changed Bundles to CAC
+              if: steps.detect-bundles.outputs.has_changes == 'true'
+              run: |
+                echo "Exporting changed bundles to CAC repository..."
+
+                BUNDLE_DIRS="${{ steps.detect-bundles.outputs.bundle_dirs }}"
+
+                # Process each changed bundle directory
+                echo "$BUNDLE_DIRS" | while IFS= read -r bundle_dir; do
+                  if [ -n "$bundle_dir" ] && [ -d "integrations-deployment-templates/$bundle_dir" ]; then
+                    echo "Copying $bundle_dir..."
+
+                    # Create parent directory structure in CAC repo
+                    parent_dir=$(dirname "$bundle_dir")
+                    mkdir -p "cac-tools-test/bundles/$parent_dir"
+
+                    # Copy the bundle directory
+                    cp -r "integrations-deployment-templates/$bundle_dir" "cac-tools-test/bundles/$bundle_dir"
+
+                    echo "✓ Copied $bundle_dir"
+                  fi
+                done
 
                 echo "Bundle export completed"
 
             - name: Create PR in CAC Repo
+              if: steps.detect-bundles.outputs.has_changes == 'true'
               run: |
                 cd cac-tools-test
 
@@ -56,7 +104,7 @@ jobs:
                 if [[ -n $(git status --porcelain) ]]; then
                   echo "Changes detected, creating PR..."
 
-                  # Set PR number and commit SHA based on trigger type
+                  # set PR number and commit SHA based on trigger type
                   if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                     PR_NUMBER="${{ github.event.inputs.pr_number }}"
                     COMMIT_SHA="${{ github.sha }}"
@@ -69,6 +117,9 @@ jobs:
                     TEST_PREFIX=""
                   fi
 
+                  # get bundle list
+                  BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
+
                   # create a new branch for the PR
                   BRANCH_NAME="push-to-cac-${PR_NUMBER}-$(date +%s)"
                   git checkout -b "$BRANCH_NAME"
@@ -77,7 +128,10 @@ jobs:
                   git add .
                   git commit -m "${TEST_PREFIX}Push to CaC Bundle from integration-deployment-templates
 
-                  Synced from PR #${PR_NUMBER}
+                  Synced bundles:
+                  $BUNDLE_LIST
+
+                  From PR #${PR_NUMBER}
                   Source commit: ${COMMIT_SHA}"
 
                   # push branch to remote
@@ -87,6 +141,9 @@ jobs:
                   gh pr create \
                     --title "${TEST_PREFIX}Sync bundles from integration-deployment-templates PR #${PR_NUMBER}" \
                     --body "## Auto-sync from integration-deployment-templates
+
+                  **Synced bundles:**
+                  $BUNDLE_LIST
 
                   **Source PR:** #${PR_NUMBER}
                   **Source commit:** ${COMMIT_SHA}
