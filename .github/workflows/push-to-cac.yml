@@ -28,7 +28,7 @@ jobs:
               uses: actions/checkout@v3
               with:
                 repository: 'hydrolix/cac-tools-test'
-                token: ${{ secrets.PUSH_TO_CAC_TOKEN }}
+                token: ${{ secrets.PUSH_TO_CAC }}
                 path: 'cac-tools-test'
 
             - name: Detect Changed Bundles
@@ -161,8 +161,8 @@ jobs:
                   echo "No changes to commit"
                 fi
               env:
-                GH_TOKEN: ${{ secrets.PUSH_TO_CAC_TOKEN }}
+                GH_TOKEN: ${{ secrets.PUSH_TO_CAC }}
 
         env:
-            GITHUB_TOKEN: ${{ secrets.PUSH_TO_CAC_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.PUSH_TO_CAC }}
             CAC_REPO: 'https://github.com/hydrolix/cac-tools-test'
