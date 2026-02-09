@@ -4,22 +4,105 @@ on:
     pull_request:
         types: [closed]
         branches: [main]
+    workflow_dispatch:
+        inputs:
+            pr_number:
+                description: 'PR number to simulate (for testing)'
+                required: false
+                default: '0'
 
 jobs:
     bundle-export:
-        if: github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
 
-        steps: 
+        steps:
             - name: Checkout Integrations Repo
               uses: actions/checkout@v3
               with:
-                path: 'integrations-deployment-template'
-            # checkout integrations repo
-            # checkout cac repo
-            # run python env
-            # run export script
-            # commit and push to cac repo
+                path: 'integrations-deployment-templates'
+
+            - name: Checkout CAC Repo
+              uses: actions/checkout@v3
+              with:
+                repository: 'hydrolix/cac-tools-test'
+                token: ${{ secrets.PUSH_TO_CAC_TOKEN }}
+                path: 'cac-tools-test'
+
+            - name: Export Bundles to CAC
+              run: |
+                # copy bundle directories from integration templates to CAC repo
+                echo "Exporting bundles to CAC repository..."
+
+                # copy AWS bundles
+                mkdir -p cac-tools-test/bundles/aws
+                cp -r integrations-deployment-templates/aws/* cac-tools-test/bundles/aws/
+
+                # copy TrafficPeak bundles
+                mkdir -p cac-tools-test/bundles/trafficpeak
+                cp -r integrations-deployment-templates/trafficpeak/* cac-tools-test/bundles/trafficpeak/
+
+                echo "Bundle export completed"
+
+            - name: Create PR in CAC Repo
+              run: |
+                cd cac-tools-test
+
+                # configure git
+                git config user.name "github-actions[bot]"
+                git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                # check for changes
+                if [[ -n $(git status --porcelain) ]]; then
+                  echo "Changes detected, creating PR..."
+
+                  # Set PR number and commit SHA based on trigger type
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                    PR_NUMBER="${{ github.event.inputs.pr_number }}"
+                    COMMIT_SHA="${{ github.sha }}"
+                    TRIGGERED_BY="${{ github.actor }}"
+                    TEST_PREFIX="[TEST] "
+                  else
+                    PR_NUMBER="${{ github.event.pull_request.number }}"
+                    COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+                    TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
+                    TEST_PREFIX=""
+                  fi
+
+                  # create a new branch for the PR
+                  BRANCH_NAME="push-to-cac-${PR_NUMBER}-$(date +%s)"
+                  git checkout -b "$BRANCH_NAME"
+
+                  # commit changes
+                  git add .
+                  git commit -m "${TEST_PREFIX}Push to CaC Bundle from integration-deployment-templates
+
+                  Synced from PR #${PR_NUMBER}
+                  Source commit: ${COMMIT_SHA}"
+
+                  # push branch to remote
+                  git push origin "$BRANCH_NAME"
+
+                  # create PR using GitHub CLI
+                  gh pr create \
+                    --title "${TEST_PREFIX}Sync bundles from integration-deployment-templates PR #${PR_NUMBER}" \
+                    --body "## Auto-sync from integration-deployment-templates
+
+                  **Source PR:** #${PR_NUMBER}
+                  **Source commit:** ${COMMIT_SHA}
+                  **Triggered by:** @${TRIGGERED_BY}
+                  **Trigger type:** ${{ github.event_name }}
+
+                  This PR was automatically generated to sync bundle changes from the integration-deployment-templates repository." \
+                    --base main \
+                    --head "$BRANCH_NAME"
+
+                  echo "Successfully created PR in CAC repository"
+                else
+                  echo "No changes to commit"
+                fi
+              env:
+                GH_TOKEN: ${{ secrets.PUSH_TO_CAC_TOKEN }}
 
         env:
             GITHUB_TOKEN: ${{ secrets.PUSH_TO_CAC_TOKEN }}
