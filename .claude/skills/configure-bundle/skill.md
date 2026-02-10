@@ -10,19 +10,52 @@ You are helping configure a Hydrolix integration deployment bundle. Follow this 
 
 ## Phase 1: Discovery and Assessment
 
-1. **Identify the bundle directory** (ask if not provided)
-   - Look for structure: dashboards/, summaries/, transformations/, functions/
-   - List all files found
-   - Determine bundle location: `aws/` or `trafficpeak/`
+1. **Identify the bundle directory**
 
-2. **Check what exists:**
+**Step 1a: Detect current location**
+- Check if current directory contains bundle structure (dashboards/, transformations/)
+- Check if current directory is a repo root (contains aws/, trafficpeak/ subdirectories)
+
+**Step 1b: If in repo root, prompt for bundle selection**
+
+If current directory contains `aws/` or `trafficpeak/` subdirectories:
+- List available bundles by scanning subdirectories
+- Present options to user with AskUserQuestion:
+  ```
+  Which bundle would you like to configure?
+  Options:
+  - aws/firehose-waf-regional
+  - aws/firehose-waf-global
+  - aws/bot-detection
+  - aws/cdn-insights
+  - trafficpeak/security
+  - trafficpeak/default_shared
+  - [Other - specify path]
+  ```
+- Store selected bundle path
+
+**Step 1c: If in bundle directory, confirm**
+- If current directory has bundle structure, display: "Detected bundle directory: {path}"
+- Ask user to confirm or specify different path
+
+**Step 1d: Validate bundle directory exists**
+- Navigate to the selected/confirmed bundle directory
+- Verify it exists and is accessible
+- ❌ BLOCKER if directory doesn't exist
+
+2. **Scan bundle structure**
+   - List all files and folders found
+   - Identify: dashboards/, summaries/, transformations/ (or transforms/), functions/
+   - Determine bundle location: `aws/` or `trafficpeak/` (from path)
+
+3. **Check what exists:**
    - ✓ bundle.json (if missing, needs to be created)
    - ✓ Dashboard JSON files in dashboards/
    - ✓ Summary SQL files in summaries/ (optional)
    - ✓ Transformation and sample data in transformations/ (or transforms/)
    - ✓ Function definitions in functions/ (optional)
 
-3. **Identify the source/vendor:**
+4. **Identify the source/vendor:**
    - Check directory name or existing files for clues
    - Ask user for: source name, bundle name, table name, maintainer email
    - Table name is typically "logs", "events", "siem", etc.
