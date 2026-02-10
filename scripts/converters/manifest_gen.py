@@ -28,7 +28,10 @@ class ManifestGenerator:
             }
         }
 
-        return dump_yaml(manifest, sort_keys=False)
+        yaml_content = dump_yaml(manifest, sort_keys=False)
+        # Add trailing comment
+        yaml_content += "\n# additional properties, metadata of a bundle\n"
+        return yaml_content
 
     def write(self, output_path: Path, metadata: BundleMetadata):
         """Generate and write manifest file."""

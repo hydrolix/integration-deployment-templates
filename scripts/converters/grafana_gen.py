@@ -1,11 +1,11 @@
 """Grafana resource generator."""
 
 from pathlib import Path
-from typing import List, Dict, Set
+from typing import List, Dict
 
 from utils.models import BundleAssets, Dashboard
 from utils.yaml_utils import dump_yaml
-from utils.file_utils import write_file, copy_file
+from utils.file_utils import write_file, copy_file, sanitize_filename
 
 
 class GrafanaGenerator:
@@ -32,11 +32,8 @@ class GrafanaGenerator:
         # Copy dashboards
         dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards)
 
-        # Collect folder information
-        folders = self._collect_folders(assets.dashboards)
-
         # Generate main resources file
-        self._generate_resources_file(grafana_dir, assets.dashboards, folders, dashboard_paths, home_dashboard)
+        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard)
 
         if self.verbose:
             print(f"✓ Generated Grafana resources")
@@ -49,80 +46,94 @@ class GrafanaGenerator:
         dashboard_paths = {}
 
         for dashboard in dashboards:
-            # Preserve relative path structure
-            dest_path = dashboards_dir / dashboard.relative_path
-            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            # Use just the filename (flatten structure)
+            dest_path = dashboards_dir / dashboard.filename
 
             copy_file(dashboard.file_path, dest_path)
 
             # Store relative path from grafana/ directory
-            rel_path = f"dashboards/{dashboard.relative_path}"
+            rel_path = f"dashboards/{dashboard.filename}"
             dashboard_paths[dashboard.filename] = rel_path
 
             if self.verbose:
-                print(f"  Copied dashboard: {dashboard.relative_path}")
+                print(f"  Copied dashboard: {dashboard.filename}")
 
         return dashboard_paths
 
-    def _collect_folders(self, dashboards: List[Dashboard]) -> Set[str]:
-        """Collect unique folder UIDs from dashboards."""
-        folders = set()
-        for dashboard in dashboards:
-            if dashboard.folder_uid:
-                folders.add(dashboard.folder_uid)
-        return folders
+    def _generate_dashboard_uid(self, filename: str) -> str:
+        """Generate dashboard UID from filename."""
+        # Remove extension and sanitize
+        name = Path(filename).stem
+        sanitized = sanitize_filename(name.lower())
+        return f"hdx-{sanitized}"
 
     def _generate_resources_file(
         self,
         grafana_dir: Path,
         dashboards: List[Dashboard],
-        folders: Set[str],
         dashboard_paths: Dict[str, str],
         home_dashboard: str = None
     ):
-        """Generate main resources.gfo.yaml file."""
+        """Generate main resources.gfo.yaml file with nested structure."""
         resources = {}
 
-        # Add folders section
-        if folders:
-            folder_list = []
-            for folder_uid in sorted(folders):
-                # Extract readable name from UID (hdx-<name>-folder -> <name>)
-                folder_name = folder_uid.replace('hdx-', '').replace('-folder', '').replace('-', ' ').title()
-                folder_list.append({
-                    'uid': folder_uid,
-                    'title': folder_name
-                })
-            resources['folders'] = folder_list
+        # Build nested folder structure
+        folders_dict = {
+            'hdx-main-folder': {
+                'name': 'TrafficPeak Certified Reference Dashboards',
+                'children': {}
+            }
+        }
 
-        # Add dashboards section
-        dashboard_list = []
+        # Collect child folders
+        child_folders = set()
         for dashboard in dashboards:
-            dashboard_entry = {
-                'file': dashboard_paths[dashboard.filename],
-                'folder_uid': dashboard.folder_uid
+            if dashboard.folder_uid and dashboard.folder_uid != 'hdx-main-folder':
+                child_folders.add(dashboard.folder_uid)
+
+        # Add child folders to main folder
+        for folder_uid in sorted(child_folders):
+            # Extract readable name from UID (hdx-<name>-folder -> <name>)
+            folder_name = folder_uid.replace('hdx-', '').replace('-folder', '').replace('-', ' ').title()
+            folders_dict['hdx-main-folder']['children'][folder_uid] = {
+                'name': folder_name
             }
 
-            # Add inputs if present
+        resources['folders'] = folders_dict
+
+        # Build dashboards dict
+        dashboards_dict = {}
+        for dashboard in dashboards:
+            dashboard_uid = self._generate_dashboard_uid(dashboard.filename)
+
+            dashboard_entry = {
+                'dashboard': {
+                    '__extend__': dashboard_paths[dashboard.filename]
+                },
+                'folderUid': dashboard.folder_uid
+            }
+
+            # Add inputs if present - as a flat dict
             if dashboard.inputs:
-                inputs = []
+                inputs_dict = {}
                 for inp in dashboard.inputs:
-                    input_entry = {
-                        'name': inp.name,
-                        'type': inp.type
-                    }
-                    if inp.value is not None:
-                        input_entry['value'] = inp.value
-                    inputs.append(input_entry)
-                dashboard_entry['inputs'] = inputs
+                    # Use the input name as the key, and value/type as the value
+                    # For datasource inputs, use the predefined datasource UID
+                    if inp.type == 'datasource':
+                        inputs_dict[inp.name] = 'hdx-hydrolix-datasource'
+                    elif inp.value is not None:
+                        inputs_dict[inp.name] = inp.value
+                    else:
+                        inputs_dict[inp.name] = ''
+                dashboard_entry['inputs'] = inputs_dict
 
             # Mark as home dashboard if specified
             if home_dashboard and dashboard.filename == home_dashboard:
                 dashboard_entry['home'] = True
 
-            dashboard_list.append(dashboard_entry)
+            dashboards_dict[dashboard_uid] = dashboard_entry
 
-        resources['dashboards'] = dashboard_list
+        resources['dashboards'] = dashboards_dict
 
         # Write resources file
         resources_path = grafana_dir / "resources.gfo.yaml"

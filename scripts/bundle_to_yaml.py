@@ -99,8 +99,8 @@ Examples:
 
     parser.add_argument(
         '--version',
-        default='1.0.0',
-        help='Bundle version in semantic versioning format (default: 1.0.0)'
+        default='1.0',
+        help='Bundle version (e.g., 1.0 or 1.0.0) (default: 1.0)'
     )
 
     parser.add_argument(
@@ -180,9 +180,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: portables/<customer_type>_<bundle_name>
-        bundle_dir = f"{args.customer_type}_{args.bundle_name}"
-        output_path = repo_root / "portables" / bundle_dir
+        # Default output: <bundle_name>/<version>
+        output_path = repo_root / args.bundle_name / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")

@@ -97,11 +97,11 @@ class BundleValidator:
         if not metadata.maintainer:
             errors.append("maintainer is required")
 
-        # Version format (basic semantic version check)
+        # Version format (basic semantic version check - allow X.Y or X.Y.Z)
         if metadata.version:
             parts = metadata.version.split('.')
-            if len(parts) != 3 or not all(p.isdigit() for p in parts):
-                errors.append(f"version must be semantic version (e.g., 1.0.0), got: {metadata.version}")
+            if len(parts) not in [2, 3] or not all(p.isdigit() for p in parts):
+                errors.append(f"version must be semantic version (e.g., 1.0 or 1.0.0), got: {metadata.version}")
 
         if self.verbose and not errors:
             print("✓ Metadata validation passed")
