@@ -1,0 +1,13 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-edns-_-gtm-1769128731936:
+    dashboard:
+      __extend__: dashboards/eDNS _ GTM-1769128731936.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_EDNS: FreeWheel_Media__Inc_.gtm
+      VAR_EDNS_SUMMARY_HOUR: FreeWheel_Media__Inc_.edns_summary_hour

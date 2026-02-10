@@ -1,0 +1,7 @@
+tables:
+  akamai_logs:
+    __extend__: tables/table_akamai_logs.yaml
+transforms:
+  akamai_logs:
+    siem:
+      __extend__: transforms/siem.json
