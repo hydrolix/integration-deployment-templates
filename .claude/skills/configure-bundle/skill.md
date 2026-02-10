@@ -299,20 +299,24 @@ Now that transforms are analyzed and cleaned, create or update bundle.json with 
 ### 4a. Determine Bundle Method
 
 **Count transforms:**
-- If single transform → method depends on transform type
-- If multiple transforms → method = `multi_stream`
+- If single transform → single method type (bundle level only)
+- If multiple transforms with different methods → `multi_stream` (bundle + transform level)
 
-**For single transform, detect method from directory/filename:**
-- If name contains "firehose" → method = `firehose`
-- If name contains "kinesis" → method = `kinesis`
-- Otherwise → method = `http_streaming`
+**Case A: Single transform (single method type)**
+- Detect method from directory/filename:
+  - If name contains "firehose" → `"method": "firehose"`
+  - If name contains "kinesis" → `"method": "kinesis"`
+  - Otherwise → `"method": "http_streaming"`
+- **Place method at BUNDLE level only**
+- **DO NOT include method field in transforms array**
 
-**For multiple transforms:**
-- Bundle-level method = `multi_stream`
-- Per-transform method:
-  - If subdirectory name contains "firehose" → transform method = `firehose`
-  - If subdirectory name contains "kinesis" → transform method = `kinesis`
-  - Otherwise → transform method = `http_streaming`
+**Case B: Multiple transforms (different method types)**
+- Bundle-level method = `"method": "multi_stream"`
+- **Each transform MUST specify its own method:**
+  - If subdirectory name contains "firehose" → `"method": "firehose"`
+  - If subdirectory name contains "kinesis" → `"method": "kinesis"`
+  - Otherwise → `"method": "http_streaming"`
+- **Include method field in each transform object**
 
 ### 4a-1. Add Method Overrides for Firehose (if applicable)
 
@@ -371,15 +375,20 @@ Check bundle name, source, or transform names:
 
 ### 4b. Build Transform References
 
-**Single transform:**
+**IMPORTANT: Method field placement depends on bundle type**
+
+**Case A: Single-method bundle (http_streaming, firehose, or kinesis)**
+- Bundle-level method: `"method": "http_streaming"` (or firehose/kinesis)
+- Transform-level method: **OMIT** (transforms inherit from bundle)
+
 ```json
+"method": "http_streaming",
 "tables": [
   {
     "dashboard_var": "__TABLE_NAME__",
     "name": "{table_name}",
     "transforms": [
       {
-        "method": "http_streaming",
         "path": "transformations/transform.json",
         "sample": "transformations/sample_data.json"
       }
@@ -388,8 +397,12 @@ Check bundle name, source, or transform names:
 ]
 ```
 
-**Multiple transforms:**
+**Case B: Multi-stream bundle (multiple method types)**
+- Bundle-level method: `"method": "multi_stream"`
+- Transform-level method: **REQUIRED** for each transform
+
 ```json
+"method": "multi_stream",
 "tables": [
   {
     "dashboard_var": "__TABLE_NAME__",
@@ -414,6 +427,8 @@ Check bundle name, source, or transform names:
   }
 ]
 ```
+
+**Rule:** Only include method at transform level when bundle method = `multi_stream`
 
 ### 4c. Populate Dependencies
 
