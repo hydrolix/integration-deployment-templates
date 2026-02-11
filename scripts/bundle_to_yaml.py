@@ -126,7 +126,7 @@ Examples:
 
     parser.add_argument(
         '--output',
-        help='Output directory (default: portables/<customer_type>_<bundle_name>)'
+        help='Output directory (default: cac_bundle/<bundle_name>/<version>)'
     )
 
     parser.add_argument(
@@ -180,8 +180,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: <bundle_name>/<version>
-        output_path = repo_root / args.bundle_name / args.version
+        # Default output: cac_bundle/<bundle_name>/<version>
+        output_path = repo_root / "cac_bundle" / args.bundle_name / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")
