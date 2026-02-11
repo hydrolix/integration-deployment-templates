@@ -65,6 +65,13 @@ def main():
             file=sys.stderr,
         )
         sys.exit(EXIT_MISSING_INPUT)
+    if not all(c.isalnum() or c == '_' for c in config.table_name):
+        print(
+            f"Error: --table-name '{config.table_name}' is invalid - "
+            "only letters, digits, and underscores allowed",
+            file=sys.stderr,
+        )
+        sys.exit(EXIT_MISSING_INPUT)
 
     state = BundleState()
 
