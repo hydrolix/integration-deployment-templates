@@ -18,7 +18,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "SIEM Trafficpeak Bundle Description",
+    "description": "Integrates multiple data streams into Security Information and Event Management (SIEM) systems for centralized log collection, correlation, and real-time security analytics.",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
