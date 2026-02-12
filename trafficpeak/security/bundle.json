@@ -29,7 +29,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Security TP Description",
+    "description": "Aggregates and analyzes security event data from multiple streams to provide comprehensive threat detection, monitoring, and incident response capabilities across your infrastructure.",
     "maintainer": "kcorbett@hydrolix.io",
     "version": "1.0.0"
   },
