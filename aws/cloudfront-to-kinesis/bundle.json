@@ -24,7 +24,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Amazon Kinesis Cloudfront",
+    "description": "AWS CloudFront is a content delivery network (CDN) service that distributes content through a network of globally distributed edge locations. It reduces latency and origin load by caching data, media, and API endpoints closer to end users, ensuring consistent and efficient content delivery.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },

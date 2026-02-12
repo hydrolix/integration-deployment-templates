@@ -7,7 +7,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Amazon Firehose MediaLive Itegration",
+    "description": "AWS Elemental MediaLive is a real-time, video-encoding service that converts live video streams into multiple outputs for broadcast and streaming delivery. It's commonly used to prepare live video for distribution through services like AWS Elemental MediaPackage, CDNs, or custom streaming applications.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },
