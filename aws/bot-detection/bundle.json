@@ -22,7 +22,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Bot Detection Description",
+    "description": "Bot Insights gives you real-time analytics for bot traffic so you can better understand how bots and agentic AI are interacting with your business.",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
