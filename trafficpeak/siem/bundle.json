@@ -40,7 +40,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "siem_hourly_summary",
-      "parent_table_name": "siem_logs",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/siem_hourly_summary.sql"
       }
@@ -48,7 +48,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "siem_daily_summary",
-      "parent_table_name": "siem_logs",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/siem_daily_summary.sql"
       }
@@ -57,7 +57,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "siem_logs",
+      "name": "logs",
       "transforms": [
         {
           "method": "http_streaming",
