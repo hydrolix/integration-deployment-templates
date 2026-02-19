@@ -2,6 +2,8 @@
 
 import json
 import os
+import re
+import shutil
 
 
 def read_json(filepath):
@@ -36,3 +38,20 @@ def is_valid_json(filepath):
 def ensure_dir(dirpath):
     """Create directory if it doesn't exist."""
     os.makedirs(dirpath, exist_ok=True)
+
+
+def copy_file(src, dst):
+    """Copy a file, creating parent directories as needed."""
+    os.makedirs(os.path.dirname(str(dst)), exist_ok=True)
+    shutil.copy2(str(src), str(dst))
+
+
+def sanitize_filename(name):
+    """Sanitize a string for use as a filename or UID component.
+
+    Replaces non-alphanumeric characters (except hyphens/underscores) with hyphens
+    and collapses multiple hyphens.
+    """
+    sanitized = re.sub(r"[^a-zA-Z0-9_-]", "-", name)
+    sanitized = re.sub(r"-{2,}", "-", sanitized)
+    return sanitized.strip("-")

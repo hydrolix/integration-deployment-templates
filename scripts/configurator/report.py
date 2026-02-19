@@ -17,6 +17,7 @@ def run_report(config, state):
             "data_category": config.data_category,
             "method": state.detected_method,
             "channel_type": config.channel_type,
+            "version": config.version,
             "beta": config.beta,
             "dry_run": config.dry_run,
         },

@@ -73,7 +73,7 @@ class BundleConfig:
     @property
     def bundle_name_normalized(self):
         """Get bundle name normalized for bundle.json name field."""
-        return re.sub(r"[^a-zA-Z0-9_-]", "_", self.bundle_name)
+        return re.sub(r"[^a-zA-Z0-9_]", "_", self.bundle_name)
 
     @property
     def base_url(self):
