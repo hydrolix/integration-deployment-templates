@@ -1,17 +1,17 @@
 name: push-to-cac
 
 on:
-    pull_request:
-        types: [closed]
-        branches: [main]
-    push:
-        branches: [push-to-cac]  # Temporary: for testing only
-    workflow_dispatch:
-        inputs:
-            pr_number:
-                description: 'PR number to simulate (for testing)'
-                required: false
-                default: '0'
+    # pull_request:
+    #     types: [closed]
+    #     branches: [main]
+    # push:
+    #     branches: [push-to-cac]  # Temporary: for testing only
+    # workflow_dispatch:
+    #     inputs:
+    #         pr_number:
+    #             description: 'PR number to simulate (for testing)'
+    #             required: false
+    #             default: '0'
 
 jobs:
     bundle-export:
