@@ -34,7 +34,7 @@
     "version": "1.0.0"
   },
   "method": "http_streaming",
-  "name": "tp_security",
+  "name": "trafficpeak_security",
   "other_dashboards": [
     {
       "path": "dashboards/DS2 Web Security.json",
@@ -42,7 +42,7 @@
     }
   ],
   "solution": true,
-  "source": "tp_security",
+  "source": "trafficpeak",
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
@@ -50,7 +50,7 @@
       "transforms": [
         {
           "method": "http_streaming",
-          "path": "transformations/akamai_default_datastream.json",
+          "path": "transformations/transform.json",
           "sample": "transformations/sample_data.json"
         }
       ]
