@@ -1,8 +1,8 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/bot-detection",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/bot-insights",
   "beta": true,
   "dashboard": {
-    "path": "dashboards/Bot Detection Summary.json",
+    "path": "dashboards/Bot Insights Summary.json",
     "project_var": "__PROJECT_NAME__"
   },
   "dependencies": {
@@ -22,7 +22,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Bot Detection Description",
+    "description": "Bot Insights gives you real-time analytics for bot traffic so you can better understand how bots and agentic AI are interacting with your business.",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
@@ -31,14 +31,14 @@
     "region": "us-east-1",
     "stream_prefix": "aws-waf-logs-hdx"
   },
-  "name": "multi_stream_bot_detection",
+  "name": "bot_insights",
   "solution": true,
-  "source": "bot_detection",
+  "source": "bot_insights",
   "summary_tables": [
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "bot_summary_day",
-      "parent_table_name": "bot_detection",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/bot_summary_day.sql"
       }
@@ -46,7 +46,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "bot_summary_hour",
-      "parent_table_name": "bot_detection",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/bot_summary_hour.sql"
       }
@@ -54,7 +54,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
       "name": "bot_summary_month",
-      "parent_table_name": "bot_detection",
+      "parent_table_name": "logs",
       "sql": {
         "path": "summaries/bot_summary_month.sql"
       }
@@ -63,7 +63,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "bot_detection",
+      "name": "logs",
       "transforms": [
         {
           "method": "http_streaming",
@@ -99,9 +99,9 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/bot-detection",
+    "primary_url": "https://docs.hydrolix.io/docs/bot-insights",
     "source": {
-      "full_title": "Bot Detection",
+      "full_title": "Bot Insights",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
     }
   }
