@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+  push: 
+    branches: [LOTC-786-create-test-bundle-to-run-new-github-actions]
   workflow_dispatch:
     inputs:
       pr_number:
