@@ -1,0 +1,7 @@
+tables:
+  siem_logs:
+    __extend__: tables/table_siem_logs.yaml
+transforms:
+  siem_logs:
+    siem:
+      __extend__: transforms/siem.json

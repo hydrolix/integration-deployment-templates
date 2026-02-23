@@ -41,7 +41,7 @@ SELECT
   ruleData,
   count() AS request_count
 FROM
-  akamai.siem
+  __PROJECT_NAME__.__TABLE_NAME__
 GROUP BY
   timestamp,
   method,
