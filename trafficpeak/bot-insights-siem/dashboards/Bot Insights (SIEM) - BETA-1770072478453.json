@@ -1,0 +1,1552 @@
+{
+  "__elements": {},
+  "__inputs": [
+    {
+      "description": "",
+      "label": "hydrolix-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "type": "datasource"
+    },
+    {
+      "description": "",
+      "label": "summary_min",
+      "name": "VAR_SUMMARY_MIN",
+      "type": "constant",
+      "value": "akamai.siem"
+    },
+    {
+      "description": "",
+      "label": "summary_hour",
+      "name": "VAR_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "akamai.siem"
+    },
+    {
+      "description": "",
+      "label": "siem_raw",
+      "name": "VAR_SIEM_RAW",
+      "type": "constant",
+      "value": "akamai.siem"
+    },
+    {
+      "description": "",
+      "label": "siem_summary_hour",
+      "name": "VAR_SIEM_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "akamai.siem_summary_hour"
+    },
+    {
+      "description": "",
+      "label": "siem_summary_day",
+      "name": "VAR_SIEM_SUMMARY_DAY",
+      "type": "constant",
+      "value": "akamai.siem_summary_day"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "12.0.4"
+    },
+    {
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "type": "datasource",
+      "version": "0.6.0"
+    },
+    {
+      "id": "piechart",
+      "name": "Pie chart",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "stat",
+      "name": "Stat",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 65,
+      "panels": [],
+      "title": "Description",
+      "type": "row"
+    },
+    {
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 62,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## Bot Visibility\n\n**Provides visibility into how bots are interacting with your websites.**\n\nUnderstand high-level trends in bot traffic and which AI bots are requesting resources from your site.\n\nNOTE: THIS DASHBOARD IS SET TO QUERY FOR MAX OF 30 DAYS.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.0.4",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 52,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 46,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n    count() as \"Total Requests\",\n    countIf(notEmpty(bot_type) = 1) AS \"Total Bot Requests\",\n    countIf(notEmpty(bot_type) = 1 AND bot_category = 'Artificial Intelligence (AI) Bots') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Request overview",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "bot traffic for each category",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cnt_all"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Filter to this item type",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 12
+      },
+      "id": 64,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    bot_category,\n    count()\nFROM \n    ${table}\nWHERE \n    $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND notEmpty(bot_type) = 1\nGROUP BY bot_category\nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; Bot traffic percentage per category; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot traffic per category",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.bot_category}",
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 15,
+        "x": 9,
+        "y": 12
+      },
+      "id": 48,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "width": 200
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    toStartOfDay(timestamp) as time,\n    count() as \"All Bot Requests\",\n    bot_category    \nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND notEmpty(bot_type) = 1\nGROUP BY \n    time, bot_category\nORDER BY \n    count() DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "All Bot Requests",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 51,
+      "panels": [],
+      "title": "AI Bot Requests",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.botnet_id}",
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    toStartOfDay(timestamp) as time,\n    count(),\n    botnet_id\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND notEmpty(bot_type) = 1\n    AND bot_category = 'Artificial Intelligence (AI) Bots'\nGROUP BY \n    time, botnet_id\nORDER BY \n    time, count() DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "AI Bot Traffic",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 50,
+      "panels": [],
+      "title": "AI Bots: Requested Resources",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ai_category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 123
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "path_category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 30
+      },
+      "id": 54,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    botnet_id,\n    path,\n    count() as count\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND notEmpty(bot_type) = 1\n    AND bot_category = 'Artificial Intelligence (AI) Bots'\nGROUP BY \n    botnet_id, path\nORDER BY\n    count DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Summary of Crawl Policy File Requests",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.botnet_id} - ${__field.labels.path}",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 30
+      },
+      "id": 56,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    toStartOfDay(timestamp) as time,\n    botnet_id,\n    path,\n    count() as count\nFROM \n    ${table}\nWHERE $__timeFilter(timestamp)\n    AND $__adHocFilter()\n    AND notEmpty(bot_type) = 1\n    AND bot_category = 'Artificial Intelligence (AI) Bots'\nGROUP BY \n    time, botnet_id, path\nORDER BY\n    count() DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_max_timerange_sec=2592000, hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Crawl Policy File Requests Over Time",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 66,
+      "panels": [],
+      "title": "Additional Bot Insights from Web Security Analytics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 39
+      },
+      "id": 68,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 67,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.attackTypes}",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 6,
+        "y": 39
+      },
+      "id": 67,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "WITH cte AS (\n  SELECT  \n    timestamp,\n    ${attackTypes_var} AS attackTypes\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId IN (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId IN (${WAFPolicy:sqlstring}),${WAFPolicy})\n    AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND $__conditionalAll(arrayExists(x -> x IN (${Bot_Id_var:sqlstring}), ${Bot_Id_array}), ${Bot_Id_var})\n    AND $__adHocFilter() \n)\nSELECT  \n  toStartOfInterval(toDateTime(timestamp), ${interval}) AS time,  \n  attackTypes, \n  count(*) as \"Request Count\"\nFROM cte\nARRAY JOIN attackTypes\nGROUP BY attackTypes, time  \nORDER BY count(*) desc",
+          "refId": "A"
+        }
+      ],
+      "title": "Time Line: Attack Type",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ""
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 47
+      },
+      "id": 69,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "WITH cte AS (\n  SELECT  \n    timestamp,\n    bot_type,\n    ${bot_category_array} AS bot_category_array\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId IN (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId IN (${WAFPolicy:sqlstring}),${WAFPolicy})\n    AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND $__conditionalAll(arrayExists(x -> x IN (${Bot_Id_var:sqlstring}), ${Bot_Id_array}), ${Bot_Id_var})\n    --AND notEmpty(toString(botData_responseSegment))\n    AND notEmpty(bot_type)\n    AND $__adHocFilter() \n)\nSELECT \n  bot_category, \n  bot_type,  \n  toStartOfInterval(toDateTime(timestamp), ${interval}) AS time,  \n  count(*) \nFROM cte\nARRAY JOIN bot_category_array AS bot_category\nGROUP BY bot_category, bot_type, time ORDER by count() DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Category",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ""
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 47
+      },
+      "id": 70,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "WITH cte AS (\n  SELECT  \n    timestamp,\n    bot_type\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId IN (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId IN (${WAFPolicy:sqlstring}),${WAFPolicy})\n    AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND $__conditionalAll(arrayExists(x -> x IN (${Bot_Id_var:sqlstring}), ${Bot_Id_array}), ${Bot_Id_var})\n    AND notEmpty(bot_type)\n    AND $__adHocFilter() \n)\nSELECT \n  bot_type, \n  toStartOfInterval(toDateTime(timestamp), ${interval}) as time, \n  count(*)  AS \"Count Requests Bot Type\" \nFROM cte \nGROUP BY bot_type, time",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Type",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ""
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 55
+      },
+      "id": 75,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "WITH cte AS (\n  SELECT  \n    timestamp,\n    multiIf(botScore = 0, '0',\n                botScore between 1 and 10, '1-10', \n                botScore between 11 and 20, '11-20', \n                botScore between 21 and 30, '21-30',\n                botScore between 31 and 40, '31-40',\n                botScore between 41 and 50, '41-50',\n                botScore between 51 and 60, '51-60',\n                botScore between 61 and 70, '61-70',\n                botScore between 71 and 80, '71-80',\n                botScore between 81 and 90, '81-90',\n                botScore between 91 and 100, '91-100', '') AS botScoreRange  \n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId IN (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId IN (${WAFPolicy:sqlstring}),${WAFPolicy})\n    AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND $__conditionalAll(arrayExists(x -> x IN (${Bot_Id_var:sqlstring}), ${Bot_Id_array}), ${Bot_Id_var})\n    AND botScore IS NOT NULL\n    AND $__adHocFilter() \n)\nSELECT \n  botScoreRange,  \n  toStartOfInterval(toDateTime(timestamp), ${interval}) as time,  \n  count(*) \nFROM cte\nGROUP BY botScoreRange, time",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Score",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ""
+            },
+            "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "BotCategoryAkamai"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 327
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 55
+      },
+      "id": 74,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "WITH cte AS (\n  SELECT  \n    timestamp,\n    [rules] AS BotCategoryAkamai_array,\n    ${bot_category_array} AS bot_category_array\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId IN (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId IN (${WAFPolicy:sqlstring}),${WAFPolicy})\n    --and notEmpty(bot_type)\n    AND bot_type IN ('Akamai', 'Unknown')\n    AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND $__conditionalAll(arrayExists(x -> x IN (${Bot_Id_var:sqlstring}), ${Bot_Id_array}), ${Bot_Id_var})\n    AND $__adHocFilter() \n)\nSELECT \n  BotCategoryAkamai, \n  bot_category,  \n  toStartOfInterval(toDateTime(timestamp), ${interval}) as time,  \n  count(*) \nFROM cte\nARRAY JOIN BotCategoryAkamai_array AS BotCategoryAkamai, bot_category_array AS bot_category\nGROUP BY BotCategoryAkamai, bot_category, time ORDER BY count() DESC\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Rule Id",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_min}'\nWHEN ${duration} > 24 THEN '${summary_hour}'\nEND",
+        "hide": 2,
+        "name": "table",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_min}'\nWHEN ${duration} > 24 THEN '${summary_hour}'\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 60\nWHEN ${duration} > 24 THEN 3600\nEND",
+        "hide": 2,
+        "name": "seconds",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 60\nWHEN ${duration} > 24 THEN 3600\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SUMMARY_MIN}",
+          "value": "${VAR_SUMMARY_MIN}"
+        },
+        "hide": 2,
+        "name": "summary_min",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_MIN}",
+            "value": "${VAR_SUMMARY_MIN}"
+          }
+        ],
+        "query": "${VAR_SUMMARY_MIN}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SUMMARY_HOUR}",
+          "value": "${VAR_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "name": "summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_HOUR}",
+            "value": "${VAR_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "filters": [],
+        "label": "Filter",
+        "name": "filter",
+        "type": "adhoc"
+      },
+      {
+        "current": {},
+        "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "hide": 2,
+        "name": "duration",
+        "options": [],
+        "query": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT CASE\nWHEN ${duration} < 6 THEN '${siem_raw}'\nWHEN ${duration} >=6 AND ${duration} < 72 THEN '${siem_summary_hour}'\nELSE '${siem_summary_day}'\nEND",
+        "hide": 2,
+        "name": "siem_table",
+        "options": [],
+        "query": "SELECT CASE\nWHEN ${duration} < 6 THEN '${siem_raw}'\nWHEN ${duration} >=6 AND ${duration} < 72 THEN '${siem_summary_hour}'\nELSE '${siem_summary_day}'\nEND",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SIEM_RAW}",
+          "value": "${VAR_SIEM_RAW}"
+        },
+        "hide": 2,
+        "name": "siem_raw",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM_RAW}",
+            "value": "${VAR_SIEM_RAW}"
+          }
+        ],
+        "query": "${VAR_SIEM_RAW}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SIEM_SUMMARY_HOUR}",
+          "value": "${VAR_SIEM_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "name": "siem_summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_HOUR}",
+            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_SIEM_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SIEM_SUMMARY_DAY}",
+          "value": "${VAR_SIEM_SUMMARY_DAY}"
+        },
+        "hide": 2,
+        "name": "siem_summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_DAY}",
+            "value": "${VAR_SIEM_SUMMARY_DAY}"
+          }
+        ],
+        "query": "${VAR_SIEM_SUMMARY_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {},
+        "definition": "SELECT  IF('${table}' = '${siem_raw}', 'attackTypes', $$arrayFilter((x, y) -> y = 1, ['Bot','WAF', 'Reputation','Custom','DoS', 'User Risk', 'Network Firewall', 'Custom'], [attack_bot, attack_waf,attack_reputation,attack_custom_bot,attack_dos, attack_risk, attack_firewall, attack_custom_rules]) $$ )",
+        "hide": 2,
+        "name": "attackTypes_var",
+        "options": [],
+        "query": "SELECT  IF('${table}' = '${siem_raw}', 'attackTypes', $$arrayFilter((x, y) -> y = 1, ['Bot','WAF', 'Reputation','Custom','DoS', 'User Risk', 'Network Firewall', 'Custom'], [attack_bot, attack_waf,attack_reputation,attack_custom_bot,attack_dos, attack_risk, attack_firewall, attack_custom_rules]) $$ )",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "with  cte as (\nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'CPC PoC' as PolicyName, '6h78_267295' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_40921' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'QA_ChoiceHotels' as PolicyName, 'QACH_58335' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Alert Monitor only' as PolicyName, 'ps_224861' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'KRS_ChoiceHotels' as PolicyName, '2000_5001' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Redirects' as PolicyName, 'redi_54784' as PolicyId UNION ALL \nSELECT 'Radisson Americas Security File' as WafConfig, '72649' as WafConfigId, 'Radisson Americas Security Policy' as PolicyName, 'RHBM_116227' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'KRS_International_ChoiceHotels' as PolicyName, 'intd_49367' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49365' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'Redirects' as PolicyName, 'redi_55714' as PolicyId UNION ALL \nSELECT 'Choice University Security File' as WafConfig, '100983' as WafConfigId, 'Choice University Security Policy' as PolicyName, 'CU_256240' as PolicyId UNION ALL \n\nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49856' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Skytouch KRS policy' as PolicyName, 'sky_291530' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Alert Monitor only' as PolicyName, 'aml_243752' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Choice Advantage KRS policy' as PolicyName, 'CU_qik2_4985556240' as PolicyId \n ), cte2 as (\nSELECT policyId\nFROM ${siem_table}\nWHERE $__timeFilter(timestamp)\ngroup by policyId\n)\n         select concatWithSeparator('|', toString(WafConfigId), concatWithSeparator(' : ', toString(WafConfigId), WafConfig)) as WAFConfig from cte\n         INNER JOIN cte2 on  cte.PolicyId = cte2.policyId\n                      GROUP BY WAFConfig\n",
+        "includeAll": true,
+        "multi": true,
+        "name": "WAFConfig",
+        "options": [],
+        "query": "with  cte as (\nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'CPC PoC' as PolicyName, '6h78_267295' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_40921' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'QA_ChoiceHotels' as PolicyName, 'QACH_58335' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Alert Monitor only' as PolicyName, 'ps_224861' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'KRS_ChoiceHotels' as PolicyName, '2000_5001' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Redirects' as PolicyName, 'redi_54784' as PolicyId UNION ALL \nSELECT 'Radisson Americas Security File' as WafConfig, '72649' as WafConfigId, 'Radisson Americas Security Policy' as PolicyName, 'RHBM_116227' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'KRS_International_ChoiceHotels' as PolicyName, 'intd_49367' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49365' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'Redirects' as PolicyName, 'redi_55714' as PolicyId UNION ALL \nSELECT 'Choice University Security File' as WafConfig, '100983' as WafConfigId, 'Choice University Security Policy' as PolicyName, 'CU_256240' as PolicyId UNION ALL \n\nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49856' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Skytouch KRS policy' as PolicyName, 'sky_291530' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Alert Monitor only' as PolicyName, 'aml_243752' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Choice Advantage KRS policy' as PolicyName, 'CU_qik2_4985556240' as PolicyId \n ), cte2 as (\nSELECT policyId\nFROM ${siem_table}\nWHERE $__timeFilter(timestamp)\ngroup by policyId\n)\n         select concatWithSeparator('|', toString(WafConfigId), concatWithSeparator(' : ', toString(WafConfigId), WafConfig)) as WAFConfig from cte\n         INNER JOIN cte2 on  cte.PolicyId = cte2.policyId\n                      GROUP BY WAFConfig\n",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "with  cte as (\nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'CPC PoC' as PolicyName, '6h78_267295' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_40921' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'QA_ChoiceHotels' as PolicyName, 'QACH_58335' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Alert Monitor only' as PolicyName, 'ps_224861' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'KRS_ChoiceHotels' as PolicyName, '2000_5001' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Redirects' as PolicyName, 'redi_54784' as PolicyId UNION ALL \nSELECT 'Radisson Americas Security File' as WafConfig, '72649' as WafConfigId, 'Radisson Americas Security Policy' as PolicyName, 'RHBM_116227' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'KRS_International_ChoiceHotels' as PolicyName, 'intd_49367' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49365' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'Redirects' as PolicyName, 'redi_55714' as PolicyId UNION ALL \nSELECT 'Choice University Security File' as WafConfig, '100983' as WafConfigId, 'Choice University Security Policy' as PolicyName, 'CU_256240' as PolicyId UNION ALL \n\nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49856' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Skytouch KRS policy' as PolicyName, 'sky_291530' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Alert Monitor only' as PolicyName, 'aml_243752' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Choice Advantage KRS policy' as PolicyName, 'CU_qik2_4985556240' as PolicyId \n ),\n cte2 as (SELECT policyId\nFROM ${siem_table}\nWHERE $__timeFilter(timestamp)\ngroup by policyId)\n\n\n\nselect  concatWithSeparator('|', toString(PolicyId), concatWithSeparator(' : ', toString(PolicyId), PolicyName)) from cte\n INNER JOIN cte2 on  cte.PolicyId = cte2.policyId\nwhere  $__conditionalAll(WafConfigId in (${WAFConfig}), ${WAFConfig})",
+        "includeAll": true,
+        "multi": true,
+        "name": "WAFPolicy",
+        "options": [],
+        "query": "with  cte as (\nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'CPC PoC' as PolicyName, '6h78_267295' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_40921' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'QA_ChoiceHotels' as PolicyName, 'QACH_58335' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Alert Monitor only' as PolicyName, 'ps_224861' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'KRS_ChoiceHotels' as PolicyName, '2000_5001' as PolicyId UNION ALL \nSELECT 'WAF Security File' as WafConfig, '3366' as WafConfigId, 'Redirects' as PolicyName, 'redi_54784' as PolicyId UNION ALL \nSELECT 'Radisson Americas Security File' as WafConfig, '72649' as WafConfigId, 'Radisson Americas Security Policy' as PolicyName, 'RHBM_116227' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'KRS_International_ChoiceHotels' as PolicyName, 'intd_49367' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49365' as PolicyId UNION ALL \nSELECT 'International' as WafConfig, '21242' as WafConfigId, 'Redirects' as PolicyName, 'redi_55714' as PolicyId UNION ALL \nSELECT 'Choice University Security File' as WafConfig, '100983' as WafConfigId, 'Choice University Security Policy' as PolicyName, 'CU_256240' as PolicyId UNION ALL \n\nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'NL_Placeholder' as PolicyName, 'nlph_49856' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Skytouch KRS policy' as PolicyName, 'sky_291530' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Alert Monitor only' as PolicyName, 'aml_243752' as PolicyId UNION ALL \nSELECT 'Advantage' as WafConfig, '21371' as WafConfigId, 'Choice Advantage KRS policy' as PolicyName, 'CU_qik2_4985556240' as PolicyId \n ),\n cte2 as (SELECT policyId\nFROM ${siem_table}\nWHERE $__timeFilter(timestamp)\ngroup by policyId)\n\n\n\nselect  concatWithSeparator('|', toString(PolicyId), concatWithSeparator(' : ', toString(PolicyId), PolicyName)) from cte\n INNER JOIN cte2 on  cte.PolicyId = cte2.policyId\nwhere  $__conditionalAll(WafConfigId in (${WAFConfig}), ${WAFConfig})",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "with cte as (SELECT  \nbot_type,\n${bot_category_array} as bot_category_array\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__conditionalAll(configId in (${WAFConfig:sqlstring}), ${WAFConfig})\nAND $__conditionalAll(policyId in (${WAFPolicy:sqlstring}),${WAFPolicy})\nand notEmpty(bot_type))\nSELECT bot_category FROM cte array join bot_category_array as bot_category GROUP BY bot_category",
+        "includeAll": true,
+        "multi": true,
+        "name": "bot_category_var",
+        "options": [],
+        "query": "with cte as (SELECT  \nbot_type,\n${bot_category_array} as bot_category_array\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nAND $__conditionalAll(configId in (${WAFConfig:sqlstring}), ${WAFConfig})\nAND $__conditionalAll(policyId in (${WAFPolicy:sqlstring}),${WAFPolicy})\nand notEmpty(bot_type))\nSELECT bot_category FROM cte array join bot_category_array as bot_category GROUP BY bot_category",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT IF('${table}' = '${siem_raw}', '[bot_category]', '[bot_category_Str]')",
+        "includeAll": false,
+        "name": "bot_category_array",
+        "options": [],
+        "query": "SELECT IF('${table}' = '${siem_raw}', '[bot_category]', '[bot_category_Str]')",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "WITH cte AS (SELECT \n  bot_type,\n  ${Bot_Id_array} AS Bot_Id_array,\n  bot_category\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId in (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId in (${WAFPolicy:sqlstring}),${WAFPolicy})\n \n AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND notEmpty(bot_type)\n )\n\nSELECT Bot_Id \nFROM cte\nARRAY JOIN Bot_Id_array AS Bot_Id\nGROUP BY Bot_Id ",
+        "includeAll": true,
+        "multi": true,
+        "name": "Bot_Id_var",
+        "options": [],
+        "query": "WITH cte AS (SELECT \n  bot_type,\n  ${Bot_Id_array} AS Bot_Id_array,\n  bot_category\n  FROM ${table}\n  WHERE $__timeFilter(timestamp)\n    AND $__conditionalAll(configId in (${WAFConfig:sqlstring}), ${WAFConfig})\n    AND $__conditionalAll(policyId in (${WAFPolicy:sqlstring}),${WAFPolicy})\n \n AND $__conditionalAll(arrayExists(x -> x IN (${bot_category_var:sqlstring}), ${bot_category_array}), ${bot_category_var})\n    AND notEmpty(bot_type)\n )\n\nSELECT Bot_Id \nFROM cte\nARRAY JOIN Bot_Id_array AS Bot_Id\nGROUP BY Bot_Id ",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT IF('${table}' = '${siem_raw}', 'Bot_Id', '[Bot_Id_Str]')",
+        "includeAll": false,
+        "name": "Bot_Id_array",
+        "options": [],
+        "query": "SELECT IF('${table}' = '${siem_raw}', 'Bot_Id', '[Bot_Id_Str]')",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": " SELECT CASE \nWHEN ${duration} < 6 THEN 'INTERVAL 1 MINUTE'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN 'INTERVAL 1 HOUR' \nELSE 'INTERVAL 1 DAY'\nEND",
+        "hide": 2,
+        "includeAll": false,
+        "name": "interval",
+        "options": [],
+        "query": " SELECT CASE \nWHEN ${duration} < 6 THEN 'INTERVAL 1 MINUTE'\nWHEN ${duration} >= 6 AND ${duration} < 72 THEN 'INTERVAL 1 HOUR' \nELSE 'INTERVAL 1 DAY'\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "definition": "SELECT IF('${table}' = '${siem_raw}', 'BotCategoryAkamai', '[BotCategoryAkamaiStr]')",
+        "hide": 2,
+        "includeAll": false,
+        "name": "BotCategoryAkamai_array",
+        "options": [],
+        "query": "SELECT IF('${table}' = '${siem_raw}', 'BotCategoryAkamai', '[BotCategoryAkamaiStr]')",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {},
+        "definition": "SELECT IF('${table}' = '${siem_raw}', 'count(*)', 'cnt_all')",
+        "hide": 2,
+        "includeAll": false,
+        "name": "cnt_all_var",
+        "options": [],
+        "query": "SELECT IF('${table}' = '${siem_raw}', 'count(*)', 'cnt_all')",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Bot Insights (SIEM) - BETA",
+  "version": 6,
+  "weekStart": ""
+}
