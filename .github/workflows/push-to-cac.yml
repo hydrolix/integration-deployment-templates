@@ -38,7 +38,7 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           path: 'integrations-deployment-templates'
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Checkout CAC Repo
         uses: actions/checkout@v4
@@ -52,8 +52,14 @@ jobs:
         run: |
           cd integrations-deployment-templates
 
-          # Find files changed by the merge commit
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          # For workflow_run (merge commit on main), diff the merge commit against its parent.
+          # For push/workflow_dispatch (feature branch), diff the entire branch against main.
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            git fetch origin main --depth=1
+            CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          fi
 
           echo "Changed files:"
           echo "$CHANGED_FILES"
@@ -110,12 +116,7 @@ jobs:
           fi
 
           # Set context based on trigger type
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PR_NUMBER="${{ github.event.inputs.pr_number || github.run_id }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.actor }}"
-            TEST_PREFIX="[TEST] "
-          else
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
             COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
             TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
             TEST_PREFIX=""
@@ -125,6 +126,11 @@ jobs:
             if [ -z "$PR_NUMBER" ]; then
               PR_NUMBER="run-${{ github.run_id }}"
             fi
+          else
+            PR_NUMBER="${{ github.event.inputs.pr_number || github.run_id }}"
+            COMMIT_SHA="${{ github.sha }}"
+            TRIGGERED_BY="${{ github.actor }}"
+            TEST_PREFIX="[TEST] "
           fi
 
           BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
