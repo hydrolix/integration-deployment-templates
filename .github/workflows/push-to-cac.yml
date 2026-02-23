@@ -57,7 +57,6 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_run" ]; then
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
-            git fetch origin main --depth=1
             CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
           fi
 
