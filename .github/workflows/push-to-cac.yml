@@ -1,21 +1,14 @@
 name: push-to-cac
 
 on:
-    # pull_request:
-    #     types: [closed]
-    #     branches: [main]
-    # push:
-    #     branches: [push-to-cac]  # Temporary: for testing only
-    # workflow_dispatch:
-    #     inputs:
-    #         pr_number:
-    #             description: 'PR number to simulate (for testing)'
-    #             required: false
-    #             default: '0'
+    pull_request:
+        types: [closed]
+        branches: [main]
+    workflow_dispatch:
 
 jobs:
     bundle-export:
-        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
 
         steps:
@@ -30,6 +23,7 @@ jobs:
               uses: actions/checkout@v3
               with:
                 path: 'integrations-deployment-templates'
+                fetch-depth: 2
 
             - name: Checkout CAC Repo
               uses: actions/checkout@v3
@@ -38,128 +32,76 @@ jobs:
                 token: ${{ steps.app-token.outputs.token }}
                 path: 'cac-tools-test'
 
-            - name: Detect Changed Bundles
+            - name: Detect Portable Bundles to Export
               id: detect-bundles
               run: |
                 cd integrations-deployment-templates
 
-                # Fetch main branch for comparison
-                git fetch origin main
+                # Get files changed by the merge commit and filter to portables/
+                CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- portables/)
 
-                # Get list of changed files
-                CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
-
-                echo "Changed files:"
+                echo "Changed files in portables/:"
                 echo "$CHANGED_FILES"
 
-                # Extract unique bundle directories (first two path components)
-                BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
+                # Extract unique bundle names (portables/<bundle_name>/...)
+                BUNDLE_NAMES=$(echo "$CHANGED_FILES" | cut -d'/' -f2 | sort -u | grep -v '^$')
 
-                if [ -z "$BUNDLE_DIRS" ]; then
-                  echo "No bundle directories changed"
+                if [ -z "$BUNDLE_NAMES" ]; then
+                  echo "No portable bundle changes detected"
                   echo "has_changes=false" >> $GITHUB_OUTPUT
-                  echo "bundle_list=" >> $GITHUB_OUTPUT
                 else
-                  echo "Changed bundle directories:"
-                  echo "$BUNDLE_DIRS"
-
-                  # Format bundle list for display
-                  BUNDLE_LIST=$(echo "$BUNDLE_DIRS" | sed 's/^/  - /')
-
+                  echo "Bundles to export:"
+                  echo "$BUNDLE_NAMES"
                   echo "has_changes=true" >> $GITHUB_OUTPUT
-                  echo "bundle_dirs<<EOF" >> $GITHUB_OUTPUT
-                  echo "$BUNDLE_DIRS" >> $GITHUB_OUTPUT
-                  echo "EOF" >> $GITHUB_OUTPUT
-                  echo "bundle_list<<EOF" >> $GITHUB_OUTPUT
-                  echo "$BUNDLE_LIST" >> $GITHUB_OUTPUT
+                  echo "bundle_names<<EOF" >> $GITHUB_OUTPUT
+                  echo "$BUNDLE_NAMES" >> $GITHUB_OUTPUT
                   echo "EOF" >> $GITHUB_OUTPUT
                 fi
 
-            - name: Export Changed Bundles to CAC
+            - name: Copy Portable Bundles to CAC Repo
               if: steps.detect-bundles.outputs.has_changes == 'true'
               run: |
-                echo "Exporting changed bundles to CAC repository..."
-
-                BUNDLE_DIRS="${{ steps.detect-bundles.outputs.bundle_dirs }}"
-
-                # Process each changed bundle directory
-                echo "$BUNDLE_DIRS" | while IFS= read -r bundle_dir; do
-                  if [ -n "$bundle_dir" ] && [ -d "integrations-deployment-templates/$bundle_dir" ]; then
-                    echo "Copying $bundle_dir..."
-
-                    # Create parent directory structure in CAC repo
-                    parent_dir=$(dirname "$bundle_dir")
-                    mkdir -p "cac-tools-test/bundles/$parent_dir"
-
-                    # Copy the bundle directory
-                    cp -r "integrations-deployment-templates/$bundle_dir" "cac-tools-test/bundles/$bundle_dir"
-
-                    echo "✓ Copied $bundle_dir"
+                echo "${{ steps.detect-bundles.outputs.bundle_names }}" | while IFS= read -r bundle; do
+                  if [ -n "$bundle" ] && [ -d "integrations-deployment-templates/portables/$bundle" ]; then
+                    mkdir -p "cac-tools-test/bundles/$bundle"
+                    cp -r "integrations-deployment-templates/portables/$bundle/." "cac-tools-test/bundles/$bundle/"
+                    echo "Copied: portables/$bundle → bundles/$bundle"
                   fi
                 done
-
-                echo "Bundle export completed"
 
             - name: Create PR in CAC Repo
               if: steps.detect-bundles.outputs.has_changes == 'true'
               run: |
                 cd cac-tools-test
 
-                # configure git
                 git config user.name "github-actions[bot]"
                 git config user.email "github-actions[bot]@users.noreply.github.com"
 
-                # check for changes
                 if [[ -n $(git status --porcelain) ]]; then
-                  echo "Changes detected, creating PR..."
+                  PR_NUMBER="${{ github.event.pull_request.number || github.run_id }}"
+                  COMMIT_SHA="${{ github.sha }}"
+                  TRIGGERED_BY="${{ github.event.pull_request.user.login || github.actor }}"
 
-                  # set PR number and commit SHA based on trigger type
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "push" ]; then
-                    PR_NUMBER="${{ github.event.inputs.pr_number || 'test' }}"
-                    COMMIT_SHA="${{ github.sha }}"
-                    TRIGGERED_BY="${{ github.actor }}"
-                    TEST_PREFIX="[TEST] "
-                  else
-                    PR_NUMBER="${{ github.event.pull_request.number }}"
-                    COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-                    TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
-                    TEST_PREFIX=""
-                  fi
-
-                  # get bundle list
-                  BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
-
-                  # create a new branch for the PR
                   BRANCH_NAME="push-to-cac-${PR_NUMBER}-$(date +%s)"
                   git checkout -b "$BRANCH_NAME"
 
-                  # commit changes
                   git add .
-                  git commit -m "${TEST_PREFIX}Push to CaC Bundle from integration-deployment-templates
+                  git commit -m "Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}
 
-                  Synced bundles:
-                  $BUNDLE_LIST
+                  Source commit: ${COMMIT_SHA}
+                  Triggered by: @${TRIGGERED_BY}"
 
-                  From PR #${PR_NUMBER}
-                  Source commit: ${COMMIT_SHA}"
-
-                  # push branch to remote
                   git push origin "$BRANCH_NAME"
 
-                  # create PR using GitHub CLI
                   gh pr create \
-                    --title "${TEST_PREFIX}Sync bundles from integration-deployment-templates PR #${PR_NUMBER}" \
+                    --title "Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
                     --body "## Auto-sync from integration-deployment-templates
 
-                  **Synced bundles:**
-                  $BUNDLE_LIST
-
-                  **Source PR:** #${PR_NUMBER}
+                  **Source PR:** hydrolix/integration-deployment-templates#${PR_NUMBER}
                   **Source commit:** ${COMMIT_SHA}
                   **Triggered by:** @${TRIGGERED_BY}
-                  **Trigger type:** ${{ github.event_name }}
 
-                  This PR was automatically generated to sync bundle changes from the integration-deployment-templates repository." \
+                  This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
                     --base main \
                     --head "$BRANCH_NAME"
 

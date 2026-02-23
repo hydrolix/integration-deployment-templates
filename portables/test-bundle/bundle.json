@@ -1,0 +1,11 @@
+{
+  "name": "test_bundle",
+  "metadata": {
+    "channel_type": "test",
+    "description": "Minimal test bundle for validating the push-to-cac workflow.",
+    "maintainer": "test@hydrolix.io",
+    "version": "0.0.1"
+  },
+  "beta": true,
+  "solution": false
+}
