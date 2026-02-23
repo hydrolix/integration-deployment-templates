@@ -133,7 +133,8 @@ Examples:
         """,
     )
 
-    # Required args
+    # Required args (validated after config merge in main(), not by argparse,
+    # so that --config can provide these values without CLI flags)
     parser.add_argument(
         "--bundle-dir",
         required=True,
@@ -141,14 +142,13 @@ Examples:
     )
     parser.add_argument(
         "--table-name",
-        required=True,
-        help="Table name (e.g., logs, bot_detection)",
+        default="",
+        help="Table name (e.g., logs, bot_detection). Required unless provided via --config.",
     )
     parser.add_argument(
         "--data-category",
-        required=True,
-        choices=VALID_DATA_CATEGORIES,
-        help="Data category for the bundle",
+        default="",
+        help=f"Data category: {', '.join(VALID_DATA_CATEGORIES)}. Required unless provided via --config.",
     )
 
     # Optional args

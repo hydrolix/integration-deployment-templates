@@ -27,6 +27,13 @@ REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 def main():
     args = parse_args()
+
+    # If --config provided, load it and fill in missing pipeline args so that
+    # _require_stage2_args and build_*_cmd get the values without requiring
+    # them on the CLI.  This lets CI run with just --config.
+    if args.config:
+        _merge_config_into_args(args)
+
     stages = resolve_stages(args)
 
     results = []
@@ -194,6 +201,31 @@ def resolve_stages(args):
     return stages
 
 
+def _merge_config_into_args(args):
+    """Load --config JSON and fill in missing pipeline args (table_name, data_category, etc.)."""
+    config_path = args.config
+    if not os.path.isabs(config_path):
+        config_path = os.path.join(REPO_ROOT, config_path)
+
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        print(f"Warning: could not load config file '{args.config}': {e}", file=sys.stderr)
+        return
+
+    if not args.table_name:
+        args.table_name = data.get("table_name", "")
+    if not args.data_category:
+        args.data_category = data.get("data_category", "")
+    if not args.source_name:
+        args.source_name = data.get("source_name", "")
+    if not args.bundle_name:
+        args.bundle_name = data.get("bundle_name", "")
+    if not args.description:
+        args.description = data.get("description", "")
+
+
 def _require_stage2_args(args):
     """Validate that stage 2 required args are present."""
     missing = []
@@ -202,7 +234,8 @@ def _require_stage2_args(args):
     if not args.data_category:
         missing.append("--data-category")
     if missing:
-        print(f"Error: {', '.join(missing)} required when stage 2 (configure) runs",
+        print(f"Error: {', '.join(missing)} required when stage 2 (configure) runs"
+              " (or provide via --config)",
               file=sys.stderr)
         sys.exit(2)
 

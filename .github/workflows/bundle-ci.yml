@@ -1,0 +1,161 @@
+name: bundle-ci
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'aws/**'
+      - 'trafficpeak/**'
+
+permissions:
+  contents: write
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bundle_dirs: ${{ steps.detect.outputs.bundle_dirs }}
+      has_bundles: ${{ steps.detect.outputs.has_bundles }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed bundle directories
+        id: detect
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Extract unique bundle dirs (first two path components under aws/ or trafficpeak/)
+          BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
+
+          if [ -z "$BUNDLE_DIRS" ]; then
+            echo "No bundle directories changed"
+            echo "has_bundles=false" >> $GITHUB_OUTPUT
+            echo "bundle_dirs=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Filter to dirs that have a bundle-config.json
+          VALID_DIRS=""
+          while IFS= read -r dir; do
+            if [ -f "$dir/bundle-config.json" ]; then
+              if [ -n "$VALID_DIRS" ]; then
+                VALID_DIRS="${VALID_DIRS}
+          ${dir}"
+              else
+                VALID_DIRS="$dir"
+              fi
+            else
+              echo "::warning::Bundle directory '$dir' has changes but no bundle-config.json — skipping auto-format"
+            fi
+          done <<< "$BUNDLE_DIRS"
+
+          if [ -z "$VALID_DIRS" ]; then
+            echo "No bundles with bundle-config.json found"
+            echo "has_bundles=false" >> $GITHUB_OUTPUT
+            echo "bundle_dirs=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Bundles to process:"
+          echo "$VALID_DIRS"
+
+          # Convert to JSON array for downstream jobs
+          JSON_ARRAY=$(echo "$VALID_DIRS" | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "bundle_dirs=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          echo "has_bundles=true" >> $GITHUB_OUTPUT
+
+  format-bundles:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_bundles == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Format and configure bundles
+        run: |
+          BUNDLE_DIRS='${{ needs.detect-changes.outputs.bundle_dirs }}'
+
+          echo "$BUNDLE_DIRS" | jq -r '.[]' | while IFS= read -r bundle_dir; do
+            echo ""
+            echo "========================================="
+            echo "Processing: $bundle_dir"
+            echo "========================================="
+
+            python scripts/run_pipeline.py \
+              --bundle-dir "$bundle_dir" \
+              --config "$bundle_dir/bundle-config.json" \
+              --skip-validate \
+              --verbose
+
+            echo "✓ Formatted $bundle_dir"
+          done
+
+      - name: Commit formatted bundles
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add aws/ trafficpeak/ portables/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[skip ci] Auto-format bundles via bundle-ci"
+            git push
+          fi
+
+  validate-bundles:
+    needs: format-bundles
+    runs-on: ubuntu-latest
+    container:
+      image: rust:latest
+    environment: bundle-validator-env
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build bundle validator
+        run: cargo build --release --bin bundle-validator
+
+      - name: Run bundle-validator
+        run: ./target/release/bundle-validator
+        env:
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
