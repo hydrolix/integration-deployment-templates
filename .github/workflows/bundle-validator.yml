@@ -2,7 +2,7 @@ name: bundle-validator
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, push-to-cac ]
   pull_request:
     branches: [ main ]
 
