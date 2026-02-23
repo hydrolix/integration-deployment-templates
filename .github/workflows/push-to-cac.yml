@@ -4,24 +4,16 @@ on:
   workflow_run:
     workflows: ["bundle-ci"]
     types: [completed]
-    branches:
-      - main
-      - LOTC-786-create-test-bundle-to-run-new-github-actions
-  push:
-    branches:
-      - LOTC-786-create-test-bundle-to-run-new-github-actions
+  pull_request:
+    types: [closed]
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to simulate (for testing)'
-        required: false
-        default: '0'
 
 jobs:
   bundle-export:
     if: |
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
-      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
@@ -52,9 +44,10 @@ jobs:
         run: |
           cd integrations-deployment-templates
 
-          # For workflow_run (merge commit on main), diff the merge commit against its parent.
-          # For push/workflow_dispatch (feature branch), diff the entire branch against main.
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+          # For pull_request merge: diff the merge commit against its parent on main.
+          # For workflow_run (PR validation): diff the entire PR branch against main.
+          # For workflow_dispatch: diff the current branch against main.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
             CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
@@ -115,18 +108,22 @@ jobs:
           fi
 
           # Set context based on trigger type
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            COMMIT_SHA="${{ github.sha }}"
+            TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
+            TEST_PREFIX=""
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
             COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
             TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
             TEST_PREFIX=""
-            # Resolve PR number from the commit SHA
             PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${COMMIT_SHA}/pulls" \
               --jq '.[0].number // empty' 2>/dev/null || echo "")
             if [ -z "$PR_NUMBER" ]; then
               PR_NUMBER="run-${{ github.run_id }}"
             fi
           else
-            PR_NUMBER="${{ github.event.inputs.pr_number || github.run_id }}"
+            PR_NUMBER="run-${{ github.run_id }}"
             COMMIT_SHA="${{ github.sha }}"
             TRIGGERED_BY="${{ github.actor }}"
             TEST_PREFIX="[TEST] "
