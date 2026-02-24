@@ -4,16 +4,12 @@ on:
   workflow_run:
     workflows: ["bundle-ci"]
     types: [completed]
-  pull_request:
-    types: [closed]
-    branches: [main]
   workflow_dispatch:
 
 jobs:
   bundle-export:
     if: |
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
@@ -44,14 +40,8 @@ jobs:
         run: |
           cd integrations-deployment-templates
 
-          # For pull_request merge: diff the merge commit against its parent on main.
-          # For workflow_run (PR validation): diff the entire PR branch against main.
-          # For workflow_dispatch: diff the current branch against main.
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-          else
-            CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
-          fi
+          # Diff the entire PR branch against main to find all portables changes.
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
 
           echo "Changed files:"
           echo "$CHANGED_FILES"
@@ -108,12 +98,7 @@ jobs:
           fi
 
           # Set context based on trigger type
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
-            TEST_PREFIX=""
-          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
             COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
             TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
             TEST_PREFIX=""
