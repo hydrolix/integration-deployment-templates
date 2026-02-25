@@ -51,9 +51,9 @@
       "name": "siem_logs",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/sample_data.json"
         }
       ]
     }
@@ -66,7 +66,7 @@
     },
     "primary_url": "https://docs.hydrolix.io/docs/bot_insights_siem-integration",
     "source": {
-      "full_title": "Trafficpeak",
+      "full_title": "Trafficpeak Siem",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }
