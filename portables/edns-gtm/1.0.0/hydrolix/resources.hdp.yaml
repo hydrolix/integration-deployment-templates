@@ -1,7 +1,7 @@
 tables:
-  logs:
-    __extend__: tables/table_logs.yaml
+  siem:
+    __extend__: tables/table_siem.yaml
 transforms:
-  logs:
+  siem:
     edns:
       __extend__: transforms/edns.json

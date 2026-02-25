@@ -30,7 +30,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "edns_summary_hour",
-      "parent_table_name": "logs",
+      "parent_table_name": "siem",
       "sql": {
         "path": "summaries/edns_summary_hour.sql"
       }
@@ -39,7 +39,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "logs",
+      "name": "siem",
       "transforms": [
         {
           "path": "transformations/transform.json",
