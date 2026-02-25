@@ -1,0 +1,13 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-edns-_-gtm-1772048391892:
+    dashboard:
+      __extend__: dashboards/eDNS _ GTM-1772048391892.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HDX-DEMO: hdx-hydrolix-datasource
+      VAR_EDNS: akamai.edns
+      VAR_EDNS_SUMMARY_HOUR: akamai.edns_summary_hour

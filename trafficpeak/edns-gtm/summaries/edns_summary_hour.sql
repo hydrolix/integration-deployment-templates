@@ -62,7 +62,7 @@ SELECT
     ) as "9000 - 9999"
   ) AS edns_size
 FROM
-  akamai.edns
+  __PROJECT_NAME__.__TABLE_NAME__
 GROUP BY
   timeStamp,
   requestName,
