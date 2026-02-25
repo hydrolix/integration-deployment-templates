@@ -115,8 +115,10 @@ def _build_bundle_data(config, state, method):
         METHOD_UI["http_streaming"],
     )
 
-    # Source title
-    source_title = config.source_name.replace("_", " ").replace("-", " ").title()
+    # Source title — must be globally unique across all bundles
+    bundle_label = config.bundle_name.replace("_", " ").replace("-", " ").title()
+    source_label = config.source_name.replace("_", " ").replace("-", " ").title()
+    source_title = f"{source_label} {bundle_label}"
 
     bundle_data = {
         "base_url": config.base_url,
