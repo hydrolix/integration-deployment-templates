@@ -1,0 +1,151 @@
+name: push-to-cac-tools
+
+on:
+  workflow_run:
+    workflows: ["bundle-ci"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  bundle-export:
+    if: |
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.INTEGRATIONS_APP_ID }}
+          private-key: ${{ secrets.INTEGRATIONS_APP_PRIVATE_KEY }}
+          owner: hydrolix
+
+      - name: Checkout Integrations Repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          path: 'integrations-deployment-templates'
+          fetch-depth: 0
+
+      - name: Checkout CAC Tools Repo
+        uses: actions/checkout@v4
+        with:
+          repository: 'hydrolix/cac-tools'
+          token: ${{ steps.app-token.outputs.token }}
+          path: 'cac-tools'
+
+      - name: Detect portable bundles
+        id: detect-bundles
+        run: |
+          cd integrations-deployment-templates
+
+          # Diff the entire PR branch against main to find all portables changes.
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Extract unique portable bundle names (second path component under portables/)
+          PORTABLE_BUNDLES=$(echo "$CHANGED_FILES" | grep -E '^portables/' | cut -d'/' -f2 | sort -u)
+
+          if [ -z "$PORTABLE_BUNDLES" ]; then
+            echo "No portable bundle changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Portable bundles to export:"
+          echo "$PORTABLE_BUNDLES"
+
+          BUNDLE_LIST=$(echo "$PORTABLE_BUNDLES" | sed 's/^/  - /')
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "portable_bundles<<EOF" >> $GITHUB_OUTPUT
+          echo "$PORTABLE_BUNDLES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "bundle_list<<EOF" >> $GITHUB_OUTPUT
+          echo "$BUNDLE_LIST" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Export portables to CAC
+        if: steps.detect-bundles.outputs.has_changes == 'true'
+        run: |
+          PORTABLE_BUNDLES="${{ steps.detect-bundles.outputs.portable_bundles }}"
+
+          echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
+            if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
+              echo "Copying portables/$bundle_name → cac-tools/bundles/$bundle_name/"
+
+              mkdir -p "cac-tools/bundles/$bundle_name"
+              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools/bundles/$bundle_name/"
+
+              echo "✓ Copied $bundle_name"
+            fi
+          done
+
+      - name: Create PR in CAC Repo
+        if: steps.detect-bundles.outputs.has_changes == 'true'
+        run: |
+          cd cac-tools
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # Set context based on trigger type
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+            TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
+            TEST_PREFIX=""
+            PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${COMMIT_SHA}/pulls" \
+              --jq '.[0].number // empty' 2>/dev/null || echo "")
+            if [ -z "$PR_NUMBER" ]; then
+              PR_NUMBER="run-${{ github.run_id }}"
+            fi
+          else
+            PR_NUMBER="run-${{ github.run_id }}"
+            COMMIT_SHA="${{ github.sha }}"
+            TRIGGERED_BY="${{ github.actor }}"
+            TEST_PREFIX="[TEST] "
+          fi
+
+          BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
+
+          BRANCH_NAME="push-to-cac-tools-${PR_NUMBER}-$(date +%s)"
+          git checkout -b "$BRANCH_NAME"
+
+          git add .
+          git commit -m "${TEST_PREFIX}Push portable bundles from integration-deployment-templates
+
+          Synced bundles:
+          $BUNDLE_LIST
+
+          From PR #${PR_NUMBER}
+          Source commit: ${COMMIT_SHA}"
+
+          git push origin "$BRANCH_NAME"
+
+          gh pr create \
+            --title "${TEST_PREFIX}Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
+            --body "## Auto-sync from integration-deployment-templates
+
+          **Synced bundles:**
+          $BUNDLE_LIST
+
+          **Source PR:** #${PR_NUMBER}
+          **Source commit:** \`${COMMIT_SHA}\`
+          **Triggered by:** @${TRIGGERED_BY}
+          **Trigger type:** ${{ github.event_name }}
+
+          This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
+            --base main \
+            --head "$BRANCH_NAME"
+
+          echo "Successfully created PR in CAC repository"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
