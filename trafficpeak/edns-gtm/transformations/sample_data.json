@@ -1,0 +1,16 @@
+{
+  "date": "07/12/2020",
+  "time": "19:10:07",
+  "answers": "3:NXDOMAIN",
+  "tcpFlag": "T",
+  "version": 1,
+  "dnsClass": "IN",
+  "edns0Flag": "E",
+  "edns0Size": "1220",
+  "requestIP": "2600:141b:b000::1736:a142",
+  "timeStamp": "1607368207",
+  "dnssecFlag": "D",
+  "requestName": "nxdomain.edgedns.zone",
+  "requestPort": "37041",
+  "requestType": "A"
+}
