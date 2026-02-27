@@ -22,7 +22,7 @@
     "version": "1.0.0"
   },
   "method": "http_streaming",
-  "name": "trafficpeak_edns_gtm",
+  "name": "edns_gtm",
   "other_dashboards": [],
   "solution": true,
   "source": "trafficpeak",
