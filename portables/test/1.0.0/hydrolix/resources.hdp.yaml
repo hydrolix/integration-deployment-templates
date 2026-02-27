@@ -1,7 +1,0 @@
-tables:
-  eDNS_GTM:
-    __extend__: tables/table_eDNS_GTM.yaml
-transforms:
-  eDNS_GTM:
-    edns:
-      __extend__: transforms/edns.json
