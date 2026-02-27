@@ -1,16 +1,11 @@
 name: push-to-cac-tools-test
 
 on:
-  workflow_run:
-    workflows: ["bundle-ci"]
-    types: [completed]
   workflow_dispatch:
 
 jobs:
   bundle-export:
-    if: |
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
-      github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +19,7 @@ jobs:
       - name: Checkout Integrations Repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.sha }}
           path: 'integrations-deployment-templates'
           fetch-depth: 0
 
@@ -97,22 +92,10 @@ jobs:
             exit 0
           fi
 
-          # Set context based on trigger type
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
-            TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
-            TEST_PREFIX=""
-            PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${COMMIT_SHA}/pulls" \
-              --jq '.[0].number // empty' 2>/dev/null || echo "")
-            if [ -z "$PR_NUMBER" ]; then
-              PR_NUMBER="run-${{ github.run_id }}"
-            fi
-          else
-            PR_NUMBER="run-${{ github.run_id }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.actor }}"
-            TEST_PREFIX="[TEST] "
-          fi
+          PR_NUMBER="run-${{ github.run_id }}"
+          COMMIT_SHA="${{ github.sha }}"
+          TRIGGERED_BY="${{ github.actor }}"
+          TEST_PREFIX="[TEST] "
 
           BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
 
