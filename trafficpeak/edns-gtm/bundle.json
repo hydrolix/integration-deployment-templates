@@ -17,7 +17,7 @@
   },
   "metadata": {
     "channel_type": "3rdParty",
-    "description": "Trafficpeak eDNS GTM Integration",
+    "description": "Trafficpeak Edns Gtm Integration",
     "maintainer": "Hydrolix Team <team@hydrolix.io>",
     "version": "1.0.0"
   },
@@ -30,7 +30,7 @@
     {
       "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "edns_summary_hour",
-      "parent_table_name": "logs",
+      "parent_table_name": "eDNS_GTM",
       "sql": {
         "path": "summaries/edns_summary_hour.sql"
       }
@@ -39,12 +39,12 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "logs",
+      "name": "eDNS_GTM",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json"
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
@@ -55,9 +55,9 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/trafficpeak_edns_gtm-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/edns_gtm-integration",
     "source": {
-      "full_title": "Trafficpeak eDNS GTM",
+      "full_title": "Trafficpeak Edns Gtm",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }

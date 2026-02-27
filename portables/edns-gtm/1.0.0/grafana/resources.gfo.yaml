@@ -1,0 +1,9 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-edns-_-gtm:
+    dashboard:
+      __extend__: dashboards/eDNS _ GTM.json
+    folderUid: hdx-main-folder
