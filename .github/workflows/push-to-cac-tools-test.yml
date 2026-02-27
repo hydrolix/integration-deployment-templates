@@ -1,16 +1,15 @@
 name: push-to-cac-tools-test
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'portables/**'
+  workflow_run:
+    workflows: ["bundle-ci"]
+    types: [completed]
   workflow_dispatch:
 
 jobs:
   bundle-export:
     if: |
-      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
@@ -25,7 +24,7 @@ jobs:
       - name: Checkout Integrations Repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           path: 'integrations-deployment-templates'
           fetch-depth: 0
 
@@ -99,11 +98,15 @@ jobs:
           fi
 
           # Set context based on trigger type
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+            TRIGGERED_BY="${{ github.event.workflow_run.triggering_actor.login }}"
             TEST_PREFIX=""
+            PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${COMMIT_SHA}/pulls" \
+              --jq '.[0].number // empty' 2>/dev/null || echo "")
+            if [ -z "$PR_NUMBER" ]; then
+              PR_NUMBER="run-${{ github.run_id }}"
+            fi
           else
             PR_NUMBER="run-${{ github.run_id }}"
             COMMIT_SHA="${{ github.sha }}"

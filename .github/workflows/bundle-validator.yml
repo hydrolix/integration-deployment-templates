@@ -1,14 +1,7 @@
 name: bundle-validator
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'aws/**'
-      - 'trafficpeak/**'
-      - 'portables/**'
+  workflow_dispatch:
 
 jobs:
   bundle-validator:
