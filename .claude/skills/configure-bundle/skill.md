@@ -10,28 +10,138 @@ You are helping configure a Hydrolix integration deployment bundle. Follow this 
 
 ## Phase 1: Discovery and Assessment
 
-1. **Identify the bundle directory** (ask if not provided)
-   - Look for structure: dashboards/, summaries/, transformations/, functions/
-   - List all files found
-   - Determine bundle location: `aws/` or `trafficpeak/`
+1. **Identify the bundle directory**
 
-2. **Check what exists:**
+**Step 1a: Detect current location**
+- Check if current directory contains bundle structure (dashboards/, transformations/)
+- Check if current directory is a repo root (contains aws/, trafficpeak/ subdirectories)
+
+**Step 1b: If in repo root, prompt for bundle selection**
+
+If current directory contains `aws/` or `trafficpeak/` subdirectories:
+- List available bundles by scanning subdirectories
+- Present options to user with AskUserQuestion:
+  ```
+  Which bundle would you like to configure?
+  Options:
+  - aws/firehose-waf-regional
+  - aws/firehose-waf-global
+  - aws/bot-detection
+  - aws/cdn-insights
+  - trafficpeak/security
+  - trafficpeak/default_shared
+  - [Other - specify path]
+  ```
+- Store selected bundle path
+
+**Step 1c: If in bundle directory, confirm**
+- If current directory has bundle structure, display: "Detected bundle directory: {path}"
+- Ask user to confirm or specify different path
+
+**Step 1d: Validate bundle directory exists**
+- Navigate to the selected/confirmed bundle directory
+- Verify it exists and is accessible
+- ❌ BLOCKER if directory doesn't exist
+
+2. **Scan bundle structure**
+   - List all files and folders found
+   - Identify: dashboards/, summaries/, transformations/ (or transforms/), functions/
+   - Determine bundle location: `aws/` or `trafficpeak/` (from path)
+
+3. **Check what exists:**
    - ✓ bundle.json (if missing, needs to be created)
    - ✓ Dashboard JSON files in dashboards/
    - ✓ Summary SQL files in summaries/ (optional)
    - ✓ Transformation and sample data in transformations/ (or transforms/)
    - ✓ Function definitions in functions/ (optional)
 
-3. **Identify the source/vendor:**
+4. **Identify the source/vendor:**
    - Check directory name or existing files for clues
    - Ask user for: source name, bundle name, table name, maintainer email
    - Table name is typically "logs", "events", "siem", etc.
 
-## Phase 2: Transform Organization and Cleanup
+## Phase 2: Validation - Collect All Blockers
+
+**IMPORTANT:** Before making any changes, scan all assets and collect ALL blocking issues. Report all errors together for better user experience.
+
+### Validation Checklist:
+
+**1. Check for transform files:**
+- ✓ At least one transform file exists in `transformations/` or `transforms/`
+- ❌ BLOCKER: No transform files found
+
+**2. For EACH transform file found, validate:**
+
+**a) File is valid JSON:**
+- Try to parse the JSON
+- ❌ BLOCKER: `{filename}` - Invalid JSON syntax, cannot parse
+
+**b) Has required transform structure:**
+- Has `"settings"` object
+- Has `"output_columns"` array
+- Has `"name"` field
+- ❌ BLOCKER: `{filename}` - Missing required transform structure (settings, output_columns, or name)
+
+**c) Has sample_data field:**
+- Check if `sample_data` field exists in transform
+- ❌ BLOCKER: `{filename}` - Missing sample_data field (provider must add sample data)
+
+**d) Sample data has content:**
+- If sample_data field exists, check it's not null/empty
+- ❌ BLOCKER: `{filename}` - sample_data field is empty
+
+**3. Check for TrafficPeak + Firehose violation:**
+
+**IF** bundle path contains `trafficpeak/`:
+- Scan bundle.json (if exists) for `"method": "firehose"`
+- Scan all transform files for `"method": "firehose"`
+- ❌ BLOCKER: TrafficPeak bundles cannot use firehose method (only http_streaming allowed)
+
+**4. Check for dashboard files:**
+- At least one `.json` file exists in `dashboards/` folder
+- ❌ BLOCKER: No dashboard files found
+
+**5. Validate dashboard JSON:**
+- For each dashboard, try to parse JSON
+- ❌ BLOCKER: `dashboards/{filename}` - Invalid JSON syntax, cannot parse
+
+### Error Reporting:
+
+**If ANY blockers found:**
+
+```
+❌ Cannot proceed with bundle configuration. Found {N} blocking issues:
+
+Transform Issues:
+1. transformations/transform_1.json - Missing sample_data field
+2. transformations/transform_2.json - Invalid JSON syntax, cannot parse
+3. transformations/transform_3.json - sample_data field is empty
+
+Bundle Rule Violations:
+4. TrafficPeak bundles cannot use firehose method (found in bundle.json)
+
+Dashboard Issues:
+5. dashboards/main.json - Invalid JSON syntax, cannot parse
+
+Action Required:
+- Contact the team/provider that supplied these bundle assets
+- Fix the issues listed above
+- Run the configuration skill again once fixes are complete
+
+The bundle validator will perform additional checks after configuration is complete.
+```
+
+**STOP HERE** - Do not proceed to Phase 3 until all blockers are resolved.
+
+**If NO blockers found:**
+- Report: ✅ All validation checks passed
+- Proceed to Phase 3
+
+## Phase 3: Transform Organization and Cleanup
 
 This phase normalizes and organizes all transformation files.
 
-### 2a. Normalize Folder Name
+### 3a. Normalize Folder Name
 
 **Check transformation folder name:**
 - Look for folders: `transforms/` or `transformations/`
@@ -44,7 +154,7 @@ This phase normalizes and organizes all transformation files.
 - If folder is named `transforms/` (singular) → rename to `transformations/`
 - Update any bundle.json references to the folder
 
-### 2b. Organize Transform Files
+### 3b. Organize Transform Files
 
 **Detect transform file structure:**
 
@@ -85,7 +195,7 @@ Count transform files in the transformations/ folder:
    - If transform is named `transform.json` → ✅ done
    - If transform has different name → rename to `transform.json`
 
-### 2c. Clean Transform Metadata Fields
+### 3c. Clean Transform Metadata Fields
 
 **For EACH transform file** (whether in root transformations/ or subdirectories):
 
@@ -103,30 +213,16 @@ Remove these metadata fields if present:
 - `"settings"` - All transform settings
 - `"sample_data"` - Sample data (will process in next step)
 
-### 2d. Extract and Validate Sample Data
+### 3d. Extract and Validate Sample Data
 
 **For EACH transform file:**
 
-1. **Check for sample_data field in transform:**
-   - If `sample_data` field is missing or empty → **BLOCKER**
-   - Stop and display error:
-     ```
-     ❌ ERROR: Cannot continue configuration
+**Note:** Phase 2 validation already confirmed sample_data field exists and has content. This phase normalizes the format.
 
-     The transform file '{filename}' is missing sample_data.
-
-     Action Required:
-     - Contact the team that provided this bundle
-     - Request they add sample_data to the transform file
-     - Sample data must include at least one complete example record
-
-     Cannot proceed with bundle configuration until sample_data is present.
-     ```
-
-2. **Extract sample_data from transform:**
+1. **Extract sample_data from transform:**
    - Read the `sample_data` field value
 
-3. **Validate and normalize format:**
+2. **Validate and normalize format:**
    - If sample_data is an array: `[{...}, {...}]`
      - Take ONLY the first element: `[0]`
      - Result should be single object: `{...}`
@@ -134,19 +230,19 @@ Remove these metadata fields if present:
      - Use as-is ✅
    - **REQUIRED:** Final format must be single object, NOT array
 
-4. **Create sample_data.json file:**
+3. **Create sample_data.json file:**
    - Write the normalized sample data object to `sample_data.json`
    - Location:
      - Single transform: `transformations/sample_data.json`
      - Multiple transforms: `transformations/{provider}/sample_data.json`
 
-5. **Update transform file:**
+4. **Update transform file:**
    - Replace the `sample_data` field in transform.json with the normalized object
    - Both files must match exactly
 
 **Result:** Both `sample_data.json` and transform's `sample_data` field contain identical single object.
 
-### 2e. Analyze SQL Transform and Fix Prefixes
+### 3e. Analyze SQL Transform and Fix Prefixes
 
 **For EACH transform file (transform.json), analyze the `sql_transform` field:**
 
@@ -196,39 +292,103 @@ akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)')
 dictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent))
 ```
 
-## Phase 3: Create/Update bundle.json
+## Phase 4: Create/Update bundle.json
 
 Now that transforms are analyzed and cleaned, create or update bundle.json with complete information.
 
-### 3a. Determine Bundle Method
+### 4a. Determine Bundle Method
 
 **Count transforms:**
-- If single transform → method depends on transform type
-- If multiple transforms → method = `multi_stream`
+- If single transform → single method type (bundle level only)
+- If multiple transforms with different methods → `multi_stream` (bundle + transform level)
 
-**For single transform, detect method from directory/filename:**
-- If name contains "firehose" → method = `firehose`
-- If name contains "kinesis" → method = `kinesis`
-- Otherwise → method = `http_streaming`
+**Case A: Single transform (single method type)**
+- Detect method from directory/filename:
+  - If name contains "firehose" → `"method": "firehose"`
+  - If name contains "kinesis" → `"method": "kinesis"`
+  - Otherwise → `"method": "http_streaming"`
+- **Place method at BUNDLE level only**
+- **DO NOT include method field in transforms array**
 
-**For multiple transforms:**
-- Bundle-level method = `multi_stream`
-- Per-transform method:
-  - If subdirectory name contains "firehose" → transform method = `firehose`
-  - If subdirectory name contains "kinesis" → transform method = `kinesis`
-  - Otherwise → transform method = `http_streaming`
+**Case B: Multiple transforms (different method types)**
+- Bundle-level method = `"method": "multi_stream"`
+- **Each transform MUST specify its own method:**
+  - If subdirectory name contains "firehose" → `"method": "firehose"`
+  - If subdirectory name contains "kinesis" → `"method": "kinesis"`
+  - Otherwise → `"method": "http_streaming"`
+- **Include method field in each transform object**
 
-### 3b. Build Transform References
+### 4a-1. Add Method Overrides for Firehose (if applicable)
 
-**Single transform:**
+**IMPORTANT:** Only add method_overrides if firehose method is detected.
+
+**Check if firehose is used:**
+- Bundle-level method = `firehose`, OR
+- Any transform has method = `firehose`
+
+**If NO firehose detected:**
+- Skip this section, do not add method_overrides
+
+**If firehose IS detected:**
+
+**Step 1: Determine the type of firehose bundle**
+
+Check bundle name, source, or transform names:
+
+**Type A: WAF Logs**
+- Bundle/source name contains "waf" (case insensitive)
+- OR transform path contains "waf"
+- Examples: `firehose-waf-regional`, `aws-waf-logs`
+
+**Type B: CloudFront**
+- Bundle/source name contains "cloudfront" (case insensitive)
+- OR transform path contains "cloudfront"
+- OR ui.source.full_title contains "CloudFront"
+- Examples: `firehose-waf-global`, `cloudfront_firehose`
+
+**Type C: Other Firehose**
+- Neither WAF nor CloudFront
+- Examples: generic firehose transforms
+
+**Step 2: Add method_overrides based on type**
+
+**For Type A (WAF Regional):**
 ```json
+"method_overrides": {
+  "stream_prefix": "aws-waf-logs-hdx"
+}
+```
+
+**For Type B (CloudFront Global):**
+```json
+"method_overrides": {
+  "region": "us-east-1",
+  "stream_prefix": "aws-waf-logs-hdx"
+}
+```
+
+**For Type C (Other):**
+- Do not add method_overrides
+
+**Placement:**
+- Add method_overrides at the bundle level (same level as "method", "name", "source")
+
+### 4b. Build Transform References
+
+**IMPORTANT: Method field placement depends on bundle type**
+
+**Case A: Single-method bundle (http_streaming, firehose, or kinesis)**
+- Bundle-level method: `"method": "http_streaming"` (or firehose/kinesis)
+- Transform-level method: **OMIT** (transforms inherit from bundle)
+
+```json
+"method": "http_streaming",
 "tables": [
   {
     "dashboard_var": "__TABLE_NAME__",
     "name": "{table_name}",
     "transforms": [
       {
-        "method": "http_streaming",
         "path": "transformations/transform.json",
         "sample": "transformations/sample_data.json"
       }
@@ -237,8 +397,12 @@ Now that transforms are analyzed and cleaned, create or update bundle.json with 
 ]
 ```
 
-**Multiple transforms:**
+**Case B: Multi-stream bundle (multiple method types)**
+- Bundle-level method: `"method": "multi_stream"`
+- Transform-level method: **REQUIRED** for each transform
+
 ```json
+"method": "multi_stream",
 "tables": [
   {
     "dashboard_var": "__TABLE_NAME__",
@@ -264,9 +428,11 @@ Now that transforms are analyzed and cleaned, create or update bundle.json with 
 ]
 ```
 
-### 3c. Populate Dependencies
+**Rule:** Only include method at transform level when bundle method = `multi_stream`
 
-Using the base names collected from Phase 2e:
+### 4c. Populate Dependencies
+
+Using the base names collected from Phase 3e:
 
 ```json
 "dependencies": {
@@ -300,7 +466,7 @@ Using the base names collected from Phase 2e:
 
 **Note:** List base names only (without prefixes). The actual prefixes are in the sql_transform.
 
-### 3d. Complete bundle.json Structure
+### 4d. Complete bundle.json Structure
 
 If bundle.json doesn't exist, create with this structure:
 
@@ -316,8 +482,8 @@ If bundle.json doesn't exist, create with this structure:
     "hydrolix": {
       "required_dictionaries": [],
       "required_functions": [],
-      "shared_dictionaries": [/* from Phase 2e */],
-      "shared_functions": [/* from Phase 2e */]
+      "shared_dictionaries": [/* from Phase 3e */],
+      "shared_functions": [/* from Phase 3e */]
     }
   },
   "metadata": {
@@ -359,7 +525,7 @@ If bundle.json doesn't exist, create with this structure:
 - Shared functions/dictionaries listed WITHOUT prefixes
 - `tables[].name` should be set to the table name provided by the user
 
-## Phase 4: Fix Summary SQL Files
+## Phase 5: Fix Summary SQL Files
 
 For each `.sql` file in `summaries/`:
 
@@ -384,11 +550,11 @@ For each `.sql` file in `summaries/`:
    ]
    ```
 
-## Phase 5: Fix Dashboard Structure
+## Phase 6: Fix Dashboard Structure
 
 For EACH dashboard JSON file:
 
-### 5a. Fix Dashboard Wrapper and Structure
+### 6a. Fix Dashboard Wrapper and Structure
 
 **Step 1: Add dashboard wrapper if missing**
 
@@ -438,11 +604,11 @@ Example of what to remove:
 
 The `__requires` array should remain - only remove `__inputs`.
 
-### 5b. Update Dashboard UID
+### 6b. Update Dashboard UID
 Find the UID at the bottom of the dashboard:
 - Replace hardcoded UID → `"uid": "__DASHBOARD_UUID__"`
 
-### 5c. Fix Template Variables
+### 6c. Fix Template Variables
 
 **Check for old-style variables to replace:**
 - `${VAR_TIMESTAMP}` → `timestamp` (literal column name)
@@ -525,7 +691,7 @@ The validator requires `__PROJECT_NAME__` to appear somewhere in the dashboard. 
 
 This variable is hidden (hide: 2) and ensures the validator can find the required `__PROJECT_NAME__` pattern.
 
-### 5d. Update Datasource UIDs Throughout Dashboard
+### 6d. Update Datasource UIDs Throughout Dashboard
 
 **Replace all datasource UID references with the template variable:**
 
@@ -538,7 +704,7 @@ These must ALL be replaced with: `"uid": "__DATASOURCE__"`
 **Where to find these UIDs:**
 1. **Panel datasources** - In each panel's `datasource` object
 2. **Target datasources** - In each panel's `targets[].datasource` object
-3. **Template variable datasources** - In adhoc filter variables (already handled in 5c)
+3. **Template variable datasources** - In adhoc filter variables (already handled in 6c)
 
 **Example replacements:**
 
@@ -566,7 +732,7 @@ After:
 - Replace with: `"uid": "__DATASOURCE__"`
 - Also search for any other hardcoded datasource UIDs and replace them
 
-## Phase 6: Update bundle.json with Dashboard Paths
+## Phase 7: Update bundle.json with Dashboard Paths
 
 1. **Identify the primary dashboard** (usually the main overview/analysis dashboard)
 2. **Add to bundle.json:**
@@ -591,12 +757,19 @@ After:
    ]
    ```
 
-## Phase 7: Validation Summary
+## Phase 8: Configuration Summary
 
 After making all changes, provide a summary:
 
 ```
-✅ Transform Organization Complete:
+✅ Phase 2 Validation: All blockers resolved
+   - {N} transform files validated
+   - {N} dashboard files validated
+   - All JSON files parseable
+   - All required fields present
+   - No TrafficPeak + firehose violations
+
+✅ Transform Organization Complete (Phase 3):
    - Folder normalized to: transformations/
    - Transform count: {N} ({single/multiple})
    - Structure: {single transform.json OR subdirectories per provider}
@@ -604,8 +777,8 @@ After making all changes, provide a summary:
    - Sample data validated: single object format
    - SQL prefixes replaced: {old_prefix}_ → {correct_prefix}_
 
-✅ Created/Updated Files:
-   - bundle.json (with correct method and dependencies)
+✅ Created/Updated Files (Phase 4-7):
+   - bundle.json (with correct method, method_overrides if firehose, and dependencies)
    - transformations/{structure}
    - summaries/{files}.sql (template variables)
    - dashboards/{primary}.json (primary)
@@ -625,7 +798,8 @@ After making all changes, provide a summary:
    - __DASHBOARD_UUID__ → generated UUID
 
 ✅ Key Patterns Applied:
-   - Transform methods: {http_streaming/firehose/multi_stream}
+   - Transform methods: {http_streaming/firehose/kinesis/multi_stream}
+   - Method overrides: {added for WAF/CloudFront firehose if applicable}
    - SQL prefixes: {commons/akamai}_ for functions/dictionaries
    - Primary dashboard: __SUMMARY_TABLE_NAME_X__ (no prefix)
    - Other dashboards: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_X__ (with prefix)
@@ -649,27 +823,41 @@ After making all changes, provide a summary:
 | `__DATASOURCE__` | All | Datasource UID | Generated |
 | `__DASHBOARD_UUID__` | All | Dashboard UID | Generated |
 
-## Common Issues to Check
+## Common Issues and How They're Handled
 
-1. **Array-wrapped sample data:** If `sample_data.json` starts with `[`, remove the array wrapper
-2. **Wrong SQL prefixes:** aws bundles must use `commons_`, trafficpeak must use `akamai_`
-3. **Missing sample data:** Transform files must have sample_data field
-4. **Duplication:** If seeing `project.project.table`, primary dashboard has wrong pattern
-5. **Missing project:** If seeing just `table_name`, other dashboard missing `__PROJECT_NAME__.` prefix
-6. **Syntax errors in queries:** Old `${VAR_*}` variables not replaced
-7. **Missing wrapper:** Dashboard content not wrapped in `"dashboard": { }`
-8. **Wrong transform methods:** Check for firehose/kinesis in names
+**Phase 2 Blockers (Cannot proceed):**
+1. **Missing sample data:** Transform files must have sample_data field - BLOCKER
+2. **Invalid JSON:** Any JSON file that can't be parsed - BLOCKER
+3. **TrafficPeak + Firehose:** TrafficPeak bundles cannot use firehose method - BLOCKER
+4. **Missing required structure:** Transform missing settings/output_columns/name - BLOCKER
+
+**Auto-Fixed Issues (Skill handles):**
+1. **Array-wrapped sample data:** Skill extracts first object from array
+2. **Wrong SQL prefixes:** Skill replaces reference/commons/akamai with correct prefix
+3. **Missing dashboard wrapper:** Skill adds `"dashboard": { }` wrapper
+4. **Old ${VAR_*} variables:** Skill replaces with template variables
+5. **Wrong folder name:** Skill renames `transforms/` to `transformations/`
+6. **Transform metadata:** Skill removes uuid, created, modified, url, table fields
+7. **Datasource UIDs:** Skill replaces with `__DATASOURCE__`
+8. **Dashboard UID:** Skill replaces with `__DASHBOARD_UUID__`
+9. **Missing method_overrides:** Skill adds for WAF/CloudFront firehose bundles
+
+**Dashboard Variable Patterns (Applied by skill):**
+- Primary dashboard summary vars: `__SUMMARY_TABLE_NAME_X__` (no prefix)
+- Other dashboard summary vars: `__PROJECT_NAME__.__SUMMARY_TABLE_NAME_X__` (with prefix)
+- All dashboard table vars: `__PROJECT_NAME__.__TABLE_NAME__`
 
 ## Files to Review
 
 After configuration, suggest user review:
-- `bundle.json` - Verify all paths, names, methods, and dependencies
-- `transformations/` structure - Verify proper organization
-- Transform files - Verify SQL prefixes and metadata cleanup
-- `sample_data.json` files - Verify single object format
+- `bundle.json` - Verify all paths, names, methods, method_overrides (if firehose), and dependencies
+- `transformations/` structure - Verify proper organization and naming
+- Transform files - Verify SQL prefixes match bundle location (commons/akamai) and metadata cleaned
+- `sample_data.json` files - Verify single object format (not array)
 - Primary dashboard variables - Verify NO prefix on summary table vars
 - Other dashboard variables - Verify WITH prefix on summary table vars
-- Summary SQL files - Verify template variables used
+- All dashboards - Verify datasource UIDs are `__DATASOURCE__` and dashboard UID is `__DASHBOARD_UUID__`
+- Summary SQL files - Verify template variables used (`__PROJECT_NAME__.__TABLE_NAME__`)
 
 ---
 
