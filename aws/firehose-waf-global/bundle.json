@@ -7,7 +7,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Amazon WAF Data Firehose",
+    "description": "AWS Web Application Firewall (WAF) is a security service that helps protect web applications from common web exploits and attacks by filtering and monitoring HTTP and HTTPS requests. It allows you to create customizable rules to block, allow, or count specific traffic patterns based on conditions like IP addresses, HTTP headers, or query strings.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },
