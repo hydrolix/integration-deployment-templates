@@ -1,132 +1,241 @@
-# Hydrolix Bundle Development Workflow
+# How to Contribute Integrations
 
-## Branch Structure
-```
-main (production) ← develop (staging) ← feature/* (development)
-                  ← release/* (release candidate)
-                  ← hotfix/* (emergency fixes)
-```
+This guide outlines the process for external teams to contribute integration assets to the Hydrolix console.
 
-## Feature Development → Staging
+## Contribution Workflow
 
-### 1. Create Feature Branch
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
-```
+### 1. Create a Jira Ticket
 
-### 2. Make Changes
-- Edit `bundles/your-bundle/bundle.json`
-- Add/modify files in transformations, dashboards, alerts, dictionaries, functions, sql
-- Calculate SHA256 hashes: `openssl dgst -sha256 <filename>`
-- Update version (optional): `"version": "1.x.0-dev"`
+Create a Jira ticket in the **LOTC** project for your integration request.
 
-### 3. Commit and Push
-```bash
-git add .
-git commit -m "Description of changes"
-git push origin feature/your-feature-name
-```
+**Jira Project**: [LOTC Board](https://hydrolix.atlassian.net/jira/software/projects/LOTC/boards/635)
 
-### 4. Create Pull Request
-- **Target:** `develop`
-- **Requirements:** 1 approval + all validation checks pass
-- **Auto-validates:** JSON schema, macros, SHA256 format, file paths
+Include the following information in your ticket:
 
-### 5. Merge to Develop
-- Automatic deployment to **staging environment**
-- **Extended validation runs:** URL checks, dictionary conflicts, function references, alerts
-- Test bundle end-to-end in staging
+#### Required Information
 
-## Staging → Production
+**Basic Details**
+- **Integration name**: Technical name (lowercase, underscores allowed, e.g., `cdn_insights`)
+- **Display title**: User-facing name (e.g., "CDN Insights")
+- **Description**: Clear explanation of what the integration does and its purpose
+- **Category**: AWS or TrafficPeak
+- **Data category**: Type of data (e.g., security, observability, analytics)
 
-### 6. Create Release Branch
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b release/v1.x.0
-```
+**Table Configuration**
+- **Primary table name**: Name for the main table (e.g., `cdn_insights_logs`)
+- **Summary table names** (if applicable): Names for any summary/aggregation tables
 
-### 7. Finalize Release
-- Update `bundle.json`: `"version": "1.x.0"`
-- Update `CHANGELOG.md` with release notes
-```bash
-git add .
-git commit -m "Bump version to 1.x.0"
-git push origin release/v1.x.0
-```
+**UI Assets**
+- **Integration logo**: PNG image or URL for the integration icon
+- **Method logo** (if applicable): Icon representing the data ingestion method
+- **Documentation URL**: Link to integration documentation (if available)
 
-### 8. Create Pull Request to Main
-- **Target:** `main`
-- **Requirements:** 2 approvals + all validation checks pass
-- **Full validation runs:** Version bump check, SHA256 verification, integration tests
+**Technical Details**
+- **Ingestion method**: How data will be ingested (e.g., `http_streaming`, `firehose`, `multi_stream`)
+- **Dependencies**: Any shared dictionaries or functions required (e.g., GeoIP, user-agent parsing)
+- **New or updated dictionaries**: If providing new dictionaries or updates to existing ones, specify the dictionary names and describe the changes
+- **New or updated functions**: If providing new functions or updates to existing ones, specify the function names and describe their purpose
+- **Sample data**: Representative data samples for each transformation
 
-### 9. Tag and Deploy
+#### Optional Information
+- **Maintainer contact**: Email address for the integration maintainer
+- **Beta status**: Whether this integration is in beta
+- **Multiple dashboards**: If providing multiple dashboard views (e.g., overview, detailed, raw)
+
+### 2. Create a Branch
+
+Create a branch named with your ticket number and a brief description:
+
 ```bash
 git checkout main
 git pull origin main
-git tag -a v1.x.0 -m "Release 1.x.0: Description"
-git push origin v1.x.0
-```
-- Tag creation triggers **production deployment**
-
-### 10. Backmerge to Develop
-```bash
-git checkout develop
-git pull origin develop
-git merge release/v1.x.0
-git push origin develop
+git checkout -b TICKET-123-integration-name
 ```
 
-## Hotfix Process
+**Example:** `JIRA-456-cloudflare-logs`
 
-### 1. Create Hotfix Branch
-```bash
-git checkout main
-git pull origin main
-git checkout -b hotfix/v1.x.1
+### 3. Prepare and Load Assets
+
+Organize your assets following the bundle structure. Assets should be placed in a newly created folder under either `aws/` or `trafficpeak/` depending on your integration category.
+
+#### Repository Structure
+```
+integration-deployment-templates/
+├── aws/
+│   └── your-project-name/
+│       ├── bundle-config.json    ← required
+│       ├── dashboards/
+│       ├── dictionaries/
+│       ├── functions/
+│       ├── transformations/
+│       └── summaries/
+└── trafficpeak/
+    └── your-project-name/
+        ├── bundle-config.json    ← required
+        ├── dashboards/
+        ├── dictionaries/
+        ├── functions/
+        ├── transformations/
+        └── summaries/
 ```
 
-### 2. Fix Issue
-- Make necessary fixes
-- Update `bundle.json`: `"version": "1.x.1"`
-- Update `CHANGELOG.md`
+#### `bundle-config.json` (Required)
 
-### 3. Deploy Hotfix
+Every bundle directory must include a `bundle-config.json` file. This file is used by CI to automatically format, configure, and validate your bundle when you open a PR.
+
+**Required fields:**
+
+```json
+{
+  "table_name": "your_table_name",
+  "data_category": "security"
+}
+```
+
+| Field | Description | Values |
+|-------|-------------|--------|
+| `table_name` | Primary table name. Letters, digits, and underscores only (no dashes). | e.g., `bot_detection`, `cdn_logs`, `siem_logs` |
+| `data_category` | Type of data the integration handles. | `video`, `cdn`, or `security` |
+
+**Optional fields** (override auto-inferred values):
+
+| Field | Description |
+|-------|-------------|
+| `source_name` | Source provider name (default: inferred from directory path) |
+| `bundle_name` | Bundle identifier (default: inferred from directory name) |
+| `channel_type` | `AWS`, `Azure`, `GCP`, `3rdParty`, or `Internal` (default: auto-detected) |
+| `method` | Ingestion method: `http_streaming`, `firehose`, `kinesis`, `multi_stream`, etc. (default: auto-detected) |
+| `description` | Integration description (default: auto-generated) |
+| `version` | Bundle version (default: `1.0.0`) |
+| `beta` | Whether this is a beta integration (default: `true`) |
+
+> **Note:** Do not create a `bundle.json` file manually. It is auto-generated by CI from your assets and `bundle-config.json`.
+
+#### Asset Types and Formats
+
+**Dashboards**
+- Grafana JSON dashboard files
+- Include primary dashboard and any additional views (global, detailed, raw, etc.)
+- Place in `dashboards/` folder
+
+**Dictionaries**
+- CSV files with key-value mappings
+- Used for lookups and data enrichment
+- Place in `dictionaries/` folder
+
+**Functions**
+- SQL function definitions
+- Custom functions used in transformations or queries
+- Place in `functions/` folder
+
+**Transformations**
+- Transformation configuration JSON files
+- **Must include sample data** (`sample_data.json`) for each transformation
+- Organize by ingestion method or data source (e.g., `transformations/cloudflare/`, `transformations/firehose/`)
+- Place in `transformations/` folder
+
+**Summaries**
+- SQL files for summary/aggregation table definitions
+- Used for pre-computed metrics and roll-ups
+- Place in `summaries/` folder
+
+**Logos**
+- PNG format recommended
+- Minimum 200x200 pixels for clarity
+- Transparent background preferred
+- Can be provided as files or publicly accessible URLs
+
+### 4. Commit and Push Assets
+
 ```bash
 git add .
-git commit -m "Hotfix: description"
-git push origin hotfix/v1.x.1
+git commit -m "Add [integration name] assets for TICKET-123"
+git push origin TICKET-123-integration-name
 ```
-- Create PR to `main` (expedited review: 1-2 approvals)
 
-### 4. Tag and Backmerge
+### 5. Create a Pull Request
+
+Create a pull request to the `main` branch for asset review:
+
+1. Go to the repository on GitHub
+2. Create a new Pull Request from your branch to `main`
+3. Use the title format: `[TICKET-123] Integration Name`
+4. In the PR description:
+   - Link to your Jira ticket
+   - Summarize the integration and assets provided
+   - Note any dependencies or special considerations
+5. Request review from the Integration Engineer
+
+**What happens next:** When your PR is opened, CI automatically runs:
+1. **Auto-format** — configures your raw assets, generates `bundle.json`, and creates portable bundle artifacts. These changes are committed back to your PR branch.
+2. **Validate** — runs structural validation checks on the configured bundle.
+
+If either step fails, check the workflow logs for details and fix the issues in your branch.
+
+**Note**: This PR will remain open throughout the process. The Integration Engineer will review the CI results and run additional manual validation before merging.
+
+### 6. Assign to Integration Engineer
+
+Update your Jira ticket and assign it to an integration engineer on the SaaS Engineering team. The team will:
+- Review your submitted assets via the PR
+- Provide feedback through PR comments and Jira
+- Once assets are approved, add bundling work to your branch
+- Create the `bundle.json` configuration file
+- Adapt assets for validation and deployment
+- Run validation checks
+
+### 7. Wait for Feedback
+
+The Integration Engineer will provide feedback through both the Pull Request and Jira ticket. You may receive:
+
+**Technical Validation Feedback**
+- Asset format issues
+- Schema validation errors
+- Configuration problems
+
+**Functional Testing Feedback**
+- Runtime errors
+- Data processing issues
+- Integration compatibility problems
+
+### 8. Update Assets Based on Feedback
+
+If issues are identified with the provided assets:
+
+1. Make necessary corrections to your assets
+2. Commit and push updates to your branch
 ```bash
-git checkout main
-git pull origin main
-git tag -a v1.x.1 -m "Hotfix 1.x.1: description"
-git push origin v1.x.1
-
-git checkout develop
-git merge hotfix/v1.x.1
-git push origin develop
+git add .
+git commit -m "Update assets based on feedback for TICKET-123"
+git push origin TICKET-123-integration-name
 ```
+3. Comment on the PR and/or Jira ticket to notify the Integration Engineer
+4. The PR will automatically update with your new commits
 
-## Branch Protection
+### 9. Bundling and Final Validation
 
-| Branch | Approvals | Force Push |
-|--------|-----------|------------|
-| `main` | 2 | ❌ |
-| `develop` | 1 | ❌ |
-| `release/*` | 2 | ❌ |
+Once your assets are approved:
+- The Integration Engineer will continue work on **your branch**
+- They will add bundling configuration (`bundle.json`) and any necessary adaptations
+- Additional commits will appear in your PR from the Integration Engineer
+- The Integration Engineer will run validation and testing
+- The PR will be merged to `main` only when the complete integration is validated and ready for deployment
 
-## Quick Commands
+You will receive confirmation via the PR and Jira ticket when the integration is complete.
 
-| Task | Command |
-|------|---------|
-| Calculate SHA256 | `openssl dgst -sha256 <filename>` |
-| Start feature | `git checkout -b feature/name` from `develop` |
-| Start release | `git checkout -b release/v1.x.0` from `develop` |
-| Start hotfix | `git checkout -b hotfix/v1.x.1` from `main` |
-| Tag release | `git tag -a v1.x.0 -m "message"` |
+## Best Practices
+
+- **Follow naming conventions**: Use clear, descriptive names for all asset files
+- **Test locally**: Validate SQL syntax and JSON formatting before submission
+- **Document dependencies**: Note any external dependencies or data requirements
+- **Provide examples**: Include sample data or usage examples where applicable
+- **Respond promptly**: Address feedback quickly to expedite the integration process
+- **Use PR comments**: Ask questions and clarify feedback directly on the PR for better context
+- **Monitor your branch**: The Integration Engineer will add commits to your branch—this is expected and part of the workflow
+
+## Need Help?
+
+If you have questions or need assistance:
+- Comment on your Jira ticket
+- Contact an integration engineer on the SaaS engineering team (Slack: @eng-marketplace)
+- Refer to existing integrations in the repository for examples

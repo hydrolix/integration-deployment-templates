@@ -7,7 +7,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "AWS MediaTailor Firehose",
+    "description": "The default Hydrolix dashboard for AWS Elemental MediaTailor combines MediaTailor manifests, ad server decision logs, and service metrics to provide information about your MediaTailor environment. When you add MediaTailor as a data source in the Hydrolix web console, Hydrolix provisions two AWS Data Firehose streams to transport data into your Hydrolix cluster: one stream for logs and another for metrics.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },
