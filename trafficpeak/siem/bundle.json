@@ -2,7 +2,7 @@
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/siem",
   "beta": true,
   "dashboard": {
-    "path": "dashboards/Akamai SIEM-1769811259240.json",
+    "path": "dashboards/Akamai SIEM.json",
     "project_var": "__PROJECT_NAME__"
   },
   "dependencies": {
@@ -20,40 +20,22 @@
     "channel_type": "AWS",
     "description": "SIEM Trafficpeak Bundle Description",
     "maintainer": "kevin.borkman@hydrolix.io",
-    "version": "1.0.0"
+    "version": "0.0.9"
   },
   "method": "http_streaming",
   "name": "trafficpeak_siem",
   "other_dashboards": [
     {
-      "path": "dashboards/Security Analysis-1769811253280.json",
+      "path": "dashboards/Security Analysis.json",
       "project_var": "__PROJECT_NAME__"
     },
     {
-      "path": "dashboards/SIEM Raw Logs-1769811302527.json",
+      "path": "dashboards/SIEM Raw Logs.json",
       "project_var": "__PROJECT_NAME__"
     }
   ],
   "solution": true,
   "source": "trafficpeak",
-  "summary_tables": [
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "siem_hourly_summary",
-      "parent_table_name": "siem_logs",
-      "sql": {
-        "path": "summaries/siem_hourly_summary.sql"
-      }
-    },
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
-      "name": "siem_daily_summary",
-      "parent_table_name": "siem_logs",
-      "sql": {
-        "path": "summaries/siem_daily_summary.sql"
-      }
-    }
-  ],
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
