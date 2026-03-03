@@ -9,28 +9,22 @@
     "hydrolix": {
       "required_dictionaries": [],
       "required_functions": [],
+      "shared_dictionaries": [],
       "shared_functions": [
         "breadcrumbs",
         "cmcd_object_type",
-        "cmcd_stream_type",
         "cmcd_query_param",
+        "cmcd_stream_type",
         "cmcd_streaming_format",
-        "edge_worker_execution",
         "edge_worker",
-        "edgeworker_edgeserverflow",
-        "edgeworker_errorcode",
-        "edgeworker_eventhandler",
-        "edgeworker_offreason",
-        "edgeworker_status",
-        "extract_key_pair",
-        "siem_extract"
+        "edge_worker_execution"
       ]
     }
   },
   "metadata": {
-    "channel_type": "AWS",
-    "description": "Aggregates and analyzes security event data from multiple streams to provide comprehensive threat detection, monitoring, and incident response capabilities across your infrastructure.",
-    "maintainer": "kcorbett@hydrolix.io",
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Security Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
     "version": "1.0.0"
   },
   "method": "http_streaming",
@@ -43,15 +37,16 @@
   ],
   "solution": true,
   "source": "trafficpeak",
+  "summary_tables": [],
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "logs",
+      "name": "security",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json"
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
@@ -60,9 +55,9 @@
     "data_category": "security",
     "method": {
       "full_title": "Http Streaming",
-      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/security-integration",
     "source": {
       "full_title": "Trafficpeak Security",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"

@@ -1,0 +1,7 @@
+tables:
+  security:
+    __extend__: tables/table_security.yaml
+transforms:
+  security:
+    akamai_default_datastream:
+      __extend__: transforms/akamai_default_datastream.json
