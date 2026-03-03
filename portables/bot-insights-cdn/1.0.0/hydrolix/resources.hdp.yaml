@@ -3,13 +3,13 @@ tables:
     __extend__: tables/table_logs.yaml
 transforms:
   logs:
-    fastly:
-      __extend__: transforms/fastly.json
     default:
       __extend__: transforms/default.json
-    akamai:
-      __extend__: transforms/akamai.json
     cloudflare:
       __extend__: transforms/cloudflare.json
+    akamai:
+      __extend__: transforms/akamai.json
     cloudfront_firehose:
       __extend__: transforms/cloudfront_firehose.json
+    fastly:
+      __extend__: transforms/fastly.json
