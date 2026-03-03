@@ -1,0 +1,14 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-bot-insights-cdn-1770227511016:
+    dashboard:
+      __extend__: dashboards/Bot Insights (CDN)-1770227511016.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_HOUR: demo_customer.bot_summary_hour
+      VAR_SUMMARY_DAY: demo_customer.bot_summary_day
+      VAR_SUMMARY_MONTH: demo_customer.bot_summary_month
