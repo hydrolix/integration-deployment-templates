@@ -1,0 +1,7 @@
+tables:
+  siem:
+    __extend__: tables/table_siem.yaml
+transforms:
+  siem:
+    siem:
+      __extend__: transforms/siem.json

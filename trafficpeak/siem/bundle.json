@@ -11,40 +11,41 @@
       "required_functions": [],
       "shared_dictionaries": [],
       "shared_functions": [
-        "siem_extract",
-        "extract_key_pair"
+        "extract_key_pair",
+        "siem_extract"
       ]
     }
   },
   "metadata": {
-    "channel_type": "AWS",
-    "description": "SIEM Trafficpeak Bundle Description",
-    "maintainer": "kevin.borkman@hydrolix.io",
-    "version": "0.0.9"
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Siem Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
   },
   "method": "http_streaming",
   "name": "trafficpeak_siem",
   "other_dashboards": [
     {
-      "path": "dashboards/Security Analysis.json",
+      "path": "dashboards/SIEM Raw Logs.json",
       "project_var": "__PROJECT_NAME__"
     },
     {
-      "path": "dashboards/SIEM Raw Logs.json",
+      "path": "dashboards/Security Analysis.json",
       "project_var": "__PROJECT_NAME__"
     }
   ],
   "solution": true,
   "source": "trafficpeak",
+  "summary_tables": [],
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "siem_logs",
+      "name": "siem",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json"
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
@@ -55,9 +56,9 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/siem_trafficpeak-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/siem-integration",
     "source": {
-      "full_title": "SIEM",
+      "full_title": "Trafficpeak Siem",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }
