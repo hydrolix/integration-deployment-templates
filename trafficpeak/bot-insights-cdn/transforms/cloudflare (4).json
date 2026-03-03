@@ -1,6 +1,8 @@
 {
+  "created": "2026-01-08T22:17:01.309053Z",
   "description": "Version v1.0",
-  "name": "akamai",
+  "modified": "2026-01-08T22:17:01.309067Z",
+  "name": "cloudflare",
   "settings": {
     "compression": "",
     "format_details": {
@@ -18,30 +20,8 @@
       }
     },
     "is_default": false,
-    "null_values": [
-      "-",
-      "-1",
-      "^"
-    ],
+    "null_values": [],
     "output_columns": [
-      {
-        "datatype": {
-          "default": null,
-          "format": "s",
-          "index": false,
-          "primary": true,
-          "resolution": "ms",
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/reqTimeSec"
-            ]
-          },
-          "suppress": false,
-          "type": "epoch"
-        },
-        "name": "timestamp"
-      },
       {
         "datatype": {
           "default": null,
@@ -50,14 +30,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/cacheStatus"
-            ]
+            "from_input_field": "CacheCacheStatus"
           },
-          "suppress": false,
-          "type": "boolean"
+          "suppress": true,
+          "type": "string"
         },
-        "name": "cacheStatus"
+        "name": "result_type"
       },
       {
         "datatype": {
@@ -82,9 +60,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/totalBytes"
-            ]
+            "from_input_field": "EdgeResponseBytes"
           },
           "suppress": false,
           "type": "uint64"
@@ -99,9 +75,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/statusCode"
-            ]
+            "from_input_field": "EdgeResponseStatus"
           },
           "suppress": false,
           "type": "string"
@@ -116,9 +90,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/timeToFirstByte"
-            ]
+            "from_input_field": "EdgeTimeToFirstByteMs"
           },
           "suppress": false,
           "type": "uint64"
@@ -133,9 +105,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/transferTimeMSec"
-            ]
+            "from_input_field": "OriginResponseDurationMs"
           },
           "suppress": false,
           "type": "uint64"
@@ -150,9 +120,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/rspContentType"
-            ]
+            "from_input_field": "EdgeResponseContentType"
           },
           "suppress": false,
           "type": "string"
@@ -167,9 +135,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqMethod"
-            ]
+            "from_input_field": "ClientRequestMethod"
           },
           "suppress": false,
           "type": "string"
@@ -184,9 +150,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqHost"
-            ]
+            "from_input_field": "ClientRequestHost"
           },
           "suppress": false,
           "type": "string"
@@ -201,14 +165,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/queryStr"
-            ]
+            "from_input_field": "ClientRequestURI"
           },
           "suppress": true,
           "type": "string"
         },
-        "name": "queryStr"
+        "name": "request_full_path"
       },
       {
         "datatype": {
@@ -233,24 +195,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/referer"
-            ]
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "referer"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientRequestReferer"
           },
           "suppress": false,
           "type": "string"
@@ -265,31 +210,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/reqPath"
-            ]
+            "from_input_field": "ClientRequestPath"
           },
           "suppress": false,
           "type": "string"
         },
         "name": "request_path"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_json_pointers": [
-              "/UA"
-            ]
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "UA"
       },
       {
         "datatype": {
@@ -344,7 +270,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientRequestUserAgent"
           },
           "suppress": false,
           "type": "string"
@@ -359,9 +285,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/cliIP"
-            ]
+            "from_input_field": "ClientIP"
           },
           "suppress": false,
           "type": "string"
@@ -376,7 +300,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "EdgeServerIP"
           },
           "suppress": false,
           "type": "string"
@@ -391,7 +315,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "OriginIP"
           },
           "suppress": false,
           "type": "string"
@@ -406,7 +330,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
           },
           "suppress": false,
           "type": "uint64"
@@ -421,7 +345,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "OriginResponseTime"
           },
           "suppress": false,
           "type": "uint64"
@@ -436,9 +360,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/country"
-            ]
+            "from_input_field": "ClientCountry"
           },
           "suppress": false,
           "type": "string"
@@ -453,9 +375,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/city"
-            ]
+            "from_input_field": "ClientCity"
           },
           "suppress": false,
           "type": "string"
@@ -470,9 +390,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_json_pointers": [
-              "/asn"
-            ]
+            "from_input_field": "ClientASN"
           },
           "suppress": false,
           "type": "string"
@@ -487,25 +405,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "EdgeColoCode"
           },
           "suppress": false,
           "type": "string"
         },
         "name": "edge_pop"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": false,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "breadcrumbs"
       },
       {
         "datatype": {
@@ -524,7 +429,7 @@
       },
       {
         "datatype": {
-          "default": "Akamai",
+          "default": "Cloudflare",
           "format": null,
           "index": true,
           "resolution": null,
@@ -537,7 +442,7 @@
       },
       {
         "datatype": {
-          "default": "Akamai multi cdn",
+          "default": "Cloudflare multi cdn",
           "format": null,
           "index": true,
           "resolution": null,
@@ -571,35 +476,115 @@
           "type": "map"
         },
         "name": "unknown"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "2006-01-02T15:04:05",
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "EdgeStartTimestamp"
       }
     ],
     "rate_limit": null,
     "sample_data": [
       {
-        "Asnum": "7922",
-        "UA": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/124.0.0.0 Mobile/15E148 Safari/604.1",
-        "breadcrumbs": "",
-        "cacheStatus": 1,
-        "city": "New Haven",
-        "cliIP": "73.142.98.77",
-        "country": "US",
-        "origin_ip": "52.75.0.13",
-        "queryStr": "",
-        "referer": "https://hydrolix.io",
-        "reqHost": "hydrolix.io",
-        "reqMethod": "GET",
-        "reqPath": "/hls/Crimson Arcade S03E08 — Garden Doors/multivariant.m3u8",
-        "reqTimeSec": 1759940340,
-        "rspContentType": "application/vnd.apple.mpegurl",
-        "statusCode": 200,
-        "timeToFirstByte": 83,
-        "totalBytes": 1268,
-        "transferTimeMSec": 199
+        "CacheCacheStatus": "hit",
+        "ClientASN": 7922,
+        "ClientCity": "West Hartford",
+        "ClientCountry": "US",
+        "ClientIP": "50.205.69.23",
+        "ClientRequestHost": [
+          "https:",
+          "",
+          "hydrolix.io"
+        ],
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
+        "ClientRequestQuery": "",
+        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+        "ClientRequestURI": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        "ClientState": "US",
+        "EdgeColoCode": "SJC",
+        "EdgeResponseBytes": 840923,
+        "EdgeResponseContentType": "video/mp4",
+        "EdgeResponseStatus": 200,
+        "EdgeServerIP": null,
+        "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
+        "EdgeTimeToFirstByteMs": 72,
+        "OriginIP": "52.75.0.2",
+        "OriginResponseDurationMs": 334,
+        "OriginResponseHeaderReceiveDurationMs": 0,
+        "OriginResponseTime": 0
+      },
+      {
+        "CacheCacheStatus": "hit",
+        "ClientASN": 7922,
+        "ClientCity": "West Hartford",
+        "ClientCountry": "US",
+        "ClientIP": "50.205.69.23",
+        "ClientRequestHost": [
+          "https:",
+          "",
+          "hydrolix.io"
+        ],
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
+        "ClientRequestQuery": "",
+        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+        "ClientRequestURI": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        "ClientState": "US",
+        "EdgeColoCode": "SJC",
+        "EdgeResponseBytes": 840923,
+        "EdgeResponseContentType": "video/mp4",
+        "EdgeResponseStatus": 200,
+        "EdgeServerIP": null,
+        "EdgeStartTimestamp": 1764051339000000000,
+        "EdgeTimeToFirstByteMs": 72,
+        "OriginIP": "52.75.0.2",
+        "OriginResponseDurationMs": 334,
+        "OriginResponseHeaderReceiveDurationMs": 0,
+        "OriginResponseTime": 0
       }
     ],
     "shadow_table": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)') as origin_time_to_last_byte_ms,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'n=([^,\\]]+)') as edge_pop,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'a=([^,\\]]+)') AS origin_ip,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'l=([^,\\]]+)') AS origin_time_to_first_byte_ms,\nakamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'a=([^,\\]]+)') as edge_ip,\nmultiIf(\ncacheStatus=1,1,\nbreadcrumbs IS NULL OR empty(breadcrumbs),0,\norigin_ip IS NULL OR empty(origin_ip) OR origin_ip = '127.0.0.1',1,0\n) AS cache_was_cached,\ndecodeURLComponent(assumeNotNull(queryStr)) AS request_query_string,\nconcat('/', assumeNotNull(request_path)) as request_path,\ndecodeURLComponent(assumeNotNull(referer)) AS request_referer,\ndecodeURLComponent(assumeNotNull(UA)) as user_agent,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT \n    CASE\n        WHEN match(CAST(EdgeStartTimestamp AS String), '^[0-9]+$') THEN \n            toDateTime64(\n                CAST(EdgeStartTimestamp AS Int64) / 1000000000.0, 9\n            )\n            ELSE parseDateTimeBestEffort(EdgeStartTimestamp)\n    END AS timestamp,\n    datediff(s, timestamp, now64(3)) AS hdx_source_latency_sec,\n    TRUE as cache_was_cached,\n    decodeURLComponent(queryString(request_full_path)) as request_query_string,\n    multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other') AS resource_category,\n    'NONE' AS user_agent_category,\n    FALSE AS is_bot_traffic,\n    *\nFROM { STREAM }",
     "wurfl": null
   },
-  "type": "json"
+  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
+  "type": "json",
+  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/ccdaa6c0-55fa-4752-b7da-eae10400f417",
+  "uuid": "ccdaa6c0-55fa-4752-b7da-eae10400f417"
 }
