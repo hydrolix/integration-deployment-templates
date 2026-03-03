@@ -7,7 +7,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Amazon Data Firehose MediaPackage",
+    "description": "Amazon Elemental MediaPackage is a video delivery service that prepares and protects video streams for distribution to a variety of playback devices. It ingests live or on-demand video, packages it into multiple adaptive bitrate formats, and integrates with AWS services for content protection, scaling, and monitoring.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },

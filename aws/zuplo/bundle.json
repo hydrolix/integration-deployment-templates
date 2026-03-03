@@ -7,7 +7,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Zuplo",
+    "description": "Zuplo is a fully-managed API Gateway that can be deployed within various cloud infrastructures (AWS, GCP, Azure) as well as private data centers. Typically, it sits between clients' applications and an API. Zuplo proxies traffic from clients to the API, enforcing protections such as rate limiting, request validation, and authentication while providing an executable code layer between the API and its consumers.",
     "maintainer": "jgoodson@hydrolix.io",
     "version": "1.0.0"
   },

@@ -23,7 +23,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Default Trafficpeak Bundle Description",
+    "description": "Default shared configuration for Trafficpeak monitoring and analytics, providing insights into traffic patterns, performance metrics, and usage trends across your services.",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
