@@ -35,6 +35,7 @@ from converters.hydrolix_gen import HydrolixGenerator
 from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
+from utils.file_utils import sanitize_cac_name
 
 
 def auto_detect_from_path(source_path: str):
@@ -126,7 +127,7 @@ Examples:
 
     parser.add_argument(
         '--output',
-        help='Output directory (default: cac_bundle/<bundle_name>/<version>)'
+        help='Output directory (default: cac_bundle/<customer_type>/<bundle_name>/<version>)'
     )
 
     parser.add_argument(
@@ -180,8 +181,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: cac_bundle/<bundle_name>/<version>
-        output_path = repo_root / "cac_bundle" / args.bundle_name / args.version
+        # Default output: cac_bundle/<customer_type>/<bundle_name>/<version>
+        output_path = repo_root / "cac_bundle" / sanitize_cac_name(args.customer_type) / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")
@@ -256,7 +257,7 @@ def main():
     manifest_gen.write(output_path, metadata)
 
     # Generate Hydrolix resources
-    hydrolix_gen.generate(output_path, assets, args.table_name)
+    hydrolix_gen.generate(output_path, assets, args.table_name, metadata=metadata)
 
     # Generate Grafana resources
     grafana_gen.generate(output_path, assets, args.home_dashboard)
@@ -281,9 +282,10 @@ def main():
     print()
     print(f"Bundle generated at: {output_path}")
     print()
+    sanitized_bundle = sanitize_cac_name(args.bundle_name)
     print("Structure:")
     print(f"  {output_path}/")
-    print(f"  ├── {args.bundle_name}.bdl.yaml")
+    print(f"  ├── {sanitized_bundle}.bdl.yaml")
     if assets.transforms or assets.summaries:
         print(f"  ├── hydrolix/")
         print(f"  │   └── resources.hdp.yaml")
