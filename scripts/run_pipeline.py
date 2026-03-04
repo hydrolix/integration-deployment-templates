@@ -24,6 +24,9 @@ import time
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
+sys.path.insert(0, SCRIPTS_DIR)
+from utils.file_utils import sanitize_cac_name
+
 
 def main():
     args = parse_args()
@@ -312,9 +315,11 @@ def build_portable_cmd(args):
     if args.portable_output:
         cmd += ["--output", args.portable_output]
     else:
-        # Default: portables/<bundle_name>/<version>/
-        bundle_name = os.path.basename(args.bundle_dir.rstrip("/"))
-        output = os.path.join(REPO_ROOT, "portables", bundle_name, args.version)
+        # Default: portables/<customer_type>/<bundle_name>/<version>/
+        parts = args.bundle_dir.rstrip("/").split("/")
+        customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
+        bundle_name = sanitize_cac_name(parts[-1])
+        output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
     if args.version != "1.0.0":
