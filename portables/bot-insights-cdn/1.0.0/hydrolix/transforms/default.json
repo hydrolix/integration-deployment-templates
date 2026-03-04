@@ -1,7 +1,5 @@
 {
-  "created": "2026-01-08T22:17:03.078481Z",
   "description": "Version v1.0",
-  "modified": "2026-01-08T22:17:03.078492Z",
   "name": "default",
   "settings": {
     "compression": "",
@@ -445,8 +443,5 @@
     "sql_transform": "SELECT \ndatediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\ndictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('reference_ua_cat_dict', 'ai_category', assumeNotNull(user_agent)) AS ai_category,\ndictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
     "wurfl": null
   },
-  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
-  "type": "json",
-  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/a52f19e1-a8f5-4931-96d8-f5aef1571dbb",
-  "uuid": "a52f19e1-a8f5-4931-96d8-f5aef1571dbb"
+  "type": "json"
 }
