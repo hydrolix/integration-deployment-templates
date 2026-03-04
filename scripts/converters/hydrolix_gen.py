@@ -5,7 +5,9 @@ from typing import List
 
 from utils.models import BundleAssets, Transform
 from utils.yaml_utils import dump_yaml
-from utils.file_utils import write_file, copy_file
+import json
+
+from utils.file_utils import write_file, sanitize_cac_name
 
 
 class HydrolixGenerator:
@@ -14,19 +16,20 @@ class HydrolixGenerator:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
 
-    def generate(self, output_path: Path, assets: BundleAssets, table_name: str = "logs"):
+    def generate(self, output_path: Path, assets: BundleAssets, table_name: str = "logs", metadata=None):
         """Generate all Hydrolix resources.
 
         Args:
             output_path: Path to bundle output directory
             assets: Discovered bundle assets
             table_name: Name for the table (default: logs)
+            metadata: Optional BundleMetadata for description etc.
         """
         hydrolix_dir = output_path / "hydrolix"
 
         # Generate table definition and transforms
         if assets.transforms:
-            self._generate_table(hydrolix_dir, table_name)
+            self._generate_table(hydrolix_dir, table_name, metadata=metadata)
             self._copy_transforms(hydrolix_dir, assets.transforms)
 
         # Generate main resources file
@@ -35,22 +38,18 @@ class HydrolixGenerator:
         if self.verbose:
             print(f"✓ Generated Hydrolix resources")
 
-    def _generate_table(self, hydrolix_dir: Path, table_name: str):
+    def _generate_table(self, hydrolix_dir: Path, table_name: str, metadata=None):
         """Generate table YAML file."""
         tables_dir = hydrolix_dir / "tables"
         tables_dir.mkdir(parents=True, exist_ok=True)
 
+        description = metadata.description if metadata else 'Integration logs'
+
         # Create table YAML with reference to base defaults
         table_yaml = {
             '__extend__': '../../../../../../hydrolix/_defaults/table_defaults.yaml',
-            'description': 'Akamai Observability Platform logs',
+            'description': description,
             'type': 'turbine',
-            'settings': {
-                'stream': {
-                    'cold_data_max_age_days': 365,
-                    'token_auth_enabled': True
-                }
-            }
         }
 
         table_filename = f"table_{table_name}.yaml"
@@ -61,15 +60,26 @@ class HydrolixGenerator:
             print(f"  Generated table: {table_filename}")
 
     def _copy_transforms(self, hydrolix_dir: Path, transforms: List[Transform]):
-        """Copy transform JSON files."""
+        """Copy transform JSON files, stripping metadata fields."""
         transforms_dir = hydrolix_dir / "transforms"
         transforms_dir.mkdir(parents=True, exist_ok=True)
 
+        strip_fields = {'created', 'modified', 'table', 'url', 'uuid'}
+
         for transform in transforms:
-            # Use the transform name from the JSON file for the output filename
-            transform_filename = f"{transform.name}.json"
+            # Read, strip metadata, write cleaned JSON
+            with open(transform.file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            for field in strip_fields:
+                data.pop(field, None)
+
+            sanitized_name = sanitize_cac_name(transform.name)
+            transform_filename = f"{sanitized_name}.json"
             transform_dest = transforms_dir / transform_filename
-            copy_file(transform.file_path, transform_dest)
+            transforms_dir.mkdir(parents=True, exist_ok=True)
+            with open(transform_dest, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+                f.write('\n')
 
             if self.verbose:
                 print(f"  Copied transform: {transform_filename}")
@@ -90,8 +100,9 @@ class HydrolixGenerator:
         if assets.transforms:
             transforms_dict = {}
             for transform in assets.transforms:
-                transforms_dict[transform.name] = {
-                    '__extend__': f'transforms/{transform.name}.json'
+                sanitized_name = sanitize_cac_name(transform.name)
+                transforms_dict[sanitized_name] = {
+                    '__extend__': f'transforms/{sanitized_name}.json'
                 }
 
             resources['transforms'] = {
@@ -99,6 +110,7 @@ class HydrolixGenerator:
             }
 
         # Write resources file
+        hydrolix_dir.mkdir(parents=True, exist_ok=True)
         resources_path = hydrolix_dir / "resources.hdp.yaml"
         write_file(resources_path, dump_yaml(resources, sort_keys=False))
 

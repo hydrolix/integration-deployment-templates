@@ -4,7 +4,7 @@ from pathlib import Path
 
 from utils.models import BundleMetadata
 from utils.yaml_utils import dump_yaml
-from utils.file_utils import write_file
+from utils.file_utils import write_file, sanitize_cac_name
 
 
 class ManifestGenerator:
@@ -16,7 +16,7 @@ class ManifestGenerator:
     def generate(self, metadata: BundleMetadata) -> str:
         """Generate .bdl.yaml content."""
         manifest = {
-            'name': f"{metadata.customer_type}_{metadata.bundle_name}",
+            'name': sanitize_cac_name(f"{metadata.customer_type}_{metadata.bundle_name}"),
             'version': metadata.version,
             'description': metadata.description,
             'maintainer': metadata.maintainer,
@@ -35,7 +35,7 @@ class ManifestGenerator:
 
     def write(self, output_path: Path, metadata: BundleMetadata):
         """Generate and write manifest file."""
-        filename = f"{metadata.bundle_name}.bdl.yaml"
+        filename = f"{sanitize_cac_name(metadata.bundle_name)}.bdl.yaml"
         content = self.generate(metadata)
 
         file_path = output_path / filename
