@@ -1,14 +1,33 @@
 name: push-to-cac-tools-test
 
 on:
-  workflow_dispatch:
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   bundle-export:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify all CI checks have passed
+        run: |
+          echo "Checking CI status for PR #${{ github.event.pull_request.number }}..."
+
+          FAILED_CHECKS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state \
+            --jq '[.[] | select(.state != "SUCCESS" and .state != "SKIPPING")] | length')
+
+          if [ "$FAILED_CHECKS" -gt "0" ]; then
+            echo "The following checks have not passed:"
+            gh pr checks ${{ github.event.pull_request.number }} --json name,state \
+              --jq '.[] | select(.state != "SUCCESS" and .state != "SKIPPING") | "\(.state): \(.name)"'
+            exit 1
+          fi
+
+          echo "All CI checks have passed."
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - uses: actions/create-github-app-token@v2
         id: app-token
         with:
@@ -19,7 +38,7 @@ jobs:
       - name: Checkout Integrations Repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           path: 'integrations-deployment-templates'
           fetch-depth: 0
 
@@ -92,8 +111,8 @@ jobs:
             exit 0
           fi
 
-          PR_NUMBER="run-${{ github.run_id }}"
-          COMMIT_SHA="${{ github.sha }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
           TRIGGERED_BY="${{ github.actor }}"
           TEST_PREFIX="[TEST] "
 
@@ -123,7 +142,7 @@ jobs:
           **Source PR:** #${PR_NUMBER}
           **Source commit:** \`${COMMIT_SHA}\`
           **Triggered by:** @${TRIGGERED_BY}
-          **Trigger type:** ${{ github.event_name }}
+          **Trigger type:** PR approval
 
           This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
             --base main \
