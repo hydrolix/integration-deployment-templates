@@ -1,5 +1,7 @@
 {
+  "created": "2026-01-08T22:17:00.753675Z",
   "description": "Version v1.0",
+  "modified": "2026-01-08T22:17:03.056596Z",
   "name": "akamai",
   "settings": {
     "compression": "",
@@ -797,5 +799,8 @@
     "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nreference_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)') as origin_time_to_last_byte_ms,\nreference_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'n=([^,\\]]+)') as edge_pop,\nreference_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'a=([^,\\]]+)') AS origin_ip,\nreference_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'l=([^,\\]]+)') AS origin_time_to_first_byte_ms,\nreference_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'a=([^,\\]]+)') as edge_ip,\nmultiIf(\ncacheStatus=1,1,\nbreadcrumbs IS NULL OR empty(breadcrumbs),0,\norigin_ip IS NULL OR empty(origin_ip) OR origin_ip = '127.0.0.1',1,0\n) AS cache_was_cached,\ndecodeURLComponent(assumeNotNull(queryStr)) AS request_query_string,\nconcat('/', assumeNotNull(request_path)) as request_path,\ndecodeURLComponent(assumeNotNull(referer)) AS request_referer,\ndecodeURLComponent(assumeNotNull(UA)) as user_agent,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
     "wurfl": null
   },
-  "type": "json"
+  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
+  "type": "json",
+  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/155b89a9-f780-4715-8100-7d46b7e38634",
+  "uuid": "155b89a9-f780-4715-8100-7d46b7e38634"
 }
