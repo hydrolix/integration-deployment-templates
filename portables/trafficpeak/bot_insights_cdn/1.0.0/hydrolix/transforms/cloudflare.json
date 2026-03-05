@@ -1,7 +1,5 @@
 {
-  "created": "2026-01-08T22:17:01.309053Z",
   "description": "Version v1.0",
-  "modified": "2026-01-08T22:17:01.309067Z",
   "name": "cloudflare",
   "settings": {
     "compression": "",
@@ -517,74 +515,8 @@
       }
     ],
     "rate_limit": null,
-    "sample_data": [
-      {
-        "CacheCacheStatus": "hit",
-        "ClientASN": 7922,
-        "ClientCity": "West Hartford",
-        "ClientCountry": "US",
-        "ClientIP": "50.205.69.23",
-        "ClientRequestHost": [
-          "https:",
-          "",
-          "hydrolix.io"
-        ],
-        "ClientRequestMethod": "GET",
-        "ClientRequestPath": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestQuery": "",
-        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
-        "ClientRequestURI": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-        "ClientState": "US",
-        "EdgeColoCode": "SJC",
-        "EdgeResponseBytes": 840923,
-        "EdgeResponseContentType": "video/mp4",
-        "EdgeResponseStatus": 200,
-        "EdgeServerIP": null,
-        "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
-        "EdgeTimeToFirstByteMs": 72,
-        "OriginIP": "52.75.0.2",
-        "OriginResponseDurationMs": 334,
-        "OriginResponseHeaderReceiveDurationMs": 0,
-        "OriginResponseTime": 0
-      },
-      {
-        "CacheCacheStatus": "hit",
-        "ClientASN": 7922,
-        "ClientCity": "West Hartford",
-        "ClientCountry": "US",
-        "ClientIP": "50.205.69.23",
-        "ClientRequestHost": [
-          "https:",
-          "",
-          "hydrolix.io"
-        ],
-        "ClientRequestMethod": "GET",
-        "ClientRequestPath": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestQuery": "",
-        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
-        "ClientRequestURI": "/hls/Midnight Archive S01E01 â Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-        "ClientState": "US",
-        "EdgeColoCode": "SJC",
-        "EdgeResponseBytes": 840923,
-        "EdgeResponseContentType": "video/mp4",
-        "EdgeResponseStatus": 200,
-        "EdgeServerIP": null,
-        "EdgeStartTimestamp": 1764051339000000000,
-        "EdgeTimeToFirstByteMs": 72,
-        "OriginIP": "52.75.0.2",
-        "OriginResponseDurationMs": 334,
-        "OriginResponseHeaderReceiveDurationMs": 0,
-        "OriginResponseTime": 0
-      }
-    ],
     "shadow_table": null,
-    "sql_transform": "SELECT \n    CASE\n        WHEN match(CAST(EdgeStartTimestamp AS String), '^[0-9]+$') THEN \n            toDateTime64(\n                CAST(EdgeStartTimestamp AS Int64) / 1000000000.0, 9\n            )\n            ELSE parseDateTimeBestEffort(EdgeStartTimestamp)\n    END AS timestamp,\n    datediff(s, timestamp, now64(3)) AS hdx_source_latency_sec,\n    TRUE as cache_was_cached,\n    decodeURLComponent(queryString(request_full_path)) as request_query_string,\n    multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other') AS resource_category,\n    'NONE' AS user_agent_category,\n    FALSE AS is_bot_traffic,\n    *\nFROM { STREAM }",
     "wurfl": null
   },
-  "table": "fbff2999-96da-4260-9622-d0d2751d704b",
-  "type": "json",
-  "url": "https://demo.aws.hydrolix.live/config/v1/orgs/2b8cbbf8-dcb8-4c28-bd94-cb46147296d1/projects/6debffd1-3c88-4d5e-afc8-9e1a770f6a7a/tables/fbff2999-96da-4260-9622-d0d2751d704b/transforms/ccdaa6c0-55fa-4752-b7da-eae10400f417",
-  "uuid": "ccdaa6c0-55fa-4752-b7da-eae10400f417"
+  "type": "json"
 }
