@@ -60,23 +60,45 @@ class HydrolixGenerator:
             print(f"  Generated table: {table_filename}")
 
     def _copy_transforms(self, hydrolix_dir: Path, transforms: List[Transform]):
-        """Copy transform JSON files, stripping metadata fields."""
+        """Copy transform JSON files, extracting sql_transform and sample_data into separate files."""
         transforms_dir = hydrolix_dir / "transforms"
         transforms_dir.mkdir(parents=True, exist_ok=True)
 
         strip_fields = {'created', 'modified', 'table', 'url', 'uuid'}
 
         for transform in transforms:
-            # Read, strip metadata, write cleaned JSON
+            # Read, strip metadata
             with open(transform.file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             for field in strip_fields:
                 data.pop(field, None)
 
             sanitized_name = sanitize_cac_name(transform.name)
+            settings = data.get('settings', {})
+
+            # Extract sql_transform to separate .sql file
+            sql_transform = settings.pop('sql_transform', None)
+            if sql_transform:
+                sql_filename = f"{sanitized_name}_select.sql"
+                sql_path = transforms_dir / sql_filename
+                write_file(sql_path, sql_transform)
+                if self.verbose:
+                    print(f"  Extracted SQL: {sql_filename}")
+
+            # Extract sample_data to separate .json file
+            sample_data = settings.pop('sample_data', None)
+            if sample_data is not None:
+                sample_filename = f"{sanitized_name}_sample_data.json"
+                sample_path = transforms_dir / sample_filename
+                with open(sample_path, 'w', encoding='utf-8') as f:
+                    json.dump(sample_data, f, indent=2, ensure_ascii=False)
+                    f.write('\n')
+                if self.verbose:
+                    print(f"  Extracted sample data: {sample_filename}")
+
+            # Write cleaned transform JSON (without sql_transform and sample_data)
             transform_filename = f"{sanitized_name}.json"
             transform_dest = transforms_dir / transform_filename
-            transforms_dir.mkdir(parents=True, exist_ok=True)
             with open(transform_dest, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
                 f.write('\n')
@@ -101,9 +123,18 @@ class HydrolixGenerator:
             transforms_dict = {}
             for transform in assets.transforms:
                 sanitized_name = sanitize_cac_name(transform.name)
-                transforms_dict[sanitized_name] = {
-                    '__extend__': f'transforms/{sanitized_name}.json'
+                transform_entry = {
+                    '__extend__': f'transforms/{sanitized_name}.json',
+                    'settings': {
+                        'sql_transform': {
+                            '__extend__': f'transforms/{sanitized_name}_select.sql'
+                        },
+                        'sample_data': {
+                            '__extend__': f'transforms/{sanitized_name}_sample_data.json'
+                        }
+                    }
                 }
+                transforms_dict[sanitized_name] = transform_entry
 
             resources['transforms'] = {
                 table_name: transforms_dict

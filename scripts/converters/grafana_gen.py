@@ -69,6 +69,9 @@ class GrafanaGenerator:
                 data = json.load(f)
             self._replace_datasource_uids(data)
 
+            # Strip top-level dashboard uid (CaC deployments assign their own)
+            data.pop('uid', None)
+
             sanitized_name = sanitize_cac_name(Path(dashboard.filename).stem) + '.json'
             dest_path = dashboards_dir / sanitized_name
             with open(dest_path, 'w', encoding='utf-8') as f:
