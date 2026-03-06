@@ -14,12 +14,12 @@ jobs:
         run: |
           echo "Checking CI status for PR #${{ github.event.pull_request.number }}..."
 
-          FAILED_CHECKS=$(gh pr checks ${{ github.event.pull_request.number }} --json name,state \
+          FAILED_CHECKS=$(gh pr checks ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json name,state \
             --jq '[.[] | select(.state != "SUCCESS" and .state != "SKIPPING")] | length')
 
           if [ "$FAILED_CHECKS" -gt "0" ]; then
             echo "The following checks have not passed:"
-            gh pr checks ${{ github.event.pull_request.number }} --json name,state \
+            gh pr checks ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json name,state \
               --jq '.[] | select(.state != "SUCCESS" and .state != "SKIPPING") | "\(.state): \(.name)"'
             exit 1
           fi
