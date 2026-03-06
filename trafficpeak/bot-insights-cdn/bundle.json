@@ -27,7 +27,7 @@
     "version": "1.0.0"
   },
   "method": "multi_stream",
-  "name": "test_bundle_v2",
+  "name": "trafficpeak_bot_insights_cdn",
   "other_dashboards": [],
   "solution": true,
   "source": "trafficpeak",
