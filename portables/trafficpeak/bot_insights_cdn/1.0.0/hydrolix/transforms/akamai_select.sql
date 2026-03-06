@@ -1,9 +1,9 @@
 SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,
-reference_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'k=([^,\]]+)') as origin_time_to_last_byte_ms,
-reference_breadcrumbs(breadcrumbs, '(\[[^[]*c=g[^]]*\])', 'n=([^,\]]+)') as edge_pop,
-reference_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'a=([^,\]]+)') AS origin_ip,
-reference_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'l=([^,\]]+)') AS origin_time_to_first_byte_ms,
-reference_breadcrumbs(breadcrumbs, '(\[[^[]*c=g[^]]*\])', 'a=([^,\]]+)') as edge_ip,
+akamai_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'k=([^,\]]+)') as origin_time_to_last_byte_ms,
+akamai_breadcrumbs(breadcrumbs, '(\[[^[]*c=g[^]]*\])', 'n=([^,\]]+)') as edge_pop,
+akamai_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'a=([^,\]]+)') AS origin_ip,
+akamai_breadcrumbs(breadcrumbs, '(\[[^[]*c=o[^]]*\])', 'l=([^,\]]+)') AS origin_time_to_first_byte_ms,
+akamai_breadcrumbs(breadcrumbs, '(\[[^[]*c=g[^]]*\])', 'a=([^,\]]+)') as edge_ip,
 multiIf(
 cacheStatus=1,1,
 breadcrumbs IS NULL OR empty(breadcrumbs),0,
@@ -17,7 +17,7 @@ multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 
     positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',
     'other')
 AS resource_category,
-dictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
-dictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,
+dictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
+dictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,
  * 
 FROM {STREAM}
