@@ -8,7 +8,7 @@ multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 
     positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',
     'other')
 AS resource_category,
-dictGet('reference_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
-dictGet('reference_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,
+dictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
+dictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,
  * 
 FROM {STREAM}
