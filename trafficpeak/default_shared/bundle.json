@@ -28,7 +28,7 @@
     "version": "1.0.0"
   },
   "method": "http_streaming",
-  "name": "trafficpeak_default_shared_test",
+  "name": "trafficpeak_default_shared_test_v2",
   "other_dashboards": [
     {
       "path": "dashboards/cache.json",
