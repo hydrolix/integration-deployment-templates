@@ -2,10 +2,21 @@ name: bundle-validator
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+    branches: [main]
+    paths:
+      - 'aws/**'
+      - 'trafficpeak/**'
+      - 'portables/**'
 
 jobs:
   bundle-validator:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') ||
+      contains(github.event.pull_request.body, '[skip-bundle-format]')
     container:
       image: rust:latest
     environment: bundle-validator-env

@@ -125,7 +125,7 @@ jobs:
 
   validate-bundles:
     needs: format-bundles
-    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && (needs.format-bundles.result == 'success' || contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') || contains(github.event.pull_request.body, '[skip-bundle-format]'))
+    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') && !contains(github.event.pull_request.body, '[skip-bundle-format]') && needs.format-bundles.result == 'success'
     runs-on: ubuntu-latest
     container:
       image: rust:latest
