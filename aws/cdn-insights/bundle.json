@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
-  "beta": true,
+  "beta": false,
   "dashboard": {
     "path": "dashboards/default.json",
     "project_var": "__PROJECT_NAME__"
