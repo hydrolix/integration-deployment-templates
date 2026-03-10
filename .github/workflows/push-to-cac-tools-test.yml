@@ -6,7 +6,9 @@ on:
 
 jobs:
   bundle-export:
-    if: github.event.review.state == 'approved'
+    if: |
+      github.event.review.state == 'approved' &&
+      !contains(github.event.pull_request.body, '[skip-bundle-format]')
     runs-on: ubuntu-latest
 
     steps:
