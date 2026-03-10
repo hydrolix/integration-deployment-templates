@@ -14,7 +14,7 @@ permissions:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && !contains(github.event.pull_request.body, '[skip-bundle-format]') }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') && !contains(github.event.pull_request.body, '[skip-bundle-format]') }}
     outputs:
       bundle_dirs: ${{ steps.detect.outputs.bundle_dirs }}
       has_bundles: ${{ steps.detect.outputs.has_bundles }}
@@ -125,7 +125,7 @@ jobs:
 
   validate-bundles:
     needs: format-bundles
-    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && (needs.format-bundles.result == 'success' || contains(github.event.pull_request.body, '[skip-bundle-format]'))
+    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && (needs.format-bundles.result == 'success' || contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') || contains(github.event.pull_request.body, '[skip-bundle-format]'))
     runs-on: ubuntu-latest
     container:
       image: rust:latest
