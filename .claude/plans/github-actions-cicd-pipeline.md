@@ -143,7 +143,7 @@ This preserves the current review workflow exactly — CI just handles the tedio
 **Trigger:** `pull_request: types: [closed]` on `main` (where `merged == true`) + `workflow_dispatch` for testing
 
 ### Key changes from coworker's version:
-1. **Copy portables instead of raw bundles** — `cp -r integrations-deployment-templates/portables/<bundle_name> cac-tools-test/bundles/<bundle_name>`
+1. **Copy portables instead of raw bundles** — `cp -r integrations-deployment-templates/portables/<bundle_name> cac-tools-test/data/bundles/<bundle_name>`
 2. **Portables cleanup step** — After creating the PR in cac-tools-test, commit removal of `portables/` back to main in integration-deployment-templates
 3. **Keep everything else** — GitHub App auth, detect-changes logic, PR creation with metadata
 
@@ -152,13 +152,13 @@ This preserves the current review workflow exactly — CI just handles the tedio
 2. Checkout integration-deployment-templates (main, with `fetch-depth: 2` for diff)
 3. Checkout `hydrolix/cac-tools-test` with app token
 4. Detect portable bundles to export — `git diff --name-only HEAD~1 HEAD` to find files changed by the merge, filter to `portables/` paths, extract bundle names
-5. For each portable bundle, copy `portables/<bundle_name>/` → `cac-tools-test/bundles/<bundle_name>/`
+5. For each portable bundle, copy `portables/<bundle_name>/` → `cac-tools-test/data/bundles/<bundle_name>/`
 6. Create branch, commit, push, `gh pr create` in cac-tools-test (same PR format as coworker's: source PR #, commit SHA, triggering user)
 7. **Cleanup**: back in integration-deployment-templates, remove the exported `portables/` dirs, commit to main with `[skip ci]`
 
 ### Portables directory mapping:
 - Source: `portables/<bundle_name>/<version>/` (e.g., `portables/bot-insights-cdn/1.0.0/`)
-- Target: `cac-tools-test/bundles/<bundle_name>/` — confirm exact target path with coworker
+- Target: `cac-tools-test/data/bundles/<bundle_name>/` — confirm exact target path with coworker
 
 ---
 
@@ -220,7 +220,7 @@ The `configure_bundle.py --config` flag already consumes this format via `_build
 
 ## Open Items to Confirm
 
-- [ ] Exact target path in `cac-tools-test` for portables (is it `bundles/<name>/` or root?)
+- [ ] Exact target path in `cac-tools-test` for portables (is it `data/bundles/<name>/` or root?)
 - [ ] Whether portables cleanup commit to main needs approval or can auto-commit
 - [ ] Python dependency: confirm `pyyaml` is the only external dep needed in CI
 - [x] `run_pipeline.py` already passes `--config` through to `configure_bundle.py` (line 139, 329)
