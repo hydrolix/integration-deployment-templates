@@ -1,0 +1,13 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-ds2-web-security:
+    dashboard:
+      __extend__: dashboards/ds2_web_security.json
+    folderUid: hdx-main-folder
+  hdx-ds2-security-analysis:
+    dashboard:
+      __extend__: dashboards/ds2_security_analysis.json
+    folderUid: hdx-main-folder
