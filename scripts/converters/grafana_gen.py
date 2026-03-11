@@ -5,7 +5,9 @@ from typing import List, Dict
 
 from utils.models import BundleAssets, Dashboard
 from utils.yaml_utils import dump_yaml
-from utils.file_utils import write_file, copy_file, sanitize_filename
+import json
+
+from utils.file_utils import write_file, sanitize_filename, sanitize_cac_name
 
 
 class GrafanaGenerator:
@@ -38,25 +40,50 @@ class GrafanaGenerator:
         if self.verbose:
             print(f"✓ Generated Grafana resources")
 
+    def _replace_datasource_uids(self, obj):
+        """Recursively replace datasource UIDs with Grafana variable reference."""
+        grafana_internal = {'-- Grafana --', 'grafana', '-- Dashboard --', '-- Mixed --'}
+
+        if isinstance(obj, dict):
+            # Detect datasource context: dict with both 'type' and 'uid' keys
+            if 'type' in obj and 'uid' in obj:
+                uid_val = obj['uid']
+                if isinstance(uid_val, str) and uid_val not in grafana_internal:
+                    obj['uid'] = '${DS_HYDROLIX-HYDROLIX-DATASOURCE}'
+            for value in obj.values():
+                self._replace_datasource_uids(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._replace_datasource_uids(item)
+
     def _copy_dashboards(self, grafana_dir: Path, dashboards: List[Dashboard]) -> Dict[str, str]:
-        """Copy dashboard JSON files and return mapping of filename to relative path."""
+        """Copy dashboard JSON files, replacing datasource UIDs."""
         dashboards_dir = grafana_dir / "dashboards"
         dashboards_dir.mkdir(parents=True, exist_ok=True)
 
         dashboard_paths = {}
 
         for dashboard in dashboards:
-            # Use just the filename (flatten structure)
-            dest_path = dashboards_dir / dashboard.filename
+            # Read, replace datasource UIDs, write cleaned JSON
+            with open(dashboard.file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            self._replace_datasource_uids(data)
 
-            copy_file(dashboard.file_path, dest_path)
+            # Strip top-level dashboard uid (CaC deployments assign their own)
+            data.pop('uid', None)
 
-            # Store relative path from grafana/ directory
-            rel_path = f"dashboards/{dashboard.filename}"
+            sanitized_name = sanitize_cac_name(Path(dashboard.filename).stem) + '.json'
+            dest_path = dashboards_dir / sanitized_name
+            with open(dest_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+                f.write('\n')
+
+            # Store relative path from grafana/ directory (map original filename to sanitized path)
+            rel_path = f"dashboards/{sanitized_name}"
             dashboard_paths[dashboard.filename] = rel_path
 
             if self.verbose:
-                print(f"  Copied dashboard: {dashboard.filename}")
+                print(f"  Copied dashboard: {sanitized_name}")
 
         return dashboard_paths
 
