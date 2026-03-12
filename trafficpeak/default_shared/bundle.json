@@ -14,21 +14,21 @@
         "breadcrumbs",
         "cmcd_object_type",
         "cmcd_query_param",
-        "cmcd_streaming_format",
         "cmcd_stream_type",
+        "cmcd_streaming_format",
         "edge_worker",
         "edge_worker_execution"
       ]
     }
   },
   "metadata": {
-    "channel_type": "AWS",
-    "description": "Default shared configuration for Trafficpeak monitoring and analytics, providing insights into traffic patterns, performance metrics, and usage trends across your services.",
-    "maintainer": "kevin.borkman@hydrolix.io",
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Default Shared Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
     "version": "1.0.0"
   },
   "method": "http_streaming",
-  "name": "test",
+  "name": "trafficpeak_default_shared",
   "other_dashboards": [
     {
       "path": "dashboards/cache.json",
@@ -59,17 +59,17 @@
   "source": "trafficpeak",
   "summary_tables": [
     {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
       "name": "table_summary_hour_defaults",
-      "parent_table_name": "logs",
+      "parent_table_name": "security",
       "sql": {
         "path": "summaries/table_summary_hour_defaults.sql"
       }
     },
     {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
       "name": "table_summary_sampled_day_defaults",
-      "parent_table_name": "logs",
+      "parent_table_name": "security",
       "sql": {
         "path": "summaries/table_summary_sampled_day_defaults.sql"
       }
@@ -78,12 +78,12 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "logs",
+      "name": "security",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json"
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
@@ -94,9 +94,9 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/default_trafficpeak-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/default_shared-integration",
     "source": {
-      "full_title": "Trafficpeak",
+      "full_title": "Trafficpeak Default Shared",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }

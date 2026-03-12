@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -98,7 +98,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {},
@@ -146,7 +146,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT *\nFROM __PROJECT_NAME__.__TABLE_NAME__\nWHERE ${timestamp} > now() - INTERVAL 6 HOUR\nAND $__adHocFilter() \nORDER BY ${timestamp} DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
@@ -296,7 +296,7 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "filter",
@@ -305,19 +305,19 @@
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "${VAR_TABLE}",
+            "value": "${VAR_TABLE}"
           },
           "hide": 2,
           "name": "table",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "${VAR_TABLE}",
+              "value": "${VAR_TABLE}"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "${VAR_TABLE}",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -344,7 +344,7 @@
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "definition": "SELECT COALESCE(nullIf(replaceAll(replaceAll('${filter:raw}', '\"', '\\''), ',', ' AND '), ''), '1=1')\n",
           "hide": 2,
