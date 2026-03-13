@@ -1,5 +1,6 @@
 """Phase 4: Fix summary SQL files - replace hardcoded tables with template variables."""
 
+import json
 import os
 import re
 import sys
@@ -29,8 +30,33 @@ def run_summary_fix(config, state):
         state.phases_completed.append("Phase 4: Fix Summaries (skipped)")
         return True
 
-    for idx, sinfo in enumerate(state.summaries, start=1):
-        sinfo.dashboard_var = f"__SUMMARY_TABLE_NAME_{idx}__"
+    # Preserve existing dashboard_var assignments from bundle.json
+    existing_vars = {}
+    bundle_json_path = os.path.join(config.bundle_dir, "bundle.json")
+    if os.path.isfile(bundle_json_path):
+        try:
+            with open(bundle_json_path, "r", encoding="utf-8") as f:
+                existing_bundle = json.load(f)
+            for entry in existing_bundle.get("summary_tables", []):
+                if "name" in entry and "dashboard_var" in entry:
+                    existing_vars[entry["name"]] = entry["dashboard_var"]
+        except Exception:
+            pass
+
+    used_nums = {
+        int(v.replace("__SUMMARY_TABLE_NAME_", "").replace("__", ""))
+        for v in existing_vars.values()
+        if v.startswith("__SUMMARY_TABLE_NAME_") and v.endswith("__")
+    }
+    next_num = [n for n in range(1, len(state.summaries) + len(used_nums) + 2) if n not in used_nums]
+
+    new_idx = 0
+    for sinfo in state.summaries:
+        if sinfo.name in existing_vars:
+            sinfo.dashboard_var = existing_vars[sinfo.name]
+        else:
+            sinfo.dashboard_var = f"__SUMMARY_TABLE_NAME_{next_num[new_idx]}__"
+            new_idx += 1
 
         # Read and fix SQL
         with open(sinfo.path, "r", encoding="utf-8") as f:
