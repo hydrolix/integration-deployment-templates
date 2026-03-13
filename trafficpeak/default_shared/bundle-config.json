@@ -1,4 +1,4 @@
 {
     "data_category": "security",
-    "table_name": "trafficpeak_default_shared"
+    "table_name": "logs"
 }
