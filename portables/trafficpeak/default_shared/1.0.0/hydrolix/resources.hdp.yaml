@@ -1,8 +1,8 @@
 tables:
-  trafficpeak_default_shared:
-    __extend__: tables/table_trafficpeak_default_shared.yaml
+  logs:
+    __extend__: tables/table_logs.yaml
 transforms:
-  trafficpeak_default_shared:
+  logs:
     akamai_default_datastream:
       __extend__: transforms/akamai_default_datastream.json
       settings:
