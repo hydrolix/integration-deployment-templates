@@ -94,7 +94,7 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/default_shared-integration",
+    "primary_url": "https://docs.hydrolix.io/docs/",
     "source": {
       "full_title": "Trafficpeak Default Shared",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
