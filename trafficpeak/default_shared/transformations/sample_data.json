@@ -137,7 +137,7 @@
   "reqMethod": "GET",
   "reqPath": "/operator/v5.8.5/operator-resources",
   "reqPort": 443,
-  "reqTimeSec": 1767038702,
+  "reqTimeSec": "1767038702",
   "req_id_hash": null,
   "req_path_array": [],
   "rspContentLen": "2682",
