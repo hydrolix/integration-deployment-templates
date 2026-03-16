@@ -1,7 +1,0 @@
-__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
-description: Akamai Observability Platform logs
-type: turbine
-settings:
-  stream:
-    cold_data_max_age_days: 365
-    token_auth_enabled: true
