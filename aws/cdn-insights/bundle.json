@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
-  "beta": true,
+  "beta": false,
   "dashboard": {
     "path": "dashboards/default.json",
     "project_var": "__PROJECT_NAME__"
@@ -102,7 +102,7 @@
       "full_title": "Http Streaming, Firehose",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
+    "primary_url": "https://docs.hydrolix.io/latest/managed/solutions/cdn-insights/#send-log-data-to-hydrolix",
     "source": {
       "full_title": "CDN Insights",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"

@@ -9,7 +9,10 @@ on:
 jobs:
   bundle-export:
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (!contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') &&
+       !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') &&
+       !contains(github.event.pull_request.body, '[skip-bundle-format]') &&
+       github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
@@ -75,10 +78,10 @@ jobs:
 
           echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
             if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
-              echo "Copying portables/$bundle_name → cac-tools/bundles/$bundle_name/"
+              echo "Copying portables/$bundle_name → cac-tools/data/bundles/$bundle_name/"
 
-              mkdir -p "cac-tools/bundles/$bundle_name"
-              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools/bundles/$bundle_name/"
+              mkdir -p "cac-tools/data/bundles/$bundle_name"
+              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools/data/bundles/$bundle_name/"
 
               echo "✓ Copied $bundle_name"
             fi

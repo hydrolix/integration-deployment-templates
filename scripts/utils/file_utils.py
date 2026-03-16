@@ -46,6 +46,14 @@ def copy_file(src, dst):
     shutil.copy2(str(src), str(dst))
 
 
+def sanitize_cac_name(name):
+    """Lowercase + underscores only for CAC file names and YAML keys."""
+    sanitized = name.lower()
+    sanitized = re.sub(r"[^a-z0-9_]", "_", sanitized)
+    sanitized = re.sub(r"_{2,}", "_", sanitized)
+    return sanitized.strip("_")
+
+
 def sanitize_filename(name):
     """Sanitize a string for use as a filename or UID component.
 
