@@ -12197,7 +12197,7 @@
                 "format": 1,
                 "hide": true,
                 "pluginVersion": "4.0.6",
-                "rawSql": "SELECT cmcd_session_id FROM \"akamai\".\"logs\" WHERE ( reqTimeSec >= $__fromTime AND reqTimeSec <= $__toTime ) LIMIT 100",
+                "rawSql": "SELECT cmcd_session_id FROM ${ds2} WHERE ( reqTimeSec >= $__fromTime AND reqTimeSec <= $__toTime ) LIMIT 100",
                 "refId": "B"
               }
             ],
@@ -12559,7 +12559,7 @@
                 "format": 1,
                 "hide": true,
                 "pluginVersion": "4.0.6",
-                "rawSql": "SELECT cmcd_session_id FROM \"akamai\".\"logs\" WHERE ( reqTimeSec >= $__fromTime AND reqTimeSec <= $__toTime ) LIMIT 100",
+                "rawSql": "SELECT cmcd_session_id FROM ${ds2} WHERE ( reqTimeSec >= $__fromTime AND reqTimeSec <= $__toTime ) LIMIT 100",
                 "refId": "B"
               }
             ],

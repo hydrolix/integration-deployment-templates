@@ -41,7 +41,7 @@
   "tables": [
     {
       "dashboard_var": "__TABLE_NAME__",
-      "name": "security",
+      "name": "logs",
       "transforms": [
         {
           "path": "transformations/transform.json",
