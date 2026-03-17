@@ -20,7 +20,7 @@
     "channel_type": "3rdParty",
     "description": "Trafficpeak Siem Integration",
     "maintainer": "Hydrolix Team <team@hydrolix.io>",
-    "version": "0.0.0"
+    "version": "0.9.0"
   },
   "method": "http_streaming",
   "name": "trafficpeak_siem",
