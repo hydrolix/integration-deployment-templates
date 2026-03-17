@@ -1,5 +1,5 @@
 """Validation utilities for bundle conversion."""
-
+import json
 from pathlib import Path
 from typing import List, Tuple
 
@@ -18,6 +18,7 @@ class BundleValidator:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
 
+    # checks rouce path, asset presence, valid JSON
     def validate_input(self, source_path: Path, assets: BundleAssets) -> Tuple[bool, List[str]]:
         """Validate input bundle structure and assets.
 
@@ -77,6 +78,7 @@ class BundleValidator:
 
         return len(errors) == 0, errors
 
+    # checks required fields, format
     def validate_metadata(self, metadata: BundleMetadata) -> Tuple[bool, List[str]]:
         """Validate bundle metadata.
 
@@ -108,6 +110,7 @@ class BundleValidator:
 
         return len(errors) == 0, errors
 
+    # checks output path, manifest files
     def validate_output(self, output_path: Path) -> Tuple[bool, List[str]]:
         """Validate generated bundle structure.
 
@@ -140,6 +143,20 @@ class BundleValidator:
             resources_file = grafana_dir / "resources.gfo.yaml"
             if not resources_file.exists():
                 errors.append("grafana/resources.gfo.yaml not found")
+
+        # check for format of dashboard JSON files for Grafana
+        dashboard_dir = output_path / "grafana" / "dashboards"
+        if dashboard_dir.exists():
+            for dashboard in dashboard_dir.glob("*.json"):
+                with open(dashboard, 'r') as f:
+                    try:
+                        json_file = json.load(f)
+                    except json.JSONDecodeError:
+                        errors.append(f"Invalid JSON format in dashboard: {dashboard}")
+                        continue
+                    # check for __inputs section
+                    if '__inputs' not in json_file:
+                        errors.append(f"Dashboard JSON missing __inputs section: {dashboard}")
 
         if self.verbose and not errors:
             print("✓ Output validation passed")
