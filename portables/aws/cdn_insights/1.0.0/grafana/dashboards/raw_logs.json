@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -40,7 +40,7 @@
           "builtIn": 1,
           "datasource": {
             "type": "grafana",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "enable": true,
           "hide": true,
@@ -79,7 +79,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "gridPos": {
           "h": 17,
@@ -104,7 +104,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} > now() - INTERVAL 15 MINUTE\nAND $__adHocFilter() \nORDER BY ${timestamp} DESC \nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
@@ -166,30 +166,11 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "Filters",
           "type": "adhoc"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
         }
       ]
     },
