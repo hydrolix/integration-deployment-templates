@@ -69,6 +69,12 @@ class GrafanaGenerator:
                 data = json.load(f)
             self._replace_datasource_uids(data)
 
+            # Normalize __inputs datasource names to standard variable
+            for inp in data.get('__inputs', []):
+                if inp.get('type') == 'datasource':
+                    inp['name'] = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
+                    inp['label'] = 'Hydrolix'
+
             # Strip top-level dashboard uid (CaC deployments assign their own)
             data.pop('uid', None)
 
@@ -147,7 +153,7 @@ class GrafanaGenerator:
                     # Use the input name as the key, and value/type as the value
                     # For datasource inputs, use the predefined datasource UID
                     if inp.type == 'datasource':
-                        inputs_dict[inp.name] = 'hdx-hydrolix-datasource'
+                        inputs_dict['DS_HYDROLIX-HYDROLIX-DATASOURCE'] = 'hdx-hydrolix-datasource'
                     elif inp.value is not None:
                         inputs_dict[inp.name] = inp.value
                     else:
