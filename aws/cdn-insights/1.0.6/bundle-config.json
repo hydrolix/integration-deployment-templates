@@ -1,5 +1,5 @@
 {
-  "data_category": "Security",
+  "data_category": "cdn",
   "table_name": "cdn_insights_logs",
   "version": "1.0.6"
 }
