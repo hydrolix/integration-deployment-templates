@@ -1,0 +1,15 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-bot-insights-siem:
+    dashboard:
+      __extend__: dashboards/bot_insights_siem.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HDX-DEMO: hdx-hydrolix-datasource
+      VAR_SIEM_RAW: akamai.siem
+      VAR_SIEM_SUMMARY_HOUR: akamai.bot_siem_summary_hour
+      VAR_SIEM_SUMMARY_DAY: akamai.bot_siem_summary_day
+      VAR_SIEM_SUMMARY_MONTH: akamai.bot_siem_summary_month
