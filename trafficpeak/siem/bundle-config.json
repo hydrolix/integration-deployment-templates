@@ -1,5 +1,5 @@
 {
     "data_category": "security",
-    "table_name": "lgos",
+    "table_name": "siem",
     "version": "0.0.0"
 }
