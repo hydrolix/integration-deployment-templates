@@ -1,9 +1,0 @@
-folders:
-  hdx-main-folder:
-    name: TrafficPeak Certified Reference Dashboards
-    children: {}
-dashboards:
-  hdx-bot-insights-siem:
-    dashboard:
-      __extend__: dashboards/bot_insights_siem.json
-    folderUid: hdx-main-folder
