@@ -1,5 +1,5 @@
 name: trafficpeak_siem
-version: '1.0'
+version: '0.9'
 description: TRAFFICPEAK Siem integration bundle
 maintainer: Hydrolix Team <team@hydrolix.io>
 hydrolix:

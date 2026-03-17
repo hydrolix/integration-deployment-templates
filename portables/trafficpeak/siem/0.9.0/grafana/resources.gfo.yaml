@@ -8,7 +8,7 @@ dashboards:
       __extend__: dashboards/siem_raw_logs.json
     folderUid: hdx-main-folder
     inputs:
-      DS_HDX-DEMO: hdx-hydrolix-datasource
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.siem
       VAR_TIMESTAMP: timestamp
   hdx-security-analysis:
@@ -16,7 +16,7 @@ dashboards:
       __extend__: dashboards/security_analysis.json
     folderUid: hdx-main-folder
     inputs:
-      DS_HDX-DEMO: hdx-hydrolix-datasource
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.siem
       VAR_TIMESTAMP: timestamp
   hdx-akamai-siem:
@@ -24,6 +24,6 @@ dashboards:
       __extend__: dashboards/akamai_siem.json
     folderUid: hdx-main-folder
     inputs:
-      DS_HDX-DEMO: hdx-hydrolix-datasource
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.siem
       VAR_LOGS: akamai.logs
