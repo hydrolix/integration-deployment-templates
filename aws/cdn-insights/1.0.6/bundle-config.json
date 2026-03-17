@@ -1,0 +1,5 @@
+{
+  "data_category": "Security",
+  "table_name": "cdn_insights_logs",
+  "version": "1.0.6"
+}

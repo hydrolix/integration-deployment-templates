@@ -1,0 +1,534 @@
+{
+  "description": "Version v1.0",
+  "name": "tp_mcdn_cloudflare",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "is_default": false,
+    "null_values": [],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "2006-01-02T15:04:05Z",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeStartTimestamp"
+          },
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "reqTimeSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "CacheCacheStatus"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cacheStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBytes"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "totalBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseStatus"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "statusCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeTimeToFirstByteMs"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "timeToFirstByte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseDurationMs"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "transferTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseContentType"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "rspContentType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestMethod"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqMethod"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestHost"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqHost"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestURI"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "request_full_path"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "queryStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestReferer"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestPath"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqPath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "user_agent_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestUserAgent"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientIP"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cliIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "edge_pop"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeServerIP"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginIP"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "Origin_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseTime"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "Origin_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientCountry"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientCity"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientASN"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeColoCode"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "origin_time_to_first_byte_ms"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "origin_time_to_last_byte_ms"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency_sec"
+      },
+      {
+        "datatype": {
+          "default": "Cloudflare",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": "Cloudflare TP multicdn template",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "unknown"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": [
+      {
+        "timestamp": "2025-10-02T21:06:14"
+      }
+    ],
+    "shadow_table": null,
+    "sql_transform": "SELECT reqTimeSec, result_type, cacheStatus, totalBytes, statusCode, timeToFirstByte, transferTimeMSec, rspContentType, reqMethod, reqHost, request_full_path, queryStr, referer, reqPath, user_agent_category, UA, cliIP, edge_pop, Edge_IP, Origin_IP, Origin_TurnAroundTime, Origin_RequestEndTime, country, city, asn, Edge_GeoInfo, breadcrumbs, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=g[^]]*\\\\])', 'n=([^,\\\\]]+)') as edge_pop, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms, hdx_source_latency_sec, hdx_cdn, hdx_transform, unknown FROM {STREAM}",
+    "wurfl": null
+  },
+  "type": "json"
+}
