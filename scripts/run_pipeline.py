@@ -26,6 +26,7 @@ REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
 from utils.file_utils import sanitize_cac_name
+from configurator.config import is_semver
 
 
 def main():
@@ -227,6 +228,17 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
+    if args.version == "1.0.0":
+        # Only override if still at default — config or path-based version takes precedence
+        config_version = data.get("version", "")
+        if config_version:
+            args.version = config_version
+
+    # Infer version from directory name if still at default and path is versioned
+    if args.version == "1.0.0":
+        parts = args.bundle_dir.rstrip("/").split("/")
+        if parts and is_semver(parts[-1]):
+            args.version = parts[-1]
 
 
 def _require_stage2_args(args):
@@ -317,8 +329,12 @@ def build_portable_cmd(args):
     else:
         # Default: portables/<customer_type>/<bundle_name>/<version>/
         parts = args.bundle_dir.rstrip("/").split("/")
-        customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
-        bundle_name = sanitize_cac_name(parts[-1])
+        if is_semver(parts[-1]) and len(parts) >= 3:
+            customer_type = sanitize_cac_name(parts[-3])
+            bundle_name = sanitize_cac_name(parts[-2])
+        else:
+            customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
+            bundle_name = sanitize_cac_name(parts[-1])
         output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 

@@ -7,6 +7,12 @@ from typing import Optional
 
 from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP
 
+SEMVER_RE = re.compile(r'^\d+\.\d+\.\d+$')
+
+def is_semver(s: str) -> bool:
+    """Check if a string is a semver version (e.g., '1.0.0')."""
+    return bool(SEMVER_RE.match(s))
+
 
 @dataclass
 class BundleConfig:
@@ -54,6 +60,8 @@ class BundleConfig:
     def _infer_source_name(self):
         """Infer source name from directory path."""
         parts = self.bundle_dir.rstrip("/").split("/")
+        if len(parts) >= 3 and is_semver(parts[-1]):
+            return parts[-3]
         if len(parts) >= 2:
             return parts[-2]
         return "unknown"
@@ -61,6 +69,8 @@ class BundleConfig:
     def _infer_bundle_name(self):
         """Infer bundle name from directory path."""
         parts = self.bundle_dir.rstrip("/").split("/")
+        if len(parts) >= 2 and is_semver(parts[-1]):
+            return parts[-2]
         if parts:
             return parts[-1]
         return "unknown"
@@ -78,6 +88,12 @@ class BundleConfig:
     @property
     def base_url(self):
         """Generate the base_url for bundle.json."""
+        parts = self.bundle_dir.rstrip("/").split("/")
+        if is_semver(parts[-1]):
+            return (
+                f"https://github.com/hydrolix/integration-deployment-templates"
+                f"/blob/main/{self.source_name}/{self.bundle_name}/{self.version}"
+            )
         return (
             f"https://github.com/hydrolix/integration-deployment-templates"
             f"/blob/main/{self.source_name}/{self.bundle_name}"

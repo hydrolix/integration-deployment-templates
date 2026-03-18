@@ -1,6 +1,7 @@
 // Pointless comment
 
 use lazy_static::lazy_static;
+use regex::Regex;
 use std::path::PathBuf;
 use tokio::fs;
 use walkdir::WalkDir;
@@ -72,7 +73,7 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 async fn main() {
     let mut bundles_checked = 0;
 
-    let bundle_list = find_bundle_files();
+    let bundle_list = filter_to_latest_versions(find_bundle_files());
 
     let mut final_bundle_list: Vec<Bundle> = vec![];
     let mut all_bundle_list: Vec<Bundle> = vec![];
@@ -105,7 +106,18 @@ async fn main() {
 
         bundles_checked += 1;
 
-        match validate_bundle(&base_dir, &bundle).await {
+        // Extract version directory name if this is a versioned path
+        let dir_version: Option<String> = {
+            let base_path = std::path::Path::new(&base_dir);
+            let last_component = base_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            if is_semver(last_component) {
+                Some(last_component.to_string())
+            } else {
+                None
+            }
+        };
+
+        match validate_bundle(&base_dir, &bundle, dir_version.as_deref()).await {
             Ok(_) => (),
             Err(e) => {
                 eprintln!("ERROR: Failed bundle validation: {e}");
@@ -136,7 +148,11 @@ async fn main() {
 }
 
 // These are all of our tests...
-async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
+async fn validate_bundle(
+    base: &str,
+    bundle: &Bundle,
+    dir_version: Option<&str>,
+) -> Result<(), String> {
     println!("Base={base} bundle={:?}", bundle);
 
     let mut output: Output = Output::default();
@@ -151,7 +167,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("Found duplicate tokens: error={e}")),
     }
 
-    match validate::naming_is_valid::run(bundle).await {
+    match validate::naming_is_valid::run(bundle, dir_version).await {
         Ok(_) => (),
         Err(e) => return Err(format!("Found bad naming: error={e}")),
     }
@@ -342,12 +358,81 @@ fn find_bundle_files() -> Vec<std::path::PathBuf> {
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
 
     WalkDir::new(search_path)
-        .max_depth(3)
+        .max_depth(4)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_name() == "bundle.json")
         .map(|e| e.path().to_path_buf())
         .collect()
+}
+
+/// Check if a directory name is a semver version string (e.g., "1.0.0").
+fn is_semver(s: &str) -> bool {
+    lazy_static! {
+        static ref SEMVER_RE: Regex = Regex::new(r"^\d+\.\d+\.\d+$").unwrap();
+    }
+    SEMVER_RE.is_match(s)
+}
+
+/// Parse a semver string into a comparable tuple.
+fn parse_semver(s: &str) -> (u32, u32, u32) {
+    let parts: Vec<u32> = s.split('.').filter_map(|p| p.parse().ok()).collect();
+    (
+        parts.first().copied().unwrap_or(0),
+        parts.get(1).copied().unwrap_or(0),
+        parts.get(2).copied().unwrap_or(0),
+    )
+}
+
+/// Filter bundle paths so that only the latest version per bundle identity is kept.
+/// Non-versioned (flat) paths are always included.
+fn filter_to_latest_versions(paths: Vec<PathBuf>) -> Vec<PathBuf> {
+    use std::collections::HashMap;
+
+    let mut versioned: HashMap<PathBuf, (PathBuf, (u32, u32, u32))> = HashMap::new();
+    let mut flat: Vec<PathBuf> = Vec::new();
+
+    for path in paths {
+        // Parent of bundle.json — could be a version dir or a bundle dir
+        let parent = match path.parent() {
+            Some(p) => p,
+            None => {
+                flat.push(path);
+                continue;
+            }
+        };
+
+        let parent_name = parent.file_name().and_then(|n| n.to_str()).unwrap_or("");
+
+        if is_semver(parent_name) {
+            // Versioned path: grandparent is the bundle identity
+            let bundle_identity = match parent.parent() {
+                Some(gp) => gp.to_path_buf(),
+                None => {
+                    flat.push(path);
+                    continue;
+                }
+            };
+            let ver = parse_semver(parent_name);
+
+            match versioned.get(&bundle_identity) {
+                Some((_, existing_ver)) if ver > *existing_ver => {
+                    versioned.insert(bundle_identity, (path, ver));
+                }
+                None => {
+                    versioned.insert(bundle_identity, (path, ver));
+                }
+                _ => {} // existing version is higher or equal, skip
+            }
+        } else {
+            flat.push(path);
+        }
+    }
+
+    let mut result: Vec<PathBuf> = flat;
+    result.extend(versioned.into_values().map(|(path, _)| path));
+    result.sort();
+    result
 }
 
 async fn file_to_bundle(file_path: &str) -> Result<Bundle, String> {
