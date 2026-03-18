@@ -228,6 +228,17 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
+    if args.version == "1.0.0":
+        # Only override if still at default — config or path-based version takes precedence
+        config_version = data.get("version", "")
+        if config_version:
+            args.version = config_version
+
+    # Infer version from directory name if still at default and path is versioned
+    if args.version == "1.0.0":
+        parts = args.bundle_dir.rstrip("/").split("/")
+        if parts and is_semver(parts[-1]):
+            args.version = parts[-1]
 
 
 def _require_stage2_args(args):
