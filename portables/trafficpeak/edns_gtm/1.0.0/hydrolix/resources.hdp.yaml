@@ -1,0 +1,12 @@
+tables:
+  eDNS_GTM:
+    __extend__: tables/table_eDNS_GTM.yaml
+transforms:
+  eDNS_GTM:
+    edns:
+      __extend__: transforms/edns.json
+      settings:
+        sql_transform:
+          __extend__: transforms/edns_select.sql
+        sample_data:
+          __extend__: transforms/edns_sample_data.json
