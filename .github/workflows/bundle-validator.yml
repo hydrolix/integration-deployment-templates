@@ -9,6 +9,7 @@ on:
       - 'aws/**'
       - 'trafficpeak/**'
       - 'portables/**'
+      - '.originals/**'
 
 jobs:
   bundle-validator:

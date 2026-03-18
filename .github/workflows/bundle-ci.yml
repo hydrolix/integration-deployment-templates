@@ -7,6 +7,7 @@ on:
       - 'aws/**'
       - 'trafficpeak/**'
       - 'portables/**'
+      - '.originals/**'
 
 permissions:
   contents: write
@@ -14,17 +15,24 @@ permissions:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') && !contains(github.event.pull_request.body, '[skip-bundle-format]') }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') }}
     outputs:
-      bundle_dirs: ${{ steps.detect.outputs.bundle_dirs }}
-      has_bundles: ${{ steps.detect.outputs.has_bundles }}
+      full_pipeline_dirs: ${{ steps.detect.outputs.full_pipeline_dirs }}
+      validate_only_dirs: ${{ steps.detect.outputs.validate_only_dirs }}
+      has_full_pipeline: ${{ steps.detect.outputs.has_full_pipeline }}
+      has_validate_only: ${{ steps.detect.outputs.has_validate_only }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Detect changed bundle directories
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Detect changed bundle directories and route tracks
         id: detect
         run: |
           CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
@@ -35,16 +43,28 @@ jobs:
           # Extract unique bundle dirs (first two path components under aws/ or trafficpeak/)
           BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
 
-          if [ -z "$BUNDLE_DIRS" ]; then
+          # Also check for .originals/ changes — extract the corresponding bundle dir
+          ORIGINALS_BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^\.originals/(aws|trafficpeak)/' | sed 's|^\.originals/||' | cut -d'/' -f1-2 | sort -u)
+
+          # Merge both sets
+          ALL_DIRS=$(echo -e "${BUNDLE_DIRS}\n${ORIGINALS_BUNDLE_DIRS}" | sort -u | grep -v '^$')
+
+          if [ -z "$ALL_DIRS" ]; then
             echo "No bundle directories changed"
-            echo "has_bundles=false" >> $GITHUB_OUTPUT
-            echo "bundle_dirs=[]" >> $GITHUB_OUTPUT
+            echo "has_full_pipeline=false" >> $GITHUB_OUTPUT
+            echo "has_validate_only=false" >> $GITHUB_OUTPUT
+            echo "full_pipeline_dirs=[]" >> $GITHUB_OUTPUT
+            echo "validate_only_dirs=[]" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Filter to dirs that have a bundle-config.json (flat or versioned)
-          VALID_DIRS=""
+          FULL_DIRS=""
+          VALIDATE_DIRS=""
+
           while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+
+            # Resolve the actual bundle dir (flat or versioned)
             BUNDLE_DIR=""
             if [ -f "$dir/bundle-config.json" ]; then
               BUNDLE_DIR="$dir"
@@ -52,36 +72,57 @@ jobs:
               BUNDLE_DIR="$LATEST_VER"
             fi
 
+            # Use detect_track.py to determine which track this bundle should run on
             if [ -n "$BUNDLE_DIR" ]; then
-              if [ -n "$VALID_DIRS" ]; then
-                VALID_DIRS="${VALID_DIRS}
-          ${BUNDLE_DIR}"
+              # Pass changed files for this bundle to detect_track
+              BUNDLE_CHANGED=$(echo "$CHANGED_FILES" | grep -E "^(\.originals/)?${dir}/" | tr '\n' ',' | sed 's/,$//')
+              TRACK=$(python scripts/detect_track.py --bundle-dir "$BUNDLE_DIR" --changed-files "$BUNDLE_CHANGED" --mode track 2>&1) || TRACK="validate-only"
+
+              echo "Bundle: $BUNDLE_DIR → Track: $TRACK"
+
+              if [ "$TRACK" = "full" ]; then
+                FULL_DIRS="${FULL_DIRS:+${FULL_DIRS}\n}${BUNDLE_DIR}"
               else
-                VALID_DIRS="$BUNDLE_DIR"
+                VALIDATE_DIRS="${VALIDATE_DIRS:+${VALIDATE_DIRS}\n}${BUNDLE_DIR}"
               fi
             else
-              echo "::warning::Bundle directory '$dir' has changes but no bundle-config.json — skipping auto-format"
+              # No bundle-config.json — check if this is a legacy bundle with changes
+              echo "::warning::Bundle directory '$dir' has changes but no bundle-config.json — routing to validation only"
+              # For legacy bundles, use the base dir for validation
+              if [ -d "$dir" ]; then
+                VALIDATE_DIRS="${VALIDATE_DIRS:+${VALIDATE_DIRS}\n}${dir}"
+              fi
             fi
-          done <<< "$BUNDLE_DIRS"
+          done <<< "$ALL_DIRS"
 
-          if [ -z "$VALID_DIRS" ]; then
-            echo "No bundles with bundle-config.json found"
-            echo "has_bundles=false" >> $GITHUB_OUTPUT
-            echo "bundle_dirs=[]" >> $GITHUB_OUTPUT
-            exit 0
+          # Convert to JSON arrays
+          if [ -n "$FULL_DIRS" ]; then
+            FULL_JSON=$(echo -e "$FULL_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "has_full_pipeline=true" >> $GITHUB_OUTPUT
+          else
+            FULL_JSON="[]"
+            echo "has_full_pipeline=false" >> $GITHUB_OUTPUT
           fi
 
-          echo "Bundles to process:"
-          echo "$VALID_DIRS"
+          if [ -n "$VALIDATE_DIRS" ]; then
+            VALIDATE_JSON=$(echo -e "$VALIDATE_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "has_validate_only=true" >> $GITHUB_OUTPUT
+          else
+            VALIDATE_JSON="[]"
+            echo "has_validate_only=false" >> $GITHUB_OUTPUT
+          fi
 
-          # Convert to JSON array for downstream jobs
-          JSON_ARRAY=$(echo "$VALID_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "bundle_dirs=$JSON_ARRAY" >> $GITHUB_OUTPUT
-          echo "has_bundles=true" >> $GITHUB_OUTPUT
+          echo "full_pipeline_dirs=$FULL_JSON" >> $GITHUB_OUTPUT
+          echo "validate_only_dirs=$VALIDATE_JSON" >> $GITHUB_OUTPUT
 
+          echo ""
+          echo "Track 1 (full pipeline): $FULL_JSON"
+          echo "Track 2 (validate only): $VALIDATE_JSON"
+
+  # Track 1: Full pipeline — format, configure, then validate
   format-bundles:
     needs: detect-changes
-    if: needs.detect-changes.outputs.has_bundles == 'true'
+    if: needs.detect-changes.outputs.has_full_pipeline == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -97,19 +138,20 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: Format and configure bundles
+      - name: Format and configure bundles (Track 1)
         run: |
-          BUNDLE_DIRS='${{ needs.detect-changes.outputs.bundle_dirs }}'
+          BUNDLE_DIRS='${{ needs.detect-changes.outputs.full_pipeline_dirs }}'
 
           echo "$BUNDLE_DIRS" | jq -r '.[]' | while IFS= read -r bundle_dir; do
             echo ""
             echo "========================================="
-            echo "Processing: $bundle_dir"
+            echo "Processing (Track 1 - Full Pipeline): $bundle_dir"
             echo "========================================="
 
             python scripts/run_pipeline.py \
               --bundle-dir "$bundle_dir" \
               --config "$bundle_dir/bundle-config.json" \
+              --track full \
               --skip-validate \
               --verbose
 
@@ -121,7 +163,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add aws/ trafficpeak/ portables/
+          git add aws/ trafficpeak/ portables/ .originals/
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -130,9 +172,10 @@ jobs:
             git push
           fi
 
-  validate-bundles:
-    needs: format-bundles
-    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') && !contains(github.event.pull_request.body, '[skip-bundle-format]') && needs.format-bundles.result == 'success'
+  # Track 1 continued: Validate after formatting
+  validate-full-pipeline:
+    needs: [detect-changes, format-bundles]
+    if: always() && !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') && needs.format-bundles.result == 'success'
     runs-on: ubuntu-latest
     container:
       image: rust:latest
@@ -163,7 +206,48 @@ jobs:
       - name: Build bundle validator
         run: cargo build --release --bin bundle-validator
 
-      - name: Run bundle-validator
+      - name: Run bundle-validator (Track 1)
+        run: ./target/release/bundle-validator
+        env:
+          BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
+          BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
+          BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+
+  # Track 2: Validation only — no formatting, no commit
+  validate-only-bundles:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_validate_only == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: rust:latest
+    environment: bundle-validator-env
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build bundle validator
+        run: cargo build --release --bin bundle-validator
+
+      - name: Run bundle-validator (Track 2 - Validation Only)
         run: ./target/release/bundle-validator
         env:
           BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
