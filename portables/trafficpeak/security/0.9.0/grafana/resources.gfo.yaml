@@ -1,19 +1,21 @@
 folders:
   hdx-main-folder:
     name: TrafficPeak Certified Reference Dashboards
-    children: {}
+    children:
+      hdx-security-folder:
+        name: Security
 dashboards:
   hdx-ds2-web-security:
     dashboard:
       __extend__: dashboards/ds2_web_security.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.logs
   hdx-ds2-security-analysis:
     dashboard:
       __extend__: dashboards/ds2_security_analysis.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_DS2: akamai.logs
