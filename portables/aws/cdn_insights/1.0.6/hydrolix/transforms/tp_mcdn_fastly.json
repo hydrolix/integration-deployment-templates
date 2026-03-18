@@ -1,6 +1,6 @@
 {
   "description": "Version v1.0",
-  "name": "tp_mcdn_cloudflare",
+  "name": "tp_mcdn_fastly",
   "settings": {
     "compression": "",
     "format_details": {
@@ -18,18 +18,23 @@
       }
     },
     "is_default": false,
-    "null_values": [],
+    "null_values": [
+      "-1",
+      "(null)"
+    ],
     "output_columns": [
       {
         "datatype": {
           "default": null,
-          "format": "2006-01-02T15:04:05Z",
+          "format": "2006-01-02T15:04:05",
           "index": false,
           "primary": true,
           "resolution": "ms",
           "script": null,
           "source": {
-            "from_input_field": "EdgeStartTimestamp"
+            "from_json_pointers": [
+              "/timestamp"
+            ]
           },
           "suppress": false,
           "type": "datetime"
@@ -44,7 +49,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "CacheCacheStatus"
+            "from_input_field": "result_type"
           },
           "suppress": true,
           "type": "string"
@@ -59,7 +64,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_json_pointers": [
+              "/cache_was_cached"
+            ]
           },
           "suppress": false,
           "type": "boolean"
@@ -74,7 +81,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseBytes"
+            "from_json_pointers": [
+              "/response_total_bytes"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -89,7 +98,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseStatus"
+            "from_json_pointers": [
+              "/response_status_code"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -100,11 +111,30 @@
         "datatype": {
           "default": null,
           "format": null,
+          "ignore": false,
+          "index": false,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/response_time_to_first_byte"
+            ]
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "response_time_to_first_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeTimeToFirstByteMs"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "uint64"
@@ -115,11 +145,30 @@
         "datatype": {
           "default": null,
           "format": null,
+          "ignore": false,
+          "index": false,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/response_time_to_last_byte"
+            ]
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "response_time_to_last_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseDurationMs"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "uint64"
@@ -134,12 +183,14 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseContentType"
+            "from_json_pointers": [
+              "/response_content_type"
+            ]
           },
           "suppress": false,
           "type": "string"
         },
-        "name": "rspContentType"
+        "name": "response_content_type"
       },
       {
         "datatype": {
@@ -149,7 +200,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestMethod"
+            "from_json_pointers": [
+              "/request_method"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -164,27 +217,14 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestHost"
+            "from_json_pointers": [
+              "/request_host"
+            ]
           },
           "suppress": false,
           "type": "string"
         },
         "name": "reqHost"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ClientRequestURI"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "request_full_path"
       },
       {
         "datatype": {
@@ -209,7 +249,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestReferer"
+            "from_json_pointers": [
+              "/request_referer"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -224,7 +266,24 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestPath"
+            "from_json_pointers": [
+              "/original_url"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "original_url"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "string"
@@ -254,7 +313,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestUserAgent"
+            "from_json_pointers": [
+              "/user_agent"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -269,7 +330,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientIP"
+            "from_json_pointers": [
+              "/client_ip"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -284,22 +347,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "edge_pop"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "EdgeServerIP"
+            "from_json_pointers": [
+              "/edge_ip"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -314,7 +364,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginIP"
+            "from_json_pointers": [
+              "/origin_ip"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -329,7 +381,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
+            "from_json_pointers": [
+              "/origin_time_to_first_byte_ms"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -344,7 +398,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseTime"
+            "from_json_pointers": [
+              "/origin_time_to_last_byte_ms"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -359,7 +415,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientCountry"
+            "from_json_pointers": [
+              "/client_country_iso_code"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -374,7 +432,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientCity"
+            "from_json_pointers": [
+              "/client_city"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -389,12 +449,14 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientASN"
+            "from_json_pointers": [
+              "/client_asn"
+            ]
           },
           "suppress": false,
           "type": "string"
         },
-        "name": "asn"
+        "name": "Edge_GeoInfo"
       },
       {
         "datatype": {
@@ -404,12 +466,14 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeColoCode"
+            "from_json_pointers": [
+              "/edge_pop"
+            ]
           },
           "suppress": false,
           "type": "string"
         },
-        "name": "Edge_GeoInfo"
+        "name": "edge_pop"
       },
       {
         "datatype": {
@@ -471,7 +535,7 @@
       },
       {
         "datatype": {
-          "default": "Cloudflare",
+          "default": "Fastly",
           "format": null,
           "index": true,
           "resolution": null,
@@ -484,7 +548,7 @@
       },
       {
         "datatype": {
-          "default": "Cloudflare TP multicdn template",
+          "default": "Fastly TP multi cdn",
           "format": null,
           "index": true,
           "resolution": null,
@@ -521,11 +585,7 @@
       }
     ],
     "rate_limit": null,
-    "sample_data": {
-      "timestamp": "2025-10-02T21:06:14"
-    },
     "shadow_table": null,
-    "sql_transform": "SELECT reqTimeSec, result_type, cacheStatus, totalBytes, statusCode, timeToFirstByte, transferTimeMSec, rspContentType, reqMethod, reqHost, request_full_path, queryStr, referer, reqPath, user_agent_category, UA, cliIP, edge_pop, Edge_IP, Origin_IP, Origin_TurnAroundTime, Origin_RequestEndTime, country, city, asn, Edge_GeoInfo, breadcrumbs, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=g[^]]*\\\\])', 'n=([^,\\\\]]+)') as edge_pop, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms, hdx_source_latency_sec, hdx_cdn, hdx_transform, unknown FROM {STREAM}",
     "wurfl": null
   },
   "type": "json"

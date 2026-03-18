@@ -1,6 +1,6 @@
 {
   "description": "Version v1.0",
-  "name": "tp_mcdn_cloudflare",
+  "name": "mcdn_cloudfront_fireshose_v3",
   "settings": {
     "compression": "",
     "format_details": {
@@ -23,16 +23,20 @@
       {
         "datatype": {
           "default": null,
-          "format": "2006-01-02T15:04:05Z",
+          "format": "s",
+          "ignore": false,
           "index": false,
+          "index_options": {
+            "fulltext": false
+          },
           "primary": true,
           "resolution": "ms",
           "script": null,
           "source": {
-            "from_input_field": "EdgeStartTimestamp"
+            "from_input_field": "data.timestamp"
           },
           "suppress": false,
-          "type": "datetime"
+          "type": "epoch"
         },
         "name": "reqTimeSec"
       },
@@ -44,7 +48,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "CacheCacheStatus"
+            "from_input_field": "x-edge-result-type"
           },
           "suppress": true,
           "type": "string"
@@ -74,7 +78,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseBytes"
+            "from_input_field": "sc-bytes"
           },
           "suppress": false,
           "type": "uint64"
@@ -89,7 +93,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseStatus"
+            "from_input_field": "sc-status"
           },
           "suppress": false,
           "type": "string"
@@ -104,7 +108,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeTimeToFirstByteMs"
+            "from_input_field": "time-to-first-byte"
           },
           "suppress": false,
           "type": "uint64"
@@ -115,11 +119,26 @@
         "datatype": {
           "default": null,
           "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-taken"
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "response_time_to_last_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseDurationMs"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "uint64"
@@ -134,12 +153,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "EdgeResponseContentType"
+            "from_input_field": "sc-content-type"
           },
           "suppress": false,
           "type": "string"
         },
-        "name": "rspContentType"
+        "name": "response_content_type"
       },
       {
         "datatype": {
@@ -149,7 +168,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestMethod"
+            "from_input_field": "cs-method"
           },
           "suppress": false,
           "type": "string"
@@ -164,7 +183,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestHost"
+            "from_input_field": "x-host-header"
           },
           "suppress": false,
           "type": "string"
@@ -179,22 +198,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestURI"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "request_full_path"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "cs-uri-query"
           },
           "suppress": false,
           "type": "string"
@@ -209,7 +213,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestReferer"
+            "from_input_field": "cs(Referer)"
           },
           "suppress": false,
           "type": "string"
@@ -224,12 +228,27 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestPath"
+            "from_input_field": "cs-uri-stem"
           },
           "suppress": false,
           "type": "string"
         },
         "name": "reqPath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(User-Agent)"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
       },
       {
         "datatype": {
@@ -254,22 +273,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientRequestUserAgent"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "UA"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ClientIP"
+            "from_input_field": "c-ip"
           },
           "suppress": false,
           "type": "string"
@@ -284,22 +288,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "edge_pop"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "EdgeServerIP"
+            "from_input_field": "s-ip"
           },
           "suppress": false,
           "type": "string"
@@ -313,9 +302,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "OriginIP"
-          },
+          "source": null,
           "suppress": false,
           "type": "string"
         },
@@ -329,7 +316,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
+            "from_input_field": "origin-fbl"
           },
           "suppress": false,
           "type": "uint64"
@@ -344,7 +331,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "OriginResponseTime"
+            "from_input_field": "origin-lbl"
           },
           "suppress": false,
           "type": "uint64"
@@ -359,7 +346,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientCountry"
+            "from_input_field": "c-country"
           },
           "suppress": false,
           "type": "string"
@@ -374,7 +361,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientCity"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "string"
@@ -389,22 +376,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "ClientASN"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "asn"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "EdgeColoCode"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "string"
@@ -419,12 +391,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "x-edge-location"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "string"
         },
-        "name": "origin_time_to_first_byte_ms"
+        "name": "edge_pop"
       },
       {
         "datatype": {
@@ -448,19 +420,6 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "breadcrumbs"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
           "source": {
             "from_input_field": "sql_transform"
           },
@@ -471,7 +430,7 @@
       },
       {
         "datatype": {
-          "default": "Cloudflare",
+          "default": "CloudFront",
           "format": null,
           "index": true,
           "resolution": null,
@@ -484,7 +443,7 @@
       },
       {
         "datatype": {
-          "default": "Cloudflare TP multicdn template",
+          "default": "CloudFront FH multi cdn",
           "format": null,
           "index": true,
           "resolution": null,
@@ -494,6 +453,19 @@
           "type": "string"
         },
         "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
       },
       {
         "datatype": {
@@ -521,11 +493,7 @@
       }
     ],
     "rate_limit": null,
-    "sample_data": {
-      "timestamp": "2025-10-02T21:06:14"
-    },
     "shadow_table": null,
-    "sql_transform": "SELECT reqTimeSec, result_type, cacheStatus, totalBytes, statusCode, timeToFirstByte, transferTimeMSec, rspContentType, reqMethod, reqHost, request_full_path, queryStr, referer, reqPath, user_agent_category, UA, cliIP, edge_pop, Edge_IP, Origin_IP, Origin_TurnAroundTime, Origin_RequestEndTime, country, city, asn, Edge_GeoInfo, breadcrumbs, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=g[^]]*\\\\])', 'n=([^,\\\\]]+)') as edge_pop, __SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'l=([^,\\\\]]+)') as origin_time_to_first_byte_ms,\n__SHARED_PROJECT___breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms, hdx_source_latency_sec, hdx_cdn, hdx_transform, unknown FROM {STREAM}",
     "wurfl": null
   },
   "type": "json"
