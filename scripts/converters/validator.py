@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 from typing import List, Tuple
 
+import yaml
+
 from utils.models import BundleAssets, BundleMetadata
 from utils.file_utils import is_valid_json
 
@@ -147,6 +149,16 @@ class BundleValidator:
         # check for format of dashboard JSON files for Grafana
         dashboard_dir = output_path / "grafana" / "dashboards"
         if dashboard_dir.exists():
+            # Load resources.gfo.yaml inputs for cross-checking
+            gfo_datasource_keys = set()
+            resources_file = output_path / "grafana" / "resources.gfo.yaml"
+            if resources_file.exists():
+                with open(resources_file, 'r') as f:
+                    gfo = yaml.safe_load(f) or {}
+                for dash_entry in (gfo.get('dashboards') or {}).values():
+                    for key in (dash_entry.get('inputs') or {}):
+                        gfo_datasource_keys.add(key)
+
             for dashboard in dashboard_dir.glob("*.json"):
                 with open(dashboard, 'r') as f:
                     try:
@@ -157,6 +169,24 @@ class BundleValidator:
                     # check for __inputs section
                     if '__inputs' not in json_file:
                         errors.append(f"Dashboard JSON missing __inputs section: {dashboard}")
+                        continue
+                    # check datasource input names match expected value
+                    expected_ds_name = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
+                    for inp in json_file['__inputs']:
+                        if inp.get('type') == 'datasource':
+                            actual_name = inp.get('name')
+                            if actual_name != expected_ds_name:
+                                errors.append(
+                                    f"Dashboard {dashboard.name}: datasource input name "
+                                    f"'{actual_name}' does not match expected '{expected_ds_name}'"
+                                )
+                            # cross-check against resources.gfo.yaml inputs keys
+                            if gfo_datasource_keys and actual_name not in gfo_datasource_keys:
+                                errors.append(
+                                    f"Dashboard {dashboard.name}: datasource input name "
+                                    f"'{actual_name}' not found in resources.gfo.yaml inputs "
+                                    f"(found: {sorted(gfo_datasource_keys)})"
+                                )
 
         if self.verbose and not errors:
             print("✓ Output validation passed")
