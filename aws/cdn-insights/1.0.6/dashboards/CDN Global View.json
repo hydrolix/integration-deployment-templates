@@ -1823,15 +1823,7 @@
           "hide": 2,
           "name": "raw_table",
           "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "type": "constant",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "skipUrlSync": true
+          "type": "constant"
         },
         {
           "current": {},
