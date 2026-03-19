@@ -26,6 +26,7 @@ REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
 from utils.file_utils import sanitize_cac_name
+from configurator.config import is_semver
 
 
 def main():
@@ -130,6 +131,8 @@ Examples:
                     help="Override portable output dir (default: portables/<bundle_name>/<version>/)")
     s1.add_argument("--skip-portable-validation", action="store_true",
                     help="Skip bundle_to_yaml's internal validation")
+    s1.add_argument("--bundle-config", default="",
+                    help="Path to bundle-config.json whose version must match bundle.json")
     s1.add_argument("--version", default="1.0.0", help="Bundle version (default: 1.0.0)")
     s1.add_argument("--maintainer", default="Hydrolix Team <team@hydrolix.io>",
                     help="Bundle maintainer")
@@ -227,6 +230,17 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
+    if args.version == "1.0.0":
+        # Only override if still at default — config or path-based version takes precedence
+        config_version = data.get("version", "")
+        if config_version:
+            args.version = config_version
+
+    # Infer version from directory name if still at default and path is versioned
+    if args.version == "1.0.0":
+        parts = args.bundle_dir.rstrip("/").split("/")
+        if parts and is_semver(parts[-1]):
+            args.version = parts[-1]
 
 
 def _require_stage2_args(args):
@@ -317,8 +331,12 @@ def build_portable_cmd(args):
     else:
         # Default: portables/<customer_type>/<bundle_name>/<version>/
         parts = args.bundle_dir.rstrip("/").split("/")
-        customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
-        bundle_name = sanitize_cac_name(parts[-1])
+        if is_semver(parts[-1]) and len(parts) >= 3:
+            customer_type = sanitize_cac_name(parts[-3])
+            bundle_name = sanitize_cac_name(parts[-2])
+        else:
+            customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
+            bundle_name = sanitize_cac_name(parts[-1])
         output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
@@ -332,6 +350,8 @@ def build_portable_cmd(args):
         cmd += ["--description", args.description]
     if args.skip_portable_validation:
         cmd.append("--skip-validation")
+    if args.bundle_config:
+        cmd += ["--bundle-config", args.bundle_config]
     if args.verbose:
         cmd.append("--verbose")
 
