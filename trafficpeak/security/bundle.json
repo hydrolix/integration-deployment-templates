@@ -1,0 +1,61 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/security",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/DS2 Web Security.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": [
+        "breadcrumbs",
+        "cmcd_object_type",
+        "cmcd_query_param",
+        "cmcd_stream_type",
+        "cmcd_streaming_format",
+        "edge_worker",
+        "edge_worker_execution"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Security Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "0.9.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_security",
+  "other_dashboards": [],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/security-integration",
+    "source": {
+      "full_title": "Trafficpeak Security",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}
