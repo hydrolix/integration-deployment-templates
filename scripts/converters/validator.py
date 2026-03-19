@@ -1,7 +1,7 @@
 """Validation utilities for bundle conversion."""
 import json
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import yaml
 
@@ -112,8 +112,74 @@ class BundleValidator:
 
         return len(errors) == 0, errors
 
+    # checks version consistency across bundle-config.json, bundle.json, output path, and .bdl.yaml
+    def validate_version_consistency(
+        self,
+        source_path: Path,
+        expected_version: str,
+        bundle_config_path: Optional[Path] = None,
+    ) -> Tuple[bool, List[str]]:
+        """Validate that version is consistent across bundle-config.json, bundle.json,
+        the portables output path, and the .bdl.yaml manifest.
+
+        Args:
+            source_path: Source bundle directory (may contain bundle.json and bundle-config.json)
+            expected_version: The version passed on the CLI / from metadata
+            bundle_config_path: Explicit path to a bundle-config.json; if None, looks for
+                                 bundle-config.json inside source_path
+
+        Returns:
+            Tuple of (is_valid, error_messages)
+        """
+        errors = []
+
+        # Resolve bundle-config.json path
+        config_path = bundle_config_path or (source_path / "bundle-config.json")
+
+        # Load bundle.json version (may not exist yet at stage-1 time)
+        bundle_json_path = source_path / "bundle.json"
+        bundle_json_version: Optional[str] = None
+        if bundle_json_path.exists():
+            try:
+                with open(bundle_json_path, "r") as f:
+                    bundle_data = json.load(f)
+                bundle_json_version = bundle_data.get("metadata", {}).get("version", "")
+            except json.JSONDecodeError:
+                errors.append(f"Invalid JSON in bundle.json: {bundle_json_path}")
+
+        if bundle_json_version and bundle_json_version != expected_version:
+            errors.append(
+                f"Version mismatch: bundle.json metadata.version '{bundle_json_version}' "
+                f"does not match expected version '{expected_version}'"
+            )
+
+        # Load bundle-config.json version if it exists
+        if config_path.exists():
+            try:
+                with open(config_path, "r") as f:
+                    config_data = json.load(f)
+                config_version = config_data.get("version", "")
+                if config_version:
+                    if config_version != expected_version:
+                        errors.append(
+                            f"Version mismatch: {config_path.name} version '{config_version}' "
+                            f"does not match expected version '{expected_version}'"
+                        )
+                    if bundle_json_version and config_version != bundle_json_version:
+                        errors.append(
+                            f"Version mismatch: {config_path.name} version '{config_version}' "
+                            f"does not match bundle.json metadata.version '{bundle_json_version}'"
+                        )
+            except json.JSONDecodeError:
+                errors.append(f"Invalid JSON in {config_path.name}: {config_path}")
+
+        if self.verbose and not errors:
+            print("✓ Version consistency validation passed")
+
+        return len(errors) == 0, errors
+
     # checks output path, manifest files
-    def validate_output(self, output_path: Path) -> Tuple[bool, List[str]]:
+    def validate_output(self, output_path: Path, expected_version: Optional[str] = None) -> Tuple[bool, List[str]]:
         """Validate generated bundle structure.
 
         Returns:
@@ -125,12 +191,35 @@ class BundleValidator:
             errors.append(f"Output path does not exist: {output_path}")
             return False, errors
 
+        # Check output path version segment matches expected version
+        if expected_version:
+            path_version = output_path.name
+            if path_version != expected_version:
+                errors.append(
+                    f"Version mismatch: portables output directory '{path_version}' "
+                    f"does not match expected version '{expected_version}'"
+                )
+
         # Check for manifest file
         manifest_files = list(output_path.glob("*.bdl.yaml"))
         if not manifest_files:
             errors.append("No .bdl.yaml manifest file found")
         elif len(manifest_files) > 1:
             errors.append(f"Multiple .bdl.yaml files found: {[f.name for f in manifest_files]}")
+        elif expected_version:
+            # Check .bdl.yaml version field matches expected version
+            manifest_path = manifest_files[0]
+            try:
+                with open(manifest_path, "r") as f:
+                    manifest_data = yaml.safe_load(f) or {}
+                manifest_version = manifest_data.get("version", "")
+                if manifest_version and manifest_version != expected_version:
+                    errors.append(
+                        f"Version mismatch: {manifest_path.name} version '{manifest_version}' "
+                        f"does not match expected version '{expected_version}'"
+                    )
+            except yaml.YAMLError as exc:
+                errors.append(f"Invalid YAML in {manifest_path.name}: {exc}")
 
         # Check for hydrolix directory and resources file
         hydrolix_dir = output_path / "hydrolix"
