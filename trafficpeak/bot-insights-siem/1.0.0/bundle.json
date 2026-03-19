@@ -1,0 +1,73 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot-insights-siem/1.0.0",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/Bot Insights (SIEM) - BETA-1770072478453.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": [
+        "extract_key_pair",
+        "siem_extract"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Bot Insights Siem Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_bot_insights_siem",
+  "other_dashboards": [],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "siem_daily_summary",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/siem_daily_summary.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "siem_hourly_summary",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/siem_hourly_summary.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/bot_insights_siem-integration",
+    "source": {
+      "full_title": "Trafficpeak Bot Insights Siem",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}
