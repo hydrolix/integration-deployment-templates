@@ -1,0 +1,2571 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix"
+    },
+    {
+      "name": "VAR_TABLE",
+      "type": "constant",
+      "label": "table",
+      "value": "akamai.logs",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.2.3"
+    },
+    {
+      "type": "datasource",
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "version": "0.7.0"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "This dashboard requires web security and breadcrumbs enabled for Datastream 2 and the appropriate transform configuration to handle the new data.\n\nsplitByChar('|',assumeNotNull(securityRules))[1] as policy,\nsplitByChar('|',assumeNotNull(securityRules))[3] as denyRule,\nif(empty(splitByChar('|',assumeNotNull(securityRules))[3]),0,1) as denied,\nmultiIf(denyRule like '%REP%','Reputation', \n\tdenyRule like '3%' or denyRule like 'BOT-%', 'BOT',\n\tdenyRule like 'IP%', 'DOS',\n\tdenyRule like 'XSS%' or denyRule like 'WAT-%' or denyRule like 'RFI-ANOMALY%' or denyRule like 'PLATFORM-ANOMALY' or  denyRule like 'SQL%' or denyRule like 'LFI%' or denyRule like 'CMD-INJECTION%' or denyRule like 'PROTOCOL-ANOMALY%'  or denyRule like 'ADAPTIVE_UA_IP_BLOCK%' or denyRule like '6%', 'WAF Rule',\n\t''\n\t) as denyGroup",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 49,
+      "panels": [
+        {
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 48,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "<div style=\"background-color: #990000; color: #CCCCCC; padding: 15px; padding-bottom: 0; border-radius: 5px 5px 0 0;\">\n      <h1 style=\"color: #CCCCCC; margin-top: 0;\">Akamai / Hydrolix Internal - Please read:</h1>\n  <br><p style=\"color: #CCCCCC;\">IF you export this <b>TrafficPeak Certified Reference <i>Security</i></b> dashboard please double check that the Ad Hoc Filter variable has a datasource.</p>\n  <br>\n</div>\n\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "12.0.2",
+          "title": "",
+          "type": "text"
+        }
+      ],
+      "title": "Akamai / Hydrolix internal - Please read",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 35,
+      "panels": [],
+      "title": "Summary",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Counts of different parts of traffic, summed up by minute",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Denied"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 100
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monitored"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Denied"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 100
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Edge"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Origin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 30,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \n$__timeInterval(reqTimeSec) as time,\nsum(denied) AS Denied,\ncountIf(denied = 0 and arrayFirstOrNull(x -> if(length(x)>0,1,0), assumeNotNull(rulesTriggered)) IS NOT NULL) AS Monitored,\ncountIf(notEmpty(Origin_IP)) AS Origin,\ncountIf(cacheStatus = 1) AS Edge,\ncount() AS Total\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\nAND $__adHocFilter()\nAND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\ngroup by time order by time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic and Security Overview; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Traffic and Security Overview",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Total": "Total Requests"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 24,
+      "panels": [],
+      "title": "Security",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "fields": [],
+              "limit": 100,
+              "mode": "list"
+            }
+          },
+          "queryType": "sql",
+          "rawSql": "SELECT $__timeInterval(reqTimeSec) as time, \r\n  count(reqTimeSec) as Overall,\r\n  countIf(denied = 1) as Denied\r\nFROM ${table}\r\nWHERE $__timeFilter(reqTimeSec)\r\n  AND $__adHocFilter()\r\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\nGROUP BY time ORDER BY time\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='akamai - totalTraffic vs Denied - ${__user.login}'",
+          "refId": "Total Traffic",
+          "selectedFormat": 0
+        }
+      ],
+      "title": "Overall Traffic vs Denied",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "timeseries",
+          "rawSql": "SELECT toString(denyRule) as denyRule, $__timeInterval(reqTimeSec) as time, count(denyRule) as count\r\nFROM ${table}\r\nWHERE $__timeFilter(reqTimeSec)\r\n  AND $__adHocFilter()\r\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\n  AND denied = 1\r\nGROUP BY denyRule, time ORDER BY time\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Deny Rule BreakDown; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Deny Rule BreakDown",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 17,
+        "x": 0,
+        "y": 33
+      },
+      "id": 25,
+      "maxDataPoints": 50,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -45,
+        "xTickLabelSpacing": 100
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT countIf(denied = 1) / count() as \"Denied Traffic\", \r\n  $__timeInterval(toStartOfMinute(reqTimeSec)) as time\r\nFROM ${table}\r\nWHERE $__timeFilter(reqTimeSec)\r\n  AND $__adHocFilter()\r\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\nGROUP BY time, time ORDER BY time\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=% Total  Denied Traffic; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "% Total  Denied Traffic",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count()",
+                  "rspContentType",
+                  "application/rss+xml",
+                  "application/javascript"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 17,
+        "y": 33
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^count\\(\\)$/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\n  count(),\n  rspContentType\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND rspContentType IS not NULL\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\n  AND denied = 1\nGROUP BY rspContentType \nORDER BY count() DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Denied Traffic By Response Content Type; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Denied Traffic By Response Content Type",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Percentage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 32,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \r\n  tupleElement(tuple, 1) AS cliIP,\r\n  tupleElement(tuple, 2) as Count\r\nFROM (\r\n  SELECT arrayJoin(approx_top_k(50)(cliIP)) as tuple\r\n  FROM ${table}\r\n  WHERE $__timeFilter(reqTimeSec)\r\n    AND $__adHocFilter()\r\n    AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\n    AND denied = 1\r\n)\r\nORDER BY Count DESC\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 IP Denied; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 50 IP Denied",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Percentage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "id": 31,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT  denyGroup,\r\n\tcount()\r\nFROM ${table}\r\nWHERE $__timeFilter(reqTimeSec)\r\nAND $__adHocFilter()\r\nAND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\nAND denied = 1\r\nAND notEmpty(denyGroup)\r\nGROUP BY denyGroup\r\nORDER BY count() Desc\r\nLimit 50\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Denied Group; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Denied Group Counts",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "count()": "Count",
+              "denyGroup": "Denied Group"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Percentage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 0,
+        "y": 51
+      },
+      "id": 27,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \r\n  tupleElement(tuple, 1) AS denyRule,\r\n  tupleElement(tuple, 2) as Count\r\nFROM (\r\n  SELECT arrayJoin(approx_top_k(50)(denyRule)) as tuple\r\n  FROM ${table}\r\n  WHERE $__timeFilter(reqTimeSec)\r\n    AND $__adHocFilter()\r\n    AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\n    AND denied = 1\r\n) \r\nORDER BY Count Desc\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 Traffic Denied Rules; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 50 Traffic Denied Rules",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "denyRule": "Denied Rule"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Percentage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 3
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 51
+      },
+      "id": 29,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 100,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT \r\n  tupleElement(tuple, 1) AS reqPath,\r\n  tupleElement(tuple, 2) AS Count\r\nFROM (\r\n  SELECT \r\n    arrayJoin(approx_top_k(50)(reqPath)) as tuple\r\n  FROM ${table}\r\n  WHERE $__timeFilter(reqTimeSec)\r\n    AND $__adHocFilter()\r\n    AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\r\n    AND denied = 1\r\n)\r\nORDER BY Count Desc\r\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 Denied By URL; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 50 Denied By URL",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Count": "",
+              "reqPath": "URL Path"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "id": 22,
+      "panels": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "Number of requests - grouped by HTTP Status Code",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic",
+                "seriesBy": "last"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 71
+          },
+          "id": 3,
+          "options": {
+            "legend": {
+              "calcs": [
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "elkjop",
+                  "filters": [],
+                  "limit": 100,
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "logs"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT \n  toString(statusCode) as HTTP_Status_Code, \n  $__timeInterval(reqTimeSec) as time, \n  count(*) as http\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY HTTP_Status_Code, time \nORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Hits per status code; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Hits per status code",
+          "transformations": [
+            {
+              "id": "prepareTimeSeries",
+              "options": {
+                "format": "many"
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "Sum of all requests with cacheStatus of 1, divided by total count of requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "cache_hit"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": true,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 71
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "elkjop",
+                  "filters": [],
+                  "limit": 100,
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "logs"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT \n  $__timeInterval(reqTimeSec) as time,\n  (sumIf(cacheStatus,1)/count()) * 100 as cache_hit \nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY time \nORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Cache Hit Ratio; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Cache Hit Ratio",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "cache_hit": "Cache Hit"
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "Sum of all bytes delivered divided by the sum of transfer time",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "binBps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 79
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "elkjop",
+                  "filters": [],
+                  "limit": 100,
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "logs"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT \n  $__timeInterval(reqTimeSec) as time,\n  sum(totalBytes) / sum(transferTimeMSec/1000) as Throughput\nFROM ${table}\nWHERE \n  $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY time ORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Throughput; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Throughput",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "Sum of Total Bytes Delivered",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 79
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "elkjop",
+                  "filters": [],
+                  "limit": 100,
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": "logs"
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT \n  $__timeInterval(reqTimeSec) as time,\n  sum(totalBytes) as Bytes_Delivered\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY time \nORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bytes Delivered; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Bytes Delivered",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "Bytes_Delivered": "Bytes Delivered"
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "count()"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 83
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "reqPath"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Filter",
+                        "url": "/d/${__dashboard.uid}/${__dashboard}?${__all_variables}&var-filter=reqPath|=|${__data.fields.reqPath:percentencode}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 87
+          },
+          "id": 5,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    count() as Count,\n    reqPath\nFROM ${table}\nWHERE \n    $__timeFilter(reqTimeSec)\n    AND $__adHocFilter()\n    AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY reqPath\nORDER BY Count DESC\nLIMIT 50\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 Path; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 50 Path",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "reqPath": "Path"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "count()"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 83
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "UA"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Filter",
+                        "url": "/d/${__dashboard.uid}/${__dashboard}?${__all_variables}&var-filter=UA|=|${__data.fields[\"escaped_UA\"]}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "escaped_UA"
+                },
+                "properties": [
+                  {
+                    "id": "custom.hidden",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 87
+          },
+          "id": 6,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    tupleElement(tuple, 1) AS UA,\n    REPLACE(tupleElement(tuple, 1), ',', '__gfc__') AS escaped_UA,\n    tupleElement(tuple, 2) AS Count\nFROM (\n    SELECT arrayJoin(approx_top_k(50)(UA)) as tuple\n    FROM ${table}\n    WHERE $__timeFilter(reqTimeSec)\n        AND $__adHocFilter() \n        AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\n)\nORDER BY Count DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 User Agent; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 50 User Agent",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": [],
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "count()",
+                      "rspContentType",
+                      "application/rss+xml",
+                      "application/javascript"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": true,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 95
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "value",
+                "percent"
+              ]
+            },
+            "pieType": "pie",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/^count\\(\\)$/",
+              "values": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\ncount(),\nrspContentType\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\n  AND rspContentType IS not NULL\nGROUP BY rspContentType ORDER BY count() DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Request Per Content Type; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Request Per Content Type",
+          "type": "piechart"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "count()"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 83
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cliIP"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": false,
+                        "title": "Show Details",
+                        "url": "/d/${__dashboard.uid}/${__dashboard}?${__all_variables}&var-filter=cliIP|=|${__data.fields.cliIP:percentencode}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 95
+          },
+          "id": 7,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    tupleElement(tuple, 1) AS cliIP,\n    tupleElement(tuple, 2) AS Count\nFROM (\n    SELECT arrayJoin(approx_top_k(50)(cliIP)) AS tuple\n    FROM ${table}\n    WHERE \n        $__timeFilter(reqTimeSec)\n        AND $__adHocFilter()\n        AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\n)\nORDER BY Count DESC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 50 IP; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 50 IP",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "cliIP": "IP"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "The time in milliseconds from when the edge server is ready to send the first byte of the response to when the last byte reaches the kernel.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 103
+          },
+          "id": 20,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT $__timeInterval(reqTimeSec) as time,\n  quantile(0.25)(transferTimeMSec) as 25th,\n  quantile(0.5)(transferTimeMSec) as 50th,\n  quantile(0.75)(transferTimeMSec) as 75th,\n  quantile(0.9)(transferTimeMSec) as 90th,\n  quantile(0.95)(transferTimeMSec) as 95th,\n  quantile(0.99)(transferTimeMSec) as 99th\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY time ORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Edge TransferTime; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Edge TransferTime",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "description": "The time in milliseconds from when the edge server receives the last byte of the request to when it sends the first bytes of the response.\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 103
+          },
+          "id": 21,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 100,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT $__timeInterval(reqTimeSec) as time,\n  quantile(0.25)(turnAroundTimeMSec) as 25th,\n  quantile(0.5)(turnAroundTimeMSec) as 50th,\n  quantile(0.75)(turnAroundTimeMSec) as 75th,\n  quantile(0.9)(turnAroundTimeMSec) as 90th,\n  quantile(0.95)(turnAroundTimeMSec) as 95th,\n  quantile(0.99)(turnAroundTimeMSec) as 99th\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\n  AND $__conditionalAll( transferTimeMSec >= ${transferTimeMSec_percentile}, ${transferTimeMSec_percentile})\nGROUP BY time ORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Edge Turn Around Time; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Edge Turn Around Time",
+          "type": "timeseries"
+        }
+      ],
+      "title": "General CDN Data",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "Security",
+    "DS2",
+    "v0.9"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "$__all",
+          "value": "$__all"
+        },
+        "includeAll": true,
+        "label": "Edge Response Time Percentile",
+        "name": "edge_response_time_percentile",
+        "options": [
+          {
+            "selected": false,
+            "text": "0.5",
+            "value": "0.5"
+          },
+          {
+            "selected": false,
+            "text": "0.75",
+            "value": "0.75"
+          },
+          {
+            "selected": false,
+            "text": "0.90",
+            "value": "0.90"
+          },
+          {
+            "selected": false,
+            "text": "0.95",
+            "value": "0.95"
+          },
+          {
+            "selected": false,
+            "text": "0.99",
+            "value": "0.99"
+          }
+        ],
+        "query": "0.5 , 0.75 , 0.90 , 0.95, 0.99",
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "definition": "$__conditionalAll(SELECT quantile(${edge_response_time_percentile})(transferTimeMSec) FROM ${table} WHERE $__timeFilter(reqTimeSec),$edge_response_time_percentile)",
+        "hide": 2,
+        "includeAll": false,
+        "name": "transferTimeMSec_percentile",
+        "options": [],
+        "query": "$__conditionalAll(SELECT quantile(${edge_response_time_percentile})(transferTimeMSec) FROM ${table} WHERE $__timeFilter(reqTimeSec),$edge_response_time_percentile)",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "hide": 2,
+        "name": "table",
+        "query": "${VAR_TABLE}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_TABLE}",
+          "text": "${VAR_TABLE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_TABLE}",
+            "text": "${VAR_TABLE}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "definition": "SELECT concat(project,'.`',table,'#.catalog`')\nFROM (SELECT splitByChar('.','${table}')[1] as project, splitByChar('.','${table}')[2] as table)",
+        "hide": 2,
+        "includeAll": false,
+        "name": "catalog",
+        "options": [],
+        "query": "SELECT concat(project,'.`',table,'#.catalog`')\nFROM (SELECT splitByChar('.','${table}')[1] as project, splitByChar('.','${table}')[2] as table)",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "filters": [],
+        "name": "filter",
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now-1m"
+  },
+  "timepicker": {
+    "nowDelay": "1m"
+  },
+  "timezone": "",
+  "title": "DS2 Web Security",
+  "version": 3,
+  "weekStart": ""
+}
