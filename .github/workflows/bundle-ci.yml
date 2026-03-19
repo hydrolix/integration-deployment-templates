@@ -42,15 +42,22 @@ jobs:
             exit 0
           fi
 
-          # Filter to dirs that have a bundle-config.json
+          # Filter to dirs that have a bundle-config.json (flat or versioned)
           VALID_DIRS=""
           while IFS= read -r dir; do
+            BUNDLE_DIR=""
             if [ -f "$dir/bundle-config.json" ]; then
+              BUNDLE_DIR="$dir"
+            elif LATEST_VER=$(ls -d "$dir"/[0-9]*.* 2>/dev/null | sort -V | tail -1) && [ -f "$LATEST_VER/bundle-config.json" ]; then
+              BUNDLE_DIR="$LATEST_VER"
+            fi
+
+            if [ -n "$BUNDLE_DIR" ]; then
               if [ -n "$VALID_DIRS" ]; then
                 VALID_DIRS="${VALID_DIRS}
-          ${dir}"
+          ${BUNDLE_DIR}"
               else
-                VALID_DIRS="$dir"
+                VALID_DIRS="$BUNDLE_DIR"
               fi
             else
               echo "::warning::Bundle directory '$dir' has changes but no bundle-config.json — skipping auto-format"
