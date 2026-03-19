@@ -3,7 +3,7 @@ name: push-to-cac-tools
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, LOTC-1203-two-track-pipeline]  # TODO: remove feature branch before merging to main
   workflow_dispatch:
 
 jobs:
