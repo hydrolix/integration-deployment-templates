@@ -1,3 +1,0 @@
-__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
-description: TRAFFICPEAK Security integration bundle
-type: turbine
