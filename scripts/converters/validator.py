@@ -238,15 +238,21 @@ class BundleValidator:
         # check for format of dashboard JSON files for Grafana
         dashboard_dir = output_path / "grafana" / "dashboards"
         if dashboard_dir.exists():
-            # Load resources.gfo.yaml inputs for cross-checking
-            gfo_datasource_keys = set()
+            # Build a per-dashboard map of inputs keys from resources.gfo.yaml
+            # key: dashboard filename stem (e.g. "my_dashboard") → set of input keys
+            gfo_inputs_by_file: dict = {}
             resources_file = output_path / "grafana" / "resources.gfo.yaml"
             if resources_file.exists():
                 with open(resources_file, 'r') as f:
                     gfo = yaml.safe_load(f) or {}
                 for dash_entry in (gfo.get('dashboards') or {}).values():
-                    for key in (dash_entry.get('inputs') or {}):
-                        gfo_datasource_keys.add(key)
+                    extend_path = (dash_entry.get('dashboard') or {}).get('__extend__', '')
+                    if extend_path:
+                        # __extend__ is like "dashboards/my_dashboard.json"
+                        fname = Path(extend_path).name
+                        gfo_inputs_by_file[fname] = set(
+                            (dash_entry.get('inputs') or {}).keys()
+                        )
 
             for dashboard in dashboard_dir.glob("*.json"):
                 with open(dashboard, 'r') as f:
@@ -261,6 +267,7 @@ class BundleValidator:
                         continue
                     # check datasource input names match expected value
                     expected_ds_name = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
+                    gfo_keys = gfo_inputs_by_file.get(dashboard.name, set())
                     for inp in json_file['__inputs']:
                         if inp.get('type') == 'datasource':
                             actual_name = inp.get('name')
@@ -269,12 +276,12 @@ class BundleValidator:
                                     f"Dashboard {dashboard.name}: datasource input name "
                                     f"'{actual_name}' does not match expected '{expected_ds_name}'"
                                 )
-                            # cross-check against resources.gfo.yaml inputs keys
-                            if gfo_datasource_keys and actual_name not in gfo_datasource_keys:
+                            # per-dashboard cross-check: gfo inputs key must match dashboard name
+                            if gfo_keys and actual_name not in gfo_keys:
                                 errors.append(
                                     f"Dashboard {dashboard.name}: datasource input name "
                                     f"'{actual_name}' not found in resources.gfo.yaml inputs "
-                                    f"(found: {sorted(gfo_datasource_keys)})"
+                                    f"for this dashboard (found: {sorted(gfo_keys)})"
                                 )
 
         if self.verbose and not errors:
