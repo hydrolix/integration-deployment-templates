@@ -56,7 +56,7 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/siem-integration",
+    "primary_url": "LOTC-691-siem-bundle-v2",
     "source": {
       "full_title": "Trafficpeak Siem",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
