@@ -9,9 +9,10 @@ Complete and check off every item before requesting a merge to `main`. PRs witho
 ## Validation & Testing
 
 - [ ] `bundle-validator` passes with no errors
-- [ ] Bundle deployed to test environment successfully
+- [ ] CI workflows pass with no errors
+- [ ] Bundle deployed to test environment by QA successfully
 - [ ] Data ingestion verified with provided sample data
-- [ ] All transforms confirmed working
+- [ ] All transforms confirmed validated
 - [ ] Dashboards render correctly (no errors in headless browser test)
 - [ ] Edge cases and error handling tested
 - [ ] No regressions introduced (upgrade only)
@@ -30,6 +31,7 @@ Complete and check off every item before requesting a merge to `main`. PRs witho
 
 - [ ] Code review approved by integration engineer
 - [ ] QA sign-off from bundle deployment team
+- [ ] CAC sign-off from provisioning team
 - [ ] Resources sent to Technical Enablement
 - [ ] Enablement session scheduled (if applicable)
 
