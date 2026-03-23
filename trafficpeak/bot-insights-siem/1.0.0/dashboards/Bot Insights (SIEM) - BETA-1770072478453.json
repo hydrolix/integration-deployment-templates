@@ -188,7 +188,7 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "bot traffic for each category",
+        "description": "Bot traffic for each category",
         "fieldConfig": {
           "defaults": {
             "color": {
