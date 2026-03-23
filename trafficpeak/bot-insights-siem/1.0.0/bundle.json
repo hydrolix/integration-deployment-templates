@@ -19,7 +19,7 @@
   "metadata": {
     "channel_type": "3rdParty",
     "description": "Trafficpeak Bot Insights Siem Integration",
-    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.0"
   },
   "method": "http_streaming",
@@ -51,9 +51,9 @@
       "name": "logs",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/sample_data.json"
         }
       ]
     }
