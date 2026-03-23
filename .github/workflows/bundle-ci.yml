@@ -2,7 +2,7 @@ name: bundle-ci
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, LOTC-1203-two-track-pipeline]  # TODO: remove feature branch before merging to main
     paths:
       - 'aws/**'
       - 'trafficpeak/**'
@@ -35,16 +35,42 @@ jobs:
       - name: Detect changed bundle directories and route tracks
         id: detect
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          # Full PR diff — used to determine WHICH bundles are affected
+          ALL_PR_FILES=$(git diff --name-only origin/main...HEAD)
 
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
+          echo "All PR changed files:"
+          echo "$ALL_PR_FILES"
 
-          # Extract unique bundle dirs (first two path components under aws/ or trafficpeak/)
-          BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
+          # Latest push diff — used for TRACK ROUTING decisions
+          # This excludes .originals/ files auto-committed by CI in previous runs
+          # For the first push (no prior commits), falls back to the full PR diff
+          LATEST_PUSH_FILES=""
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            LAST_MSG=$(git log -1 --format=%s HEAD)
+            if echo "$LAST_MSG" | grep -q '\[skip ci\]'; then
+              # Latest commit is a CI auto-commit — look at the one before it
+              if git rev-parse HEAD~2 >/dev/null 2>&1; then
+                LATEST_PUSH_FILES=$(git diff --name-only HEAD~2..HEAD~1 2>/dev/null || echo "")
+              fi
+            else
+              LATEST_PUSH_FILES=$(git diff --name-only HEAD~1..HEAD)
+            fi
+          fi
 
-          # Also check for .originals/ changes — extract the corresponding bundle dir
-          ORIGINALS_BUNDLE_DIRS=$(echo "$CHANGED_FILES" | grep -E '^\.originals/(aws|trafficpeak)/' | sed 's|^\.originals/||' | cut -d'/' -f1-2 | sort -u)
+          # Fall back to full PR diff if we couldn't determine latest push
+          if [ -z "$LATEST_PUSH_FILES" ]; then
+            LATEST_PUSH_FILES="$ALL_PR_FILES"
+          fi
+
+          echo ""
+          echo "Latest push changed files (for track routing):"
+          echo "$LATEST_PUSH_FILES"
+
+          # Extract unique bundle dirs from full PR diff (which bundles are involved)
+          BUNDLE_DIRS=$(echo "$ALL_PR_FILES" | grep -E '^(aws|trafficpeak)/' | cut -d'/' -f1-2 | sort -u)
+
+          # Check for .originals/ changes in the LATEST PUSH only (not CI auto-commits)
+          ORIGINALS_BUNDLE_DIRS=$(echo "$LATEST_PUSH_FILES" | grep -E '^\.originals/(aws|trafficpeak)/' | sed 's|^\.originals/||' | cut -d'/' -f1-2 | sort -u)
 
           # Merge both sets
           ALL_DIRS=$(echo -e "${BUNDLE_DIRS}\n${ORIGINALS_BUNDLE_DIRS}" | sort -u | grep -v '^$')
@@ -73,9 +99,9 @@ jobs:
             fi
 
             # Use detect_track.py to determine which track this bundle should run on
+            # Pass LATEST PUSH files (not full PR diff) so CI auto-commits don't affect routing
             if [ -n "$BUNDLE_DIR" ]; then
-              # Pass changed files for this bundle to detect_track
-              BUNDLE_CHANGED=$(echo "$CHANGED_FILES" | grep -E "^(\.originals/)?${dir}/" | tr '\n' ',' | sed 's/,$//')
+              BUNDLE_CHANGED=$(echo "$LATEST_PUSH_FILES" | grep -E "^(\.originals/)?${dir}/" | tr '\n' ',' | sed 's/,$//')
               TRACK=$(python scripts/detect_track.py --bundle-dir "$BUNDLE_DIR" --changed-files "$BUNDLE_CHANGED" --mode track 2>&1) || TRACK="validate-only"
 
               echo "Bundle: $BUNDLE_DIR → Track: $TRACK"
@@ -88,7 +114,6 @@ jobs:
             else
               # No bundle-config.json — check if this is a legacy bundle with changes
               echo "::warning::Bundle directory '$dir' has changes but no bundle-config.json — routing to validation only"
-              # For legacy bundles, use the base dir for validation
               if [ -d "$dir" ]; then
                 VALIDATE_DIRS="${VALIDATE_DIRS:+${VALIDATE_DIRS}\n}${dir}"
               fi
