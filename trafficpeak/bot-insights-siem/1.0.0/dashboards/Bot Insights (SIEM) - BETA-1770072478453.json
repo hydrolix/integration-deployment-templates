@@ -1529,7 +1529,7 @@
     },
     "timepicker": {},
     "timezone": "utc",
-    "title": "Bot Insights (SIEM) - BETA",
+    "title": "Bot Insights (SIEM)",
     "version": 6,
     "weekStart": "",
     "uid": "__DASHBOARD_UUID__"
