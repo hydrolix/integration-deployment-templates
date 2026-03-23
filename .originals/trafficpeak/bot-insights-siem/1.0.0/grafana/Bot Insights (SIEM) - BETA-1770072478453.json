@@ -225,7 +225,7 @@
         "type": "hydrolix-hydrolix-datasource",
         "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
       },
-      "description": "bot traffic for each category",
+      "description": "Bot traffic for each category",
       "fieldConfig": {
         "defaults": {
           "color": {
