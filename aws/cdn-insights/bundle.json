@@ -27,7 +27,7 @@
   },
   "metadata": {
     "channel_type": "AWS",
-    "description": "Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers into a single unified view via interactive dashboards",
+    "description": "Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers into a single unified view via interactive grafana dashboards",
     "maintainer": "kevin.borkman@hydrolix.io",
     "version": "1.0.5"
   },
