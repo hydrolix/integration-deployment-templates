@@ -73,6 +73,9 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 async fn main() {
     let mut bundles_checked = 0;
 
+    // Reject any directories that look like versions but aren't strict X.Y.Z
+    reject_invalid_version_dirs();
+
     let bundle_list = filter_to_latest_versions(find_bundle_files());
 
     let mut final_bundle_list: Vec<Bundle> = vec![];
@@ -359,6 +362,32 @@ async fn validate_bundle(
     println!("SUCCESS");
 
     Ok(())
+}
+
+/// Scan for directories that look like versions but aren't strict X.Y.Z semver.
+/// This catches folders like "1.0.0-beta", "1.0", "2.0.0rc1" before they silently
+/// bypass version detection.
+fn reject_invalid_version_dirs() {
+    let search_path = if *SCAN_WIP { "./WIP" } else { "." };
+
+    for entry in WalkDir::new(search_path)
+        .max_depth(3)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().is_dir())
+    {
+        let dir_name = entry.file_name().to_str().unwrap_or("");
+        if looks_like_version(dir_name) {
+            eprintln!(
+                "ERROR: folder name '{}' looks like a version but is not valid \
+                 semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict \
+                 X.Y.Z version or a plain bundle name.\n  Path: {}",
+                dir_name,
+                entry.path().display()
+            );
+            std::process::exit(1);
+        }
+    }
 }
 
 // Update find_bundle_files to handle WIP location
