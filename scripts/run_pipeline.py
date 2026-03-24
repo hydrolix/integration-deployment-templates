@@ -38,6 +38,9 @@ def main():
     if args.config:
         _merge_config_into_args(args)
 
+    # Two-track pipeline: apply track selection before resolving stages
+    _apply_track(args)
+
     stages = resolve_stages(args)
 
     results = []
@@ -113,6 +116,13 @@ Examples:
     parser.add_argument("--dry-run", action="store_true",
                         help="Passed to stage 2; auto-skips stages 1 and 3")
     parser.add_argument("--json", action="store_true", help="Output final report as JSON")
+
+    # --- Track selection (two-track pipeline) ---
+    parser.add_argument(
+        "--track", choices=["auto", "full", "validate-only"], default="auto",
+        help="Pipeline track: 'auto' (detect from assets), 'full' (Stage 1+2+3), "
+             "'validate-only' (Stage 3 only). Default: auto",
+    )
 
     # --- Skip / only flags ---
     skip = parser.add_argument_group("stage selection (skip)")
@@ -241,6 +251,48 @@ def _merge_config_into_args(args):
         parts = args.bundle_dir.rstrip("/").split("/")
         if parts and is_semver(parts[-1]):
             args.version = parts[-1]
+
+
+def _apply_track(args):
+    """Apply two-track pipeline logic based on --track flag.
+
+    - 'validate-only': forces --only-validate (Stage 3 only)
+    - 'full': runs originals management, then full pipeline (default stages)
+    - 'auto': detects track from bundle state, then applies accordingly
+    """
+    if args.track == "validate-only":
+        args.only_validate = True
+    elif args.track == "full":
+        # Full pipeline — originals management happens here
+        bundle_dir = os.path.join(REPO_ROOT, args.bundle_dir) if not os.path.isabs(args.bundle_dir) else args.bundle_dir
+        from originals_manager import backup_to_originals, restore_from_originals
+        originals_dir = os.path.join(REPO_ROOT, ".originals", os.path.relpath(bundle_dir, REPO_ROOT))
+        if os.path.isdir(originals_dir):
+            restore_from_originals(bundle_dir, REPO_ROOT)
+        else:
+            backup_to_originals(bundle_dir, REPO_ROOT)
+    elif args.track == "auto":
+        # Auto-detect: classify bundle state and route
+        bundle_dir = os.path.join(REPO_ROOT, args.bundle_dir) if not os.path.isabs(args.bundle_dir) else args.bundle_dir
+        from detect_track import classify_bundle_state
+        originals_dir = os.path.join(REPO_ROOT, ".originals", os.path.relpath(bundle_dir, REPO_ROOT))
+        has_originals = os.path.isdir(originals_dir)
+        has_config = os.path.isfile(os.path.join(bundle_dir, "bundle-config.json"))
+
+        state = classify_bundle_state(bundle_dir)
+
+        if has_originals and state == "raw":
+            # Raw assets detected with originals — treat as full
+            args.track = "full"
+            _apply_track(args)
+        elif not has_originals and has_config and state == "raw":
+            # First run — backup and run full
+            args.track = "full"
+            _apply_track(args)
+        else:
+            # Configured, ambiguous, or legacy — validate only
+            args.track = "validate-only"
+            _apply_track(args)
 
 
 def _require_stage2_args(args):

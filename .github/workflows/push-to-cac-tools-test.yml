@@ -15,9 +15,7 @@ jobs:
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event.review.state == 'approved' &&
-      !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') &&
-      !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') &&
-      !contains(github.event.pull_request.body, '[skip-bundle-format]'))
+      !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci'))
     runs-on: ubuntu-latest
 
     steps:
@@ -126,23 +124,9 @@ jobs:
 
           BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
 
-          BRANCH_NAME="push-to-cac-tools-test-${PR_NUMBER}-$(date +%s)"
-          git checkout -b "$BRANCH_NAME"
+          BRANCH_NAME="push-to-cac-tools-test-${PR_NUMBER}"
 
-          git add .
-          git commit -m "${TEST_PREFIX}Push portable bundles from integration-deployment-templates
-
-          Synced bundles:
-          $BUNDLE_LIST
-
-          From PR #${PR_NUMBER}
-          Source commit: ${COMMIT_SHA}"
-
-          git push origin "$BRANCH_NAME"
-
-          gh pr create \
-            --title "${TEST_PREFIX}Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
-            --body "## Auto-sync from integration-deployment-templates
+          PR_BODY="## Auto-sync from integration-deployment-templates
 
           **Synced bundles:**
           $BUNDLE_LIST
@@ -152,10 +136,43 @@ jobs:
           **Triggered by:** @${TRIGGERED_BY}
           **Trigger type:** PR approval
 
-          This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
-            --base main \
-            --head "$BRANCH_NAME"
+          This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository."
 
-          echo "Successfully created PR in CAC repository"
+          # Check if an open PR already exists for this branch
+          EXISTING_PR=$(gh pr list --repo hydrolix/cac-tools-test --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty')
+
+          # Create branch from current state (main + freshly copied portables)
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m "${TEST_PREFIX}Push portable bundles from integration-deployment-templates
+
+          Synced bundles:
+          $BUNDLE_LIST
+
+          From PR #${PR_NUMBER}
+          Source commit: ${COMMIT_SHA}"
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Existing PR #${EXISTING_PR} found — force-pushing branch and updating PR body"
+            git push --force-with-lease origin "$BRANCH_NAME"
+
+            gh pr edit "$EXISTING_PR" \
+              --repo hydrolix/cac-tools-test \
+              --body "$PR_BODY"
+
+            echo "Successfully updated existing PR #${EXISTING_PR} in CAC repository"
+          else
+            echo "No existing PR — creating new branch and PR"
+            git push origin "$BRANCH_NAME"
+
+            gh pr create \
+              --repo hydrolix/cac-tools-test \
+              --title "${TEST_PREFIX}Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME"
+
+            echo "Successfully created PR in CAC repository"
+          fi
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
