@@ -7,6 +7,7 @@ import yaml
 
 from utils.models import BundleAssets, BundleMetadata
 from utils.file_utils import is_valid_json
+from configurator.constants import VALID_CATEGORIES, VALID_SUBCATEGORIES
 
 
 class ValidationError(Exception):
@@ -178,6 +179,49 @@ class BundleValidator:
 
         return len(errors) == 0, errors
 
+    def _expected_folder_uids_from_output_path(self, output_path: Path) -> List[str]:
+        """Derive the expected Grafana folder UID chain from the portable output path.
+
+        The chain always starts with 'hdx-main-folder'. For category-aware paths the
+        category segments plus the bundle name are appended as nested folder UIDs.
+
+        Examples:
+            portables/security/ds2/0.9.0     → ['hdx-main-folder', 'hdx-security-folder', 'hdx-ds2-folder']
+            portables/security/bots/1.0.0    → ['hdx-main-folder', 'hdx-security-folder', 'hdx-bots-folder']
+            portables/cdn/multi-cdn/b/1.0.0  → ['hdx-main-folder', 'hdx-cdn-folder', 'hdx-multi-cdn-folder', 'hdx-b-folder']
+            portables/trafficpeak/d/1.0.0    → ['hdx-main-folder']
+        """
+        parts = list(output_path.parts)
+        try:
+            portables_idx = next(i for i, p in enumerate(parts) if p == 'portables')
+        except StopIteration:
+            return ['hdx-main-folder']
+
+        # Segments after 'portables/', strip version (last segment)
+        rel = parts[portables_idx + 1:]
+        if len(rel) > 1:
+            rel = rel[:-1]  # drop version
+
+        if not rel:
+            return ['hdx-main-folder']
+
+        bundle_name = rel[-1]
+
+        # Determine category segments (same logic as _extract_category_path)
+        category_segments = []
+        if len(rel) >= 2 and rel[-2] in VALID_CATEGORIES:
+            category_segments = [rel[-2]]
+        elif len(rel) >= 3 and rel[-3] in VALID_CATEGORIES:
+            cat, sub = rel[-3], rel[-2]
+            if sub in VALID_SUBCATEGORIES.get(cat, ()):
+                category_segments = [cat, sub]
+
+        if not category_segments:
+            return ['hdx-main-folder']
+
+        folder_path = category_segments + [bundle_name]
+        return ['hdx-main-folder'] + [f'hdx-{seg}-folder' for seg in folder_path]
+
     # checks output path, manifest files
     def validate_output(self, output_path: Path, expected_version: Optional[str] = None) -> Tuple[bool, List[str]]:
         """Validate generated bundle structure.
@@ -244,6 +288,35 @@ class BundleValidator:
             if resources_file.exists():
                 with open(resources_file, 'r') as f:
                     gfo = yaml.safe_load(f) or {}
+
+                # Validate folder hierarchy matches the portable directory structure
+                expected_uids = self._expected_folder_uids_from_output_path(output_path)
+                deepest_uid = expected_uids[-1]
+                folders = gfo.get('folders') or {}
+
+                if 'hdx-main-folder' not in folders:
+                    errors.append("resources.gfo.yaml: missing required 'hdx-main-folder'")
+                else:
+                    current_level = folders
+                    for depth, uid in enumerate(expected_uids):
+                        if uid not in current_level:
+                            errors.append(
+                                f"resources.gfo.yaml: expected folder '{uid}' not found "
+                                f"at depth {depth} (path: {' > '.join(expected_uids[:depth + 1])})"
+                            )
+                            break
+                        if depth < len(expected_uids) - 1:
+                            current_level = (current_level[uid] or {}).get('children') or {}
+
+                # Validate all dashboards reference the deepest folder
+                for dash_uid, dash_entry in (gfo.get('dashboards') or {}).items():
+                    actual = dash_entry.get('folderUid')
+                    if actual != deepest_uid:
+                        errors.append(
+                            f"resources.gfo.yaml: dashboard '{dash_uid}' has folderUid "
+                            f"'{actual}', expected '{deepest_uid}'"
+                        )
+
                 for dash_entry in (gfo.get('dashboards') or {}).values():
                     for key in (dash_entry.get('inputs') or {}):
                         gfo_datasource_keys.add(key)
