@@ -1,331 +1,334 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
-      "label": "hydrolix-hydrolix-datasource",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "hydrolix-hydrolix-datasource",
-      "pluginName": "Hydrolix"
-    },
-    {
-      "name": "GRAFANA_REGION",
-      "label": "grafana-region",
-      "value": "Grafana-US",
-      "type": "constant",
-      "pluginId": null,
-      "pluginName":null
-    },
-    {
-      "name": "CDN_FOLDER_UID",
-      "label": "cdn-folder-uid",
-      "value": "cdn",
-      "type": "constant",
-      "pluginId": null,
-      "pluginName":null
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "canvas",
-      "name": "Canvas",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "dashlist",
-      "name": "Dashboard list",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "hydrolix-hydrolix-datasource",
-      "name": "Hydrolix",
-      "version": "0.2.0"
-    },
-    {
-      "type": "panel",
-      "id": "news",
-      "name": "News",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
+  "dashboard": {
+    "__elements": {
+      "model": {
         "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": null,
-  "links": [],
-  "panels": [
-    {
-      "datasource": {
-        "type": "hydrolix-hydrolix-datasource",
-        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 5,
-        "x": 0,
-        "y": 0
-      },
-      "id": 22,
-      "options": {
-        "infinitePan": false,
-        "inlineEditing": false,
-        "panZoom": false,
-        "root": {
-          "background": {
-            "color": {
-              "fixed": "transparent"
-            },
-            "image": {
-              "fixed": "https://github.com/hydrolix/feeds/blob/dev/654773-trafficpeak-logo-dark-background-large.png?raw=true"
-            },
-            "size": "contain"
-          },
-          "border": {
-            "color": {
-              "fixed": "dark-green"
-            },
-            "width": 0
-          },
-          "constraint": {
-            "horizontal": "left",
-            "vertical": "top"
-          },
-          "elements": [],
-          "name": "Element 1748333496511",
-          "placement": {
-            "height": 100,
-            "left": 0,
-            "rotation": 0,
-            "top": 0,
-            "width": 100
-          },
-          "type": "frame"
-        },
-        "showAdvancedTypes": false
-      },
-      "pluginVersion": "12.0.0",
-      "targets": [
-        {
-          "format": 1,
-          "refId": "A",
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
-          }
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
         }
-      ],
-      "transparent": true,
-      "type": "canvas"
+      }
     },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 2
+    "__requires": [
+      {
+        "type": "panel",
+        "id": "canvas",
+        "name": "Canvas",
+        "version": ""
       },
-      "id": 14,
-      "panels": [],
-      "title": "Platform Health / List of Dashboards",
-      "type": "row"
+      {
+        "type": "panel",
+        "id": "dashlist",
+        "name": "Dashboard list",
+        "version": ""
+      },
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.0"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.2.0"
+      },
+      {
+        "type": "panel",
+        "id": "news",
+        "name": "News",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "text",
+        "name": "Text",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
     },
-    {
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 0,
-        "y": 3
-      },
-      "id": 13,
-      "options": {
-        "feedUrl": "https://script.google.com/macros/s/AKfycbw41RtpCMHffIYgtSiN7uDLLW5l5-42jBhFcjkpRocETGTX9TGVIbKHbSF8iNcSE21bkQ/exec?feed=${GRAFANA_REGION}",
-        "showImage": true
-      },
-      "pluginVersion": "12.0.0",
-      "title": "TrafficPeak Grafana Platform Live Feed Information",
-      "type": "news"
-    },
-    {
-      "gridPos": {
-        "h": 23,
-        "w": 12,
-        "x": 12,
-        "y": 3
-      },
-      "id": 3,
-      "options": {
-        "folderUID": "${CDN_FOLDER_UID}",
-        "includeVars": false,
-        "keepTime": false,
-        "maxItems": 20,
-        "query": "",
-        "showFolderNames": true,
-        "showHeadings": false,
-        "showRecentlyViewed": false,
-        "showSearch": true,
-        "showStarred": true,
-        "tags": []
-      },
-      "pluginVersion": "12.0.0",
-      "title": "TrafficPeak Dashboards",
-      "type": "dashlist"
-    },
-    {
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 12,
-      "options": {
-        "feedUrl": "https://status.linode.com/history.rss",
-        "showImage": true
-      },
-      "pluginVersion": "12.0.0",
-      "title": "Linode Status Information",
-      "type": "news"
-    },
-    {
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 20
-      },
-      "id": 10,
-      "options": {
-        "feedUrl": "https://www.akamaistatus.com/history.rss",
-        "showImage": true
-      },
-      "pluginVersion": "12.0.0",
-      "title": "Akamai Status Information",
-      "type": "news"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 16,
-      "panels": [],
-      "title": "Documentation and Help",
-      "type": "row"
-    },
-    {
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "id": 17,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
         },
-        "content": "# TrafficPeak Documentation\n\nYou can find our official TrafficPeak documentation under the following link:\n\nhttps://techdocs.akamai.com/trafficpeak/docs/trafficpeak-overview\n\n\nThe documentation includes guidance and tips for [creating dashboards and queries](https://techdocs.akamai.com/trafficpeak/docs/customize-dashboards) as well as [managing Grafana](https://techdocs.akamai.com/trafficpeak/docs/manage-grafana-users). \nIf you are experiencing issues with particular queries, please refer to the [Recommended Query Practises](https://techdocs.akamai.com/trafficpeak/docs/recommended-query-practices) section.\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "12.0.0",
-      "type": "text"
-    },
-    {
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
-      "id": 9,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
         },
-        "content": "# Get Help\n\nTrafficPeak support requests can be sent to support@akamai.com and 1.877.4-AKATEC(425.2832) (US & Canada).",
-        "mode": "markdown"
+        "gridPos": {
+          "h": 2,
+          "w": 5,
+          "x": 0,
+          "y": 0
+        },
+        "id": 22,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": false,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              },
+              "image": {
+                "fixed": "https://github.com/hydrolix/feeds/blob/dev/654773-trafficpeak-logo-dark-background-large.png?raw=true"
+              },
+              "size": "contain"
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              },
+              "width": 0
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1748333496511",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": false
+        },
+        "pluginVersion": "12.0.0",
+        "targets": [
+          {
+            "format": 1,
+            "refId": "A",
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            }
+          }
+        ],
+        "transparent": true,
+        "type": "canvas"
       },
-      "pluginVersion": "12.0.0",
-      "type": "text"
-    }
-  ],
-  "refresh": "5m",
-  "schemaVersion": 41,
-  "tags": [
-    "v1.1"
-  ],
-  "templating": {
-    "list": []
-  },
-  "time": {
-    "from": "now-12h",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Home",
-  "uid": "de9k36qfkivi8a",
-  "version": 21,
-  "weekStart": ""
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 14,
+        "panels": [],
+        "title": "Platform Health / List of Dashboards",
+        "type": "row"
+      },
+      {
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 3
+        },
+        "id": 13,
+        "options": {
+          "feedUrl": "https://script.google.com/macros/s/AKfycbw41RtpCMHffIYgtSiN7uDLLW5l5-42jBhFcjkpRocETGTX9TGVIbKHbSF8iNcSE21bkQ/exec?feed=${GRAFANA_REGION}",
+          "showImage": true
+        },
+        "pluginVersion": "12.0.0",
+        "title": "TrafficPeak Grafana Platform Live Feed Information",
+        "type": "news"
+      },
+      {
+        "gridPos": {
+          "h": 23,
+          "w": 12,
+          "x": 12,
+          "y": 3
+        },
+        "id": 3,
+        "options": {
+          "folderUID": "${CDN_FOLDER_UID}",
+          "includeVars": false,
+          "keepTime": false,
+          "maxItems": 20,
+          "query": "",
+          "showFolderNames": true,
+          "showHeadings": false,
+          "showRecentlyViewed": false,
+          "showSearch": true,
+          "showStarred": true,
+          "tags": []
+        },
+        "pluginVersion": "12.0.0",
+        "title": "TrafficPeak Dashboards",
+        "type": "dashlist"
+      },
+      {
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 14
+        },
+        "id": 12,
+        "options": {
+          "feedUrl": "https://status.linode.com/history.rss",
+          "showImage": true
+        },
+        "pluginVersion": "12.0.0",
+        "title": "Linode Status Information",
+        "type": "news"
+      },
+      {
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "id": 10,
+        "options": {
+          "feedUrl": "https://www.akamaistatus.com/history.rss",
+          "showImage": true
+        },
+        "pluginVersion": "12.0.0",
+        "title": "Akamai Status Information",
+        "type": "news"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        },
+        "id": 16,
+        "panels": [],
+        "title": "Documentation and Help",
+        "type": "row"
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 27
+        },
+        "id": 17,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "# TrafficPeak Documentation\n\nYou can find our official TrafficPeak documentation under the following link:\n\nhttps://techdocs.akamai.com/trafficpeak/docs/trafficpeak-overview\n\n\nThe documentation includes guidance and tips for [creating dashboards and queries](https://techdocs.akamai.com/trafficpeak/docs/customize-dashboards) as well as [managing Grafana](https://techdocs.akamai.com/trafficpeak/docs/manage-grafana-users). \nIf you are experiencing issues with particular queries, please refer to the [Recommended Query Practises](https://techdocs.akamai.com/trafficpeak/docs/recommended-query-practices) section.\n",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.0.0",
+        "type": "text"
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 27
+        },
+        "id": 9,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "# Get Help\n\nTrafficPeak support requests can be sent to support@akamai.com and 1.877.4-AKATEC(425.2832) (US & Canada).",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.0.0",
+        "type": "text"
+      }
+    ],
+    "refresh": "5m",
+    "schemaVersion": 41,
+    "tags": [
+      "v1.1"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-12h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Home",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 21,
+    "weekStart": ""
+  }
 }

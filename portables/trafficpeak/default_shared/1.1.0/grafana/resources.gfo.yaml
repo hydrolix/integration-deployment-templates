@@ -1,0 +1,60 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-usage:
+    dashboard:
+      __extend__: dashboards/usage.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+  hdx-home:
+    dashboard:
+      __extend__: dashboards/home.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      GRAFANA_REGION: Grafana-US
+      CDN_FOLDER_UID: cdn
+  hdx-raw:
+    dashboard:
+      __extend__: dashboards/raw.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_DS2: akamai.logs
+      VAR_TIMESTAMP: reqTimeSec
+  hdx-cache:
+    dashboard:
+      __extend__: dashboards/cache.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_DS2: akamai.logs
+      VAR_SUMMARY_HOUR: akamai.summary_hour
+      VAR_SUMMARY_DAY: akamai.summary_sampled_day
+  hdx-error:
+    dashboard:
+      __extend__: dashboards/error.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_DS2: akamai.logs
+      VAR_SUMMARY_HOUR: akamai.summary_hour
+      VAR_SUMMARY_DAY: akamai.summary_sampled_day
+  hdx-cdn:
+    dashboard:
+      __extend__: dashboards/cdn.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_HOUR: akamai.summary_hour
+      VAR_SUMMARY_DAY: akamai.summary_sampled_day
+      VAR_DS2: akamai.logs
+  hdx-explore:
+    dashboard:
+      __extend__: dashboards/explore.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
