@@ -112,6 +112,14 @@ async fn main() {
             let last_component = base_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
             if is_semver(last_component) {
                 Some(last_component.to_string())
+            } else if looks_like_version(last_component) {
+                eprintln!(
+                    "ERROR: folder name '{}' looks like a version but is not valid \
+                     semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict \
+                     X.Y.Z version or a plain bundle name.",
+                    last_component
+                );
+                std::process::exit(1);
             } else {
                 None
             }
@@ -372,6 +380,15 @@ fn is_semver(s: &str) -> bool {
         static ref SEMVER_RE: Regex = Regex::new(r"^\d+\.\d+\.\d+$").unwrap();
     }
     SEMVER_RE.is_match(s)
+}
+
+/// Check if a string looks like a version but isn't strict X.Y.Z semver.
+/// Catches names like "1.0.0-beta", "1.0", "2.0.0rc1".
+fn looks_like_version(s: &str) -> bool {
+    lazy_static! {
+        static ref VERSION_LIKE_RE: Regex = Regex::new(r"^\d+\.").unwrap();
+    }
+    VERSION_LIKE_RE.is_match(s) && !is_semver(s)
 }
 
 /// Parse a semver string into a comparable tuple.
