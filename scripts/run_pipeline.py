@@ -131,6 +131,8 @@ Examples:
                     help="Override portable output dir (default: portables/<bundle_name>/<version>/)")
     s1.add_argument("--skip-portable-validation", action="store_true",
                     help="Skip bundle_to_yaml's internal validation")
+    s1.add_argument("--bundle-config", default="",
+                    help="Path to bundle-config.json whose version must match bundle.json")
     s1.add_argument("--version", default="1.0.0", help="Bundle version (default: 1.0.0)")
     s1.add_argument("--maintainer", default="Hydrolix Team <team@hydrolix.io>",
                     help="Bundle maintainer")
@@ -348,6 +350,8 @@ def build_portable_cmd(args):
         cmd += ["--description", args.description]
     if args.skip_portable_validation:
         cmd.append("--skip-validation")
+    if args.bundle_config:
+        cmd += ["--bundle-config", args.bundle_config]
     if args.verbose:
         cmd.append("--verbose")
 
