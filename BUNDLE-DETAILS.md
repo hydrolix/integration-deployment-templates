@@ -508,3 +508,35 @@ Final:
 
 **Purpose**:
 These changes enable automated dependency resolution and ensure resources are created in the correct order, preventing runtime errors due to missing dependencies.
+
+---
+
+## Bundle Directory Categories
+
+Bundles placed under `trafficpeak/` must be organized into one of the following content categories by placing them in the correct subdirectory. The pipeline mirrors this structure directly into the `portables/` output.
+
+### Valid Categories and Subcategories
+
+| Category | Directory | Subcategories |
+|---|---|---|
+| API Context | `trafficpeak/api-context/<bundle>/` | — |
+| CDN | `trafficpeak/cdn/<bundle>/` | — |
+| CDN › Multi-CDN | `trafficpeak/cdn/multi-cdn/<bundle>/` | — |
+| DNS | `trafficpeak/dns/<bundle>/` | — |
+| Media | `trafficpeak/media/<bundle>/` | — |
+| Security › Bots | `trafficpeak/security/bots/<bundle>/` | — |
+| Security › DS2 | `trafficpeak/security/ds2/<bundle>/` | — |
+| Security › SIEM | `trafficpeak/security/siem/<bundle>/` | — |
+
+### Source → Portables Mapping
+
+The category path segments are mirrored verbatim into the portables output:
+
+```
+trafficpeak/cdn/my-bundle/             →  portables/cdn/my-bundle/<version>/
+trafficpeak/cdn/multi-cdn/my-bundle/   →  portables/cdn/multi-cdn/my-bundle/<version>/
+trafficpeak/security/bots/my-bundle/   →  portables/security/bots/my-bundle/<version>/
+trafficpeak/dns/my-bundle/             →  portables/dns/my-bundle/<version>/
+```
+
+Bundles that do not match a recognized category (e.g. `trafficpeak/default_shared/`) fall back to the legacy portables path `portables/trafficpeak/<bundle>/<version>/`.

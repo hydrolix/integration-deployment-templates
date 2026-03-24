@@ -1,5 +1,20 @@
 """Constants for bundle configuration."""
 
+# Top-level portables/trafficpeak categories
+VALID_CATEGORIES = (
+    "api-context",
+    "cdn",
+    "dns",
+    "media",
+    "security",
+)
+
+# Valid subcategories nested under each category
+VALID_SUBCATEGORIES = {
+    "cdn": ("multi-cdn",),
+    "security": ("bots", "ds2", "siem"),
+}
+
 # Prefix mapping based on bundle location
 PREFIX_MAP = {
     "aws": "commons",

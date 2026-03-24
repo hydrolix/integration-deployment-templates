@@ -373,6 +373,34 @@ def run_stage(name, cmd, cwd, verbose, parse_json=False):
     return result
 
 
+def _extract_category_path(bundle_dir):
+    """Extract category (and optional subcategory) path segments from a bundle directory path.
+
+    Mirrors the directory structure between the source root and bundle name into portables.
+
+    Examples:
+        trafficpeak/cdn/my-bundle           → ["cdn"]
+        trafficpeak/cdn/multi-cdn/my-bundle → ["cdn", "multi-cdn"]
+        trafficpeak/security/bots/my-bundle → ["security", "bots"]
+        trafficpeak/default_shared          → []  (no recognized category)
+    """
+    from configurator.constants import VALID_CATEGORIES, VALID_SUBCATEGORIES
+    parts = bundle_dir.rstrip("/").split("/")
+    if parts and is_semver(parts[-1]):
+        parts = parts[:-1]
+    if len(parts) < 2:
+        return []
+    # parts[-1] = bundle_name; check what precedes it
+    if parts[-2] in VALID_CATEGORIES:
+        return [parts[-2]]
+    if len(parts) >= 3 and parts[-3] in VALID_CATEGORIES:
+        cat = parts[-3]
+        sub = parts[-2]
+        if sub in VALID_SUBCATEGORIES.get(cat, ()):
+            return [cat, sub]
+    return []
+
+
 def build_portable_cmd(args):
     """Build command for stage 1: bundle_to_yaml.py."""
     cmd = [sys.executable, os.path.join(SCRIPTS_DIR, "bundle_to_yaml.py"),
@@ -381,15 +409,21 @@ def build_portable_cmd(args):
     if args.portable_output:
         cmd += ["--output", args.portable_output]
     else:
-        # Default: portables/<customer_type>/<bundle_name>/<version>/
         parts = args.bundle_dir.rstrip("/").split("/")
-        if is_semver(parts[-1]) and len(parts) >= 3:
-            customer_type = sanitize_cac_name(parts[-3])
+        if is_semver(parts[-1]) and len(parts) >= 2:
             bundle_name = sanitize_cac_name(parts[-2])
+            customer_type = sanitize_cac_name(parts[-3]) if len(parts) >= 3 else sanitize_cac_name(parts[-2])
         else:
-            customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
             bundle_name = sanitize_cac_name(parts[-1])
-        output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
+            customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
+
+        category_path = _extract_category_path(args.bundle_dir)
+        if category_path:
+            # Category-aware: portables/<category>/[subcategory/]<bundle_name>/<version>/
+            output = os.path.join(REPO_ROOT, "portables", *category_path, bundle_name, args.version)
+        else:
+            # Legacy: portables/<customer_type>/<bundle_name>/<version>/
+            output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
     if args.version != "1.0.0":
