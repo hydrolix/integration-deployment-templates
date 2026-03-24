@@ -115,7 +115,7 @@ integration-deployment-templates/
 | `media` | — | Media streaming and delivery integrations |
 | `security` | `bots`, `ds2`, `siem` | Security and threat detection integrations |
 
-The category directory you place your bundle in determines how it is organized in the portables output and in the Grafana folder hierarchy. For example, a bundle at `trafficpeak/security/bots/my-bundle/` will be placed in `portables/security/bots/` and its dashboards will appear under `hdx-main-folder > hdx-security-folder > hdx-bots-folder` in Grafana.
+The category directory you place your bundle in determines how it is organized in the portables output and in the Grafana folder hierarchy. For example, a bundle at `trafficpeak/security/bots/my-bundle/` will be placed in `portables/security/bots/` and its dashboards will appear under `hdx-main-folder > hdx-security-folder > hdx-bots-folder` in CaC or `Security > Bots` in Grafana.
 
 For example, if you're contributing a CloudFlare integration under AWS at version 1.0.0, your assets go in `aws/cloudflare/1.0.0/`. If contributing a bot detection integration for TrafficPeak, your assets go in `trafficpeak/security/bots/your-bundle-name/`.
 
