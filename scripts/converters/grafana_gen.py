@@ -16,13 +16,15 @@ class GrafanaGenerator:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
 
-    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None):
+    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None, category_path: list = None):
         """Generate all Grafana resources.
 
         Args:
             output_path: Path to bundle output directory
             assets: Discovered bundle assets
             home_dashboard: Optional home dashboard filename
+            category_path: Ordered list of path segments (category + bundle name) used to
+                           build the nested Grafana folder hierarchy, e.g. ['security', 'ds2']
         """
         grafana_dir = output_path / "grafana"
 
@@ -35,7 +37,7 @@ class GrafanaGenerator:
         dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards)
 
         # Generate main resources file
-        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard)
+        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, category_path or [])
 
         if self.verbose:
             print(f"✓ Generated Grafana resources")
@@ -100,38 +102,49 @@ class GrafanaGenerator:
         sanitized = sanitize_filename(name.lower())
         return f"hdx-{sanitized}"
 
+    def _build_folder_hierarchy(self, category_path: list):
+        """Build nested Grafana folder hierarchy from category path segments.
+
+        Always produces hdx-main-folder at the root. Each segment in category_path
+        becomes a child folder nested one level deeper than the previous.
+
+        Args:
+            category_path: Ordered segments, e.g. ['security', 'ds2']
+
+        Returns:
+            Tuple of (folders_dict, deepest_folder_uid)
+        """
+        main_folder = {'name': 'TrafficPeak Certified Reference Dashboards'}
+        folders_dict = {'hdx-main-folder': main_folder}
+
+        if not category_path:
+            main_folder['children'] = {}
+            return folders_dict, 'hdx-main-folder'
+
+        current = main_folder
+        deepest_uid = 'hdx-main-folder'
+        for segment in category_path:
+            uid = f"hdx-{segment}-folder"
+            name = segment.replace('-', ' ').title()
+            child = {'name': name}
+            current.setdefault('children', {})[uid] = child
+            current = child
+            deepest_uid = uid
+
+        return folders_dict, deepest_uid
+
     def _generate_resources_file(
         self,
         grafana_dir: Path,
         dashboards: List[Dashboard],
         dashboard_paths: Dict[str, str],
-        home_dashboard: str = None
+        home_dashboard: str = None,
+        category_path: list = None,
     ):
         """Generate main resources.gfo.yaml file with nested structure."""
         resources = {}
 
-        # Build nested folder structure
-        folders_dict = {
-            'hdx-main-folder': {
-                'name': 'TrafficPeak Certified Reference Dashboards',
-                'children': {}
-            }
-        }
-
-        # Collect child folders
-        child_folders = set()
-        for dashboard in dashboards:
-            if dashboard.folder_uid and dashboard.folder_uid != 'hdx-main-folder':
-                child_folders.add(dashboard.folder_uid)
-
-        # Add child folders to main folder
-        for folder_uid in sorted(child_folders):
-            # Extract readable name from UID (hdx-<name>-folder -> <name>)
-            folder_name = folder_uid.replace('hdx-', '').replace('-folder', '').replace('-', ' ').title()
-            folders_dict['hdx-main-folder']['children'][folder_uid] = {
-                'name': folder_name
-            }
-
+        folders_dict, deepest_folder_uid = self._build_folder_hierarchy(category_path or [])
         resources['folders'] = folders_dict
 
         # Build dashboards dict
@@ -143,7 +156,7 @@ class GrafanaGenerator:
                 'dashboard': {
                     '__extend__': dashboard_paths[dashboard.filename]
                 },
-                'folderUid': dashboard.folder_uid
+                'folderUid': deepest_folder_uid
             }
 
             # Add inputs if present - as a flat dict

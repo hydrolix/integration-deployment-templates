@@ -59,3 +59,4 @@ class BundleMetadata:
     maintainer: str = ""
     table_name: str = "logs"
     home_dashboard: Optional[str] = None
+    category_path: List[str] = field(default_factory=list)

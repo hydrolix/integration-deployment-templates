@@ -36,6 +36,29 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
+from configurator.constants import VALID_CATEGORIES, VALID_SUBCATEGORIES
+
+
+def _extract_category_path(source_path: str):
+    """Extract category (and optional subcategory) segments from a source path.
+
+    Returns the path segments between the source root and the bundle name.
+    e.g. trafficpeak/security/ds2    → ['security']
+         trafficpeak/cdn/multi-cdn/my-bundle → ['cdn', 'multi-cdn']
+         trafficpeak/default_shared  → []
+    """
+    parts = Path(source_path).parts
+    if len(parts) < 2:
+        return []
+    # parts[-1] = bundle_name; check what precedes it
+    if parts[-2] in VALID_CATEGORIES:
+        return [parts[-2]]
+    if len(parts) >= 3 and parts[-3] in VALID_CATEGORIES:
+        cat = parts[-3]
+        sub = parts[-2]
+        if sub in VALID_SUBCATEGORIES.get(cat, ()):
+            return [cat, sub]
+    return []
 
 
 def auto_detect_from_path(source_path: str):
@@ -198,6 +221,10 @@ def main():
         print()
 
     # Build metadata
+    category_segments = _extract_category_path(args.source)
+    # Folder hierarchy = category segments + bundle name (when category is present)
+    folder_path = category_segments + [args.bundle_name] if category_segments else []
+
     metadata = BundleMetadata(
         customer_type=args.customer_type,
         bundle_name=args.bundle_name,
@@ -205,7 +232,8 @@ def main():
         description=args.description,
         maintainer=args.maintainer,
         table_name=args.table_name,
-        home_dashboard=args.home_dashboard
+        home_dashboard=args.home_dashboard,
+        category_path=folder_path,
     )
 
     # Initialize components
@@ -276,7 +304,7 @@ def main():
     hydrolix_gen.generate(output_path, assets, args.table_name, metadata=metadata)
 
     # Generate Grafana resources
-    grafana_gen.generate(output_path, assets, args.home_dashboard)
+    grafana_gen.generate(output_path, assets, args.home_dashboard, category_path=metadata.category_path)
 
     print()
 
