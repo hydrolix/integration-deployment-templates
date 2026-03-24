@@ -62,18 +62,11 @@ Organize your assets following the bundle structure. Assets should be placed in 
 
 Assets must be placed inside a **version folder** under your project name. Use [semantic versioning](https://semver.org/) (e.g., `1.0.0`) for the folder name.
 
+**AWS integrations** are placed directly under `aws/`:
+
 ```
 integration-deployment-templates/
-├── aws/
-│   └── your-project-name/
-│       └── 1.0.0/                    ← version folder (required)
-│           ├── bundle-config.json    ← required
-│           ├── dashboards/
-│           ├── dictionaries/
-│           ├── functions/
-│           ├── transformations/
-│           └── summaries/
-└── trafficpeak/
+└── aws/
     └── your-project-name/
         └── 1.0.0/                    ← version folder (required)
             ├── bundle-config.json    ← required
@@ -84,7 +77,47 @@ integration-deployment-templates/
             └── summaries/
 ```
 
-For example, if you're contributing a CloudFlare integration under AWS at version 1.0.0, your assets go in `aws/cloudflare/1.0.0/`.
+**TrafficPeak integrations** must be placed under a content category. Place your bundle under the appropriate category (and subcategory if applicable):
+
+```
+integration-deployment-templates/
+└── trafficpeak/
+    ├── api-context/
+    │   └── your-project-name/        ← bundle directory (no version folder required)
+    │       ├── bundle-config.json    ← required
+    │       ├── dashboards/
+    │       ├── transformations/
+    │       └── ...
+    ├── cdn/
+    │   ├── your-project-name/        ← standard CDN bundle
+    │   │   └── ...
+    │   └── multi-cdn/
+    │       └── your-project-name/    ← Multi-CDN bundle
+    │           └── ...
+    ├── dns/
+    │   └── your-project-name/
+    ├── media/
+    │   └── your-project-name/
+    └── security/
+        ├── bots/
+        │   └── your-project-name/
+        ├── ds2/
+        │   └── your-project-name/
+        └── siem/
+            └── your-project-name/
+```
+
+| Category | Subcategories | Use for |
+|---|---|---|
+| `api-context` | — | API context and enrichment integrations |
+| `cdn` | `multi-cdn` | CDN delivery and performance integrations |
+| `dns` | — | DNS analytics integrations |
+| `media` | — | Media streaming and delivery integrations |
+| `security` | `bots`, `ds2`, `siem` | Security and threat detection integrations |
+
+The category directory you place your bundle in determines how it is organized in the portables output and in the Grafana folder hierarchy. For example, a bundle at `trafficpeak/security/bots/my-bundle/` will be placed in `portables/security/bots/` and its dashboards will appear under `hdx-main-folder > hdx-security-folder > hdx-bots-folder` in Grafana.
+
+For example, if you're contributing a CloudFlare integration under AWS at version 1.0.0, your assets go in `aws/cloudflare/1.0.0/`. If contributing a bot detection integration for TrafficPeak, your assets go in `trafficpeak/security/bots/your-bundle-name/`.
 
 #### `bundle-config.json` (Required)
 
@@ -103,7 +136,7 @@ Every bundle version directory must include a `bundle-config.json` file. This fi
 | Field | Description | Values |
 |-------|-------------|--------|
 | `table_name` | Primary table name. Letters, digits, and underscores only (no dashes). | e.g., `bot_detection`, `cdn_logs`, `siem_logs` |
-| `data_category` | Type of data the integration handles. | `video`, `cdn`, or `security` |
+| `data_category` | Type of data the integration handles. | `video`, `cdn`, `security`, `api_context`, `dns`, or `media` |
 | `version` | Bundle version. Must match the version folder name. | e.g., `1.0.0`, `1.1.0`, `2.0.0` |
 
 **Optional fields** (override auto-inferred values):
