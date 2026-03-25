@@ -2,7 +2,7 @@ name: bundle-ci
 
 on:
   pull_request:
-    branches: [main, LOTC-1204-Bundle-Versioning-Safeguards]  # TODO: remove feature branch before merging to main
+    branches: [main]
     paths:
       - 'aws/**'
       - 'trafficpeak/**'

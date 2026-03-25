@@ -421,8 +421,7 @@ def build_portable_cmd(args):
         output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.table_name:
         cmd += ["--table-name", args.table_name]
     if args.maintainer != "Hydrolix Team <team@hydrolix.io>":
@@ -456,8 +455,7 @@ def build_configure_cmd(args):
         cmd += ["--maintainer", args.maintainer]
     if args.description:
         cmd += ["--description", args.description]
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.method:
         cmd += ["--method", args.method]
     if args.primary_dashboard:

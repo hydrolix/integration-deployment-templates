@@ -100,8 +100,8 @@ Examples:
 
     parser.add_argument(
         '--version',
-        default='1.0',
-        help='Bundle version (e.g., 1.0 or 1.0.0) (default: 1.0)'
+        default='1.0.0',
+        help='Bundle version X.Y.Z (e.g., 1.0.0) (default: 1.0.0)'
     )
 
     parser.add_argument(
