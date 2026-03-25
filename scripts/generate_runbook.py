@@ -280,11 +280,17 @@ def _build_content(*, bundle, name, version, beta, beta_label, description, main
     sections.append(_section("Non-Default Configuration Notes", "\n".join(config_notes_parts)))
 
     # ── Release Notes ─────────────────────────────────────────────────────────
+    bundle_source = bundle.get("source", "").lower()
+    cac_bundle_url = (
+        f"https://github.com/hydrolix/cac-tools/tree/main/data/bundles/"
+        f"{bundle_source}/{name}/{version}"
+    )
     sections.append(_section(
         "Release Notes",
         f"<h3>v{h(version)}</h3>"
         f"<p><em>Published: {today}</em></p>"
         f"<ul><li>Initial release of the {h(source_title)} bundle.</li></ul>"
+        f"<p><strong>GitHub:</strong> <a href=\"{cac_bundle_url}\">{cac_bundle_url}</a></p>"
         f"<ac:structured-macro ac:name='info'>"
         f"<ac:rich-text-body><p>Update this section with specific changes for each version.</p>"
         f"</ac:rich-text-body></ac:structured-macro>",
@@ -309,6 +315,126 @@ def _build_content(*, bundle, name, version, beta, beta_label, description, main
         "Quick Start",
         f"<ol>{steps_html}</ol>{docs_link}",
     ))
+
+    # ── Deployment ────────────────────────────────────────────────────────────
+    has_summary_tables = bool(bundle.get("summary_tables", []))
+    cli_apply = (
+        f"uv run cli apply bundle -n {h(name)} -cu [cluster_url] -p [platform]"
+        + (" --summary-tables-storage [summary_table_storage_name]" if has_summary_tables else "")
+    )
+    cli_example = (
+        f"uv run cli apply bundle -n {h(name)} -cu https://your-cluster.example.com -p [platform]"
+        + (" --summary-tables-storage [storage_name]" if has_summary_tables else "")
+    )
+
+    summary_table_params = ""
+    if has_summary_tables:
+        summary_table_params = (
+            "<li><strong><code>summary_table_storage_name</code></strong>: "
+            "storage name for summary tables</li>"
+        )
+
+    deployment_assets_html = f"""
+<p><strong>Fix Drift</strong></p>
+<ol>
+  <li>From the cac-tools repo, create a new branch.</li>
+  <li>Pull from the assigned cluster to resolve any potential drift:
+    <ol>
+      <li><code>uv run cli pull</code></li>
+      <li>If there is drift, create a PR and merge to main.</li>
+      <li>If no drift, continue to the next step.</li>
+    </ol>
+  </li>
+</ol>
+<p><strong>Apply Bundle</strong></p>
+<p>Run the following command from the cac-tools repo:</p>
+<ul>
+  <li><strong><code>name_of_solution</code></strong>: <code>{h(name)}</code></li>
+  <li><strong><code>cluster_url</code></strong>: your cluster of choice</li>
+  <li><strong><code>platform</code></strong>: ingest platform (e.g. <code>akamai</code> for TrafficPeak)</li>
+  {summary_table_params}
+</ul>
+<p><code>{cli_apply}</code></p>
+<p><strong>Example:</strong> <code>{cli_example}</code></p>
+<p><strong>Create a PR</strong></p>
+<p>When the bundle is applied to your cluster successfully, create a PR for review.</p>
+""".strip()
+
+    dashboard_paths = []
+    if bundle.get("dashboard", {}).get("path"):
+        dashboard_paths.append(bundle["dashboard"]["path"])
+    dashboard_paths += [d.get("path", "") for d in bundle.get("other_dashboards", []) if d.get("path")]
+
+    dashboard_list_html = (
+        "<ul>" + "".join(f"<li><code>{h(p)}</code></li>" for p in dashboard_paths) + "</ul>"
+        if dashboard_paths else ""
+    )
+    deployment_dashboard_html = f"""
+<ol>
+  <li>Retrieve the dashboard(s) from the <a href="{cac_bundle_url}">CaC repo</a>:{dashboard_list_html}</li>
+  <li>Import into the customer&rsquo;s Grafana instance.</li>
+  <li>Configure the datasource and summary table variables accordingly.</li>
+  <li>Verify data is flowing by checking the primary dashboard panels.</li>
+</ol>
+""".strip()
+
+    sections.append(_section(
+        "Deployment",
+        f"<h3>Assets</h3>\n{deployment_assets_html}\n<h3>Dashboard</h3>\n{deployment_dashboard_html}",
+    ))
+
+    # ── Troubleshooting & Common Issues ───────────────────────────────────────
+    troubleshooting_html = """
+<h3>Dashboard Errors</h3>
+<p><strong>Issue:</strong> Dashboard errors with random syntax errors or datasource not found.</p>
+<p><strong>Cause:</strong> Variables may not have a datasource configured.</p>
+<p><strong>Fix:</strong></p>
+<ol>
+  <li>In the dashboard settings &rarr; Variables, click on each variable.</li>
+  <li>Confirm there is a datasource configured for each variable.</li>
+</ol>
+<h3>No Data Returned</h3>
+<p><strong>Issue:</strong> Panels show &ldquo;No data&rdquo; after deployment.</p>
+<p><strong>Cause:</strong> Summary table variables or table names may be misconfigured.</p>
+<p><strong>Fix:</strong></p>
+<ol>
+  <li>Verify the table and summary table names match those created during bundle apply.</li>
+  <li>Check that the Hydrolix datasource is pointing to the correct cluster.</li>
+  <li>Confirm data is ingesting by querying the primary table directly.</li>
+</ol>
+<h3>Bundle Apply Fails</h3>
+<p><strong>Issue:</strong> <code>uv run cli apply bundle</code> returns an error.</p>
+<p><strong>Cause:</strong> Drift between local CaC state and cluster state, or missing dependencies.</p>
+<p><strong>Fix:</strong></p>
+<ol>
+  <li>Run <code>uv run cli pull</code> to sync local state with the cluster.</li>
+  <li>Resolve any conflicts, then re-run the apply command.</li>
+  <li>Ensure all required dictionaries and functions listed in the Dependencies section are present.</li>
+</ol>
+""".strip()
+    sections.append(_section("Troubleshooting &amp; Common Issues", troubleshooting_html))
+
+    # ── Escalations ───────────────────────────────────────────────────────────
+    maintainer_line = (
+        f"<p><strong>Bundle Maintainer:</strong> "
+        f'<a href="mailto:{h(maintainer)}">{h(maintainer)}</a></p>'
+        if maintainer else ""
+    )
+    docs_url_line = (
+        f'<p><strong>Documentation:</strong> <a href="{h(primary_url)}">{h(primary_url)}</a></p>'
+        if primary_url else ""
+    )
+    escalations_html = f"""
+<p><strong>Dashboards:</strong> Contact the bundle maintainer or open an issue in the source repository.</p>
+<p><strong>Deployment:</strong> Contact your CSE lead or post in the Solutions team Slack channel.</p>
+{maintainer_line}
+{docs_url_line}
+<p>For technical issues with the bundle, post in the Slack channel:
+<a href="https://hydrolix.slack.com/archives/eng_marketplace"><u>#eng_marketplace</u></a></p>
+<p>For general questions and inquiries, post in the Slack channel:
+<a href="https://hydrolix.slack.com/archives/C0AAGURJV99"><u>#proj-trafficpeak-solutions</u></a></p>
+""".strip()
+    sections.append(_section("Escalations", escalations_html))
 
     return "\n\n".join(sections)
 
