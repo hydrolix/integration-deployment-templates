@@ -26,7 +26,7 @@ REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
 from utils.file_utils import sanitize_cac_name
-from configurator.config import is_semver
+from configurator.config import is_semver, looks_like_version
 
 
 def main():
@@ -246,11 +246,32 @@ def _merge_config_into_args(args):
         if config_version:
             args.version = config_version
 
+    # Pre-check: config version must match folder name if both are set
+    config_version = data.get("version", "")
+    if config_version:
+        dir_parts = args.bundle_dir.rstrip("/").split("/")
+        folder_name = dir_parts[-1] if dir_parts else ""
+        if is_semver(folder_name) and folder_name != config_version:
+            print(
+                f"Error: bundle-config.json version '{config_version}' does not match "
+                f"folder name '{folder_name}'. They must be identical.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
     # Infer version from directory name if still at default and path is versioned
     if args.version == "1.0.0":
         parts = args.bundle_dir.rstrip("/").split("/")
         if parts and is_semver(parts[-1]):
             args.version = parts[-1]
+        elif parts and looks_like_version(parts[-1]):
+            print(
+                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
+                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
+                f"X.Y.Z version or a plain bundle name.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
 
 def _apply_track(args):
@@ -386,14 +407,21 @@ def build_portable_cmd(args):
         if is_semver(parts[-1]) and len(parts) >= 3:
             customer_type = sanitize_cac_name(parts[-3])
             bundle_name = sanitize_cac_name(parts[-2])
+        elif looks_like_version(parts[-1]):
+            print(
+                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
+                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
+                f"X.Y.Z version or a plain bundle name.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
         else:
             customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
             bundle_name = sanitize_cac_name(parts[-1])
         output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.table_name:
         cmd += ["--table-name", args.table_name]
     if args.maintainer != "Hydrolix Team <team@hydrolix.io>":
@@ -427,8 +455,7 @@ def build_configure_cmd(args):
         cmd += ["--maintainer", args.maintainer]
     if args.description:
         cmd += ["--description", args.description]
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.method:
         cmd += ["--method", args.method]
     if args.primary_dashboard:
