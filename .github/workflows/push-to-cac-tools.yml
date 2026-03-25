@@ -3,15 +3,13 @@ name: push-to-cac-tools
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, LOTC-1203-two-track-pipeline]  # TODO: remove feature branch before merging to main
   workflow_dispatch:
 
 jobs:
   bundle-export:
     if: |
       (!contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') &&
-       !contains(github.event.pull_request.labels.*.name, 'skip-bundle-format') &&
-       !contains(github.event.pull_request.body, '[skip-bundle-format]') &&
        github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

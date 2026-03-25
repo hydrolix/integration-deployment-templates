@@ -26,7 +26,7 @@ REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
 from utils.file_utils import sanitize_cac_name
-from configurator.config import is_semver
+from configurator.config import is_semver, looks_like_version
 
 
 def main():
@@ -37,6 +37,9 @@ def main():
     # them on the CLI.  This lets CI run with just --config.
     if args.config:
         _merge_config_into_args(args)
+
+    # Two-track pipeline: apply track selection before resolving stages
+    _apply_track(args)
 
     stages = resolve_stages(args)
 
@@ -114,6 +117,13 @@ Examples:
                         help="Passed to stage 2; auto-skips stages 1 and 3")
     parser.add_argument("--json", action="store_true", help="Output final report as JSON")
 
+    # --- Track selection (two-track pipeline) ---
+    parser.add_argument(
+        "--track", choices=["auto", "full", "validate-only"], default="auto",
+        help="Pipeline track: 'auto' (detect from assets), 'full' (Stage 1+2+3), "
+             "'validate-only' (Stage 3 only). Default: auto",
+    )
+
     # --- Skip / only flags ---
     skip = parser.add_argument_group("stage selection (skip)")
     skip.add_argument("--skip-portable", action="store_true", help="Skip stage 1")
@@ -131,6 +141,8 @@ Examples:
                     help="Override portable output dir (default: portables/<bundle_name>/<version>/)")
     s1.add_argument("--skip-portable-validation", action="store_true",
                     help="Skip bundle_to_yaml's internal validation")
+    s1.add_argument("--bundle-config", default="",
+                    help="Path to bundle-config.json whose version must match bundle.json")
     s1.add_argument("--version", default="1.0.0", help="Bundle version (default: 1.0.0)")
     s1.add_argument("--maintainer", default="Hydrolix Team <team@hydrolix.io>",
                     help="Bundle maintainer")
@@ -234,11 +246,74 @@ def _merge_config_into_args(args):
         if config_version:
             args.version = config_version
 
+    # Pre-check: config version must match folder name if both are set
+    config_version = data.get("version", "")
+    if config_version:
+        dir_parts = args.bundle_dir.rstrip("/").split("/")
+        folder_name = dir_parts[-1] if dir_parts else ""
+        if is_semver(folder_name) and folder_name != config_version:
+            print(
+                f"Error: bundle-config.json version '{config_version}' does not match "
+                f"folder name '{folder_name}'. They must be identical.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
     # Infer version from directory name if still at default and path is versioned
     if args.version == "1.0.0":
         parts = args.bundle_dir.rstrip("/").split("/")
         if parts and is_semver(parts[-1]):
             args.version = parts[-1]
+        elif parts and looks_like_version(parts[-1]):
+            print(
+                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
+                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
+                f"X.Y.Z version or a plain bundle name.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+
+def _apply_track(args):
+    """Apply two-track pipeline logic based on --track flag.
+
+    - 'validate-only': forces --only-validate (Stage 3 only)
+    - 'full': runs originals management, then full pipeline (default stages)
+    - 'auto': detects track from bundle state, then applies accordingly
+    """
+    if args.track == "validate-only":
+        args.only_validate = True
+    elif args.track == "full":
+        # Full pipeline — originals management happens here
+        bundle_dir = os.path.join(REPO_ROOT, args.bundle_dir) if not os.path.isabs(args.bundle_dir) else args.bundle_dir
+        from originals_manager import backup_to_originals, restore_from_originals
+        originals_dir = os.path.join(REPO_ROOT, ".originals", os.path.relpath(bundle_dir, REPO_ROOT))
+        if os.path.isdir(originals_dir):
+            restore_from_originals(bundle_dir, REPO_ROOT)
+        else:
+            backup_to_originals(bundle_dir, REPO_ROOT)
+    elif args.track == "auto":
+        # Auto-detect: classify bundle state and route
+        bundle_dir = os.path.join(REPO_ROOT, args.bundle_dir) if not os.path.isabs(args.bundle_dir) else args.bundle_dir
+        from detect_track import classify_bundle_state
+        originals_dir = os.path.join(REPO_ROOT, ".originals", os.path.relpath(bundle_dir, REPO_ROOT))
+        has_originals = os.path.isdir(originals_dir)
+        has_config = os.path.isfile(os.path.join(bundle_dir, "bundle-config.json"))
+
+        state = classify_bundle_state(bundle_dir)
+
+        if has_originals and state == "raw":
+            # Raw assets detected with originals — treat as full
+            args.track = "full"
+            _apply_track(args)
+        elif not has_originals and has_config and state == "raw":
+            # First run — backup and run full
+            args.track = "full"
+            _apply_track(args)
+        else:
+            # Configured, ambiguous, or legacy — validate only
+            args.track = "validate-only"
+            _apply_track(args)
 
 
 def _require_stage2_args(args):
@@ -332,14 +407,21 @@ def build_portable_cmd(args):
         if is_semver(parts[-1]) and len(parts) >= 3:
             customer_type = sanitize_cac_name(parts[-3])
             bundle_name = sanitize_cac_name(parts[-2])
+        elif looks_like_version(parts[-1]):
+            print(
+                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
+                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
+                f"X.Y.Z version or a plain bundle name.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
         else:
             customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
             bundle_name = sanitize_cac_name(parts[-1])
         output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
         cmd += ["--output", output]
 
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.table_name:
         cmd += ["--table-name", args.table_name]
     if args.maintainer != "Hydrolix Team <team@hydrolix.io>":
@@ -348,6 +430,8 @@ def build_portable_cmd(args):
         cmd += ["--description", args.description]
     if args.skip_portable_validation:
         cmd.append("--skip-validation")
+    if args.bundle_config:
+        cmd += ["--bundle-config", args.bundle_config]
     if args.verbose:
         cmd.append("--verbose")
 
@@ -371,8 +455,7 @@ def build_configure_cmd(args):
         cmd += ["--maintainer", args.maintainer]
     if args.description:
         cmd += ["--description", args.description]
-    if args.version != "1.0.0":
-        cmd += ["--version", args.version]
+    cmd += ["--version", args.version]
     if args.method:
         cmd += ["--method", args.method]
     if args.primary_dashboard:

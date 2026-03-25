@@ -100,8 +100,8 @@ Examples:
 
     parser.add_argument(
         '--version',
-        default='1.0',
-        help='Bundle version (e.g., 1.0 or 1.0.0) (default: 1.0)'
+        default='1.0.0',
+        help='Bundle version X.Y.Z (e.g., 1.0.0) (default: 1.0.0)'
     )
 
     parser.add_argument(
@@ -128,6 +128,11 @@ Examples:
     parser.add_argument(
         '--output',
         help='Output directory (default: cac_bundle/<customer_type>/<bundle_name>/<version>)'
+    )
+
+    parser.add_argument(
+        '--bundle-config',
+        help='Path to a bundle-config.json file whose version must match bundle.json'
     )
 
     parser.add_argument(
@@ -232,17 +237,28 @@ def main():
         # Validate assets
         valid_assets, asset_errors = validator.validate_input(source_path, assets)
         if not valid_assets:
-            print("\n❌ Asset validation failed:")
+            print("\n❌ Asset validation failed:", file=sys.stderr)
             for error in asset_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
 
         # Validate metadata
         valid_metadata, metadata_errors = validator.validate_metadata(metadata)
         if not valid_metadata:
-            print("\n❌ Metadata validation failed:")
+            print("\n❌ Metadata validation failed:", file=sys.stderr)
             for error in metadata_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
+            sys.exit(1)
+
+        # Validate version consistency across bundle-config.json, bundle.json, and CLI version
+        bundle_config_path = Path(args.bundle_config) if args.bundle_config else None
+        valid_versions, version_errors = validator.validate_version_consistency(
+            source_path, args.version, bundle_config_path=bundle_config_path
+        )
+        if not valid_versions:
+            print("\n❌ Version consistency validation failed:", file=sys.stderr)
+            for error in version_errors:
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
 
         print()
@@ -267,11 +283,11 @@ def main():
     # Phase 4: Validate outputs
     if not args.skip_validation:
         print("Phase 4: Validating outputs...")
-        valid_output, output_errors = validator.validate_output(output_path)
+        valid_output, output_errors = validator.validate_output(output_path, expected_version=args.version)
         if not valid_output:
-            print("\n❌ Output validation failed:")
+            print("\n❌ Output validation failed:", file=sys.stderr)
             for error in output_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
         print()
 
