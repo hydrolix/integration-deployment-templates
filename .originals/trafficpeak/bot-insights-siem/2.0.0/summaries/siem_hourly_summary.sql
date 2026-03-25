@@ -1,20 +1,20 @@
 SELECT
-  toStartOfDay (timestamp) AS timestamp,
+  toStartOfHour (timestamp) AS timestamp,
   method,
   status,
   country,
   IF(
-    cityHash64 (clientIP, timestamp, requestId) % 100 < 10,
+    cityHash64 (clientIP) % 100 < 10,
     clientIP,
     '~~~SAMPLED_OUT~~~'
   ) AS clientIP,
   IF(
-    cityHash64 (host, timestamp, requestId) % 100 < 10,
+    cityHash64 (host) % 100 < 10,
     host,
     '~~~SAMPLED_OUT~~~'
   ) AS host,
   IF(
-    cityHash64 (path, timestamp, requestId) % 100 < 10,
+    cityHash64 (path) % 100 < 10,
     path,
     '~~~SAMPLED_OUT~~~'
   ) AS path,
@@ -41,7 +41,7 @@ SELECT
   ruleData,
   count() AS request_count
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.siem
 GROUP BY
   timestamp,
   method,
