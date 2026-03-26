@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP, VALID_CATEGORIES, VALID_SUBCATEGORIES
+from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP, VALID_FOLDERS, VALID_SUBFOLDERS
 
 SEMVER_RE = re.compile(r'^\d+\.\d+\.\d+$')
 
@@ -41,8 +41,8 @@ class BundleConfig:
     beta: bool = True
     verbose: bool = False
     dry_run: bool = False
-    category: str = ""
-    subcategory: str = ""
+    folder: str = ""
+    subfolder: str = ""
 
     def __post_init__(self):
         # Normalize bundle_dir to absolute path
@@ -71,20 +71,20 @@ class BundleConfig:
     def _infer_source_name(self):
         """Infer source name from directory path.
 
-        Handles category/subcategory nesting:
-          source/bundle                         → source
-          source/category/bundle                → source
-          source/category/subcategory/bundle    → source
+        Handles folder/subfolder nesting:
+          source/bundle                       → source
+          source/folder/bundle                → source
+          source/folder/subfolder/bundle      → source
           (same patterns with trailing version)
         """
         parts = self.bundle_dir.rstrip("/").split("/")
         if parts and is_semver(parts[-1]):
             parts = parts[:-1]
-        # source/category/subcategory/bundle
-        if len(parts) >= 4 and parts[-2] in VALID_SUBCATEGORIES.get(parts[-3], ()):
+        # source/folder/subfolder/bundle
+        if len(parts) >= 4 and parts[-2] in VALID_SUBFOLDERS.get(parts[-3], ()):
             return parts[-4]
-        # source/category/bundle
-        if len(parts) >= 3 and parts[-2] in VALID_CATEGORIES:
+        # source/folder/bundle
+        if len(parts) >= 3 and parts[-2] in VALID_FOLDERS:
             return parts[-3]
         # source/bundle (legacy)
         if len(parts) >= 2:

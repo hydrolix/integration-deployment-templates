@@ -25,7 +25,6 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
-from utils.file_utils import sanitize_cac_name
 from configurator.config import is_semver, looks_like_version
 
 
@@ -157,6 +156,10 @@ Examples:
     s2.add_argument("--channel-type", default="", help="Channel type override")
     s2.add_argument("--method", default="", help="Method override")
     s2.add_argument("--primary-dashboard", default="", help="Primary dashboard filename")
+    s2.add_argument("--folder", default="",
+                    help="Grafana folder (api-context, cdn, dns, media, security)")
+    s2.add_argument("--subfolder", default="",
+                    help="Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)")
     s2.add_argument("--beta", action="store_true", default=True, help="Mark as beta (default)")
     s2.add_argument("--no-beta", action="store_true", default=False, help="Mark as not beta")
     s2.add_argument("--config", default="", help="JSON config file for stage 2")
@@ -240,6 +243,10 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
+    if not args.folder:
+        args.folder = data.get("folder", "")
+    if not args.subfolder:
+        args.subfolder = data.get("subfolder", "")
     if args.version == "1.0.0":
         # Only override if still at default — config or path-based version takes precedence
         config_version = data.get("version", "")
@@ -406,23 +413,6 @@ def build_portable_cmd(args):
 
     if args.portable_output:
         cmd += ["--output", args.portable_output]
-    else:
-        parts = args.bundle_dir.rstrip("/").split("/")
-        if is_semver(parts[-1]) and len(parts) >= 2:
-            bundle_name = sanitize_cac_name(parts[-2])
-        elif looks_like_version(parts[-1]):
-            print(
-                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
-                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
-                f"X.Y.Z version or a plain bundle name.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-        else:
-            bundle_name = sanitize_cac_name(parts[-1])
-
-        output = os.path.join(REPO_ROOT, "portables", bundle_name, args.version)
-        cmd += ["--output", output]
 
     cmd += ["--version", args.version]
     if args.table_name:
@@ -435,6 +425,10 @@ def build_portable_cmd(args):
         cmd.append("--skip-validation")
     if args.bundle_config:
         cmd += ["--bundle-config", args.bundle_config]
+    if args.folder:
+        cmd += ["--folder", args.folder]
+    if args.subfolder:
+        cmd += ["--subfolder", args.subfolder]
     if args.verbose:
         cmd.append("--verbose")
 
@@ -463,6 +457,10 @@ def build_configure_cmd(args):
         cmd += ["--method", args.method]
     if args.primary_dashboard:
         cmd += ["--primary-dashboard", args.primary_dashboard]
+    if args.folder:
+        cmd += ["--folder", args.folder]
+    if args.subfolder:
+        cmd += ["--subfolder", args.subfolder]
     if args.no_beta:
         cmd.append("--no-beta")
     if args.config:

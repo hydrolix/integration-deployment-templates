@@ -1,7 +1,7 @@
 """Constants for bundle configuration."""
 
-# Top-level portables/trafficpeak categories
-VALID_CATEGORIES = (
+# Top-level Grafana folders
+VALID_FOLDERS = (
     "api-context",
     "cdn",
     "dns",
@@ -9,11 +9,15 @@ VALID_CATEGORIES = (
     "security",
 )
 
-# Valid subcategories nested under each category
-VALID_SUBCATEGORIES = {
+# Valid subfolders nested under each folder
+VALID_SUBFOLDERS = {
     "cdn": ("multi-cdn",),
     "security": ("bots", "ds2", "siem"),
 }
+
+# Keep legacy aliases so any remaining internal references don't break
+VALID_CATEGORIES = VALID_FOLDERS
+VALID_SUBCATEGORIES = VALID_SUBFOLDERS
 
 # Prefix mapping based on bundle location
 PREFIX_MAP = {

@@ -23,7 +23,7 @@ if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
 from configurator.config import BundleConfig, BundleState
-from configurator.constants import VALID_DATA_CATEGORIES, VALID_CATEGORIES, VALID_SUBCATEGORIES
+from configurator.constants import VALID_DATA_CATEGORIES, VALID_FOLDERS, VALID_SUBFOLDERS
 from configurator.discovery import run_discovery
 from configurator.transform_organizer import run_transform_organization
 from configurator.sql_analyzer import run_sql_analysis
@@ -69,6 +69,24 @@ def main():
         print(
             f"Error: --table-name '{config.table_name}' is invalid - "
             "only letters, digits, and underscores allowed",
+            file=sys.stderr,
+        )
+        sys.exit(EXIT_MISSING_INPUT)
+    if config.folder and config.folder not in VALID_FOLDERS:
+        print(
+            f"Error: --folder '{config.folder}' is invalid. "
+            f"Must be one of: {', '.join(VALID_FOLDERS)}",
+            file=sys.stderr,
+        )
+        sys.exit(EXIT_MISSING_INPUT)
+    if config.subfolder and not config.folder:
+        print("Error: --subfolder requires --folder to be set", file=sys.stderr)
+        sys.exit(EXIT_MISSING_INPUT)
+    if config.subfolder and config.subfolder not in VALID_SUBFOLDERS.get(config.folder, ()):
+        valid = VALID_SUBFOLDERS.get(config.folder, ())
+        print(
+            f"Error: --subfolder '{config.subfolder}' is invalid for folder '{config.folder}'. "
+            f"Must be one of: {', '.join(valid) if valid else '(none)'}",
             file=sys.stderr,
         )
         sys.exit(EXIT_MISSING_INPUT)
@@ -193,14 +211,14 @@ Examples:
         help="Primary dashboard filename (default: auto-detect)",
     )
     parser.add_argument(
-        "--category",
+        "--folder",
         default="",
-        help=f"Grafana folder category: {', '.join(VALID_CATEGORIES)} (optional)",
+        help=f"Grafana folder: {', '.join(VALID_FOLDERS)} (optional)",
     )
     parser.add_argument(
-        "--subcategory",
+        "--subfolder",
         default="",
-        help="Grafana folder subcategory (e.g., bots, ds2, siem, multi-cdn) (optional)",
+        help="Grafana subfolder (e.g., bots, ds2, siem, multi-cdn) (optional)",
     )
     parser.add_argument(
         "--beta",
@@ -270,8 +288,8 @@ def _build_config_from_args(args):
         beta=beta,
         verbose=args.verbose,
         dry_run=args.dry_run,
-        category=args.category,
-        subcategory=args.subcategory,
+        folder=args.folder,
+        subfolder=args.subfolder,
     )
 
 
@@ -322,8 +340,8 @@ def _build_config_from_dict(data, args):
         beta=beta,
         verbose=args.verbose or data.get("verbose", False),
         dry_run=args.dry_run or data.get("dry_run", False),
-        category=args.category or data.get("category", ""),
-        subcategory=args.subcategory or data.get("subcategory", ""),
+        folder=args.folder or data.get("folder", ""),
+        subfolder=args.subfolder or data.get("subfolder", ""),
     )
 
 

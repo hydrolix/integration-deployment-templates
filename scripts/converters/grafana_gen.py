@@ -16,14 +16,14 @@ class GrafanaGenerator:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
 
-    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None, category_path: list = None):
+    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None, folder_path: list = None):
         """Generate all Grafana resources.
 
         Args:
             output_path: Path to bundle output directory
             assets: Discovered bundle assets
             home_dashboard: Optional home dashboard filename
-            category_path: Ordered list of path segments (category + bundle name) used to
+            folder_path: Ordered list of path segments (category + bundle name) used to
                            build the nested Grafana folder hierarchy, e.g. ['security', 'ds2']
         """
         grafana_dir = output_path / "grafana"
@@ -37,7 +37,7 @@ class GrafanaGenerator:
         dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards)
 
         # Generate main resources file
-        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, category_path or [])
+        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, folder_path or [])
 
         if self.verbose:
             print(f"✓ Generated Grafana resources")
@@ -115,31 +115,33 @@ class GrafanaGenerator:
         'siem':        'SIEM',
     }
 
-    def _build_folder_hierarchy(self, category_path: list):
+    def _build_folder_hierarchy(self, folder_path: list):
         """Build nested Grafana folder hierarchy from category path segments.
 
-        Always produces hdx-main-folder at the root. Each segment in category_path
+        Always produces hdx-main-folder at the root. Each segment in folder_path
         becomes a child folder nested one level deeper than the previous.
 
         Args:
-            category_path: Ordered segments, e.g. ['security'] or ['security', 'bots']
+            folder_path: Ordered segments, e.g. ['security'] or ['security', 'bots']
 
         Returns:
             Tuple of (folders_dict, deepest_folder_uid)
         """
         main_folder = {'name': 'TrafficPeak Certified Reference Dashboards'}
         folders_dict = {'hdx-main-folder': main_folder}
+        deepest_uid = 'hdx-main-folder'
 
-        if category_path:
+        if folder_path:
             current = main_folder
-            for segment in category_path:
+            for segment in folder_path:
                 uid = f"hdx-{segment}-folder"
                 name = self._FOLDER_NAMES.get(segment, segment.replace('-', ' ').title())
                 child = {'name': name}
                 current.setdefault('children', {})[uid] = child
                 current = child
+                deepest_uid = uid
 
-        return folders_dict, 'hdx-main-folder'
+        return folders_dict, deepest_uid
 
     def _generate_resources_file(
         self,
@@ -147,12 +149,12 @@ class GrafanaGenerator:
         dashboards: List[Dashboard],
         dashboard_paths: Dict[str, str],
         home_dashboard: str = None,
-        category_path: list = None,
+        folder_path: list = None,
     ):
         """Generate main resources.gfo.yaml file with nested structure."""
         resources = {}
 
-        folders_dict, deepest_folder_uid = self._build_folder_hierarchy(category_path or [])
+        folders_dict, deepest_folder_uid = self._build_folder_hierarchy(folder_path or [])
         resources['folders'] = folders_dict
 
         # Build dashboards dict
