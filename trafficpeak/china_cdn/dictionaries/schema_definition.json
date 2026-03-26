@@ -1,0 +1,16 @@
+[
+    {
+        "datatype": {
+            "denullify": true,
+            "type": "string"
+        },
+        "name": "country_iso_code"
+    },
+    {
+        "datatype": {
+            "denullify": true,
+            "type": "string"
+        },
+        "name": "country_name"
+    }
+]
