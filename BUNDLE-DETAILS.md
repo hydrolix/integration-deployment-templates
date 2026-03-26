@@ -121,10 +121,43 @@ This document describes all valid fields and their validation rules.
 | `method` | `Graphics` | ✅ | Method display information |
 | `source` | `Graphics` | ✅ | Source display information |
 | `data_category` | `string` | ✅ | Data category classification |
+| `category` | `string` | ❌ | Grafana folder category for CaC bundle export. Determines which folder the dashboards are placed in when exported to portable CaC format. |
+| `subcategory` | `string` | ❌ | Grafana folder subcategory. Only valid when `category` is also set. |
 
 ### Validation Rules for Ui
 - `primary_url` must start with `https://` or `file://`
 - `data_category` must be one of: `"video"`, `"cdn"`, `"security"`
+- `category` must be one of: `"api-context"`, `"cdn"`, `"dns"`, `"media"`, `"security"`
+- `subcategory` must be a valid subcategory for the given `category`:
+  - `cdn` → `"multi-cdn"`
+  - `security` → `"bots"`, `"ds2"`, `"siem"`
+
+### Grafana Folder Hierarchy
+
+When `category` (and optionally `subcategory`) is set, the exported `resources.gfo.yaml` will place dashboards in the corresponding nested folder under the root `TrafficPeak Certified Reference Dashboards` folder:
+
+| `category` | `subcategory` | Dashboard folder |
+|---|---|---|
+| _(not set)_ | — | TrafficPeak Certified Reference Dashboards |
+| `api-context` | — | API Context |
+| `cdn` | — | CDN |
+| `cdn` | `multi-cdn` | CDN → Multi-CDN |
+| `dns` | — | DNS |
+| `media` | — | Media |
+| `security` | — | Security |
+| `security` | `bots` | Security → Bots |
+| `security` | `ds2` | Security → DS2 |
+| `security` | `siem` | Security → SIEM |
+
+**Example** (`bundle.json`):
+```json
+"ui": {
+  "category": "security",
+  "subcategory": "bots",
+  "data_category": "security",
+  ...
+}
+```
 
 ## Graphics Object
 

@@ -14,6 +14,15 @@ def is_semver(s: str) -> bool:
     return bool(SEMVER_RE.match(s))
 
 
+def looks_like_version(s: str) -> bool:
+    """Check if a string looks like a version but isn't strict X.Y.Z semver.
+
+    Catches names like '1.0.0-beta', '1.0', '2.0.0rc1' that start with
+    digits+dot but aren't valid semver.
+    """
+    return bool(re.match(r'^\d+\.', s)) and not is_semver(s)
+
+
 @dataclass
 class BundleConfig:
     """Immutable configuration derived from CLI args."""

@@ -21,6 +21,7 @@ The script will:
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -39,26 +40,38 @@ from utils.file_utils import sanitize_cac_name
 from configurator.constants import VALID_CATEGORIES, VALID_SUBCATEGORIES
 
 
-def _extract_category_path(source_path: str):
-    """Extract category (and optional subcategory) segments from a source path.
+def _category_from_bundle_json(source_path: Path) -> list:
+    """Read Grafana folder category from bundle.json ui.category and ui.subcategory.
 
-    Returns the path segments between the source root and the bundle name.
-    e.g. trafficpeak/security/ds2    → ['security']
-         trafficpeak/cdn/multi-cdn/my-bundle → ['cdn', 'multi-cdn']
-         trafficpeak/default_shared  → []
+    Returns ordered category segments used to build the nested folder hierarchy
+    in resources.gfo.yaml, e.g. ['security'] or ['security', 'bots'].
+    Returns [] if no valid category is declared.
+
+    bundle.json fields:
+        ui.category    — one of: api-context, cdn, dns, media, security
+        ui.subcategory — optional, e.g. bots, ds2, siem (under security)
     """
-    parts = Path(source_path).parts
-    if len(parts) < 2:
+    bundle_json = source_path / "bundle.json"
+    if not bundle_json.exists():
         return []
-    # parts[-1] = bundle_name; check what precedes it
-    if parts[-2] in VALID_CATEGORIES:
-        return [parts[-2]]
-    if len(parts) >= 3 and parts[-3] in VALID_CATEGORIES:
-        cat = parts[-3]
-        sub = parts[-2]
-        if sub in VALID_SUBCATEGORIES.get(cat, ()):
-            return [cat, sub]
-    return []
+
+    try:
+        with open(bundle_json, "r", encoding="utf-8") as f:
+            bundle = json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return []
+
+    ui = bundle.get("ui", {})
+    category = ui.get("category", "")
+    subcategory = ui.get("subcategory", "")
+
+    if not category or category not in VALID_CATEGORIES:
+        return []
+
+    if subcategory and subcategory in VALID_SUBCATEGORIES.get(category, ()):
+        return [category, subcategory]
+
+    return [category]
 
 
 def auto_detect_from_path(source_path: str):
@@ -123,8 +136,8 @@ Examples:
 
     parser.add_argument(
         '--version',
-        default='1.0',
-        help='Bundle version (e.g., 1.0 or 1.0.0) (default: 1.0)'
+        default='1.0.0',
+        help='Bundle version X.Y.Z (e.g., 1.0.0) (default: 1.0.0)'
     )
 
     parser.add_argument(
@@ -209,8 +222,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: cac_bundle/<customer_type>/<bundle_name>/<version>
-        output_path = repo_root / "cac_bundle" / sanitize_cac_name(args.customer_type) / sanitize_cac_name(args.bundle_name) / args.version
+        # Default output: portables/<bundle_name>/<version>
+        output_path = repo_root / "portables" / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")
@@ -221,9 +234,9 @@ def main():
         print()
 
     # Build metadata
-    category_segments = _extract_category_path(args.source)
-    # Folder hierarchy = category segments + bundle name (when category is present)
-    folder_path = category_segments + [args.bundle_name] if category_segments else []
+    category_segments = _category_from_bundle_json(source_path)
+    # Folder hierarchy = category and optional subcategory only (no bundle name)
+    folder_path = category_segments
 
     metadata = BundleMetadata(
         customer_type=args.customer_type,

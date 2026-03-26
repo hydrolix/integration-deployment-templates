@@ -102,6 +102,19 @@ class GrafanaGenerator:
         sanitized = sanitize_filename(name.lower())
         return f"hdx-{sanitized}"
 
+    # Human-readable display names for each folder segment
+    _FOLDER_NAMES = {
+        'api-context': 'API Context',
+        'cdn':         'CDN',
+        'multi-cdn':   'Multi-CDN',
+        'dns':         'DNS',
+        'media':       'Media',
+        'security':    'Security',
+        'bots':        'Bots',
+        'ds2':         'DS2',
+        'siem':        'SIEM',
+    }
+
     def _build_folder_hierarchy(self, category_path: list):
         """Build nested Grafana folder hierarchy from category path segments.
 
@@ -109,7 +122,7 @@ class GrafanaGenerator:
         becomes a child folder nested one level deeper than the previous.
 
         Args:
-            category_path: Ordered segments, e.g. ['security', 'ds2']
+            category_path: Ordered segments, e.g. ['security'] or ['security', 'bots']
 
         Returns:
             Tuple of (folders_dict, deepest_folder_uid)
@@ -117,21 +130,16 @@ class GrafanaGenerator:
         main_folder = {'name': 'TrafficPeak Certified Reference Dashboards'}
         folders_dict = {'hdx-main-folder': main_folder}
 
-        if not category_path:
-            main_folder['children'] = {}
-            return folders_dict, 'hdx-main-folder'
+        if category_path:
+            current = main_folder
+            for segment in category_path:
+                uid = f"hdx-{segment}-folder"
+                name = self._FOLDER_NAMES.get(segment, segment.replace('-', ' ').title())
+                child = {'name': name}
+                current.setdefault('children', {})[uid] = child
+                current = child
 
-        current = main_folder
-        deepest_uid = 'hdx-main-folder'
-        for segment in category_path:
-            uid = f"hdx-{segment}-folder"
-            name = segment.replace('-', ' ').title()
-            child = {'name': name}
-            current.setdefault('children', {})[uid] = child
-            current = child
-            deepest_uid = uid
-
-        return folders_dict, deepest_uid
+        return folders_dict, 'hdx-main-folder'
 
     def _generate_resources_file(
         self,

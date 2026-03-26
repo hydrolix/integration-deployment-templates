@@ -73,6 +73,9 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 async fn main() {
     let mut bundles_checked = 0;
 
+    // Reject any directories that look like versions but aren't strict X.Y.Z
+    reject_invalid_version_dirs();
+
     let bundle_list = filter_to_latest_versions(find_bundle_files());
 
     let mut final_bundle_list: Vec<Bundle> = vec![];
@@ -112,6 +115,14 @@ async fn main() {
             let last_component = base_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
             if is_semver(last_component) {
                 Some(last_component.to_string())
+            } else if looks_like_version(last_component) {
+                eprintln!(
+                    "ERROR: folder name '{}' looks like a version but is not valid \
+                     semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict \
+                     X.Y.Z version or a plain bundle name.",
+                    last_component
+                );
+                std::process::exit(1);
             } else {
                 None
             }
@@ -353,6 +364,32 @@ async fn validate_bundle(
     Ok(())
 }
 
+/// Scan for directories that look like versions but aren't strict X.Y.Z semver.
+/// This catches folders like "1.0.0-beta", "1.0", "2.0.0rc1" before they silently
+/// bypass version detection.
+fn reject_invalid_version_dirs() {
+    let search_path = if *SCAN_WIP { "./WIP" } else { "." };
+
+    for entry in WalkDir::new(search_path)
+        .max_depth(3)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().is_dir())
+    {
+        let dir_name = entry.file_name().to_str().unwrap_or("");
+        if looks_like_version(dir_name) {
+            eprintln!(
+                "ERROR: folder name '{}' looks like a version but is not valid \
+                 semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict \
+                 X.Y.Z version or a plain bundle name.\n  Path: {}",
+                dir_name,
+                entry.path().display()
+            );
+            std::process::exit(1);
+        }
+    }
+}
+
 // Update find_bundle_files to handle WIP location
 fn find_bundle_files() -> Vec<std::path::PathBuf> {
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
@@ -372,6 +409,15 @@ fn is_semver(s: &str) -> bool {
         static ref SEMVER_RE: Regex = Regex::new(r"^\d+\.\d+\.\d+$").unwrap();
     }
     SEMVER_RE.is_match(s)
+}
+
+/// Check if a string looks like a version but isn't strict X.Y.Z semver.
+/// Catches names like "1.0.0-beta", "1.0", "2.0.0rc1".
+fn looks_like_version(s: &str) -> bool {
+    lazy_static! {
+        static ref VERSION_LIKE_RE: Regex = Regex::new(r"^\d+\.").unwrap();
+    }
+    VERSION_LIKE_RE.is_match(s) && !is_semver(s)
 }
 
 /// Parse a semver string into a comparable tuple.
