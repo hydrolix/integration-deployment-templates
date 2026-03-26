@@ -1,0 +1,42 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children: {}
+dashboards:
+  hdx-cdn-dashboard-default:
+    dashboard:
+      __extend__: dashboards/cdn_dashboard_default.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MIN: PROJECT.multi_summary_min
+      VAR_SUMMARY_HOUR: PROJECT.multi_summary_hour
+      VAR_QUANTILES_RESPONSE_TTFB_50: quantiles_response_ttfb_ms[2]
+      VAR_QUANTILES_RESPONSE_TTFB_95: quantiles_response_ttfb_ms[5]
+      VAR_QUANTILES_RESPONSE_TTLB_50: quantiles_response_ttlb_ms[2]
+      VAR_QUANTILES_RESPONSE_TTLB_95: quantiles_response_ttlb_ms[5]
+      VAR_QUANTILES_ORIGIN_TTFB_50: quantiles_origin_ttfb_ms[2]
+      VAR_QUANTILES_ORIGIN_TTFB_95: quantiles_origin_ttfb_ms[5]
+      VAR_QUANTILES_ORIGIN_TTLB_50: quantiles_origin_ttlb_ms[2]
+      VAR_QUANTILES_ORIGIN_TTLB_95: quantiles_origin_ttlb_ms[5]
+      VAR_RAW_LOGS: UUID_HERE/NAME
+      VAR_CDN_PANEL: UUID_HERE/NAME
+  hdx-raw-logs:
+    dashboard:
+      __extend__: dashboards/raw_logs.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: PROJECT.cdn
+      VAR_TIMESTAMP: timestamp
+  hdx-cdn-global-view:
+    dashboard:
+      __extend__: dashboards/cdn_global_view.json
+    folderUid: hdx-main-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MIN: PROJECT.multi_summary_min
+      VAR_SUMMARY_HOUR: PROJECT.multi_summary_hour
+      VAR_CDN1: Akamai
+      VAR_RAW_LOGS: UUID_HERE/raw-logs
+      VAR_CDN_PANEL: UUID_HERE/cdn-dashboard-default-v1-0-5

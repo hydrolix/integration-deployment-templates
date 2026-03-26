@@ -1,37 +1,13 @@
 {
-  "name": "default",
-  "description": "Version v1.0",
+  "name": "tp_mcdn_tencent",
+  "description": "",
   "settings": {
-    "is_default": true,
+    "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT \ndatediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(reqPath), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(reqPath), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ai_category', assumeNotNull(UA)) AS ai_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'is_bot', assumeNotNull(UA)) AS is_bot_traffic,\n (ds_req_time*1000)::UInt64 as transferTimeMSec,\n (totalBytes/2) / (totalBytes/transferTimeMSec) as timeToFirstByte,\ndictGetString('__SHARED_PROJECT___country_mapping', 'country_iso_code', initcap(assumeNotNull(client_country_name))) AS country,\n splitByChar('=', assumeNotNull(rangeStr))[2] as range,\n * \nFROM {STREAM}",
     "null_values": [
-      "-"
+      "-",
+      "-1"
     ],
-    "sample_data": {
-      "time": "23/Oct/2022:17:48:59 +0800",
-      "client_ip": "192.0.2.1",
-      "client_ip_country": "Indonesia",
-      "client_ip_isp": "Tencent Cloud",
-      "client_ip_province": "Jakarta",
-      "client_port": 37030,
-      "domain": "cdn.example.com",
-      "ds_http_bd_status_hit": "HIT",
-      "ds_http_method": "GET",
-      "ds_http_protocol": "HTTP/3",
-      "ds_http_range": "bytes=200-1000",
-      "ds_http_referer": "https://example.com/index?version=123",
-      "ds_http_resp_content_length": 500,
-      "ds_http_resp_content_type": "image/jpeg",
-      "ds_http_resp_size": 573,
-      "ds_http_scheme": "HTTPS",
-      "ds_http_status": 200,
-      "ds_http_ua": "curl/7.85.0",
-      "ds_http_uri": "/chickadee.png?version=1",
-      "ds_http_uri_path": "/img/chickadee.png",
-      "ds_http_uri_query": "version=1&colar=red",
-      "ds_req_time": 0.104
-    },
     "shadow_table": null,
     "output_columns": [
       {
@@ -40,12 +16,12 @@
           "type": "datetime",
           "index": false,
           "primary": true,
-          "format": "02/Jan/2006:15:04:05 -0700",
+          "format": "2006-01-02T15:05:05Z",
           "resolution": "ms",
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "time"
+            "from_input_field": "RequestTime"
           },
           "suppress": false
         }
@@ -60,7 +36,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_bd_status_hit"
+            "from_input_field": "EdgeCacheStatus"
           },
           "suppress": true
         }
@@ -90,7 +66,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_resp_size"
+            "from_input_field": "EdgeResponseBytes"
           },
           "suppress": false
         }
@@ -105,7 +81,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_status"
+            "from_input_field": "EdgeResponseStatusCode"
           },
           "suppress": false
         }
@@ -120,24 +96,9 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "EdgeInternalTime"
           },
           "suppress": false
-        }
-      },
-      {
-        "name": "ds_req_time",
-        "datatype": {
-          "type": "float",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_req_time"
-          },
-          "suppress": true
         }
       },
       {
@@ -150,7 +111,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "EdgeResponseTime"
           },
           "suppress": false
         }
@@ -164,9 +125,7 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": {
-            "from_input_field": "ds_http_resp_content_type"
-          },
+          "source": null,
           "suppress": false
         }
       },
@@ -180,7 +139,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_method"
+            "from_input_field": "RequestMethod"
           },
           "suppress": false
         }
@@ -195,7 +154,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "domain"
+            "from_input_field": "RequestHost"
           },
           "suppress": false
         }
@@ -210,7 +169,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_uri_query"
+            "from_input_field": "RequestUrlQueryString"
           },
           "suppress": false
         }
@@ -225,7 +184,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_referer"
+            "from_input_field": "RequestReferer"
           },
           "suppress": false
         }
@@ -240,22 +199,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_uri_path"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "resource_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "RequestUrl"
           },
           "suppress": false
         }
@@ -264,36 +208,6 @@
         "name": "user_agent_category",
         "datatype": {
           "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "ai_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "is_bot_traffic",
-        "datatype": {
-          "type": "boolean",
           "index": true,
           "format": null,
           "resolution": null,
@@ -315,7 +229,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_ua"
+            "from_input_field": "RequestUA"
           },
           "suppress": false
         }
@@ -330,7 +244,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "client_ip"
+            "from_input_field": "ClientIP"
           },
           "suppress": false
         }
@@ -344,7 +258,9 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "EdgeServerIP"
+          },
           "suppress": false
         }
       },
@@ -357,7 +273,9 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "OriginIP"
+          },
           "suppress": false
         }
       },
@@ -370,7 +288,9 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "OriginResponseHeaderDuration"
+          },
           "suppress": false
         }
       },
@@ -388,21 +308,6 @@
         }
       },
       {
-        "name": "client_country_name",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "client_ip_country"
-          },
-          "suppress": true
-        }
-      },
-      {
         "name": "country",
         "datatype": {
           "type": "string",
@@ -412,7 +317,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_input_field": "ClientRegion"
           },
           "suppress": false
         }
@@ -427,7 +332,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "client_ip_province"
+            "from_input_field": "sql_transform"
           },
           "suppress": false
         }
@@ -442,7 +347,7 @@
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "client_ip_isp"
+            "from_input_field": "ClientISP"
           },
           "suppress": false
         }
@@ -456,21 +361,54 @@
           "resolution": null,
           "default": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_input_field": "EdgeServerID"
+          },
           "suppress": false
         }
       },
       {
-        "name": "proto",
+        "name": "BotTag",
         "datatype": {
           "type": "string",
           "index": true,
-          "source": {
-            "from_input_field": "ds_http_protocol"
-          },
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
+          "source": {
+            "from_input_field": "BotTag"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "JA3Hash",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "JA3Hash"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "reqId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestID"
+          },
           "suppress": false
         }
       },
@@ -479,27 +417,44 @@
         "datatype": {
           "type": "uint32",
           "index": true,
-          "source": {
-            "from_input_field": "client_port"
-          },
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
+          "source": {
+            "from_input_field": "RemotePort"
+          },
           "suppress": false
         }
       },
       {
-        "name": "rangeStr",
+        "name": "state",
         "datatype": {
           "type": "string",
           "index": true,
-          "source": {
-            "from_input_field": "ds_http_range"
-          },
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
-          "suppress": true
+          "source": {
+            "from_input_field": "ClientState"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestBytes"
+          },
+          "suppress": false
         }
       },
       {
@@ -507,12 +462,73 @@
         "datatype": {
           "type": "string",
           "index": true,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
+          "source": {
+            "from_input_field": "RequestRange"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "serverCountry",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeSeverRegion"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Parent_RequestID",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ParentRequestID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "proto",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tlsVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestSSLProtocol"
+          },
           "suppress": false
         }
       },
@@ -521,25 +537,297 @@
         "datatype": {
           "type": "uint64",
           "index": true,
-          "source": {
-            "from_input_field": "ds_http_resp_content_length"
-          },
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBodyBytes"
+          },
           "suppress": false
         }
       },
       {
-        "name": "URL",
+        "name": "dnsLookupTimeMSec",
         "datatype": {
           "type": "string",
           "index": true,
           "format": null,
+          "resolution": null,
           "default": null,
           "script": null,
           "source": {
-            "from_input_field": "ds_http_uri"
+            "from_input_field": "OriginDNSResponseDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotClassProxy",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassProxy"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "RequestStatus",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "SecurityAction",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityAction"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "SecurityModule",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityModule"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "SecurityRuleID",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityRuleID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotClassScanner",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassScanner"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotClassAttacker",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassAttacker"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "ClientDeviceType",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientDeviceType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "RequestBodyBytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestBodyBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotCharacteristic",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotCharacteristic"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginSSLProtocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginSSLProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotClassMaliciousBot",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassMaliciousBot"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "EdgeFunctionSubrequest",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeFunctionSubrequest"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "BotClassAccountTakeOver",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassAccountTakeOver"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginResponseStatusCode",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseStatusCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginTCPHandshakeDuration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTCPHandshakeDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginTLSHandshakeDuration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTLSHandshakeDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginRequestHeaderSendDuration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginRequestHeaderSendDuration"
           },
           "suppress": false
         }
@@ -566,7 +854,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "BytePlus",
+          "default": "Tencent",
           "script": null,
           "source": null,
           "suppress": false
@@ -579,7 +867,7 @@
           "index": true,
           "format": null,
           "resolution": null,
-          "default": "BytePlus multicdn",
+          "default": "Tencent TP multi cdn",
           "script": null,
           "source": null,
           "suppress": false

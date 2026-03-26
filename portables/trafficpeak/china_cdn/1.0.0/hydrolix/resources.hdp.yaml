@@ -1,0 +1,19 @@
+tables:
+  china_cdn:
+    __extend__: tables/table_china_cdn.yaml
+transforms:
+  china_cdn:
+    default:
+      __extend__: transforms/default.json
+      settings:
+        sql_transform:
+          __extend__: transforms/default_select.sql
+        sample_data:
+          __extend__: transforms/default_sample_data.json
+    tp_mcdn_tencent:
+      __extend__: transforms/tp_mcdn_tencent.json
+      settings:
+        sql_transform:
+          __extend__: transforms/tp_mcdn_tencent_select.sql
+        sample_data:
+          __extend__: transforms/tp_mcdn_tencent_sample_data.json
