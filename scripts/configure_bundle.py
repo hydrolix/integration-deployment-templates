@@ -23,7 +23,7 @@ if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
 from configurator.config import BundleConfig, BundleState
-from configurator.constants import VALID_DATA_CATEGORIES
+from configurator.constants import VALID_DATA_CATEGORIES, VALID_CATEGORIES, VALID_SUBCATEGORIES
 from configurator.discovery import run_discovery
 from configurator.transform_organizer import run_transform_organization
 from configurator.sql_analyzer import run_sql_analysis
@@ -193,6 +193,16 @@ Examples:
         help="Primary dashboard filename (default: auto-detect)",
     )
     parser.add_argument(
+        "--category",
+        default="",
+        help=f"Grafana folder category: {', '.join(VALID_CATEGORIES)} (optional)",
+    )
+    parser.add_argument(
+        "--subcategory",
+        default="",
+        help="Grafana folder subcategory (e.g., bots, ds2, siem, multi-cdn) (optional)",
+    )
+    parser.add_argument(
         "--beta",
         action="store_true",
         default=True,
@@ -260,6 +270,8 @@ def _build_config_from_args(args):
         beta=beta,
         verbose=args.verbose,
         dry_run=args.dry_run,
+        category=args.category,
+        subcategory=args.subcategory,
     )
 
 
@@ -310,6 +322,8 @@ def _build_config_from_dict(data, args):
         beta=beta,
         verbose=args.verbose or data.get("verbose", False),
         dry_run=args.dry_run or data.get("dry_run", False),
+        category=args.category or data.get("category", ""),
+        subcategory=args.subcategory or data.get("subcategory", ""),
     )
 
 

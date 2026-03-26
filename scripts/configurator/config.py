@@ -41,6 +41,8 @@ class BundleConfig:
     beta: bool = True
     verbose: bool = False
     dry_run: bool = False
+    category: str = ""
+    subcategory: str = ""
 
     def __post_init__(self):
         # Normalize bundle_dir to absolute path
