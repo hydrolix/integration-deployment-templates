@@ -92,6 +92,8 @@ def main():
 
     header_lines, entries = load_latest_versions(latest_versions_file)
 
+    # Only the latest_versions.yaml pointer file is written — version directories
+    # are never modified, deleted, or overwritten by this script.
     changed = False
     for bundle_rel, latest, bdl_filename in find_bundle_roots(bundles_dir):
         key = re.sub(r"[-/]", "_", bundle_rel)
