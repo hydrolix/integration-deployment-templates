@@ -155,6 +155,8 @@ def _build_bundle_data(config, state, method):
             }
         ],
         "ui": {
+            **({"folder": config.folder} if config.folder else {}),
+            **({"subfolder": config.subfolder} if config.subfolder else {}),
             "data_category": config.data_category,
             "method": method_ui,
             "primary_url": f"https://docs.hydrolix.io/docs/{config.bundle_name_normalized}-integration",

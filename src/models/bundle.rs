@@ -102,6 +102,10 @@ pub struct Ui {
     pub source: Graphics,
     #[serde(deserialize_with = "deserialize_valid_data_categories")]
     pub data_category: String,
+    #[serde(default, deserialize_with = "deserialize_optional_folder")]
+    pub folder: Option<String>,
+    #[serde(default, deserialize_with = "deserialize_optional_subfolder")]
+    pub subfolder: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -505,6 +509,34 @@ where
         }
         None => Ok(None),
     }
+}
+
+fn deserialize_optional_folder<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(deserializer)?;
+    if let Some(ref s) = opt {
+        match s.as_str() {
+            "api-context" | "cdn" | "dns" | "media" | "security" => {}
+            _ => return Err(de::Error::custom(format!("{} is an invalid folder", s))),
+        }
+    }
+    Ok(opt)
+}
+
+fn deserialize_optional_subfolder<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(deserializer)?;
+    if let Some(ref s) = opt {
+        match s.as_str() {
+            "multi-cdn" | "bots" | "ds2" | "siem" => {}
+            _ => return Err(de::Error::custom(format!("{} is an invalid subfolder", s))),
+        }
+    }
+    Ok(opt)
 }
 
 // Helper functions to extract functions and dictionaries
