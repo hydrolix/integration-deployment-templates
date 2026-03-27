@@ -1,18 +1,20 @@
 folders:
   hdx-main-folder:
     name: TrafficPeak Certified Reference Dashboards
-    children: {}
+    children:
+      hdx-cdn-folder:
+        name: CDN
 dashboards:
   hdx-usage:
     dashboard:
       __extend__: dashboards/usage.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
   hdx-home:
     dashboard:
       __extend__: dashboards/home.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       GRAFANA_REGION: Grafana-US
@@ -20,7 +22,7 @@ dashboards:
   hdx-raw:
     dashboard:
       __extend__: dashboards/raw.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_DS2: akamai.logs
@@ -28,7 +30,7 @@ dashboards:
   hdx-cache:
     dashboard:
       __extend__: dashboards/cache.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_DS2: akamai.logs
@@ -37,7 +39,7 @@ dashboards:
   hdx-error:
     dashboard:
       __extend__: dashboards/error.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_DS2: akamai.logs
@@ -46,7 +48,7 @@ dashboards:
   hdx-cdn:
     dashboard:
       __extend__: dashboards/cdn.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_SUMMARY_HOUR: akamai.summary_hour
@@ -55,6 +57,6 @@ dashboards:
   hdx-explore:
     dashboard:
       __extend__: dashboards/explore.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
