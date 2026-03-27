@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP
+from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP, VALID_FOLDERS, VALID_SUBFOLDERS
 
 SEMVER_RE = re.compile(r'^\d+\.\d+\.\d+$')
 
@@ -41,6 +41,8 @@ class BundleConfig:
     beta: bool = True
     verbose: bool = False
     dry_run: bool = False
+    folder: str = ""
+    subfolder: str = ""
 
     def __post_init__(self):
         # Normalize bundle_dir to absolute path
@@ -67,10 +69,24 @@ class BundleConfig:
             self.description = f"{source_title} {bundle_title} Integration"
 
     def _infer_source_name(self):
-        """Infer source name from directory path."""
+        """Infer source name from directory path.
+
+        Handles folder/subfolder nesting:
+          source/bundle                       → source
+          source/folder/bundle                → source
+          source/folder/subfolder/bundle      → source
+          (same patterns with trailing version)
+        """
         parts = self.bundle_dir.rstrip("/").split("/")
-        if len(parts) >= 3 and is_semver(parts[-1]):
+        if parts and is_semver(parts[-1]):
+            parts = parts[:-1]
+        # source/folder/subfolder/bundle
+        if len(parts) >= 4 and parts[-2] in VALID_SUBFOLDERS.get(parts[-3], ()):
+            return parts[-4]
+        # source/folder/bundle
+        if len(parts) >= 3 and parts[-2] in VALID_FOLDERS:
             return parts[-3]
+        # source/bundle (legacy)
         if len(parts) >= 2:
             return parts[-2]
         return "unknown"
@@ -78,11 +94,9 @@ class BundleConfig:
     def _infer_bundle_name(self):
         """Infer bundle name from directory path."""
         parts = self.bundle_dir.rstrip("/").split("/")
-        if len(parts) >= 2 and is_semver(parts[-1]):
-            return parts[-2]
-        if parts:
-            return parts[-1]
-        return "unknown"
+        if parts and is_semver(parts[-1]):
+            parts = parts[:-1]
+        return parts[-1] if parts else "unknown"
 
     @property
     def correct_prefix(self):
