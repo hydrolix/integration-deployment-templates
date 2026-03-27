@@ -85,6 +85,10 @@ jobs:
             fi
           done
 
+      - name: Update latest_versions.yaml
+        if: steps.detect-bundles.outputs.has_changes == 'true'
+        run: python3 integrations-deployment-templates/scripts/update_latest_versions.py cac-tools/data/bundles
+
       - name: Create PR in CAC Repo
         if: steps.detect-bundles.outputs.has_changes == 'true'
         run: |

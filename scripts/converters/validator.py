@@ -178,6 +178,15 @@ class BundleValidator:
 
         return len(errors) == 0, errors
 
+    def _collect_folder_uids(self, folders: dict) -> set:
+        """Recursively collect all folder UIDs from a folders dict (including children)."""
+        uids = set()
+        for uid, folder in (folders or {}).items():
+            uids.add(uid)
+            if folder and isinstance(folder, dict):
+                uids.update(self._collect_folder_uids(folder.get('children') or {}))
+        return uids
+
     # checks output path, manifest files
     def validate_output(self, output_path: Path, expected_version: Optional[str] = None) -> Tuple[bool, List[str]]:
         """Validate generated bundle structure.
@@ -244,6 +253,22 @@ class BundleValidator:
             if resources_file.exists():
                 with open(resources_file, 'r') as f:
                     gfo = yaml.safe_load(f) or {}
+
+                # Validate folder hierarchy
+                folders = gfo.get('folders') or {}
+
+                if 'hdx-main-folder' not in folders:
+                    errors.append("resources.gfo.yaml: missing required 'hdx-main-folder'")
+                else:
+                    all_folder_uids = self._collect_folder_uids(folders)
+                    for dash_uid, dash_entry in (gfo.get('dashboards') or {}).items():
+                        actual = dash_entry.get('folderUid')
+                        if actual not in all_folder_uids:
+                            errors.append(
+                                f"resources.gfo.yaml: dashboard '{dash_uid}' references "
+                                f"unknown folderUid '{actual}'"
+                            )
+
                 for dash_entry in (gfo.get('dashboards') or {}).values():
                     for key in (dash_entry.get('inputs') or {}):
                         gfo_datasource_keys.add(key)
