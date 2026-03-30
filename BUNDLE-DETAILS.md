@@ -121,10 +121,43 @@ This document describes all valid fields and their validation rules.
 | `method` | `Graphics` | ✅ | Method display information |
 | `source` | `Graphics` | ✅ | Source display information |
 | `data_category` | `string` | ✅ | Data category classification |
+| `category` | `string` | ❌ | Grafana folder category for CaC bundle export. Determines which folder the dashboards are placed in when exported to portable CaC format. |
+| `subcategory` | `string` | ❌ | Grafana folder subcategory. Only valid when `category` is also set. |
 
 ### Validation Rules for Ui
 - `primary_url` must start with `https://` or `file://`
 - `data_category` must be one of: `"video"`, `"cdn"`, `"security"`
+- `category` must be one of: `"api-context"`, `"cdn"`, `"dns"`, `"media"`, `"security"`
+- `subcategory` must be a valid subcategory for the given `category`:
+  - `cdn` → `"multi-cdn"`
+  - `security` → `"bots"`, `"ds2"`, `"siem"`
+
+### Grafana Folder Hierarchy
+
+When `category` (and optionally `subcategory`) is set, the exported `resources.gfo.yaml` will place dashboards in the corresponding nested folder under the root `TrafficPeak Certified Reference Dashboards` folder:
+
+| `category` | `subcategory` | Dashboard folder |
+|---|---|---|
+| _(not set)_ | — | TrafficPeak Certified Reference Dashboards |
+| `api-context` | — | API Context |
+| `cdn` | — | CDN |
+| `cdn` | `multi-cdn` | CDN → Multi-CDN |
+| `dns` | — | DNS |
+| `media` | — | Media |
+| `security` | — | Security |
+| `security` | `bots` | Security → Bots |
+| `security` | `ds2` | Security → DS2 |
+| `security` | `siem` | Security → SIEM |
+
+**Example** (`bundle.json`):
+```json
+"ui": {
+  "category": "security",
+  "subcategory": "bots",
+  "data_category": "security",
+  ...
+}
+```
 
 ## Graphics Object
 
@@ -508,3 +541,35 @@ Final:
 
 **Purpose**:
 These changes enable automated dependency resolution and ensure resources are created in the correct order, preventing runtime errors due to missing dependencies.
+
+---
+
+## Bundle Directory Categories
+
+Bundles placed under `trafficpeak/` must be organized into one of the following content categories by placing them in the correct subdirectory. The pipeline mirrors this structure directly into the `portables/` output.
+
+### Valid Categories and Subcategories
+
+| Category | Directory | Subcategories |
+|---|---|---|
+| API Context | `trafficpeak/api-context/<bundle>/` | — |
+| CDN | `trafficpeak/cdn/<bundle>/` | — |
+| CDN › Multi-CDN | `trafficpeak/cdn/multi-cdn/<bundle>/` | — |
+| DNS | `trafficpeak/dns/<bundle>/` | — |
+| Media | `trafficpeak/media/<bundle>/` | — |
+| Security › Bots | `trafficpeak/security/bots/<bundle>/` | — |
+| Security › DS2 | `trafficpeak/security/ds2/<bundle>/` | — |
+| Security › SIEM | `trafficpeak/security/siem/<bundle>/` | — |
+
+### Source → Portables Mapping
+
+The category path segments are mirrored verbatim into the portables output:
+
+```
+trafficpeak/cdn/my-bundle/             →  portables/cdn/my-bundle/<version>/
+trafficpeak/cdn/multi-cdn/my-bundle/   →  portables/cdn/multi-cdn/my-bundle/<version>/
+trafficpeak/security/bots/my-bundle/   →  portables/security/bots/my-bundle/<version>/
+trafficpeak/dns/my-bundle/             →  portables/dns/my-bundle/<version>/
+```
+
+Bundles that do not match a recognized category (e.g. `trafficpeak/default_shared/`) fall back to the legacy portables path `portables/trafficpeak/<bundle>/<version>/`.

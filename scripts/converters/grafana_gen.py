@@ -16,13 +16,15 @@ class GrafanaGenerator:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
 
-    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None):
+    def generate(self, output_path: Path, assets: BundleAssets, home_dashboard: str = None, folder_path: list = None):
         """Generate all Grafana resources.
 
         Args:
             output_path: Path to bundle output directory
             assets: Discovered bundle assets
             home_dashboard: Optional home dashboard filename
+            folder_path: Ordered list of path segments (category + bundle name) used to
+                           build the nested Grafana folder hierarchy, e.g. ['security', 'ds2']
         """
         grafana_dir = output_path / "grafana"
 
@@ -35,7 +37,7 @@ class GrafanaGenerator:
         dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards)
 
         # Generate main resources file
-        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard)
+        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, folder_path or [])
 
         if self.verbose:
             print(f"✓ Generated Grafana resources")
@@ -69,6 +71,12 @@ class GrafanaGenerator:
                 data = json.load(f)
             self._replace_datasource_uids(data)
 
+            # Normalize __inputs datasource names to standard variable
+            for inp in data.get('__inputs', []):
+                if inp.get('type') == 'datasource':
+                    inp['name'] = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
+                    inp['label'] = 'Hydrolix'
+
             # Strip top-level dashboard uid (CaC deployments assign their own)
             data.pop('uid', None)
 
@@ -94,38 +102,59 @@ class GrafanaGenerator:
         sanitized = sanitize_filename(name.lower())
         return f"hdx-{sanitized}"
 
+    # Human-readable display names for each folder segment
+    _FOLDER_NAMES = {
+        'api-context': 'API Context',
+        'cdn':         'CDN',
+        'multi-cdn':   'Multi-CDN',
+        'dns':         'DNS',
+        'media':       'Media',
+        'security':    'Security',
+        'bots':        'Bots',
+        'ds2':         'DS2',
+        'siem':        'SIEM',
+    }
+
+    def _build_folder_hierarchy(self, folder_path: list):
+        """Build nested Grafana folder hierarchy from category path segments.
+
+        Always produces hdx-main-folder at the root. Each segment in folder_path
+        becomes a child folder nested one level deeper than the previous.
+
+        Args:
+            folder_path: Ordered segments, e.g. ['security'] or ['security', 'bots']
+
+        Returns:
+            Tuple of (folders_dict, deepest_folder_uid)
+        """
+        main_folder = {'name': 'TrafficPeak Certified Reference Dashboards'}
+        folders_dict = {'hdx-main-folder': main_folder}
+        deepest_uid = 'hdx-main-folder'
+
+        if folder_path:
+            current = main_folder
+            for segment in folder_path:
+                uid = f"hdx-{segment}-folder"
+                name = self._FOLDER_NAMES.get(segment, segment.replace('-', ' ').title())
+                child = {'name': name}
+                current.setdefault('children', {})[uid] = child
+                current = child
+                deepest_uid = uid
+
+        return folders_dict, deepest_uid
+
     def _generate_resources_file(
         self,
         grafana_dir: Path,
         dashboards: List[Dashboard],
         dashboard_paths: Dict[str, str],
-        home_dashboard: str = None
+        home_dashboard: str = None,
+        folder_path: list = None,
     ):
         """Generate main resources.gfo.yaml file with nested structure."""
         resources = {}
 
-        # Build nested folder structure
-        folders_dict = {
-            'hdx-main-folder': {
-                'name': 'TrafficPeak Certified Reference Dashboards',
-                'children': {}
-            }
-        }
-
-        # Collect child folders
-        child_folders = set()
-        for dashboard in dashboards:
-            if dashboard.folder_uid and dashboard.folder_uid != 'hdx-main-folder':
-                child_folders.add(dashboard.folder_uid)
-
-        # Add child folders to main folder
-        for folder_uid in sorted(child_folders):
-            # Extract readable name from UID (hdx-<name>-folder -> <name>)
-            folder_name = folder_uid.replace('hdx-', '').replace('-folder', '').replace('-', ' ').title()
-            folders_dict['hdx-main-folder']['children'][folder_uid] = {
-                'name': folder_name
-            }
-
+        folders_dict, deepest_folder_uid = self._build_folder_hierarchy(folder_path or [])
         resources['folders'] = folders_dict
 
         # Build dashboards dict
@@ -137,7 +166,7 @@ class GrafanaGenerator:
                 'dashboard': {
                     '__extend__': dashboard_paths[dashboard.filename]
                 },
-                'folderUid': dashboard.folder_uid
+                'folderUid': deepest_folder_uid
             }
 
             # Add inputs if present - as a flat dict
@@ -147,7 +176,7 @@ class GrafanaGenerator:
                     # Use the input name as the key, and value/type as the value
                     # For datasource inputs, use the predefined datasource UID
                     if inp.type == 'datasource':
-                        inputs_dict[inp.name] = 'hdx-hydrolix-datasource'
+                        inputs_dict['DS_HYDROLIX-HYDROLIX-DATASOURCE'] = 'hdx-hydrolix-datasource'
                     elif inp.value is not None:
                         inputs_dict[inp.name] = inp.value
                     else:

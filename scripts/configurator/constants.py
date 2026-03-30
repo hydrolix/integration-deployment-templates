@@ -1,5 +1,24 @@
 """Constants for bundle configuration."""
 
+# Top-level Grafana folders
+VALID_FOLDERS = (
+    "api-context",
+    "cdn",
+    "dns",
+    "media",
+    "security",
+)
+
+# Valid subfolders nested under each folder
+VALID_SUBFOLDERS = {
+    "cdn": ("multi-cdn",),
+    "security": ("bots", "ds2", "siem"),
+}
+
+# Keep legacy aliases so any remaining internal references don't break
+VALID_CATEGORIES = VALID_FOLDERS
+VALID_SUBCATEGORIES = VALID_SUBFOLDERS
+
 # Prefix mapping based on bundle location
 PREFIX_MAP = {
     "aws": "commons",
