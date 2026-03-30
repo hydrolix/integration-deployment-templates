@@ -3979,38 +3979,38 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_RAW_LOGS}",
-            "value": "${VAR_RAW_LOGS}"
+            "text": "${raw_logs}",
+            "value": "${raw_logs}"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_RAW_LOGS}",
-              "value": "${VAR_RAW_LOGS}"
+              "text": "${raw_logs}",
+              "value": "${raw_logs}"
             }
           ],
-          "query": "${VAR_RAW_LOGS}",
+          "query": "${raw_logs}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_CDN_PANEL}",
-            "value": "${VAR_CDN_PANEL}"
+            "text": "${cdn_panel}",
+            "value": "${cdn_panel}"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_CDN_PANEL}",
-              "value": "${VAR_CDN_PANEL}"
+              "text": "${cdn_panel}",
+              "value": "${cdn_panel}"
             }
           ],
-          "query": "${VAR_CDN_PANEL}",
+          "query": "${cdn_panel}",
           "skipUrlSync": true,
           "type": "constant"
         },
