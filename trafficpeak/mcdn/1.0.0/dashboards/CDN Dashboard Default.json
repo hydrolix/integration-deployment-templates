@@ -3827,152 +3827,152 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}"
+            "text": "${quantiles_response_ttfb_50}",
+            "value": "${quantiles_response_ttfb_50}"
           },
           "hide": 2,
           "name": "quantiles_response_ttfb_50",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
-              "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}"
+              "text": "${quantiles_response_ttfb_50}",
+              "value": "${quantiles_response_ttfb_50}"
             }
           ],
-          "query": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
+          "query": "${quantiles_response_ttfb_50}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}"
+            "text": "${quantiles_response_ttfb_95}",
+            "value": "${quantiles_response_ttfb_95}"
           },
           "hide": 2,
           "name": "quantiles_response_ttfb_95",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
-              "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}"
+              "text": "${quantiles_response_ttfb_95}",
+              "value": "${quantiles_response_ttfb_95}"
             }
           ],
-          "query": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
+          "query": "${quantiles_response_ttfb_95}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}"
+            "text": "${quantiles_response_ttlb_50}",
+            "value": "${quantiles_response_ttlb_50}"
           },
           "hide": 2,
           "name": "quantiles_response_ttlb_50",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
-              "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}"
+              "text": "${quantiles_response_ttlb_50}",
+              "value": "${quantiles_response_ttlb_50}"
             }
           ],
-          "query": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
+          "query": "${quantiles_response_ttlb_50}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}"
+            "text": "${quantiles_response_ttlb_95}",
+            "value": "${quantiles_response_ttlb_95}"
           },
           "hide": 2,
           "name": "quantiles_response_ttlb_95",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
-              "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}"
+              "text": "${quantiles_response_ttlb_95}",
+              "value": "${quantiles_response_ttlb_95}"
             }
           ],
-          "query": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
+          "query": "${quantiles_response_ttlb_95}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}"
+            "text": "${quantiles_origin_ttfb_50}",
+            "value": "${quantiles_origin_ttfb_50}"
           },
           "hide": 2,
           "name": "quantiles_origin_ttfb_50",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
-              "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}"
+              "text": "${quantiles_origin_ttfb_50}",
+              "value": "${quantiles_origin_ttfb_50}"
             }
           ],
-          "query": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
+          "query": "${quantiles_origin_ttfb_50}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}"
+            "text": "${quantiles_origin_ttfb_95}",
+            "value": "${quantiles_origin_ttfb_95}"
           },
           "hide": 2,
           "name": "quantiles_origin_ttfb_95",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
-              "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}"
+              "text": "${quantiles_origin_ttfb_95}",
+              "value": "${quantiles_origin_ttfb_95}"
             }
           ],
-          "query": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
+          "query": "${quantiles_origin_ttfb_95}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}"
+            "text": "${quantiles_origin_ttlb_50}",
+            "value": "${quantiles_origin_ttlb_50}"
           },
           "hide": 2,
           "name": "quantiles_origin_ttlb_50",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
-              "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}"
+              "text": "${quantiles_origin_ttlb_50}",
+              "value": "${quantiles_origin_ttlb_50}"
             }
           ],
-          "query": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
+          "query": "${quantiles_origin_ttlb_50}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}"
+            "text": "${quantiles_origin_ttlb_95}",
+            "value": "${quantiles_origin_ttlb_95}"
           },
           "hide": 2,
           "name": "quantiles_origin_ttlb_95",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
-              "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}"
+              "text": "${quantiles_origin_ttlb_95}",
+              "value": "${quantiles_origin_ttlb_95}"
             }
           ],
-          "query": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
+          "query": "${quantiles_origin_ttlb_95}",
           "skipUrlSync": true,
           "type": "constant"
         },
