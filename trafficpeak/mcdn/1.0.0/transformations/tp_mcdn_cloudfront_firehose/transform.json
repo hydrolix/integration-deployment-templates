@@ -1,0 +1,514 @@
+{
+  "created": "2025-12-02T22:32:57.551418Z",
+  "description": "Version v1.0",
+  "modified": "2025-12-02T22:32:57.551432Z",
+  "name": "mcdn_cloudfront_fireshose_v3",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "is_default": false,
+    "null_values": [],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "s",
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_input_field": "data.timestamp"
+          },
+          "suppress": false,
+          "type": "epoch"
+        },
+        "name": "reqTimeSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-result-type"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cacheStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-bytes"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "totalBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-status"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "statusCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-to-first-byte"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "timeToFirstByte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-taken"
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "response_time_to_last_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "transferTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-content-type"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "response_content_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-method"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqMethod"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-host-header"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqHost"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-query"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "queryStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(Referer)"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-stem"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqPath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(User-Agent)"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "user_agent_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-ip"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cliIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "s-ip"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-fbl"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "Origin_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-lbl"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "Origin_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-country"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-location"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "edge_pop"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "origin_time_to_last_byte_ms"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency_sec"
+      },
+      {
+        "datatype": {
+          "default": "CloudFront",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": "CloudFront FH multi cdn",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "unknown"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": [
+      {
+        "records": [
+          {
+            "data": "ewogICJ4LWVkZ2UtbG9jYXRpb24iOiAiU0ZPNTMtUDkiLAogICJzYy1ieXRlcyI6ICI5OTI2MCIsCiAgImMtaXAiOiAiMjYwMToyMDY6ODEwMDoyYzpjODM3OjUxYzc6Y2RjZDplOTYxIiwKICAiY3MtbWV0aG9kIjogIkdFVCIsCiAgImNzKEhvc3QpIjogImQzbWU3dzU1ZDRmZmJjLmNsb3VkZnJvbnQubmV0IiwKICAiY3MtdXJpLXN0ZW0iOiAiL21lZGlhL3NlZ21lbnRfMTkyMHAxMDgwXzEyOS50cyIsCiAgInNjLXN0YXR1cyI6ICIyMDYiLAogICJjcyhSZWZlcmVyKSI6ICJodHRwczovL2JiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzLyIsCiAgImNzKFVzZXItQWdlbnQpIjogIk1vemlsbGEvNS4wJTIwKE1hY2ludG9zaDslMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzcpJTIwQXBwbGVXZWJLaXQvNTM3LjM2JTIwKEtIVE1MLCUyMGxpa2UlMjBHZWNrbyklMjBDaHJvbWUvMTQyLjAuMC4wJTIwU2FmYXJpLzUzNy4zNiIsCiAgImNzLXVyaS1xdWVyeSI6ICItIiwKICAiY3MoQ29va2llKSI6ICItIiwKICAieC1lZGdlLXJlc3VsdC10eXBlIjogIkVycm9yIiwKICAieC1lZGdlLXJlcXVlc3QtaWQiOiAiSUhMSEdiZ2JGbHpOd1A4OVhCWE9rVjBQZ1FHVmZNdTRUM2Q5cmVGR0RCWjFoaHd2ajRnc1R3PT0iLAogICJ4LWhvc3QtaGVhZGVyIjogImJiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzIiwKICAiY3MtcHJvdG9jb2wiOiAiaHR0cHMiLAogICJjcy1ieXRlcyI6ICI0OSIsCiAgInRpbWUtdGFrZW4iOiAiMC40MTAiLAogICJ4LWZvcndhcmRlZC1mb3IiOiAiLSIsCiAgInNzbC1wcm90b2NvbCI6ICJUTFN2MS4zIiwKICAic3NsLWNpcGhlciI6ICJUTFNfQUVTXzEyOF9HQ01fU0hBMjU2IiwKICAieC1lZGdlLXJlc3BvbnNlLXJlc3VsdC10eXBlIjogIk1pc3MiLAogICJjcy1wcm90b2NvbC12ZXJzaW9uIjogIkhUVFAvMi4wIiwKICAiZmxlLXN0YXR1cyI6ICItIiwKICAiZmxlLWVuY3J5cHRlZC1maWVsZHMiOiAiLSIsCiAgImMtcG9ydCI6ICI1ODA2MCIsCiAgInRpbWUtdG8tZmlyc3QtYnl0ZSI6ICIwLjIzOSIsCiAgIngtZWRnZS1kZXRhaWxlZC1yZXN1bHQtdHlwZSI6ICJDbGllbnRDb21tRXJyb3IiLAogICJzYy1jb250ZW50LXR5cGUiOiAidmlkZW8vbXAydCIsCiAgInNjLWNvbnRlbnQtbGVuIjogIjI4MjcxNDQiLAogICJzYy1yYW5nZS1zdGFydCI6ICIwIiwKICAic2MtcmFuZ2UtZW5kIjogIjI4MjcxNDMiLAogICJ0aW1lc3RhbXAiOiAiMTc2MzQ5MzgxMCIsCiAgImMtY291bnRyeSI6ICJVUyIKfQo="
+          }
+        ],
+        "requestId": "f578af01-027d-4174-8c1b-e85b45809992",
+        "timestamp": 1759940715104
+      }
+    ],
+    "shadow_table": null,
+    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency_sec,\nakamai_breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\nIF(isIPv6String(assumeNotNull(cliIP)), \n   NULLIF(toString(dictGet('akamai_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNumOrDefault(assumeNotNull(cliIP)))), '0'), \n   NULLIF(toString(dictGet('akamai_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4OrDefault(cliIP))), '0')) AS Edge_GeoInfo,\nakamai_city_name(cliIP) as city,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "wurfl": null
+  },
+  "type": "json"
+}
