@@ -1,6 +1,6 @@
 {
   "description": "Version v1.0",
-  "name": "mcdn_cloudfront_fireshose_v3",
+  "name": "tp_mcdn_fastly",
   "settings": {
     "compression": "",
     "format_details": {
@@ -18,25 +18,26 @@
       }
     },
     "is_default": false,
-    "null_values": [],
+    "null_values": [
+      "-1",
+      "(null)"
+    ],
     "output_columns": [
       {
         "datatype": {
           "default": null,
-          "format": "s",
-          "ignore": false,
+          "format": "2006-01-02T15:04:05",
           "index": false,
-          "index_options": {
-            "fulltext": false
-          },
           "primary": true,
           "resolution": "ms",
           "script": null,
           "source": {
-            "from_input_field": "data.timestamp"
+            "from_json_pointers": [
+              "/timestamp"
+            ]
           },
           "suppress": false,
-          "type": "epoch"
+          "type": "datetime"
         },
         "name": "reqTimeSec"
       },
@@ -48,7 +49,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "x-edge-result-type"
+            "from_input_field": "result_type"
           },
           "suppress": true,
           "type": "string"
@@ -63,7 +64,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_json_pointers": [
+              "/cache_was_cached"
+            ]
           },
           "suppress": false,
           "type": "boolean"
@@ -78,7 +81,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sc-bytes"
+            "from_json_pointers": [
+              "/response_total_bytes"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -93,7 +98,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sc-status"
+            "from_json_pointers": [
+              "/response_status_code"
+            ]
           },
           "suppress": false,
           "type": "uint32"
@@ -104,11 +111,30 @@
         "datatype": {
           "default": null,
           "format": null,
+          "ignore": false,
+          "index": false,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/response_time_to_first_byte"
+            ]
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "response_time_to_first_byte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
           "index": true,
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "time-to-first-byte"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "uint64"
@@ -119,11 +145,15 @@
         "datatype": {
           "default": null,
           "format": null,
+          "ignore": false,
           "index": false,
+          "primary": false,
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "time-taken"
+            "from_json_pointers": [
+              "/response_time_to_last_byte"
+            ]
           },
           "suppress": true,
           "type": "double"
@@ -153,7 +183,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sc-content-type"
+            "from_json_pointers": [
+              "/response_content_type"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -168,7 +200,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "cs-method"
+            "from_json_pointers": [
+              "/request_method"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -183,7 +217,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "x-host-header"
+            "from_json_pointers": [
+              "/request_host"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -198,7 +234,7 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "cs-uri-query"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "string"
@@ -213,7 +249,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "cs(Referer)"
+            "from_json_pointers": [
+              "/request_referer"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -228,12 +266,14 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "cs-uri-stem"
+            "from_json_pointers": [
+              "/original_url"
+            ]
           },
-          "suppress": false,
+          "suppress": true,
           "type": "string"
         },
-        "name": "reqPath"
+        "name": "original_url"
       },
       {
         "datatype": {
@@ -243,12 +283,12 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "cs(User-Agent)"
+            "from_input_field": "sql_transform"
           },
           "suppress": false,
           "type": "string"
         },
-        "name": "UA"
+        "name": "reqPath"
       },
       {
         "datatype": {
@@ -273,7 +313,26 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "c-ip"
+            "from_json_pointers": [
+              "/user_agent"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/client_ip"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -288,7 +347,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "s-ip"
+            "from_json_pointers": [
+              "/edge_ip"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -302,7 +363,11 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": null,
+          "source": {
+            "from_json_pointers": [
+              "/origin_ip"
+            ]
+          },
           "suppress": false,
           "type": "string"
         },
@@ -316,7 +381,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "origin-fbl"
+            "from_json_pointers": [
+              "/origin_time_to_first_byte_ms"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -331,7 +398,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "origin-lbl"
+            "from_json_pointers": [
+              "/origin_time_to_last_byte_ms"
+            ]
           },
           "suppress": false,
           "type": "uint64"
@@ -346,7 +415,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "c-country"
+            "from_json_pointers": [
+              "/client_country_iso_code"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -361,7 +432,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_json_pointers": [
+              "/client_city"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -376,7 +449,9 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "sql_transform"
+            "from_json_pointers": [
+              "/client_asn"
+            ]
           },
           "suppress": false,
           "type": "string"
@@ -391,12 +466,29 @@
           "resolution": null,
           "script": null,
           "source": {
-            "from_input_field": "x-edge-location"
+            "from_json_pointers": [
+              "/edge_pop"
+            ]
           },
           "suppress": false,
           "type": "string"
         },
         "name": "edge_pop"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "origin_time_to_first_byte_ms"
       },
       {
         "datatype": {
@@ -420,6 +512,19 @@
           "index": true,
           "resolution": null,
           "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
           "source": {
             "from_input_field": "sql_transform"
           },
@@ -430,7 +535,7 @@
       },
       {
         "datatype": {
-          "default": "CloudFront",
+          "default": "Fastly",
           "format": null,
           "index": true,
           "resolution": null,
@@ -443,7 +548,7 @@
       },
       {
         "datatype": {
-          "default": "CloudFront FH multi cdn",
+          "default": "Fastly TP multi cdn",
           "format": null,
           "index": true,
           "resolution": null,
@@ -453,19 +558,6 @@
           "type": "string"
         },
         "name": "hdx_transform"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "breadcrumbs"
       },
       {
         "datatype": {
@@ -493,17 +585,7 @@
       }
     ],
     "rate_limit": null,
-    "sample_data": {
-      "records": [
-        {
-          "data": "ewogICJ4LWVkZ2UtbG9jYXRpb24iOiAiU0ZPNTMtUDkiLAogICJzYy1ieXRlcyI6ICI5OTI2MCIsCiAgImMtaXAiOiAiMjYwMToyMDY6ODEwMDoyYzpjODM3OjUxYzc6Y2RjZDplOTYxIiwKICAiY3MtbWV0aG9kIjogIkdFVCIsCiAgImNzKEhvc3QpIjogImQzbWU3dzU1ZDRmZmJjLmNsb3VkZnJvbnQubmV0IiwKICAiY3MtdXJpLXN0ZW0iOiAiL21lZGlhL3NlZ21lbnRfMTkyMHAxMDgwXzEyOS50cyIsCiAgInNjLXN0YXR1cyI6ICIyMDYiLAogICJjcyhSZWZlcmVyKSI6ICJodHRwczovL2JiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzLyIsCiAgImNzKFVzZXItQWdlbnQpIjogIk1vemlsbGEvNS4wJTIwKE1hY2ludG9zaDslMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzcpJTIwQXBwbGVXZWJLaXQvNTM3LjM2JTIwKEtIVE1MLCUyMGxpa2UlMjBHZWNrbyklMjBDaHJvbWUvMTQyLjAuMC4wJTIwU2FmYXJpLzUzNy4zNiIsCiAgImNzLXVyaS1xdWVyeSI6ICItIiwKICAiY3MoQ29va2llKSI6ICItIiwKICAieC1lZGdlLXJlc3VsdC10eXBlIjogIkVycm9yIiwKICAieC1lZGdlLXJlcXVlc3QtaWQiOiAiSUhMSEdiZ2JGbHpOd1A4OVhCWE9rVjBQZ1FHVmZNdTRUM2Q5cmVGR0RCWjFoaHd2ajRnc1R3PT0iLAogICJ4LWhvc3QtaGVhZGVyIjogImJiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzIiwKICAiY3MtcHJvdG9jb2wiOiAiaHR0cHMiLAogICJjcy1ieXRlcyI6ICI0OSIsCiAgInRpbWUtdGFrZW4iOiAiMC40MTAiLAogICJ4LWZvcndhcmRlZC1mb3IiOiAiLSIsCiAgInNzbC1wcm90b2NvbCI6ICJUTFN2MS4zIiwKICAic3NsLWNpcGhlciI6ICJUTFNfQUVTXzEyOF9HQ01fU0hBMjU2IiwKICAieC1lZGdlLXJlc3BvbnNlLXJlc3VsdC10eXBlIjogIk1pc3MiLAogICJjcy1wcm90b2NvbC12ZXJzaW9uIjogIkhUVFAvMi4wIiwKICAiZmxlLXN0YXR1cyI6ICItIiwKICAiZmxlLWVuY3J5cHRlZC1maWVsZHMiOiAiLSIsCiAgImMtcG9ydCI6ICI1ODA2MCIsCiAgInRpbWUtdG8tZmlyc3QtYnl0ZSI6ICIwLjIzOSIsCiAgIngtZWRnZS1kZXRhaWxlZC1yZXN1bHQtdHlwZSI6ICJDbGllbnRDb21tRXJyb3IiLAogICJzYy1jb250ZW50LXR5cGUiOiAidmlkZW8vbXAydCIsCiAgInNjLWNvbnRlbnQtbGVuIjogIjI4MjcxNDQiLAogICJzYy1yYW5nZS1zdGFydCI6ICIwIiwKICAic2MtcmFuZ2UtZW5kIjogIjI4MjcxNDMiLAogICJ0aW1lc3RhbXAiOiAiMTc2MzQ5MzgxMCIsCiAgImMtY291bnRyeSI6ICJVUyIKfQo="
-        }
-      ],
-      "requestId": "f578af01-027d-4174-8c1b-e85b45809992",
-      "timestamp": 1759940715104
-    },
     "shadow_table": null,
-    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency_sec,\nakamai_breadcrumbs(breadcrumbs, '(\\\\[[^[]*c=o[^]]*\\\\])', 'k=([^,\\\\]]+)') as origin_time_to_last_byte_ms,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\nIF(isIPv6String(assumeNotNull(cliIP)), \n   NULLIF(toString(dictGet('akamai_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNumOrDefault(assumeNotNull(cliIP)))), '0'), \n   NULLIF(toString(dictGet('akamai_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4OrDefault(cliIP))), '0')) AS Edge_GeoInfo,\nakamai_city_name(cliIP) as city,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\n * \nFROM {STREAM}",
     "wurfl": null
   },
   "type": "json"
