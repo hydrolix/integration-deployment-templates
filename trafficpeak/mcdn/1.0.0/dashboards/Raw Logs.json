@@ -126,38 +126,38 @@
         {
           "current": {
             "selected": false,
-            "text": "${table}",
-            "value": "${table}"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
           "name": "table",
           "options": [
             {
               "selected": false,
-              "text": "${table}",
-              "value": "${table}"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ],
-          "query": "${table}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${timestamp}",
-            "value": "${timestamp}"
+            "text": "reqTimeSec",
+            "value": "reqTimeSec"
           },
           "hide": 2,
           "name": "timestamp",
           "options": [
             {
               "selected": false,
-              "text": "${timestamp}",
-              "value": "${timestamp}"
+              "text": "reqTimeSec",
+              "value": "reqTimeSec"
             }
           ],
-          "query": "${timestamp}",
+          "query": "reqTimeSec",
           "skipUrlSync": true,
           "type": "constant"
         },
