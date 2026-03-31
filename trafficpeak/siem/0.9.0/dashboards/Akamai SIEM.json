@@ -196,7 +196,7 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "rawSql": "SELECT $__timeInterval(reqTimeSec) as time,\ncount() as total\nFROM ${logs}\nWHERE $__timeFilter(reqTimeSec)\nAND $__conditionalAll( statusCode IN (${status:sqlstring}), $status)\nAND $__conditionalAll( reqHost IN (${host:sqlstring}), $host)\nAND $__conditionalAll( reqMethod IN (${method:sqlstring}), $method)\nAND $__conditionalAll( reqPath IN (${path:sqlstring}), $path)\nAND $__conditionalAll( cliIP IN (${clientIP:sqlstring}), $clientIP)\nAND $__conditionalAll( country IN (${country:sqlstring}), $country)\nGROUP BY time ORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Traffic vs SIEM Traffic; du=${__user.login}'",
+            "rawSql": "SELECT $__timeInterval(timestamp) as time,\ncount() as total\nFROM ${logs}\nWHERE $__timeFilter(timestamp)\nAND $__conditionalAll( statusCode IN (${status:sqlstring}), $status)\nAND $__conditionalAll( reqHost IN (${host:sqlstring}), $host)\nAND $__conditionalAll( reqMethod IN (${method:sqlstring}), $method)\nAND $__conditionalAll( reqPath IN (${path:sqlstring}), $path)\nAND $__conditionalAll( cliIP IN (${clientIP:sqlstring}), $clientIP)\nAND $__conditionalAll( country IN (${country:sqlstring}), $country)\nGROUP BY time ORDER BY time\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Traffic vs SIEM Traffic; du=${__user.login}'",
             "refId": "logs"
           },
           {
