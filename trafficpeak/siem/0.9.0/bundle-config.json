@@ -1,6 +1,6 @@
 {
   "data_category": "security",
-  "folder": "Security",
+  "folder": "security",
   "table_name": "siem",
   "version": "0.9.0"
 }
