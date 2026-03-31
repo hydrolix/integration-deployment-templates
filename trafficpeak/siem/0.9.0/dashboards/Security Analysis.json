@@ -3199,38 +3199,38 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_TABLE}",
-            "value": "${VAR_TABLE}"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
           "name": "table",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_TABLE}",
-              "value": "${VAR_TABLE}"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ],
-          "query": "${VAR_TABLE}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_TIMESTAMP}",
-            "value": "${VAR_TIMESTAMP}"
+            "text": "timestamp",
+            "value": "timestamp"
           },
           "hide": 2,
           "name": "timestamp",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_TIMESTAMP}",
-              "value": "${VAR_TIMESTAMP}"
+              "text": "timestamp",
+              "value": "timestamp"
             }
           ],
-          "query": "${VAR_TIMESTAMP}",
+          "query": "timestamp",
           "skipUrlSync": true,
           "type": "constant"
         },
