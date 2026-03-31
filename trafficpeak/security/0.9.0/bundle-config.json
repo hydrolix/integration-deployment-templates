@@ -1,5 +1,6 @@
 {
     "data_category": "security",
     "table_name": "logs",
-    "version": "0.9.0"
+    "version": "0.9.0",
+    "folder": "Security"
 }
