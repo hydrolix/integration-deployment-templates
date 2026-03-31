@@ -10,33 +10,33 @@
     },
     "__requires": [
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.2.3"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.7.0"
       },
       {
-        "type": "panel",
         "id": "logs",
         "name": "Logs",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "table",
         "name": "Table",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -276,42 +276,42 @@
     "templating": {
       "list": [
         {
+          "current": {
+            "selected": false,
+            "text": "${VAR_TABLE}",
+            "value": "${VAR_TABLE}"
+          },
           "hide": 2,
           "name": "table",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_TABLE}",
+              "value": "${VAR_TABLE}"
+            }
+          ],
           "query": "${VAR_TABLE}",
           "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "value": "${VAR_TABLE}",
-            "text": "${VAR_TABLE}",
-            "selected": false
-          },
-          "options": [
-            {
-              "value": "${VAR_TABLE}",
-              "text": "${VAR_TABLE}",
-              "selected": false
-            }
-          ]
+          "type": "constant"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "${VAR_TIMESTAMP}",
+            "value": "${VAR_TIMESTAMP}"
+          },
           "hide": 2,
           "name": "timestamp",
-          "query": "${VAR_TIMESTAMP}",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "value": "${VAR_TIMESTAMP}",
-            "text": "${VAR_TIMESTAMP}",
-            "selected": false
-          },
           "options": [
             {
-              "value": "${VAR_TIMESTAMP}",
+              "selected": false,
               "text": "${VAR_TIMESTAMP}",
-              "selected": false
+              "value": "${VAR_TIMESTAMP}"
             }
-          ]
+          ],
+          "query": "${VAR_TIMESTAMP}",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {},
