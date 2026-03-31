@@ -5,7 +5,22 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP
+from .constants import CHANNEL_TYPE_MAP, PREFIX_MAP, VALID_FOLDERS, VALID_SUBFOLDERS
+
+SEMVER_RE = re.compile(r'^\d+\.\d+\.\d+$')
+
+def is_semver(s: str) -> bool:
+    """Check if a string is a semver version (e.g., '1.0.0')."""
+    return bool(SEMVER_RE.match(s))
+
+
+def looks_like_version(s: str) -> bool:
+    """Check if a string looks like a version but isn't strict X.Y.Z semver.
+
+    Catches names like '1.0.0-beta', '1.0', '2.0.0rc1' that start with
+    digits+dot but aren't valid semver.
+    """
+    return bool(re.match(r'^\d+\.', s)) and not is_semver(s)
 
 
 @dataclass
@@ -26,6 +41,8 @@ class BundleConfig:
     beta: bool = True
     verbose: bool = False
     dry_run: bool = False
+    folder: str = ""
+    subfolder: str = ""
 
     def __post_init__(self):
         # Normalize bundle_dir to absolute path
@@ -52,8 +69,24 @@ class BundleConfig:
             self.description = f"{source_title} {bundle_title} Integration"
 
     def _infer_source_name(self):
-        """Infer source name from directory path."""
+        """Infer source name from directory path.
+
+        Handles folder/subfolder nesting:
+          source/bundle                       → source
+          source/folder/bundle                → source
+          source/folder/subfolder/bundle      → source
+          (same patterns with trailing version)
+        """
         parts = self.bundle_dir.rstrip("/").split("/")
+        if parts and is_semver(parts[-1]):
+            parts = parts[:-1]
+        # source/folder/subfolder/bundle
+        if len(parts) >= 4 and parts[-2] in VALID_SUBFOLDERS.get(parts[-3], ()):
+            return parts[-4]
+        # source/folder/bundle
+        if len(parts) >= 3 and parts[-2] in VALID_FOLDERS:
+            return parts[-3]
+        # source/bundle (legacy)
         if len(parts) >= 2:
             return parts[-2]
         return "unknown"
@@ -61,9 +94,9 @@ class BundleConfig:
     def _infer_bundle_name(self):
         """Infer bundle name from directory path."""
         parts = self.bundle_dir.rstrip("/").split("/")
-        if parts:
-            return parts[-1]
-        return "unknown"
+        if parts and is_semver(parts[-1]):
+            parts = parts[:-1]
+        return parts[-1] if parts else "unknown"
 
     @property
     def correct_prefix(self):
@@ -78,6 +111,12 @@ class BundleConfig:
     @property
     def base_url(self):
         """Generate the base_url for bundle.json."""
+        parts = self.bundle_dir.rstrip("/").split("/")
+        if is_semver(parts[-1]):
+            return (
+                f"https://github.com/hydrolix/integration-deployment-templates"
+                f"/blob/main/{self.source_name}/{self.bundle_name}/{self.version}"
+            )
         return (
             f"https://github.com/hydrolix/integration-deployment-templates"
             f"/blob/main/{self.source_name}/{self.bundle_name}"
