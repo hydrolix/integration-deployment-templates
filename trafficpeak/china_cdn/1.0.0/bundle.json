@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/china_cdn",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/china_cdn/1.0.0",
   "beta": true,
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
