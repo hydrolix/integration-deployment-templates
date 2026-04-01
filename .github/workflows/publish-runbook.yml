@@ -43,7 +43,7 @@ jobs:
               exit 1
             fi
 
-            DIRS_JSON=$(echo "$BUNDLE_PATH" | jq -R -s -c '[.]')
+            DIRS_JSON=$(echo -n "$BUNDLE_PATH" | jq -R -s -c '[.]')
             echo "bundle_dirs=$DIRS_JSON" >> $GITHUB_OUTPUT
             echo "has_bundles=true" >> $GITHUB_OUTPUT
             echo "Manual trigger for: $BUNDLE_PATH"
