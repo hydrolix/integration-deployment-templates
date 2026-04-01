@@ -1,11 +1,17 @@
 folders:
   hdx-main-folder:
     name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-cdn-folder:
+        name: CDN
+        children:
+          hdx-mcdn-folder:
+            name: Multi-CDN
 dashboards:
   hdx-cdn-global-view:
     dashboard:
       __extend__: dashboards/cdn_global_view.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-mcdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_SUMMARY_MIN: PROJECT.multi_summary_min
@@ -16,7 +22,7 @@ dashboards:
   hdx-raw-logs:
     dashboard:
       __extend__: dashboards/raw_logs.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-mcdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: PROJECT.cdn
@@ -24,7 +30,7 @@ dashboards:
   hdx-cdn-dashboard-default:
     dashboard:
       __extend__: dashboards/cdn_dashboard_default.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-mcdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_SUMMARY_MIN: PROJECT.multi_summary_min
