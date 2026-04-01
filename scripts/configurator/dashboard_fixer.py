@@ -138,7 +138,7 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
         query = var.get("query", "")
 
         # Check if this is a summary reference via ${VAR_*} pattern
-        var_ref_match = re.match(r"^\$\{(VAR_[A-Z_]+)\}$", query)
+        var_ref_match = re.match(r"^\$\{(VAR_[A-Z0-9_]+)\}$", query)
 
         if var_name == "raw_table":
             has_raw_table = True
@@ -161,8 +161,30 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
             continue
 
         if var_ref_match and var_type == "constant":
-            # This is a summary variable reference like ${VAR_SUMMARY_HOUR}
             var_ref_name = var_ref_match.group(1)
+
+            # Check if self-referencing: e.g. variable "table" with query "${VAR_TABLE}"
+            stripped_name = var_ref_name[4:]  # Remove "VAR_" prefix
+            if stripped_name.upper() == var_name.upper():
+                # Self-referencing VAR_* constant — resolve to table placeholder
+                # (timestamp is excluded here; handled separately in LOTC-1303)
+                if var_name.lower() != "timestamp":
+                    table_value = "__PROJECT_NAME__.__TABLE_NAME__"
+                    var["query"] = table_value
+                    var["current"] = {
+                        "selected": False,
+                        "text": table_value,
+                        "value": table_value,
+                    }
+                    var["options"] = [{
+                        "selected": False,
+                        "text": table_value,
+                        "value": table_value,
+                    }]
+                new_var_list.append(var)
+                continue
+
+            # This is a summary variable reference like ${VAR_SUMMARY_HOUR}
             label = inputs_map.get(var_ref_name, var_name)
 
             # Find matching summary by label/name
