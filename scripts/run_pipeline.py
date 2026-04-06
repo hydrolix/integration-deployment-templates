@@ -243,10 +243,6 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
-    if not args.folder:
-        args.folder = data.get("folder", "")
-    if not args.subfolder:
-        args.subfolder = data.get("subfolder", "")
     if args.version == "1.0.0":
         # Only override if still at default — config or path-based version takes precedence
         config_version = data.get("version", "")

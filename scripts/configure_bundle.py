@@ -340,8 +340,8 @@ def _build_config_from_dict(data, args):
         beta=beta,
         verbose=args.verbose or data.get("verbose", False),
         dry_run=args.dry_run or data.get("dry_run", False),
-        folder=args.folder or data.get("folder", ""),
-        subfolder=args.subfolder or data.get("subfolder", ""),
+        folder=args.folder,
+        subfolder=args.subfolder,
     )
 
 

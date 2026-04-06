@@ -37,41 +37,28 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
-from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS
+from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS, DATA_CATEGORY_FOLDER_MAP
 
 
-def _folder_from_bundle_json(source_path: Path) -> list:
-    """Read Grafana folder/subfolder from bundle.json ui.folder and ui.subfolder.
+def _folder_from_data_category(source_path: Path) -> list:
+    """Derive Grafana folder from data_category in bundle-config.json.
 
-    Returns ordered segments used to build the nested folder hierarchy
-    in resources.gfo.yaml, e.g. ['security'] or ['security', 'bots'].
-    Returns [] if no valid folder is declared.
-
-    bundle.json fields:
-        ui.folder    — one of: api-context, cdn, dns, media, security
-        ui.subfolder — optional, e.g. bots, ds2, siem (under security)
+    Maps data_category to its Grafana folder using DATA_CATEGORY_FOLDER_MAP.
+    Returns [] if bundle-config.json is absent or data_category is unrecognised.
     """
-    bundle_json = source_path / "bundle.json"
-    if not bundle_json.exists():
+    config = source_path / "bundle-config.json"
+    if not config.exists():
         return []
 
     try:
-        with open(bundle_json, "r", encoding="utf-8") as f:
-            bundle = json.load(f)
+        with open(config, "r", encoding="utf-8") as f:
+            data = json.load(f)
     except (json.JSONDecodeError, IOError):
         return []
 
-    ui = bundle.get("ui", {})
-    folder = ui.get("folder", "")
-    subfolder = ui.get("subfolder", "")
-
-    if not folder or folder not in VALID_FOLDERS:
-        return []
-
-    if subfolder and subfolder in VALID_SUBFOLDERS.get(folder, ()):
-        return [folder, subfolder]
-
-    return [folder]
+    category = data.get("data_category", "")
+    folder = DATA_CATEGORY_FOLDER_MAP.get(category, "")
+    return [folder] if folder else []
 
 
 def auto_detect_from_path(source_path: str):
@@ -235,7 +222,7 @@ def main():
         subfolder = args.subfolder if args.subfolder and args.subfolder in VALID_SUBFOLDERS.get(folder, ()) else ""
         folder_segments = [folder, subfolder] if subfolder else [folder]
     else:
-        folder_segments = _folder_from_bundle_json(source_path)
+        folder_segments = _folder_from_data_category(source_path)
     folder_path = folder_segments
 
     if args.output:
