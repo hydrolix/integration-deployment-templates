@@ -85,51 +85,16 @@ jobs:
             exit 0
           fi
 
-          # Version freeze check: block modifications to non-latest version folders
-          FREEZE_ERRORS=""
-          while IFS= read -r changed_file; do
-            # Extract version segment (3rd path component) if it matches X.Y.Z
-            VERSION_SEG=$(echo "$changed_file" | cut -d'/' -f3)
-            if ! echo "$VERSION_SEG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-              continue
-            fi
-
-            # Determine the bundle parent dir (first two path components)
-            BUNDLE_PARENT=$(echo "$changed_file" | cut -d'/' -f1-2)
-
-            # Find the latest version folder under the bundle parent
-            LATEST_VER=$(ls -d "${BUNDLE_PARENT}"/[0-9]*.* 2>/dev/null | sort -V | tail -1 | xargs basename 2>/dev/null)
-            if [ -z "$LATEST_VER" ]; then
-              continue
-            fi
-
-            # If the changed version is NOT the latest, it's frozen
-            if [ "$VERSION_SEG" != "$LATEST_VER" ]; then
-              FREEZE_ERRORS="${FREEZE_ERRORS}\n  - ${changed_file} (version ${VERSION_SEG} is frozen; latest is ${LATEST_VER})"
-            fi
-          done <<< "$(echo "$ALL_PR_FILES" | grep -E '^(aws|trafficpeak)/')"
-
-          if [ -n "$FREEZE_ERRORS" ]; then
-            echo "::error::Version freeze violation: the following files modify frozen (non-latest) version folders:"
-            echo -e "$FREEZE_ERRORS"
-            echo ""
-            echo "Only the latest version folder for each bundle may be modified."
-            echo "To fix: move your changes to the latest version folder, or create a new version."
-            exit 1
-          fi
-
           FULL_DIRS=""
           VALIDATE_DIRS=""
 
           while IFS= read -r dir; do
             [ -z "$dir" ] && continue
 
-            # Resolve the actual bundle dir (flat or versioned)
+            # Resolve the bundle dir (flat structure)
             BUNDLE_DIR=""
             if [ -f "$dir/bundle-config.json" ]; then
               BUNDLE_DIR="$dir"
-            elif LATEST_VER=$(ls -d "$dir"/[0-9]*.* 2>/dev/null | sort -V | tail -1) && [ -f "$LATEST_VER/bundle-config.json" ]; then
-              BUNDLE_DIR="$LATEST_VER"
             fi
 
             # Use detect_track.py to determine which track this bundle should run on
