@@ -51,7 +51,6 @@
     }
   ],
   "ui": {
-    "folder": "security",
     "data_category": "security",
     "method": {
       "full_title": "Http Streaming",
