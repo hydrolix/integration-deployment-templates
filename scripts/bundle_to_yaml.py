@@ -44,20 +44,37 @@ def _folder_from_data_category(source_path: Path) -> list:
     """Derive Grafana folder from data_category in bundle-config.json.
 
     Maps data_category to its Grafana folder using DATA_CATEGORY_FOLDER_MAP.
-    Returns [] if bundle-config.json is absent or data_category is unrecognised.
+    Returns [] if bundle-config.json is absent or data_category is unrecognised,
+    and prints a warning so operators know dashboards will land at the root folder.
     """
     config = source_path / "bundle-config.json"
     if not config.exists():
+        print(
+            f"  Warning: bundle-config.json not found at {config} — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
         return []
 
     try:
         with open(config, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except (json.JSONDecodeError, IOError):
+    except (json.JSONDecodeError, IOError) as e:
+        print(
+            f"  Warning: could not read bundle-config.json ({e}) — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
         return []
 
     category = data.get("data_category", "")
     folder = DATA_CATEGORY_FOLDER_MAP.get(category, "")
+    if not folder:
+        print(
+            f"  Warning: data_category '{category}' is not mapped to a Grafana folder — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
     return [folder] if folder else []
 
 
