@@ -1,6 +1,6 @@
 use crate::models::bundle::Bundle;
 
-pub async fn run(bundle: &Bundle, dir_version: Option<&str>) -> Result<(), String> {
+pub async fn run(bundle: &Bundle) -> Result<(), String> {
     // Check method consistency
     let method = &bundle.method;
     let method_title = &bundle.ui.method.full_title;
@@ -47,19 +47,6 @@ pub async fn run(bundle: &Bundle, dir_version: Option<&str>) -> Result<(), Strin
             file!(),
             line!()
         ));
-    }
-
-    // Check version directory matches bundle metadata version
-    if let Some(dir_ver) = dir_version {
-        if version != dir_ver {
-            return Err(format!(
-                "ERROR: {}.{} Version directory '{}' does not match bundle metadata version '{}'",
-                file!(),
-                line!(),
-                dir_ver,
-                version
-            ));
-        }
     }
 
     // Check maintainer email format
