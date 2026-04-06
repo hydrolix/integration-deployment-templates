@@ -37,7 +37,7 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
-from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS, DATA_CATEGORY_FOLDER_MAP
+from configurator.constants import DATA_CATEGORY_FOLDER_MAP
 
 
 def _folder_from_data_category(source_path: Path) -> list:
@@ -176,16 +176,6 @@ Examples:
     )
 
     parser.add_argument(
-        '--folder',
-        help='Grafana folder (api-context, cdn, dns, media, security)'
-    )
-
-    parser.add_argument(
-        '--subfolder',
-        help='Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)'
-    )
-
-    parser.add_argument(
         '--verbose',
         action='store_true',
         help='Enable verbose output'
@@ -233,13 +223,8 @@ def main():
     repo_root = Path(__file__).parent.parent
     source_path = repo_root / args.source
 
-    # Build folder path first — needed for output path
-    if args.folder and args.folder in VALID_FOLDERS:
-        folder = args.folder
-        subfolder = args.subfolder if args.subfolder and args.subfolder in VALID_SUBFOLDERS.get(folder, ()) else ""
-        folder_segments = [folder, subfolder] if subfolder else [folder]
-    else:
-        folder_segments = _folder_from_data_category(source_path)
+    # Build folder path from data_category in bundle-config.json
+    folder_segments = _folder_from_data_category(source_path)
     folder_path = folder_segments
 
     if args.output:
