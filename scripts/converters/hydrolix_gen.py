@@ -1,9 +1,10 @@
 """Hydrolix resource generator."""
 
+import shutil
 from pathlib import Path
 from typing import List
 
-from utils.models import BundleAssets, Transform
+from utils.models import BundleAssets, Transform, Function, Dictionary
 from utils.yaml_utils import dump_yaml
 import json
 
@@ -31,6 +32,12 @@ class HydrolixGenerator:
         if assets.transforms:
             self._generate_table(hydrolix_dir, table_name, metadata=metadata)
             self._copy_transforms(hydrolix_dir, assets.transforms)
+
+        # Copy function and dictionary definitions
+        if assets.functions:
+            self._copy_functions(hydrolix_dir, assets.functions)
+        if assets.dictionaries:
+            self._copy_dictionaries(hydrolix_dir, assets.dictionaries)
 
         # Generate main resources file
         self._generate_resources_file(hydrolix_dir, assets, table_name)
@@ -106,6 +113,24 @@ class HydrolixGenerator:
             if self.verbose:
                 print(f"  Copied transform: {transform_filename}")
 
+    def _copy_functions(self, hydrolix_dir: Path, functions: List[Function]):
+        """Copy function JSON files to hydrolix/functions/."""
+        functions_dir = hydrolix_dir / "functions"
+        functions_dir.mkdir(parents=True, exist_ok=True)
+        for fn in functions:
+            shutil.copy2(fn.file_path, functions_dir / f"{fn.name}.json")
+            if self.verbose:
+                print(f"  Copied function: {fn.name}.json")
+
+    def _copy_dictionaries(self, hydrolix_dir: Path, dictionaries: List[Dictionary]):
+        """Copy dictionary schema_definition.json files to hydrolix/dictionaries/<name>/."""
+        for d in dictionaries:
+            dest_dir = hydrolix_dir / "dictionaries" / d.name
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(d.file_path, dest_dir / "schema_definition.json")
+            if self.verbose:
+                print(f"  Copied dictionary: {d.name}/schema_definition.json")
+
     def _generate_resources_file(self, hydrolix_dir: Path, assets: BundleAssets, table_name: str):
         """Generate main resources.hdp.yaml file with nested structure."""
         resources = {}
@@ -138,6 +163,20 @@ class HydrolixGenerator:
 
             resources['transforms'] = {
                 table_name: transforms_dict
+            }
+
+        # Add functions section
+        if assets.functions:
+            resources['functions'] = {
+                fn.name: {'__extend__': f'functions/{fn.name}.json'}
+                for fn in assets.functions
+            }
+
+        # Add dictionaries section
+        if assets.dictionaries:
+            resources['dictionaries'] = {
+                d.name: {'__extend__': f'dictionaries/{d.name}/schema_definition.json'}
+                for d in assets.dictionaries
             }
 
         # Write resources file
