@@ -124,7 +124,7 @@ This document describes all valid fields and their validation rules.
 
 ### Validation Rules for Ui
 - `primary_url` must start with `https://` or `file://`
-- `data_category` must be one of: `"video"`, `"cdn"`, `"security"`
+- `data_category` must be one of: `"video"`, `"cdn"`, `"security"`, `"api"`, `"dns"`
 
 ### Grafana Folder Hierarchy
 
@@ -135,6 +135,8 @@ The exported `resources.gfo.yaml` folder hierarchy is derived automatically from
 | `security` | TrafficPeak Certified Reference Dashboards → Security |
 | `cdn` | TrafficPeak Certified Reference Dashboards → CDN |
 | `video` | TrafficPeak Certified Reference Dashboards → Media |
+| `api` | TrafficPeak Certified Reference Dashboards → API Context |
+| `dns` | TrafficPeak Certified Reference Dashboards → DNS |
 | _(not set / unrecognised)_ | TrafficPeak Certified Reference Dashboards (root only) |
 
 ## Graphics Object

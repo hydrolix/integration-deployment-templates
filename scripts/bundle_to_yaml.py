@@ -223,6 +223,18 @@ def main():
     repo_root = Path(__file__).parent.parent
     source_path = repo_root / args.source
 
+    # Auto-detect version from bundle-config.json if using the default
+    if args.version == '1.0.0':
+        config_file = source_path / "bundle-config.json"
+        if config_file.exists():
+            try:
+                with open(config_file, "r", encoding="utf-8") as f:
+                    config_data = json.load(f)
+                if "version" in config_data:
+                    args.version = config_data["version"]
+            except (json.JSONDecodeError, IOError):
+                pass
+
     # Build folder path from data_category in bundle-config.json
     folder_segments = _folder_from_data_category(source_path)
     folder_path = folder_segments
@@ -230,11 +242,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: portables/<folder>/[<subfolder>/]<bundle_name>/<version>
-        portables_base = repo_root / "portables"
-        for segment in folder_segments:
-            portables_base = portables_base / segment
-        output_path = portables_base / sanitize_cac_name(args.bundle_name) / args.version
+        # Default output: portables/<customer_type>/<bundle_name>/<version>
+        output_path = repo_root / "portables" / args.customer_type / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")

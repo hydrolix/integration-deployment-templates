@@ -39,13 +39,15 @@ VALID_METHODS = (
 VALID_CHANNEL_TYPES = ("AWS", "Azure", "GCP", "3rdParty", "Internal")
 
 # Valid data categories
-VALID_DATA_CATEGORIES = ("video", "cdn", "security")
+VALID_DATA_CATEGORIES = ("video", "cdn", "security", "api", "dns")
 
 # Maps data_category to its Grafana folder for CaC bundle export
 DATA_CATEGORY_FOLDER_MAP = {
     "security": "security",
     "cdn":      "cdn",
     "video":    "media",
+    "api":      "api-context",
+    "dns":      "dns",
 }
 
 # Default channel type inference from source path
