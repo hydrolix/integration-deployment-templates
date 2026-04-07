@@ -60,35 +60,33 @@ Organize your assets following the bundle structure. Assets should be placed in 
 
 #### Repository Structure
 
-Assets must be placed inside a **version folder** under your project name. Use [semantic versioning](https://semver.org/) (e.g., `1.0.0`) for the folder name.
+Assets are placed directly under your project name — no version subdirectory.
 
 ```
 integration-deployment-templates/
 ├── aws/
 │   └── your-project-name/
-│       └── 1.0.0/                    ← version folder (required)
-│           ├── bundle-config.json    ← required
-│           ├── dashboards/
-│           ├── dictionaries/
-│           ├── functions/
-│           ├── transformations/
-│           └── summaries/
+│       ├── bundle-config.json    ← required
+│       ├── dashboards/
+│       ├── dictionaries/
+│       ├── functions/
+│       ├── transformations/
+│       └── summaries/
 └── trafficpeak/
     └── your-project-name/
-        └── 1.0.0/                    ← version folder (required)
-            ├── bundle-config.json    ← required
-            ├── dashboards/
-            ├── dictionaries/
-            ├── functions/
-            ├── transformations/
-            └── summaries/
+        ├── bundle-config.json    ← required
+        ├── dashboards/
+        ├── dictionaries/
+        ├── functions/
+        ├── transformations/
+        └── summaries/
 ```
 
-For example, if you're contributing a CloudFlare integration under AWS at version 1.0.0, your assets go in `aws/cloudflare/1.0.0/`.
+For example, if you're contributing a CloudFlare integration under AWS, your assets go in `aws/cloudflare/`.
 
 #### `bundle-config.json` (Required)
 
-Every bundle version directory must include a `bundle-config.json` file. This file is used by CI to automatically format, configure, and validate your bundle when you open a PR.
+Every bundle directory must include a `bundle-config.json` file. This file is used by CI to automatically format, configure, and validate your bundle when you open a PR.
 
 **Required fields:**
 
@@ -104,7 +102,7 @@ Every bundle version directory must include a `bundle-config.json` file. This fi
 |-------|-------------|--------|
 | `table_name` | Primary table name. Letters, digits, and underscores only (no dashes). | e.g., `bot_detection`, `cdn_logs`, `siem_logs` |
 | `data_category` | Type of data the integration handles. | `video`, `cdn`, or `security` |
-| `version` | Bundle version. Must match the version folder name. | e.g., `1.0.0`, `1.1.0`, `2.0.0` |
+| `version` | Bundle version ([semantic versioning](https://semver.org/)). Used for CAC formatting. | e.g., `1.0.0`, `1.1.0`, `2.0.0` |
 
 **Optional fields** (override auto-inferred values):
 
