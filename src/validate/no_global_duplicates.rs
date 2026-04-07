@@ -3,30 +3,24 @@ use std::collections::HashMap;
 use crate::models::bundle::Bundle;
 
 pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
-    // Checking for duplicated bundle names — allow same name only if base_url differs
-    // (which indicates different versions of the same bundle)
+    // Checking for duplicated bundle names
     {
         let mut seen: HashMap<String, String> = HashMap::new(); // name -> base_url
         for b in bundles {
-            if let Some(existing_url) = seen.get(&b.name) {
-                if existing_url == &b.base_url {
-                    return Err(format!(
-                        "ERROR: {}.{} Duplicated-Bundle-Name url={} error={}",
-                        file!(),
-                        line!(),
-                        b.base_url,
-                        b.name,
-                    ));
-                }
-                // Same name but different base_url — different versions, allow it
-            } else {
-                seen.insert(b.name.clone(), b.base_url.clone());
+            if seen.contains_key(&b.name) {
+                return Err(format!(
+                    "ERROR: {}.{} Duplicated-Bundle-Name url={} error={}",
+                    file!(),
+                    line!(),
+                    b.base_url,
+                    b.name,
+                ));
             }
+            seen.insert(b.name.clone(), b.base_url.clone());
         }
     }
 
-    // Checking for duplicated source names in the UI — allow same full_title
-    // only if the bundles share the same name (i.e., same bundle, different versions)
+    // Checking for duplicated source names in the UI
     {
         let mut seen: HashMap<String, String> = HashMap::new(); // full_title -> bundle name
         for b in bundles {
@@ -40,7 +34,6 @@ pub fn run(bundles: &Vec<Bundle>) -> Result<(), String> {
                         b.ui.source.full_title
                     ));
                 }
-                // Same full_title and same bundle name — different versions, allow it
             } else {
                 seen.insert(b.ui.source.full_title.clone(), b.name.clone());
             }
