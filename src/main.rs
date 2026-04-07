@@ -14,6 +14,8 @@ mod validate;
 use crate::models::bundle::Bundle;
 use crate::models::output::Output;
 
+mod flags;
+
 lazy_static! {
     static ref BUNDLE_TESTING_CLUSTER: String =
         std::env::var("BUNDLE_TESTING_CLUSTER").unwrap_or_else(|_| "".to_string());
@@ -55,6 +57,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         #[allow(clippy::needless_range_loop)]
         for i in 1..args.len() {
+            // Skip the argument following --cleanup (it's the project name, not a filter)
+            if i > 1 && args[i - 1] == "--cleanup" {
+                continue;
+            }
             if !args[i].starts_with("--") {
                 value = args[i].to_string();
                 break;
@@ -70,6 +76,68 @@ pub const GRAFANA_LOCATION: &str = "localhost:3000";
 
 #[tokio::main]
 async fn main() {
+    // Parse flags for --guid and --cleanup
+    let args: Vec<String> = std::env::args().collect();
+    let parsed_flags = match flags::Flags::parse(&args) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("ERROR: {e}");
+            std::process::exit(1);
+        }
+    };
+
+    // Handle --cleanup: delete project and exit
+    if let Some(project_name) = &parsed_flags.cleanup_project {
+        println!("Cleaning up project: {}", project_name);
+        let bearer_token = match hdx::auth::get_token().await {
+            Ok(t) => t,
+            Err(e) => {
+                eprintln!("ERROR: Authentication failed: {e}");
+                std::process::exit(1);
+            }
+        };
+        match hdx::delete_project(&bearer_token, project_name).await {
+            Ok(_) => {
+                println!("Successfully deleted project: {}", project_name);
+                std::process::exit(0);
+            }
+            Err(e) => {
+                eprintln!("ERROR: Failed to delete project '{}': {e}", project_name);
+                std::process::exit(1);
+            }
+        }
+    }
+
+    // Handle --guid: create a GUID'd project before validation
+    if parsed_flags.use_guid {
+        let project_name = hdx::generate_guid_project_name();
+        println!("Created test project: {}", project_name);
+
+        let bearer_token = match hdx::auth::get_token().await {
+            Ok(t) => t,
+            Err(e) => {
+                eprintln!("ERROR: Authentication failed: {e}");
+                std::process::exit(1);
+            }
+        };
+
+        let project_uuid = match hdx::create_project(&bearer_token, &project_name).await {
+            Ok(uuid) => {
+                println!("  Project UUID: {}", uuid);
+                uuid
+            }
+            Err(e) => {
+                eprintln!(
+                    "ERROR: Failed to create GUID project '{}': {e}",
+                    project_name
+                );
+                std::process::exit(1);
+            }
+        };
+
+        hdx::set_guid_project(project_name, project_uuid);
+    }
+
     let mut bundles_checked = 0;
 
     let bundle_list = find_bundle_files();
@@ -337,7 +405,7 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     Ok(())
 }
 
-// Update find_bundle_files to handle WIP location
+// Find all bundle.json files in the repo
 fn find_bundle_files() -> Vec<std::path::PathBuf> {
     let search_path = if *SCAN_WIP { "./WIP" } else { "." };
 

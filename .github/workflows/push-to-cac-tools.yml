@@ -3,13 +3,14 @@ name: push-to-cac-tools
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, LOTC-1203-two-track-pipeline]  # TODO: remove feature branch before merging to main
   workflow_dispatch:
 
 jobs:
   bundle-export:
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (!contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci') &&
+       github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
@@ -75,14 +76,18 @@ jobs:
 
           echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
             if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
-              echo "Copying portables/$bundle_name → cac-tools/bundles/$bundle_name/"
+              echo "Copying portables/$bundle_name → cac-tools/data/bundles/$bundle_name/"
 
-              mkdir -p "cac-tools/bundles/$bundle_name"
-              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools/bundles/$bundle_name/"
+              mkdir -p "cac-tools/data/bundles/$bundle_name"
+              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools/data/bundles/$bundle_name/"
 
               echo "✓ Copied $bundle_name"
             fi
           done
+
+      - name: Update latest_versions.yaml
+        if: steps.detect-bundles.outputs.has_changes == 'true'
+        run: python3 integrations-deployment-templates/scripts/update_latest_versions.py cac-tools/data/bundles
 
       - name: Create PR in CAC Repo
         if: steps.detect-bundles.outputs.has_changes == 'true'

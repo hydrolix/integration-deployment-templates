@@ -1,14 +1,39 @@
 name: push-to-cac-tools-test
 
 on:
+  pull_request_review:
+    types: [submitted]
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to run against'
+        required: true
+        type: string
 
 jobs:
   bundle-export:
-    if: github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.review.state == 'approved' &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-bundle-ci'))
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve PR context
+        id: pr-context
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            HEAD_SHA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json headRefOid --jq '.headRefOid')
+          else
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          fi
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - uses: actions/create-github-app-token@v2
         id: app-token
         with:
@@ -19,7 +44,7 @@ jobs:
       - name: Checkout Integrations Repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ steps.pr-context.outputs.head_sha }}
           path: 'integrations-deployment-templates'
           fetch-depth: 0
 
@@ -70,14 +95,18 @@ jobs:
 
           echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
             if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
-              echo "Copying portables/$bundle_name → cac-tools-test/bundles/$bundle_name/"
+              echo "Copying portables/$bundle_name → cac-tools-test/data/bundles/$bundle_name/"
 
-              mkdir -p "cac-tools-test/bundles/$bundle_name"
-              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools-test/bundles/$bundle_name/"
+              mkdir -p "cac-tools-test/data/bundles/$bundle_name"
+              cp -r "integrations-deployment-templates/portables/$bundle_name/"* "cac-tools-test/data/bundles/$bundle_name/"
 
               echo "✓ Copied $bundle_name"
             fi
           done
+
+      - name: Update latest_versions.yaml
+        if: steps.detect-bundles.outputs.has_changes == 'true'
+        run: python3 integrations-deployment-templates/scripts/update_latest_versions.py cac-tools-test/data/bundles
 
       - name: Create PR in CAC Repo
         if: steps.detect-bundles.outputs.has_changes == 'true'
@@ -92,16 +121,32 @@ jobs:
             exit 0
           fi
 
-          PR_NUMBER="run-${{ github.run_id }}"
-          COMMIT_SHA="${{ github.sha }}"
+          PR_NUMBER="${{ steps.pr-context.outputs.pr_number }}"
+          COMMIT_SHA="${{ steps.pr-context.outputs.head_sha }}"
           TRIGGERED_BY="${{ github.actor }}"
           TEST_PREFIX="[TEST] "
 
           BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
 
-          BRANCH_NAME="push-to-cac-tools-test-${PR_NUMBER}-$(date +%s)"
-          git checkout -b "$BRANCH_NAME"
+          BRANCH_NAME="push-to-cac-tools-test-${PR_NUMBER}"
 
+          PR_BODY="## Auto-sync from integration-deployment-templates
+
+          **Synced bundles:**
+          $BUNDLE_LIST
+
+          **Source PR:** #${PR_NUMBER}
+          **Source commit:** \`${COMMIT_SHA}\`
+          **Triggered by:** @${TRIGGERED_BY}
+          **Trigger type:** PR approval
+
+          This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository."
+
+          # Check if an open PR already exists for this branch
+          EXISTING_PR=$(gh pr list --repo hydrolix/cac-tools-test --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty')
+
+          # Create branch from current state (main + freshly copied portables)
+          git checkout -b "$BRANCH_NAME"
           git add .
           git commit -m "${TEST_PREFIX}Push portable bundles from integration-deployment-templates
 
@@ -111,24 +156,26 @@ jobs:
           From PR #${PR_NUMBER}
           Source commit: ${COMMIT_SHA}"
 
-          git push origin "$BRANCH_NAME"
+          # Always force-push — the branch is regenerated from scratch each run
+          git push --force-with-lease origin "$BRANCH_NAME"
 
-          gh pr create \
-            --title "${TEST_PREFIX}Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
-            --body "## Auto-sync from integration-deployment-templates
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Existing PR #${EXISTING_PR} found — updating PR body"
+            gh pr edit "$EXISTING_PR" \
+              --repo hydrolix/cac-tools-test \
+              --body "$PR_BODY"
 
-          **Synced bundles:**
-          $BUNDLE_LIST
+            echo "Successfully updated existing PR #${EXISTING_PR} in CAC repository"
+          else
+            echo "No existing PR — creating new PR"
+            gh pr create \
+              --repo hydrolix/cac-tools-test \
+              --title "${TEST_PREFIX}Sync portable bundles from integration-deployment-templates PR #${PR_NUMBER}" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME"
 
-          **Source PR:** #${PR_NUMBER}
-          **Source commit:** \`${COMMIT_SHA}\`
-          **Triggered by:** @${TRIGGERED_BY}
-          **Trigger type:** ${{ github.event_name }}
-
-          This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
-            --base main \
-            --head "$BRANCH_NAME"
-
-          echo "Successfully created PR in CAC repository"
+            echo "Successfully created PR in CAC repository"
+          fi
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}

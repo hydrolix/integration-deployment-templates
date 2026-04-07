@@ -1,6 +1,4 @@
-use crate::hdx::{
-    BUNDLE_TESTING_CLUSTER, CLIENT, FOR_MARKETPLACE, HTTP_TIMEOUT, ORG_UUID, PROJ_UUID,
-};
+use crate::hdx::{BUNDLE_TESTING_CLUSTER, CLIENT, FOR_MARKETPLACE, HTTP_TIMEOUT, ORG_UUID};
 use serde_json::{json, Value};
 use tokio::time::sleep;
 use tokio::time::Duration;
@@ -8,8 +6,10 @@ use uuid::Uuid;
 
 pub async fn exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     let max_attempts = 12; // Try for up to 60 seconds (12 * 5 seconds)
@@ -73,6 +73,90 @@ pub async fn exists(bearer_token: &str, table_name: &str) -> Result<(), String> 
     ))
 }
 
+/// Create a table in a specific project (used by --guid flow and integration tests).
+#[allow(dead_code)]
+pub async fn create_in_project(
+    bearer_token: &str,
+    project_uuid: &str,
+    table_name: &str,
+) -> Result<String, String> {
+    let payload = json!({
+        "name": table_name,
+        "description": "testing",
+        "settings": {
+            "age": { "max_age_days": 1 },
+            "merge": { "enabled": false }
+        }
+    });
+
+    let url = format!(
+        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{project_uuid}/tables",
+        *BUNDLE_TESTING_CLUSTER
+    );
+
+    let response = match CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json, text/plain, */*")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .json(&payload)
+        .send()
+        .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ))
+        }
+    };
+
+    let status = response.status();
+    let table_data = match response.text().await {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error reading response: {e}",
+                file!(),
+                line!()
+            ));
+        }
+    };
+
+    if !status.is_success() {
+        return Err(format!(
+            "ERROR: {}.{} {} - Server response: {}",
+            file!(),
+            line!(),
+            status,
+            table_data
+        ));
+    }
+
+    let table_json: Value = match serde_json::from_str(&table_data) {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} url={url} error={e}",
+                file!(),
+                line!()
+            ));
+        }
+    };
+
+    match table_json["uuid"].as_str() {
+        Some(v) => Ok(v.to_string()),
+        None => Err(format!(
+            "ERROR: {}.{} table UUID not found",
+            file!(),
+            line!()
+        )),
+    }
+}
+
 pub async fn create(bearer_token: &str, table_name: &str) -> Result<String, String> {
     // Prepare the JSON payload
 
@@ -110,8 +194,10 @@ pub async fn create(bearer_token: &str, table_name: &str) -> Result<String, Stri
     };
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     // Send the POST request
@@ -199,8 +285,10 @@ pub async fn add_transform(
     };
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables/{table_uuid}/transforms/",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables/{table_uuid}/transforms/",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     // Exponential backoff configuration
@@ -450,8 +538,10 @@ pub fn create_table_name() -> String {
 #[allow(dead_code)]
 pub async fn get_list(bearer_token: &str, debug_mode: bool) -> Result<String, String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     if debug_mode {
@@ -492,8 +582,10 @@ pub async fn get_list(bearer_token: &str, debug_mode: bool) -> Result<String, St
 #[allow(dead_code)]
 pub async fn delete(bearer_token: &str, uuid: &str) -> Result<(), String> {
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables/{uuid}",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables/{uuid}",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     // Send the DELETE
@@ -560,8 +652,10 @@ pub async fn create_summary(
     });
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{PROJ_UUID}/tables",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables",
+        *BUNDLE_TESTING_CLUSTER,
+        ORG_UUID,
+        super::get_project_uuid()
     );
 
     // Send the POST request

@@ -21,6 +21,7 @@ The script will:
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -36,6 +37,41 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
+from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS
+
+
+def _folder_from_bundle_json(source_path: Path) -> list:
+    """Read Grafana folder/subfolder from bundle.json ui.folder and ui.subfolder.
+
+    Returns ordered segments used to build the nested folder hierarchy
+    in resources.gfo.yaml, e.g. ['security'] or ['security', 'bots'].
+    Returns [] if no valid folder is declared.
+
+    bundle.json fields:
+        ui.folder    — one of: api-context, cdn, dns, media, security
+        ui.subfolder — optional, e.g. bots, ds2, siem (under security)
+    """
+    bundle_json = source_path / "bundle.json"
+    if not bundle_json.exists():
+        return []
+
+    try:
+        with open(bundle_json, "r", encoding="utf-8") as f:
+            bundle = json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return []
+
+    ui = bundle.get("ui", {})
+    folder = ui.get("folder", "")
+    subfolder = ui.get("subfolder", "")
+
+    if not folder or folder not in VALID_FOLDERS:
+        return []
+
+    if subfolder and subfolder in VALID_SUBFOLDERS.get(folder, ()):
+        return [folder, subfolder]
+
+    return [folder]
 
 
 def auto_detect_from_path(source_path: str):
@@ -100,8 +136,8 @@ Examples:
 
     parser.add_argument(
         '--version',
-        default='1.0',
-        help='Bundle version (e.g., 1.0 or 1.0.0) (default: 1.0)'
+        default='1.0.0',
+        help='Bundle version X.Y.Z (e.g., 1.0.0) (default: 1.0.0)'
     )
 
     parser.add_argument(
@@ -128,6 +164,21 @@ Examples:
     parser.add_argument(
         '--output',
         help='Output directory (default: cac_bundle/<customer_type>/<bundle_name>/<version>)'
+    )
+
+    parser.add_argument(
+        '--bundle-config',
+        help='Path to a bundle-config.json file whose version must match bundle.json'
+    )
+
+    parser.add_argument(
+        '--folder',
+        help='Grafana folder (api-context, cdn, dns, media, security)'
+    )
+
+    parser.add_argument(
+        '--subfolder',
+        help='Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)'
     )
 
     parser.add_argument(
@@ -178,11 +229,23 @@ def main():
     repo_root = Path(__file__).parent.parent
     source_path = repo_root / args.source
 
+    # Build folder path first — needed for output path
+    if args.folder and args.folder in VALID_FOLDERS:
+        folder = args.folder
+        subfolder = args.subfolder if args.subfolder and args.subfolder in VALID_SUBFOLDERS.get(folder, ()) else ""
+        folder_segments = [folder, subfolder] if subfolder else [folder]
+    else:
+        folder_segments = _folder_from_bundle_json(source_path)
+    folder_path = folder_segments
+
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: cac_bundle/<customer_type>/<bundle_name>/<version>
-        output_path = repo_root / "cac_bundle" / sanitize_cac_name(args.customer_type) / sanitize_cac_name(args.bundle_name) / args.version
+        # Default output: portables/<folder>/[<subfolder>/]<bundle_name>/<version>
+        portables_base = repo_root / "portables"
+        for segment in folder_segments:
+            portables_base = portables_base / segment
+        output_path = portables_base / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")
@@ -192,7 +255,6 @@ def main():
         print(f"Table Name: {args.table_name}")
         print()
 
-    # Build metadata
     metadata = BundleMetadata(
         customer_type=args.customer_type,
         bundle_name=args.bundle_name,
@@ -200,7 +262,8 @@ def main():
         description=args.description,
         maintainer=args.maintainer,
         table_name=args.table_name,
-        home_dashboard=args.home_dashboard
+        home_dashboard=args.home_dashboard,
+        folder_path=folder_path,
     )
 
     # Initialize components
@@ -232,17 +295,28 @@ def main():
         # Validate assets
         valid_assets, asset_errors = validator.validate_input(source_path, assets)
         if not valid_assets:
-            print("\n❌ Asset validation failed:")
+            print("\n❌ Asset validation failed:", file=sys.stderr)
             for error in asset_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
 
         # Validate metadata
         valid_metadata, metadata_errors = validator.validate_metadata(metadata)
         if not valid_metadata:
-            print("\n❌ Metadata validation failed:")
+            print("\n❌ Metadata validation failed:", file=sys.stderr)
             for error in metadata_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
+            sys.exit(1)
+
+        # Validate version consistency across bundle-config.json, bundle.json, and CLI version
+        bundle_config_path = Path(args.bundle_config) if args.bundle_config else None
+        valid_versions, version_errors = validator.validate_version_consistency(
+            source_path, args.version, bundle_config_path=bundle_config_path
+        )
+        if not valid_versions:
+            print("\n❌ Version consistency validation failed:", file=sys.stderr)
+            for error in version_errors:
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
 
         print()
@@ -260,18 +334,18 @@ def main():
     hydrolix_gen.generate(output_path, assets, args.table_name, metadata=metadata)
 
     # Generate Grafana resources
-    grafana_gen.generate(output_path, assets, args.home_dashboard)
+    grafana_gen.generate(output_path, assets, args.home_dashboard, folder_path=metadata.folder_path)
 
     print()
 
     # Phase 4: Validate outputs
     if not args.skip_validation:
         print("Phase 4: Validating outputs...")
-        valid_output, output_errors = validator.validate_output(output_path)
+        valid_output, output_errors = validator.validate_output(output_path, expected_version=args.version)
         if not valid_output:
-            print("\n❌ Output validation failed:")
+            print("\n❌ Output validation failed:", file=sys.stderr)
             for error in output_errors:
-                print(f"  • {error}")
+                print(f"  • {error}", file=sys.stderr)
             sys.exit(1)
         print()
 
