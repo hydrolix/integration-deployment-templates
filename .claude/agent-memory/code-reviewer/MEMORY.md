@@ -1,0 +1,1 @@
+- [Codebase Architecture](arch_overview.md) — bundle structure, two-track CI pipeline, portables/ output, and how bundle.json is used
