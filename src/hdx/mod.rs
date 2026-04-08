@@ -7,6 +7,9 @@ pub mod table;
 
 use lazy_static::lazy_static;
 use reqwest::Client;
+use serde_json::Value;
+use std::sync::OnceLock;
+use std::time::Duration;
 
 // These are static but not secret
 // const ORG_UUID_MARK: &str = "d867bf48-4281-4496-8432-a93aa989aae6";  // markeplace-dev
@@ -37,6 +40,212 @@ lazy_static! {
     };
 }
 
+/// Dynamic project overrides set by --guid at startup.
+static GUID_PROJECT_NAME: OnceLock<String> = OnceLock::new();
+static GUID_PROJECT_UUID: OnceLock<String> = OnceLock::new();
+
+/// Set the dynamic project name and UUID (called once at startup when --guid is used).
+pub fn set_guid_project(name: String, uuid: String) {
+    GUID_PROJECT_NAME
+        .set(name)
+        .expect("GUID project name already set");
+    GUID_PROJECT_UUID
+        .set(uuid)
+        .expect("GUID project UUID already set");
+}
+
 pub fn get_project_name() -> String {
-    PROJ_NAME.to_string()
+    GUID_PROJECT_NAME
+        .get()
+        .cloned()
+        .unwrap_or_else(|| PROJ_NAME.to_string())
+}
+
+pub fn get_project_uuid() -> String {
+    GUID_PROJECT_UUID
+        .get()
+        .cloned()
+        .unwrap_or_else(|| PROJ_UUID.to_string())
+}
+
+/// Create a new project on the cluster. Returns the project UUID.
+pub async fn create_project(bearer_token: &str, name: &str) -> Result<String, String> {
+    let url = format!(
+        "https://{}/config/v1/orgs/{}/projects/",
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+    );
+
+    let payload = serde_json::json!({
+        "name": name,
+        "description": format!("GUID test project for bundle validation ({})", name),
+    });
+
+    let response = CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "application/json")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to create project: {}", e))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        return Err(format!(
+            "HTTP {} creating project '{}': {}",
+            status, name, body
+        ));
+    }
+
+    let result: Value = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse create project response: {}", e))?;
+
+    result
+        .get("uuid")
+        .and_then(|u| u.as_str())
+        .map(|s| s.to_string())
+        .ok_or_else(|| "No UUID in create project response".to_string())
+}
+
+/// Find a project UUID by name. Returns Err if not found.
+pub async fn find_project_uuid(bearer_token: &str, name: &str) -> Result<String, String> {
+    let url = format!(
+        "https://{}/config/v1/orgs/{}/projects/",
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+    );
+
+    let response = CLIENT
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to list projects: {}", e))?;
+
+    if !response.status().is_success() {
+        return Err(format!("Failed to list projects: {}", response.status()));
+    }
+
+    let projects: Value = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse projects response: {}", e))?;
+
+    let empty_vec = vec![];
+    let list = if projects.is_array() {
+        projects.as_array().unwrap()
+    } else if let Some(results) = projects.get("results") {
+        results.as_array().unwrap_or(&empty_vec)
+    } else if let Some(data) = projects.get("data") {
+        data.as_array().unwrap_or(&empty_vec)
+    } else {
+        &empty_vec
+    };
+
+    for project in list {
+        if let Some(pname) = project.get("name").and_then(|n| n.as_str()) {
+            if pname == name {
+                if let Some(uuid) = project.get("uuid").and_then(|u| u.as_str()) {
+                    return Ok(uuid.to_string());
+                }
+            }
+        }
+    }
+
+    Err(format!("Project '{}' not found", name))
+}
+
+/// Delete a project by name. Finds it first, then deletes by UUID.
+pub async fn delete_project(bearer_token: &str, name: &str) -> Result<(), String> {
+    let uuid = find_project_uuid(bearer_token, name).await?;
+
+    let url = format!(
+        "https://{}/config/v1/orgs/{}/projects/{}",
+        *BUNDLE_TESTING_CLUSTER, ORG_UUID, uuid
+    );
+
+    let response = CLIENT
+        .delete(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to delete project: {}", e))?;
+
+    if response.status().is_success() {
+        Ok(())
+    } else {
+        let status = response.status();
+        let body = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        Err(format!(
+            "HTTP {} deleting project '{}' (uuid={}): {}",
+            status, name, uuid, body
+        ))
+    }
+}
+
+pub fn generate_guid_project_name() -> String {
+    let suffix: String = uuid::Uuid::new_v4()
+        .to_string()
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .take(10)
+        .collect();
+    format!("bundle_verification_{suffix}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_guid_project_name_has_correct_prefix() {
+        let name = generate_guid_project_name();
+        assert!(
+            name.starts_with("bundle_verification_"),
+            "Expected prefix 'bundle_verification_', got: {}",
+            name
+        );
+    }
+
+    #[test]
+    fn test_guid_project_name_has_correct_length() {
+        let name = generate_guid_project_name();
+        let suffix = name.strip_prefix("bundle_verification_").unwrap();
+        assert_eq!(
+            suffix.len(),
+            10,
+            "Expected 10-char suffix, got {}: '{}'",
+            suffix.len(),
+            suffix
+        );
+    }
+
+    #[test]
+    fn test_guid_project_name_suffix_is_alphanumeric() {
+        let name = generate_guid_project_name();
+        let suffix = name.strip_prefix("bundle_verification_").unwrap();
+        assert!(
+            suffix.chars().all(|c| c.is_ascii_alphanumeric()),
+            "Suffix should be alphanumeric, got: {}",
+            suffix
+        );
+    }
+
+    #[test]
+    fn test_guid_project_names_are_unique() {
+        let name1 = generate_guid_project_name();
+        let name2 = generate_guid_project_name();
+        assert_ne!(name1, name2, "Two generated names should differ");
+    }
 }

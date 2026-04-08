@@ -25,7 +25,6 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
-from configurator.config import is_semver, looks_like_version
 
 
 def main():
@@ -245,32 +244,6 @@ def _merge_config_into_args(args):
         if config_version:
             args.version = config_version
 
-    # Pre-check: config version must match folder name if both are set
-    config_version = data.get("version", "")
-    if config_version:
-        dir_parts = args.bundle_dir.rstrip("/").split("/")
-        folder_name = dir_parts[-1] if dir_parts else ""
-        if is_semver(folder_name) and folder_name != config_version:
-            print(
-                f"Error: bundle-config.json version '{config_version}' does not match "
-                f"folder name '{folder_name}'. They must be identical.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-    # Infer version from directory name if still at default and path is versioned
-    if args.version == "1.0.0":
-        parts = args.bundle_dir.rstrip("/").split("/")
-        if parts and is_semver(parts[-1]):
-            args.version = parts[-1]
-        elif parts and looks_like_version(parts[-1]):
-            print(
-                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
-                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
-                f"X.Y.Z version or a plain bundle name.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
 
 
 def _apply_track(args):

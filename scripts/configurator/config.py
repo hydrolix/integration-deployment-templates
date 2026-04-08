@@ -77,8 +77,6 @@ class BundleConfig:
           (same patterns with trailing version)
         """
         parts = self.bundle_dir.rstrip("/").split("/")
-        if parts and is_semver(parts[-1]):
-            parts = parts[:-1]
         # source/folder/subfolder/bundle
         if len(parts) >= 4 and parts[-2] in VALID_SUBFOLDERS.get(parts[-3], ()):
             return parts[-4]
@@ -93,8 +91,6 @@ class BundleConfig:
     def _infer_bundle_name(self):
         """Infer bundle name from directory path."""
         parts = self.bundle_dir.rstrip("/").split("/")
-        if parts and is_semver(parts[-1]):
-            parts = parts[:-1]
         return parts[-1] if parts else "unknown"
 
     @property
@@ -110,12 +106,6 @@ class BundleConfig:
     @property
     def base_url(self):
         """Generate the base_url for bundle.json."""
-        parts = self.bundle_dir.rstrip("/").split("/")
-        if is_semver(parts[-1]):
-            return (
-                f"https://github.com/hydrolix/integration-deployment-templates"
-                f"/blob/main/{self.source_name}/{self.bundle_name}/{self.version}"
-            )
         return (
             f"https://github.com/hydrolix/integration-deployment-templates"
             f"/blob/main/{self.source_name}/{self.bundle_name}"
