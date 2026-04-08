@@ -1,7 +1,9 @@
 folders:
-  hdx-main-folder:
+  hdx-main-folder: # folder uid
     name: TrafficPeak Certified Reference Dashboards
-    children: {}
+    children:
+      hdx-security-folder: # folder uid
+        name: Security
 dashboards:
   hdx-bot-insights-cdn-1770227511016:
     dashboard:
