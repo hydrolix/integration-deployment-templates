@@ -1,0 +1,144 @@
+name: publish-runbook
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aws/**/bundle.json'
+      - 'trafficpeak/**/bundle.json'
+
+  workflow_dispatch:
+    inputs:
+      bundle_path:
+        description: 'Bundle directory path (e.g. aws/cloudfront-to-kinesis)'
+        required: true
+        type: string
+      force_publish:
+        description: 'Force publish even if content is unchanged'
+        required: false
+        default: 'false'
+        type: string
+
+jobs:
+  detect-bundles:
+    runs-on: ubuntu-latest
+    outputs:
+      bundle_dirs: ${{ steps.detect.outputs.bundle_dirs }}
+      has_bundles: ${{ steps.detect.outputs.has_bundles }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed bundle directories
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BUNDLE_PATH="${{ inputs.bundle_path }}"
+
+            if [ ! -f "$BUNDLE_PATH/bundle.json" ]; then
+              echo "Error: bundle.json not found at $BUNDLE_PATH/bundle.json" >&2
+              exit 1
+            fi
+
+            DIRS_JSON=$(echo -n "$BUNDLE_PATH" | jq -R -s -c '[.]')
+            echo "bundle_dirs=$DIRS_JSON" >> $GITHUB_OUTPUT
+            echo "has_bundles=true" >> $GITHUB_OUTPUT
+            echo "Manual trigger for: $BUNDLE_PATH"
+            exit 0
+          fi
+
+          # Push event: find bundle.json files changed in this commit
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          BUNDLE_DIRS=$(echo "$CHANGED" \
+            | grep -E '^(aws|trafficpeak)/.*/bundle\.json$' \
+            | xargs -I{} dirname {} \
+            | sort -u)
+
+          if [ -z "$BUNDLE_DIRS" ]; then
+            echo "No bundle.json changes detected"
+            echo "has_bundles=false" >> $GITHUB_OUTPUT
+            echo "bundle_dirs=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Bundles to publish:"
+          echo "$BUNDLE_DIRS"
+
+          DIRS_JSON=$(echo "$BUNDLE_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "has_bundles=true" >> $GITHUB_OUTPUT
+          echo "bundle_dirs=$DIRS_JSON" >> $GITHUB_OUTPUT
+
+  publish-runbook:
+    needs: detect-bundles
+    if: needs.detect-bundles.outputs.has_bundles == 'true'
+    runs-on: ubuntu-latest
+    environment: bundle-runbook-env
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        bundle_dir: ${{ fromJson(needs.detect-bundles.outputs.bundle_dirs) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-west-2
+
+      - name: Load secrets from AWS Secrets Manager
+        run: |
+          secrets=$(aws secretsmanager get-secret-value \
+            --secret-id "${{ vars.AWS_SECRET_ARN }}" \
+            --query SecretString \
+            --output text)
+
+          echo "$secrets" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          for k, v in d.items():
+              print(f'{k}={v}')
+          " >> $GITHUB_ENV
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate runbook
+        id: generate
+        run: |
+          python scripts/generate_runbook.py \
+            --bundle-dir "${{ matrix.bundle_dir }}" \
+            --output runbook.json
+
+          BUNDLE_NAME=$(python -c "import json; d=json.load(open('runbook.json')); print(d['bundle_name'])")
+          echo "bundle_name=$BUNDLE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Publish to Confluence
+        id: publish
+        run: |
+          RESULT=$(python scripts/publish_to_confluence.py --runbook runbook.json)
+          echo "result=$RESULT" >> $GITHUB_OUTPUT
+
+          CONFLUENCE_URL=$(echo "$RESULT" | python -c "import json,sys; print(json.load(sys.stdin)['url'])")
+          echo "confluence_url=$CONFLUENCE_URL" >> $GITHUB_OUTPUT
+          echo "Published runbook to: $CONFLUENCE_URL"
+
+      - name: Notify bundle team
+        run: |
+          python scripts/notify_bundle_team.py \
+            --runbook runbook.json \
+            --confluence-url "${{ steps.publish.outputs.confluence_url }}"

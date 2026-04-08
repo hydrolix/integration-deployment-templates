@@ -21,6 +21,7 @@ The script will:
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -36,6 +37,41 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
+from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS
+
+
+def _folder_from_bundle_json(source_path: Path) -> list:
+    """Read Grafana folder/subfolder from bundle.json ui.folder and ui.subfolder.
+
+    Returns ordered segments used to build the nested folder hierarchy
+    in resources.gfo.yaml, e.g. ['security'] or ['security', 'bots'].
+    Returns [] if no valid folder is declared.
+
+    bundle.json fields:
+        ui.folder    — one of: api-context, cdn, dns, media, security
+        ui.subfolder — optional, e.g. bots, ds2, siem (under security)
+    """
+    bundle_json = source_path / "bundle.json"
+    if not bundle_json.exists():
+        return []
+
+    try:
+        with open(bundle_json, "r", encoding="utf-8") as f:
+            bundle = json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return []
+
+    ui = bundle.get("ui", {})
+    folder = ui.get("folder", "")
+    subfolder = ui.get("subfolder", "")
+
+    if not folder or folder not in VALID_FOLDERS:
+        return []
+
+    if subfolder and subfolder in VALID_SUBFOLDERS.get(folder, ()):
+        return [folder, subfolder]
+
+    return [folder]
 
 
 def auto_detect_from_path(source_path: str):
@@ -136,6 +172,16 @@ Examples:
     )
 
     parser.add_argument(
+        '--folder',
+        help='Grafana folder (api-context, cdn, dns, media, security)'
+    )
+
+    parser.add_argument(
+        '--subfolder',
+        help='Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)'
+    )
+
+    parser.add_argument(
         '--verbose',
         action='store_true',
         help='Enable verbose output'
@@ -183,11 +229,23 @@ def main():
     repo_root = Path(__file__).parent.parent
     source_path = repo_root / args.source
 
+    # Build folder path first — needed for output path
+    if args.folder and args.folder in VALID_FOLDERS:
+        folder = args.folder
+        subfolder = args.subfolder if args.subfolder and args.subfolder in VALID_SUBFOLDERS.get(folder, ()) else ""
+        folder_segments = [folder, subfolder] if subfolder else [folder]
+    else:
+        folder_segments = _folder_from_bundle_json(source_path)
+    folder_path = folder_segments
+
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: cac_bundle/<customer_type>/<bundle_name>/<version>
-        output_path = repo_root / "cac_bundle" / sanitize_cac_name(args.customer_type) / sanitize_cac_name(args.bundle_name) / args.version
+        # Default output: portables/<folder>/[<subfolder>/]<bundle_name>/<version>
+        portables_base = repo_root / "portables"
+        for segment in folder_segments:
+            portables_base = portables_base / segment
+        output_path = portables_base / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")
@@ -197,7 +255,6 @@ def main():
         print(f"Table Name: {args.table_name}")
         print()
 
-    # Build metadata
     metadata = BundleMetadata(
         customer_type=args.customer_type,
         bundle_name=args.bundle_name,
@@ -205,7 +262,8 @@ def main():
         description=args.description,
         maintainer=args.maintainer,
         table_name=args.table_name,
-        home_dashboard=args.home_dashboard
+        home_dashboard=args.home_dashboard,
+        folder_path=folder_path,
     )
 
     # Initialize components
@@ -276,7 +334,7 @@ def main():
     hydrolix_gen.generate(output_path, assets, args.table_name, metadata=metadata)
 
     # Generate Grafana resources
-    grafana_gen.generate(output_path, assets, args.home_dashboard)
+    grafana_gen.generate(output_path, assets, args.home_dashboard, folder_path=metadata.folder_path)
 
     print()
 

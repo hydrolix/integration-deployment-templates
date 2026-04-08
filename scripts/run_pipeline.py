@@ -25,8 +25,6 @@ SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 
 sys.path.insert(0, SCRIPTS_DIR)
-from utils.file_utils import sanitize_cac_name
-from configurator.config import is_semver, looks_like_version
 
 
 def main():
@@ -157,6 +155,10 @@ Examples:
     s2.add_argument("--channel-type", default="", help="Channel type override")
     s2.add_argument("--method", default="", help="Method override")
     s2.add_argument("--primary-dashboard", default="", help="Primary dashboard filename")
+    s2.add_argument("--folder", default="",
+                    help="Grafana folder (api-context, cdn, dns, media, security)")
+    s2.add_argument("--subfolder", default="",
+                    help="Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)")
     s2.add_argument("--beta", action="store_true", default=True, help="Mark as beta (default)")
     s2.add_argument("--no-beta", action="store_true", default=False, help="Mark as not beta")
     s2.add_argument("--config", default="", help="JSON config file for stage 2")
@@ -240,38 +242,16 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
+    if not args.folder:
+        args.folder = data.get("folder", "")
+    if not args.subfolder:
+        args.subfolder = data.get("subfolder", "")
     if args.version == "1.0.0":
         # Only override if still at default — config or path-based version takes precedence
         config_version = data.get("version", "")
         if config_version:
             args.version = config_version
 
-    # Pre-check: config version must match folder name if both are set
-    config_version = data.get("version", "")
-    if config_version:
-        dir_parts = args.bundle_dir.rstrip("/").split("/")
-        folder_name = dir_parts[-1] if dir_parts else ""
-        if is_semver(folder_name) and folder_name != config_version:
-            print(
-                f"Error: bundle-config.json version '{config_version}' does not match "
-                f"folder name '{folder_name}'. They must be identical.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-    # Infer version from directory name if still at default and path is versioned
-    if args.version == "1.0.0":
-        parts = args.bundle_dir.rstrip("/").split("/")
-        if parts and is_semver(parts[-1]):
-            args.version = parts[-1]
-        elif parts and looks_like_version(parts[-1]):
-            print(
-                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
-                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
-                f"X.Y.Z version or a plain bundle name.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
 
 
 def _apply_track(args):
@@ -281,6 +261,10 @@ def _apply_track(args):
     - 'full': runs originals management, then full pipeline (default stages)
     - 'auto': detects track from bundle state, then applies accordingly
     """
+    # Skip track routing if an explicit --only-* flag was provided
+    if any([args.only_portable, args.only_configure, args.only_validate]):
+        return
+
     if args.track == "validate-only":
         args.only_validate = True
     elif args.track == "full":
@@ -394,6 +378,7 @@ def run_stage(name, cmd, cwd, verbose, parse_json=False):
     return result
 
 
+
 def build_portable_cmd(args):
     """Build command for stage 1: bundle_to_yaml.py."""
     cmd = [sys.executable, os.path.join(SCRIPTS_DIR, "bundle_to_yaml.py"),
@@ -401,25 +386,6 @@ def build_portable_cmd(args):
 
     if args.portable_output:
         cmd += ["--output", args.portable_output]
-    else:
-        # Default: portables/<customer_type>/<bundle_name>/<version>/
-        parts = args.bundle_dir.rstrip("/").split("/")
-        if is_semver(parts[-1]) and len(parts) >= 3:
-            customer_type = sanitize_cac_name(parts[-3])
-            bundle_name = sanitize_cac_name(parts[-2])
-        elif looks_like_version(parts[-1]):
-            print(
-                f"Error: folder name '{parts[-1]}' looks like a version but is not valid "
-                f"semver (expected X.Y.Z, e.g., 1.0.0). Rename the folder to a strict "
-                f"X.Y.Z version or a plain bundle name.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-        else:
-            customer_type = sanitize_cac_name(parts[-2]) if len(parts) >= 2 else sanitize_cac_name(parts[-1])
-            bundle_name = sanitize_cac_name(parts[-1])
-        output = os.path.join(REPO_ROOT, "portables", customer_type, bundle_name, args.version)
-        cmd += ["--output", output]
 
     cmd += ["--version", args.version]
     if args.table_name:
@@ -432,6 +398,10 @@ def build_portable_cmd(args):
         cmd.append("--skip-validation")
     if args.bundle_config:
         cmd += ["--bundle-config", args.bundle_config]
+    if args.folder:
+        cmd += ["--folder", args.folder]
+    if args.subfolder:
+        cmd += ["--subfolder", args.subfolder]
     if args.verbose:
         cmd.append("--verbose")
 
@@ -460,6 +430,10 @@ def build_configure_cmd(args):
         cmd += ["--method", args.method]
     if args.primary_dashboard:
         cmd += ["--primary-dashboard", args.primary_dashboard]
+    if args.folder:
+        cmd += ["--folder", args.folder]
+    if args.subfolder:
+        cmd += ["--subfolder", args.subfolder]
     if args.no_beta:
         cmd.append("--no-beta")
     if args.config:
