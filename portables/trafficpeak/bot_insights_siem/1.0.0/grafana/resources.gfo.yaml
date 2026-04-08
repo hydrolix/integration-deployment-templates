@@ -5,13 +5,13 @@ folders:
       hdx-security-folder:
         name: Security
         children:
-          hdx-security-folder:
+          hdx-bot-folder:
             name: Bot Insights
 dashboards:
   hdx-bot-insights-siem:
     dashboard:
       __extend__: dashboards/bot_insights_siem.json
-    folderUid: hdx-security-folder
+    folderUid: hdx-bot-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_SIEM_RAW: akamai.siem
