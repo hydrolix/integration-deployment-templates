@@ -1,7 +1,12 @@
 folders:
   hdx-main-folder:
     name: TrafficPeak Certified Reference Dashboards
-    children: {}
+    children:
+      hdx-security-folder:
+        name: Security
+        children:
+          hdx-security-folder:
+            name: Bot Insights
 dashboards:
   hdx-bot-insights-siem:
     dashboard:
