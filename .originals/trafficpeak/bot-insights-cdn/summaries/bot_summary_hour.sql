@@ -1,5 +1,5 @@
 SELECT
-  toStartOfDay (reqTimeSec) AS timestamp,
+  toStartOfHour (reqTimeSec) AS timestamp,
   cacheStatus,
   statusCode,
   reqHost,
@@ -13,7 +13,7 @@ SELECT
   count() AS cnt_all,
   sum(totalBytes) AS totalBytes
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.logs
 GROUP BY
   timestamp,
   cacheStatus,
