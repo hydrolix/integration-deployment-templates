@@ -92,6 +92,65 @@ gh workflow run publish-runbook.yml \
   --field force_publish=true
 ```
 
+#### Authentication & secrets
+
+This workflow uses **AWS OIDC** — no static AWS credentials are stored in GitHub. Instead, the workflow assumes an IAM role via GitHub's OIDC provider and pulls all secrets from AWS Secrets Manager at runtime.
+
+**GitHub repo variables (Settings → Variables):**
+
+| Variable | Description |
+|---|---|
+| `AWS_ROLE_ARN` | IAM role ARN the workflow assumes via OIDC |
+| `AWS_SECRET_ARN` | ARN of the Secrets Manager secret containing all runtime credentials |
+
+**AWS Secrets Manager secret** (`integration-deployment-templates/env`):
+
+The secret is a JSON object with the following keys:
+
+| Key | Used by |
+|---|---|
+| `CONFLUENCE_BASE_URL` | `publish_to_confluence.py` |
+| `CONFLUENCE_USER` | `publish_to_confluence.py` |
+| `CONFLUENCE_API_TOKEN` | `publish_to_confluence.py` |
+| `CONFLUENCE_SPACE_KEY` | `publish_to_confluence.py` |
+| `CONFLUENCE_PARENT_PAGE_ID` | `publish_to_confluence.py` |
+| `SLACK_RUNBOOK_WEBHOOK_URL` | `notify_bundle_team.py` |
+
+To update a secret value, go to **AWS Console → Secrets Manager → `integration-deployment-templates/env` → Retrieve secret value → Edit**.
+
+#### Testing scripts locally
+
+If you need to test `generate_runbook.py`, `publish_to_confluence.py`, or `notify_bundle_team.py` locally, pull the secrets from AWS Secrets Manager directly into your shell. Requires AWS CLI configured with credentials that have `secretsmanager:GetSecretValue` on the secret.
+
+```bash
+# Load secrets as environment variables into your current shell
+eval $(aws secretsmanager get-secret-value \
+  --secret-id "$AWS_SECRET_ARN" \
+  --query SecretString \
+  --output text | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+for k, v in d.items():
+    print(f'export {k}={v}')
+")
+```
+
+Or write to a `.env` file (ensure `.env` is in `.gitignore`):
+
+```bash
+aws secretsmanager get-secret-value \
+  --secret-id "$AWS_SECRET_ARN" \
+  --query SecretString \
+  --output text | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+for k, v in d.items():
+    print(f'{k}={v}')
+" > .env
+```
+
+Then run scripts as normal — they will pick up the credentials from the environment.
+
 ---
 
 ## Required Secrets & Environments
@@ -99,6 +158,6 @@ gh workflow run publish-runbook.yml \
 | Environment | Secrets |
 |---|---|
 | `bundle-validator-env` | `BUNDLE_TESTING_CLUSTER`, `BUNDLE_TESTING_USERNAME`, `BUNDLE_TESTING_PASSWORD` |
-| `bundle-runbook-env` | `CONFLUENCE_BASE_URL`, `CONFLUENCE_USER`, `CONFLUENCE_API_TOKEN`, `CONFLUENCE_SPACE_KEY`, `CONFLUENCE_PARENT_PAGE_ID`, `SLACK_RUNBOOK_WEBHOOK_URL` |
+| `bundle-runbook-env` | *(none — credentials are pulled from AWS Secrets Manager at runtime)* |
 
 The `push-to-cac-tools` and `push-to-cac-tools-test` workflows use a GitHub App for cross-repo access, configured via `INTEGRATIONS_APP_ID` (variable) and `INTEGRATIONS_APP_PRIVATE_KEY` (secret).
