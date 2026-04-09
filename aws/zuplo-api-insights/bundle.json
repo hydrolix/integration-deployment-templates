@@ -42,7 +42,7 @@
     "version": "1.0.0",
     "maintainer": "tom.howe@hydrolix.io",
     "description": "API gateway analytics from two independent data streams \u2014 Zuplo plugin telemetry and Akamai DS2 edge data \u2014 ingested via separate transforms into a shared table",
-    "channel_type": "HTTP"
+    "channel_type": "3rdParty"
   },
   "other_dashboards": [
     {
