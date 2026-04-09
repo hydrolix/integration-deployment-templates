@@ -278,7 +278,7 @@ The pipeline inspects your changed files and checks for markers that indicate ra
 - **Raw markers:** `__inputs` in transforms, bare dashboard JSON (no `{"dashboard": ...}` wrapper), hardcoded SQL table references
 - **Configured markers:** template variables (`__DATASOURCE__`, `__TABLE_NAME__`), wrapped dashboards, `bundle.json` present
 
-If signals are mixed or ambiguous, the pipeline defaults to Track 2 (validation only) to avoid unintended reformatting.
+If signals are mixed or ambiguous and a `bundle.json` exists, the pipeline defaults to Track 2 (validation only) to avoid unintended reformatting. If `bundle.json` is missing, the pipeline will fail with an error explaining the two valid submission paths.
 
 ### The `.originals/` directory
 

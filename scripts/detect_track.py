@@ -87,6 +87,8 @@ def detect_track(bundle_dir: str, changed_files: list[str], repo_root: str) -> s
         _require_bundle_json(bundle_dir)
         return "validate-only"
 
+    raise ValueError(f"Unexpected bundle state '{state}' for {bundle_dir}")
+
 
 def _require_bundle_config(bundle_dir: str):
     """Raise ValueError if bundle-config.json is missing."""

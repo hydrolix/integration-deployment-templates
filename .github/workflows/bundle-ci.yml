@@ -101,14 +101,17 @@ jobs:
             # Pass LATEST PUSH files (not full PR diff) so CI auto-commits don't affect routing
             if [ -n "$BUNDLE_DIR" ]; then
               BUNDLE_CHANGED=$(echo "$LATEST_PUSH_FILES" | grep -E "^(\.originals/)?${dir}/" | tr '\n' ',' | sed 's/,$//')
-              DETECT_OUTPUT=$(python scripts/detect_track.py --bundle-dir "$BUNDLE_DIR" --changed-files "$BUNDLE_CHANGED" --mode track 2>&1)
+              DETECT_STDERR=$(mktemp)
+              DETECT_OUTPUT=$(python scripts/detect_track.py --bundle-dir "$BUNDLE_DIR" --changed-files "$BUNDLE_CHANGED" --mode track 2>"$DETECT_STDERR")
               DETECT_EXIT=$?
 
               if [ $DETECT_EXIT -ne 0 ]; then
                 echo "::error::detect_track.py failed for $BUNDLE_DIR (exit code $DETECT_EXIT):"
-                echo "$DETECT_OUTPUT"
+                cat "$DETECT_STDERR"
+                rm -f "$DETECT_STDERR"
                 exit 1
               fi
+              rm -f "$DETECT_STDERR"
 
               TRACK="$DETECT_OUTPUT"
               echo "Bundle: $BUNDLE_DIR → Track: $TRACK"
