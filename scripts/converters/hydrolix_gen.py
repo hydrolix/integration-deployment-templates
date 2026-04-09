@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import List
 
-from utils.models import BundleAssets, Transform, Function, Dictionary
+from utils.models import BundleAssets, Transform, Function, Dictionary, Summary
 from utils.yaml_utils import dump_yaml
 import json
 
@@ -32,6 +32,10 @@ class HydrolixGenerator:
         if assets.transforms:
             self._generate_table(hydrolix_dir, table_name, metadata=metadata)
             self._copy_transforms(hydrolix_dir, assets.transforms)
+
+        # Generate summary tables
+        if assets.summaries:
+            self._generate_summary_tables(hydrolix_dir, assets.summaries)
 
         # Copy function and dictionary definitions
         if assets.functions:
@@ -131,6 +135,21 @@ class HydrolixGenerator:
             if self.verbose:
                 print(f"  Copied dictionary: {d.name}/schema_definition.json")
 
+    def _generate_summary_tables(self, hydrolix_dir: Path, summaries: List[Summary]):
+        """Generate summary table YAML wrappers and copy SQL files."""
+        tables_dir = hydrolix_dir / "tables"
+        tables_dir.mkdir(parents=True, exist_ok=True)
+        for summary in summaries:
+            shutil.copy2(summary.sql_file_path, tables_dir / f"{summary.name}.sql")
+            yaml_content = {
+                '__extend__': '../../../../../../hydrolix/_defaults/table_summary_base_defaults.yaml',
+                'description': summary.name,
+                'settings': {'summary': {'sql': {'__extend__': f'{summary.name}.sql'}}}
+            }
+            write_file(tables_dir / f"{summary.name}.yaml", dump_yaml(yaml_content, sort_keys=False))
+            if self.verbose:
+                print(f"  Generated summary table: {summary.name}")
+
     def _generate_resources_file(self, hydrolix_dir: Path, assets: BundleAssets, table_name: str):
         """Generate main resources.hdp.yaml file with nested structure."""
         resources = {}
@@ -163,6 +182,13 @@ class HydrolixGenerator:
 
             resources['transforms'] = {
                 table_name: transforms_dict
+            }
+
+        # Add summary_tables section
+        if assets.summaries:
+            resources['summary_tables'] = {
+                summary.name: {'__extend__': f'tables/{summary.name}.yaml'}
+                for summary in assets.summaries
             }
 
         # Add functions section
