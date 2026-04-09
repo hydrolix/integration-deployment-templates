@@ -1,0 +1,76 @@
+{
+  "name": "zuplo_api_insights",
+  "source": "zuplo_api_insights",
+  "method": "multi_stream",
+  "beta": true,
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/zuplo-api-insights",
+  "dashboard": {
+    "path": "dashboards/API Growth & Protection Overview.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "zuplo_gateway",
+      "transforms": [
+        {
+          "path": "transformations/zuplo_gateway/transform.json",
+          "method": "http_streaming",
+          "sha256": "f1de708665a2401a0ffbd2bf4eb628c9ef2a0fb0efe3610a89dd0c9ca3581d75"
+        },
+        {
+          "path": "transformations/mcdn_akamai_ds2/transform.json",
+          "method": "http_streaming",
+          "sha256": "fe03cb7b4ffa13130cce11b9bd83323ccf00984303d8b0b6a302aaeb80f011a7"
+        }
+      ]
+    }
+  ],
+  "ui": {},
+  "metadata": {
+    "version": "1.0.0",
+    "maintainer": "tom.howe@hydrolix.io",
+    "description": "API gateway analytics from two independent data streams \u2014 Zuplo plugin telemetry and Akamai DS2 edge data \u2014 ingested via separate transforms into a shared table",
+    "channel_type": "HTTP"
+  },
+  "other_dashboards": [
+    {
+      "path": "dashboards/API Operations Command.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/Abuse & Edge Security Triage.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "zuplo_api_overview_summary_1m",
+      "parent_table_name": "zuplo_gateway",
+      "sql": {
+        "path": "summaries/zuplo_api_overview_summary_1m.sql",
+        "sha256": "430b2314b0de23c8cd9f5f8bc2c10937cf3935c8cb47cf7d8cbad3fa4c57a6bd"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "zuplo_api_abuse_summary_5m",
+      "parent_table_name": "zuplo_gateway",
+      "sql": {
+        "path": "summaries/zuplo_api_abuse_summary_5m.sql",
+        "sha256": "bc071fe01ad394ad61b3a671d78a93e8373fa8296a5a2b42972f747e166d7dc8"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
+      "name": "zuplo_api_security_correlation_summary_1h",
+      "parent_table_name": "zuplo_gateway",
+      "sql": {
+        "path": "summaries/zuplo_api_security_correlation_summary_1h.sql",
+        "sha256": "e1b993b4c0443bf52202f44be98026708cda83b33155256d3e7186af1d61edee"
+      }
+    }
+  ],
+  "solution": true
+}

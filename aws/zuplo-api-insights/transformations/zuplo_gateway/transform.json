@@ -1,0 +1,815 @@
+{
+  "name": "zuplo_gateway",
+  "description": "Zuplo gateway plugin-baseline transform",
+  "type": "json",
+  "settings": {
+    "is_default": false,
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    },
+    "null_values": [
+      "-",
+      "-1",
+      "^"
+    ],
+    "sql_transform": "SELECT\n  deployment_name_raw AS deployment_name,\n  request_id_raw AS request_id,\n  route_path_raw AS route_path,\n  operation_id_raw AS operation_id,\n  request_url_raw AS request_url,\n  nullIf(extract(ifNull(route_path_raw, ''), '^/v[0-9]+/([^/?]+)'), '') AS route_group,\n  method_raw AS request_method,\n  nullIf(extract(ifNull(request_url_raw, ''), 'https?://[^/]+([^?]*)'), '') AS request_path,\n  nullIf(extract(ifNull(request_url_raw, ''), '\\\\\\\\?(.*)$'), '') AS request_query,\n  nullIf(user_sub_raw, '') AS consumer_id,\n  CAST(NULL, 'Nullable(String)') AS api_key_id,\n  status_code_raw AS response_status_code,\n  duration_ms_raw AS gateway_latency_ms,\n  multiIf(\n    toUInt16(status_code_raw) = 401, 'auth_rejected',\n    notEmpty(ifNull(user_sub_raw, '')) AND lowerUTF8(ifNull(user_sub_raw, '')) != 'anonymous', 'authenticated',\n    'unknown'\n  ) AS auth_outcome,\n  multiIf(\n    toUInt16(status_code_raw) = 429, 'rate_limited',\n    'unknown'\n  ) AS rate_limit_outcome,\n  multiIf(\n    rate_limit_outcome = 'rate_limited', 'rate_limited',\n    auth_outcome = 'auth_rejected', 'auth_rejected',\n    toUInt16(status_code_raw) >= 500, 'gateway_error',\n    toUInt16(status_code_raw) >= 200 AND toUInt16(status_code_raw) < 400, 'served',\n    toUInt16(status_code_raw) >= 400 AND toUInt16(status_code_raw) < 500, 'client_error',\n    'unknown'\n  ) AS gateway_outcome,\n  client_ip_raw AS client_ip,\n  country_raw AS client_country,\n  asn_raw AS client_asn,\n  user_agent_raw AS user_agent,\n  instance_id_raw AS zuplo_instance_id,\n  colo_raw AS zuplo_colo,\n  city_raw AS zuplo_city,\n  continent_raw AS zuplo_continent,\n  latitude_raw AS zuplo_latitude,\n  longitude_raw AS zuplo_longitude,\n  postal_code_raw AS zuplo_postal_code,\n  metro_code_raw AS zuplo_metro_code,\n  region_raw AS zuplo_region,\n  region_code_raw AS zuplo_region_code,\n  timezone_raw AS zuplo_timezone,\n  as_organization_raw AS zuplo_as_organization,\n  *\nFROM {STREAM}",
+    "sample_data": [
+      {
+        "timestamp": "2026-04-08T00:02:35.256Z",
+        "deploymentName": "prod-us",
+        "requestId": "676ac556-63fd-4f0d-ac4d-47951198b10d",
+        "routePath": "/v1/billing/invoices/{id}",
+        "operationId": "getInvoice",
+        "url": "https://api.example.com/v1/billing/invoices/inv_792?include=pdf",
+        "statusCode": "200",
+        "durationMs": 91,
+        "method": "GET",
+        "userSub": "user_acme_mobile",
+        "country": "US",
+        "asn": "20001",
+        "clientIP": "198.51.100.52",
+        "zuploUserAgent": "okhttp/4.12.0",
+        "instanceId": "iad-1",
+        "colo": "IAD",
+        "city": "Ashburn",
+        "continent": "NA",
+        "latitude": "39.0438",
+        "longitude": "-77.4874",
+        "postalCode": "20147",
+        "metroCode": "511",
+        "region": "Virginia",
+        "regionCode": "VA",
+        "timezone": "America/New_York",
+        "asOrganization": "Amazon.com, Inc."
+      },
+      {
+        "timestamp": "2026-04-08T08:01:20.886Z",
+        "deploymentName": "prod-us",
+        "requestId": "ff0bc369-f7c1-45d5-a4ca-75708d22f0f1",
+        "routePath": "/v1/orders/{id}",
+        "operationId": "getOrder",
+        "url": "https://api.example.com/v1/orders/ord_10214?expand=payments",
+        "statusCode": "401",
+        "durationMs": 113,
+        "method": "GET",
+        "userSub": "anonymous",
+        "country": "BR",
+        "asn": "28573",
+        "clientIP": "203.0.113.188",
+        "zuploUserAgent": "python-requests/2.32.3",
+        "instanceId": "gru-2",
+        "colo": "GRU",
+        "city": "Sao Paulo",
+        "continent": "SA",
+        "latitude": "-23.5505",
+        "longitude": "-46.6333",
+        "postalCode": "01310-100",
+        "metroCode": "",
+        "region": "Sao Paulo",
+        "regionCode": "SP",
+        "timezone": "America/Sao_Paulo",
+        "asOrganization": "Claro S.A."
+      },
+      {
+        "timestamp": "2026-04-08T16:01:08.872Z",
+        "deploymentName": "prod-us",
+        "requestId": "fbcf5cd0-5a8f-4c0d-8253-0a8cb06906fa",
+        "routePath": "/v1/customers/{id}",
+        "operationId": "getCustomer",
+        "url": "https://api.example.com/v1/customers/cus_1903",
+        "statusCode": "403",
+        "durationMs": 89,
+        "method": "GET",
+        "userSub": "user_globex_finance",
+        "country": "DE",
+        "asn": "3320",
+        "clientIP": "203.0.113.82",
+        "zuploUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
+        "instanceId": "fra-1",
+        "colo": "FRA",
+        "city": "Frankfurt",
+        "continent": "EU",
+        "latitude": "50.1109",
+        "longitude": "8.6821",
+        "postalCode": "60306",
+        "metroCode": "",
+        "region": "Hessen",
+        "regionCode": "HE",
+        "timezone": "Europe/Berlin",
+        "asOrganization": "Deutsche Telekom AG"
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp_raw",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "format": "2006-01-02T15:04:05.000Z07:00",
+          "resolution": "ms",
+          "source": {
+            "from_json_pointers": [
+              "/timestamp"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "deployment_name_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/deploymentName"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_id_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/requestId"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "route_path_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/routePath"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "operation_id_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/operationId"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_url_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/url"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "status_code_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/statusCode"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "duration_ms_raw",
+        "datatype": {
+          "type": "uint32",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/durationMs"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "method_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/method"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "user_sub_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/userSub"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "country_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/country"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "asn_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/asn"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "client_ip_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/clientIP"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "user_agent_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/zuploUserAgent"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "instance_id_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/instanceId"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "colo_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/colo"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "city_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/city"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "continent_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/continent"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "latitude_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/latitude"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "longitude_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/longitude"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "postal_code_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/postalCode"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "metro_code_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/metroCode"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "region_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/region"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "region_code_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/regionCode"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "timezone_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/timezone"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "as_organization_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_json_pointers": [
+              "/asOrganization"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05.000Z07:00",
+          "resolution": "ms",
+          "source": {
+            "from_json_pointers": [
+              "/timestamp"
+            ]
+          }
+        }
+      },
+      {
+        "name": "deployment_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "request_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "route_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "operation_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "request_url",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "route_group",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "request_query",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "consumer_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "api_key_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "default": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "gateway_latency_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "gateway_outcome",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "auth_outcome",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "rate_limit_outcome",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "client_country",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_instance_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_colo",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_continent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_latitude",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_longitude",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_postal_code",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_metro_code",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_region",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_region_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_timezone",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "zuplo_as_organization",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "source": {
+            "from_input_field": "sql_transform"
+          }
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "unknown"
+          }
+        }
+      }
+    ]
+  }
+}
