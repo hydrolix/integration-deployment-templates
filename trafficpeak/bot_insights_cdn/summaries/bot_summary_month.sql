@@ -1,0 +1,30 @@
+SELECT
+    toStartOfMonth(reqTimeSec)::DateTime AS timestamp,
+    cacheStatus,
+    statusCode,
+    reqHost,
+    country,
+    city,
+    asn,
+    user_agent_category,
+    ai_category,
+    resource_category,
+    is_bot_traffic,
+    count() AS cnt_all,
+    sum(totalBytes) AS totalBytes
+FROM
+    akamai.logs
+GROUP BY
+    timestamp,
+    cacheStatus,
+    statusCode,
+    reqHost,
+    country,
+    city,
+    asn,
+    user_agent_category,
+    ai_category,
+    resource_category,
+    is_bot_traffic
+SETTINGS
+    hdx_primary_key = 'timestamp'
