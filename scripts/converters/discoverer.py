@@ -187,7 +187,7 @@ class AssetDiscoverer:
         """Find summary SQL files."""
         summaries = []
 
-        for sql_file in folder.glob('*.sql'):
+        for sql_file in sorted(folder.glob('*.sql')):
             name = sql_file.stem
             summaries.append(Summary(
                 name=name,

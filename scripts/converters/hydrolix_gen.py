@@ -140,15 +140,16 @@ class HydrolixGenerator:
         tables_dir = hydrolix_dir / "tables"
         tables_dir.mkdir(parents=True, exist_ok=True)
         for summary in summaries:
-            shutil.copy2(summary.sql_file_path, tables_dir / f"{summary.name}.sql")
+            sanitized_name = sanitize_cac_name(summary.name)
+            shutil.copy2(summary.sql_file_path, tables_dir / f"{sanitized_name}.sql")
             yaml_content = {
                 '__extend__': '../../../../../../hydrolix/_defaults/table_summary_base_defaults.yaml',
-                'description': summary.name,
-                'settings': {'summary': {'sql': {'__extend__': f'{summary.name}.sql'}}}
+                'description': sanitized_name,
+                'settings': {'summary': {'sql': {'__extend__': f'{sanitized_name}.sql'}}}
             }
-            write_file(tables_dir / f"{summary.name}.yaml", dump_yaml(yaml_content, sort_keys=False))
+            write_file(tables_dir / f"{sanitized_name}.yaml", dump_yaml(yaml_content, sort_keys=False))
             if self.verbose:
-                print(f"  Generated summary table: {summary.name}")
+                print(f"  Generated summary table: {sanitized_name}")
 
     def _generate_resources_file(self, hydrolix_dir: Path, assets: BundleAssets, table_name: str):
         """Generate main resources.hdp.yaml file with nested structure."""
@@ -187,7 +188,7 @@ class HydrolixGenerator:
         # Add summary_tables section
         if assets.summaries:
             resources['summary_tables'] = {
-                summary.name: {'__extend__': f'tables/{summary.name}.yaml'}
+                sanitize_cac_name(summary.name): {'__extend__': f'tables/{sanitize_cac_name(summary.name)}.yaml'}
                 for summary in assets.summaries
             }
 
