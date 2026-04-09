@@ -1,0 +1,707 @@
+{
+  "dashboard": {
+    "uid": "__DASHBOARD_UUID__",
+    "title": "Abuse & Edge Security Triage",
+    "description": "Operator dashboard for suspicious traffic concentration, Akamai edge action evidence, and false-positive candidate review using only MVP-safe abuse and security-correlation summaries.",
+    "tags": [
+      "zuplo-api-insights",
+      "security",
+      "abuse",
+      "zuplo",
+      "akamai",
+      "mvp"
+    ],
+    "timezone": "utc",
+    "refresh": "1m",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "schemaVersion": 36,
+    "version": 1,
+    "editable": true,
+    "graphTooltip": 1,
+    "links": [
+      {
+        "asDropdown": true,
+        "icon": "apps",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "zuplo-api-insights"
+        ],
+        "targetBlank": false,
+        "title": "Zuplo API Insights Suite",
+        "type": "dashboards"
+      }
+    ],
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.4"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "text",
+        "name": "Text",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "stat",
+        "name": "Stat",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "hide": 2,
+          "name": "abuse_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "type": "constant",
+          "skipUrlSync": true,
+          "current": {
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "security_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "type": "constant",
+          "skipUrlSync": true,
+          "current": {
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "type": "constant",
+          "skipUrlSync": true
+        },
+        {
+          "current": {
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+          },
+          "hide": 2,
+          "name": "overview_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "type": "constant",
+          "skipUrlSync": true
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "type": "text",
+        "title": "",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 24,
+          "h": 3
+        },
+        "options": {
+          "content": "## Abuse & Edge Security Triage\nFocus on concentrated suspicious traffic, Akamai action evidence, and potential over-blocking. `api_key_id` is intentionally sparse in the MVP, so the API key table omits `unknown` values rather than pretending the dimension is complete.",
+          "mode": "markdown"
+        },
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        }
+      },
+      {
+        "id": 2,
+        "type": "stat",
+        "title": "Edge Action Share %",
+        "description": "Claim: edge controls are materially participating in the abuse story. Evidence: rows with any non-`none` Akamai edge action over all abuse-summary requests. Provenance: transform-derived action parsed from DS2 `securityRules`.",
+        "gridPos": {
+          "x": 0,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, akamai_edge_action != 'none' AND akamai_edge_action != '')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Edge Action Share; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#FF9830"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 3,
+        "type": "stat",
+        "title": "Rate Limited %",
+        "description": "Claim: abuse pressure often first surfaces as throttling. Evidence: merged `rate_limited` share from the abuse summary. Provenance: transform-derived outcome with `unknown` fallback accepted.",
+        "gridPos": {
+          "x": 6,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, rate_limit_outcome = 'rate_limited')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Rate Limited Share; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#73BF69"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 4,
+        "type": "stat",
+        "title": "Auth Rejected %",
+        "description": "Claim: auth failures remain a separate abuse signal. Evidence: merged `auth_rejected` share. Provenance: transform-derived auth outcome, sparse-safe by design.",
+        "gridPos": {
+          "x": 12,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, auth_outcome = 'auth_rejected')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Auth Rejected Share; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#FADE2A"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 5,
+        "type": "stat",
+        "title": "Unique Client IPs",
+        "description": "Claim: concentration should be read alongside spread. Evidence: merged unique client IP count. Provenance: abuse summary aggregate over normalized client IP.",
+        "gridPos": {
+          "x": 18,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  uniqMerge(`uniq(client_ip)`) AS value\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Unique Client IPs; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#5794F2"
+            },
+            "mappings": [],
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 6,
+        "type": "timeseries",
+        "title": "Blocked, Throttled, and Auth-Rejected Trends",
+        "description": "Claim: triage starts with trend separation across distinct control paths. Evidence: Akamai edge denied traffic, Akamai edge security intervention categories, gateway rate limiting, and gateway auth rejection. Provenance: abuse summary only.",
+        "gridPos": {
+          "x": 0,
+          "y": 7,
+          "w": 24,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  timestamp AS time,\n  countMergeIf(`count()`, ifNull(akamai_security_denied, 0) = 1) AS akamai_edge_denied,\n  countMergeIf(`count()`, akamai_edge_action != 'none' AND akamai_edge_action != '') AS edge_interventions,\n  countMergeIf(`count()`, rate_limit_outcome = 'rate_limited') AS rate_limited,\n  countMergeIf(`count()`, auth_outcome = 'auth_rejected') AS auth_rejected\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nGROUP BY time\nORDER BY time\nLIMIT 10000\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Control Trends; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "lineWidth": 2,
+              "pointSize": 3,
+              "showPoints": "never",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 7,
+        "type": "table",
+        "title": "Top ASNs by Suspicious Pressure",
+        "description": "Claim: high-impact network origins should rank first. Evidence: request volume, distinct IP spread, and edge-action share by ASN. Provenance: abuse summary dimensions only.",
+        "gridPos": {
+          "x": 0,
+          "y": 15,
+          "w": 8,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  client_asn,\n  countMerge(`count()`) AS requests,\n  uniqMerge(`uniq(client_ip)`) AS unique_ips,\n  round(\n    100.0 * countMergeIf(`count()`, akamai_edge_action != 'none' AND akamai_edge_action != '')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS edge_action_pct\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND client_asn != 'unknown'\nGROUP BY client_asn\nORDER BY requests DESC\nLIMIT 15\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Top ASNs; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "requests"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 8,
+        "type": "table",
+        "title": "Top Countries",
+        "description": "Claim: geographic concentration matters for triage and tuning. Evidence: request volume and edge-action share by country. Provenance: abuse summary with normalized country attribution.",
+        "gridPos": {
+          "x": 8,
+          "y": 15,
+          "w": 8,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  client_country,\n  countMerge(`count()`) AS requests,\n  uniqMerge(`uniq(client_ip)`) AS unique_ips,\n  round(\n    100.0 * countMergeIf(`count()`, akamai_edge_action != 'none' AND akamai_edge_action != '')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS edge_action_pct\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND client_country != 'unknown'\nGROUP BY client_country\nORDER BY requests DESC\nLIMIT 15\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Top Countries; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "requests"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 9,
+        "type": "table",
+        "title": "Top API Keys Where Present",
+        "description": "Claim: sparse identity still helps when it exists. Evidence: request volume and spread by `api_key_id`, excluding the fallback `unknown` bucket. Provenance: optional verified-native auth input normalized by the transform.",
+        "gridPos": {
+          "x": 16,
+          "y": 15,
+          "w": 8,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  api_key_id,\n  countMerge(`count()`) AS requests,\n  uniqMerge(`uniq(client_ip)`) AS unique_ips,\n  round(\n    100.0 * countMergeIf(`count()`, akamai_edge_action != 'none' AND akamai_edge_action != '')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS edge_action_pct\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND api_key_id != 'unknown'\nGROUP BY api_key_id\nORDER BY requests DESC\nLIMIT 15\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Top API Keys; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "requests"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 10,
+        "type": "table",
+        "title": "Akamai Edge Actions by Policy and Rule",
+        "description": "Claim: policy evidence should be attributable to named rules. Evidence: merged request counts by policy, rule, and edge action. Provenance: transform-derived fields from DS2 `securityRules`; `none` rows are intentionally excluded here.",
+        "gridPos": {
+          "x": 0,
+          "y": 23,
+          "w": 12,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  policy_name,\n  akamai_rule_id,\n  akamai_edge_action,\n  countMerge(`count()`) AS requests\nFROM ${abuse_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND akamai_edge_action != 'none' AND akamai_edge_action != ''\nGROUP BY policy_name, akamai_rule_id, akamai_edge_action\nORDER BY requests DESC\nLIMIT 20\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse Edge Actions by Policy and Rule; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "requests"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 11,
+        "type": "table",
+        "title": "False-Positive Candidate Evidence",
+        "description": "Claim: possible policy overreach shows up where strong edge intervention coexists with meaningful served traffic. Evidence: served-to-edge ratio by route and policy, plus p95 latency context. Provenance: raw gateway rows for served traffic joined with DS2 request-path-derived route groups for edge interventions.",
+        "gridPos": {
+          "x": 12,
+          "y": 23,
+          "w": 12,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "WITH\n  toDateTime(${__from:date:seconds}) AS window_start,\n  toDateTime(${__to:date:seconds}) AS window_end,\n  window_start + INTERVAL 4 HOUR AS split_point,\n  gateway_rows AS (\n    SELECT\n      ifNull(nullIf(route_group, ''), 'unknown') AS route_group,\n      ifNull(nullIf(gateway_outcome, ''), 'unknown') AS gateway_outcome,\n      gateway_latency_ms\n    FROM ${table}\n    WHERE timestamp >= window_start\n      AND timestamp < split_point\n      AND notEmpty(ifNull(route_group, ''))\n    UNION ALL\n    SELECT\n      ifNull(nullIf(route_group, ''), 'unknown') AS route_group,\n      ifNull(nullIf(gateway_outcome, ''), 'unknown') AS gateway_outcome,\n      gateway_latency_ms\n    FROM ${table}\n    WHERE timestamp >= split_point\n      AND timestamp <= window_end\n      AND notEmpty(ifNull(route_group, ''))\n  ),\n  gateway_rollup AS (\n    SELECT\n      route_group,\n      countIf(gateway_outcome = 'served') AS served_requests,\n      quantileTDigestIf(0.95)(gateway_latency_ms, gateway_outcome = 'served' AND gateway_latency_ms > 0) AS p95_latency_ms\n    FROM gateway_rows\n    GROUP BY route_group\n  ),\n  edge_rollup AS (\n    SELECT\n      route_group,\n      policy_name,\n      sum(edge_interventions) AS edge_interventions\n    FROM (\n      SELECT\n        ifNull(nullIf(extract(ifNull(request_path, ''), '^/+v[0-9]+/([^/?]+)'), ''), 'unknown') AS route_group,\n        ifNull(nullIf(akamai_security_policy, ''), 'none') AS policy_name,\n        count() AS edge_interventions\n      FROM ${table}\n      WHERE timestamp >= window_start\n        AND timestamp < split_point\n        AND ifNull(akamai_security_deny_group, '') != ''\n        AND ifNull(akamai_security_deny_group, '') != 'none'\n        AND notEmpty(ifNull(request_path, ''))\n      GROUP BY route_group, policy_name\n      UNION ALL\n      SELECT\n        ifNull(nullIf(extract(ifNull(request_path, ''), '^/+v[0-9]+/([^/?]+)'), ''), 'unknown') AS route_group,\n        ifNull(nullIf(akamai_security_policy, ''), 'none') AS policy_name,\n        count() AS edge_interventions\n      FROM ${table}\n      WHERE timestamp >= split_point\n        AND timestamp <= window_end\n        AND ifNull(akamai_security_deny_group, '') != ''\n        AND ifNull(akamai_security_deny_group, '') != 'none'\n        AND notEmpty(ifNull(request_path, ''))\n      GROUP BY route_group, policy_name\n    )\n    GROUP BY route_group, policy_name\n  )\nSELECT\n  edge_rollup.route_group,\n  edge_rollup.policy_name,\n  gateway_rollup.served_requests,\n  edge_rollup.edge_interventions,\n  round(gateway_rollup.served_requests / greatest(edge_rollup.edge_interventions, 1), 2) AS served_to_edge_ratio,\n  round(ifNull(gateway_rollup.p95_latency_ms, 0), 1) AS p95_latency_ms\nFROM edge_rollup\nINNER JOIN gateway_rollup USING (route_group)\nWHERE gateway_rollup.served_requests > 0\n  AND edge_rollup.edge_interventions > 0\nORDER BY served_to_edge_ratio DESC, edge_rollup.edge_interventions DESC\nLIMIT 20\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Abuse False Positive Candidate Evidence; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "served_to_edge_ratio"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      }
+    ],
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,648 @@
+{
+  "dashboard": {
+    "uid": "__DASHBOARD_UUID__",
+    "title": "API Operations Command",
+    "description": "Operator dashboard for latency, errors, route degradation, and policy outcomes using MVP-safe summaries plus one request-level evidence table from the live normalized table.",
+    "tags": [
+      "zuplo-api-insights",
+      "operations",
+      "zuplo",
+      "akamai",
+      "mvp"
+    ],
+    "timezone": "utc",
+    "refresh": "1m",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "schemaVersion": 36,
+    "version": 1,
+    "editable": true,
+    "graphTooltip": 1,
+    "links": [
+      {
+        "asDropdown": true,
+        "icon": "apps",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "zuplo-api-insights"
+        ],
+        "targetBlank": false,
+        "title": "Zuplo API Insights Suite",
+        "type": "dashboards"
+      }
+    ],
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.4"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "text",
+        "name": "Text",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "stat",
+        "name": "Stat",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "type": "constant",
+          "skipUrlSync": true,
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "overview_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "type": "constant",
+          "skipUrlSync": true,
+          "current": {
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+          },
+          "hide": 2,
+          "name": "abuse_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "type": "constant",
+          "skipUrlSync": true
+        },
+        {
+          "current": {
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+          },
+          "hide": 2,
+          "name": "security_summary",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "type": "constant",
+          "skipUrlSync": true
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "type": "text",
+        "title": "",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 24,
+          "h": 3
+        },
+        "options": {
+          "content": "## API Operations Command\nCurrent-vs-prior-window latency and error evidence for route owners. Policy-derived dimensions can legitimately show `unknown` when optional auth or DS2 security context is absent.",
+          "mode": "markdown"
+        },
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        }
+      },
+      {
+        "id": 2,
+        "type": "stat",
+        "title": "Error Rate %",
+        "description": "Claim: gateway stability is measurable without billing or custom logs. Evidence: merged 5xx and `gateway_error` outcome share. Provenance: overview summary from normalized response codes and outcomes.",
+        "gridPos": {
+          "x": 0,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, toUInt16(response_status_code) >= 500 OR gateway_outcome = 'gateway_error')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Error Rate; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#F2495C"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 3,
+        "type": "stat",
+        "title": "p95 Latency",
+        "description": "Claim: route degradation should surface as p95 movement, not only averages. Evidence: merged p95 gateway latency. Provenance: normalized `gateway_latency_ms` from plugin duration.",
+        "gridPos": {
+          "x": 6,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(ifNull(quantileTDigestMerge(0.95)(`quantileTDigest(0.95)(gateway_latency_ms)`), 0), 1) AS value\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations p95 Latency; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#FF9830"
+            },
+            "mappings": [],
+            "unit": "ms"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 4,
+        "type": "stat",
+        "title": "Auth Rejected %",
+        "description": "Claim: authentication failures deserve separate operational handling from policy denials. Evidence: merged `auth_rejected` share. Provenance: transform-derived `auth_outcome`, which may be `unknown` on sparse rows.",
+        "gridPos": {
+          "x": 12,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, auth_outcome = 'auth_rejected')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Auth Rejected Rate; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#FADE2A"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 5,
+        "type": "stat",
+        "title": "Rate Limited %",
+        "description": "Claim: throttling pressure should be visible separately from hard failures. Evidence: merged `rate_limited` share. Provenance: transform-derived `rate_limit_outcome` with sparse-safe fallback.",
+        "gridPos": {
+          "x": 18,
+          "y": 3,
+          "w": 6,
+          "h": 4
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  round(\n    100.0 * countMergeIf(`count()`, rate_limit_outcome = 'rate_limited')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS value\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Rate Limited Share; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#73BF69"
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 6,
+        "type": "timeseries",
+        "title": "Error Rate Trend",
+        "description": "Claim: degradation should show as a time trend, not just a point metric. Evidence: merged error share by minute. Provenance: overview summary only.",
+        "gridPos": {
+          "x": 0,
+          "y": 7,
+          "w": 12,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  timestamp AS time,\n  round(\n    100.0 * countMergeIf(`count()`, toUInt16(response_status_code) >= 500 OR gateway_outcome = 'gateway_error')\n    / greatest(countMerge(`count()`), 1),\n    2\n  ) AS error_rate_pct\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nGROUP BY time\nORDER BY time\nLIMIT 10000\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Error Rate Trend; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "#F2495C"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "fillOpacity": 12,
+              "lineWidth": 2,
+              "pointSize": 3,
+              "showPoints": "never",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 7,
+        "type": "timeseries",
+        "title": "Gateway Outcomes Over Time",
+        "description": "Claim: operators need to separate served traffic from gateway protection and failure outcomes. Evidence: per-minute merged served, gateway rate-limit, gateway auth-reject, client-error, and gateway-error counts. Provenance: transform-derived outcome categories from the overview summary.",
+        "gridPos": {
+          "x": 12,
+          "y": 7,
+          "w": 12,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  timestamp AS time,\n  countMergeIf(`count()`, gateway_outcome = 'served') AS served,\n  countMergeIf(`count()`, gateway_outcome = 'rate_limited') AS rate_limited,\n  countMergeIf(`count()`, gateway_outcome = 'auth_rejected') AS auth_rejected,\n  countMergeIf(`count()`, gateway_outcome = 'client_error') AS client_error,\n  countMergeIf(`count()`, gateway_outcome = 'gateway_error') AS gateway_error\nFROM ${overview_summary}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nGROUP BY time\nORDER BY time\nLIMIT 10000\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Gateway Outcomes Trend; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "fillOpacity": 8,
+              "lineWidth": 2,
+              "pointSize": 3,
+              "showPoints": "never",
+              "spanNulls": false
+            },
+            "mappings": [],
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 8,
+        "type": "table",
+        "title": "Routes Ranked by p95 Degradation",
+        "description": "Claim: route degradation needs baseline context. Evidence: current-vs-prior-window p95 latency delta by route group. Provenance: overview summary only; baseline window equals the selected window length immediately before the current range.",
+        "gridPos": {
+          "x": 0,
+          "y": 15,
+          "w": 14,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "WITH\n  duration AS (\n    SELECT greatest(\n      dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})) + 1,\n      1\n    ) AS secs\n  ),\n  current_window AS (\n    SELECT\n      route_group,\n      countMerge(`count()`) AS current_requests,\n      ifNull(quantileTDigestMerge(0.95)(`quantileTDigest(0.95)(gateway_latency_ms)`), 0) AS current_p95_ms\n    FROM ${overview_summary}\n    WHERE timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp <= toDateTime(${__to:date:seconds})\n      AND route_group != 'unknown'\n    GROUP BY route_group\n  ),\n  baseline_window AS (\n    SELECT\n      route_group,\n      ifNull(quantileTDigestMerge(0.95)(`quantileTDigest(0.95)(gateway_latency_ms)`), 0) AS baseline_p95_ms\n    FROM ${overview_summary}\n    WHERE timestamp >= toDateTime(${__from:date:seconds}) - INTERVAL (SELECT secs FROM duration) SECOND\n      AND timestamp < toDateTime(${__from:date:seconds})\n      AND route_group != 'unknown'\n    GROUP BY route_group\n  )\nSELECT\n  coalesce(c.route_group, b.route_group) AS route_group,\n  c.current_requests,\n  round(c.current_p95_ms, 1) AS current_p95_ms,\n  round(coalesce(b.baseline_p95_ms, 0), 1) AS baseline_p95_ms,\n  round(c.current_p95_ms - coalesce(b.baseline_p95_ms, 0), 1) AS p95_delta_ms\nFROM current_window AS c\nFULL OUTER JOIN baseline_window AS b ON c.route_group = b.route_group\nORDER BY p95_delta_ms DESC, current_p95_ms DESC\nLIMIT 15\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Route p95 Degradation; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "p95_delta_ms"
+            }
+          ]
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 9,
+        "type": "table",
+        "title": "Recent Request Evidence",
+        "description": "Claim: summaries are not enough for last-mile triage. Evidence: request-level normalized rows preserving route, latency, and policy context. Provenance: raw `zuplo_gateway` table using only implemented transform fields.",
+        "gridPos": {
+          "x": 14,
+          "y": 15,
+          "w": 10,
+          "h": 8
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  timestamp,\n  request_id,\n  route_group,\n  response_status_code,\n  gateway_latency_ms,\n  gateway_outcome,\n  ifNull(nullIf(auth_outcome, ''), 'unknown') AS auth_outcome,\n  ifNull(nullIf(rate_limit_outcome, ''), 'unknown') AS rate_limit_outcome,\n  ifNull(nullIf(akamai_security_policy, ''), 'none') AS policy_name,\n  ifNull(nullIf(akamai_security_deny_group, ''), 'none') AS akamai_edge_action\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nORDER BY timestamp DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Recent Request Evidence; du=${__user.login}'"
+          }
+        ],
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "pluginVersion": "12.0.4"
+      },
+      {
+        "id": 10,
+        "title": "Likely Triage Owner Candidates",
+        "type": "table",
+        "description": "Heuristic candidate routing only; this is not exact root cause. Buckets use raw-table gateway errors, gateway auth/rate-limit outcomes, Akamai edge denial, and Akamai edge security intervention categories. Overlapping or missing evidence falls back to ambiguous.",
+        "gridPos": {
+          "x": 0,
+          "y": 23,
+          "w": 24,
+          "h": 8
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "options": {
+          "cellHeight": "sm",
+          "showHeader": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "refId": "A",
+            "rawSql": "SELECT\n  multiIf(\n    toUInt8(ifNull(gateway_outcome, 'unknown') = 'gateway_error')\n      + toUInt8(ifNull(auth_outcome, 'unknown') = 'auth_rejected' OR ifNull(rate_limit_outcome, 'unknown') = 'rate_limited')\n      + toUInt8(ifNull(akamai_security_denied, 0) = 1 OR (ifNull(akamai_security_deny_group, '') != '' AND ifNull(akamai_security_deny_group, '') != 'none')) > 1,\n    'ambiguous',\n    ifNull(gateway_outcome, 'unknown') = 'gateway_error',\n    'zuplo_gateway',\n    ifNull(auth_outcome, 'unknown') = 'auth_rejected' OR ifNull(rate_limit_outcome, 'unknown') = 'rate_limited',\n    'zuplo_auth_or_rate_limit',\n    ifNull(akamai_security_denied, 0) = 1 OR (ifNull(akamai_security_deny_group, '') != '' AND ifNull(akamai_security_deny_group, '') != 'none'),\n    'akamai_edge_security',\n    'ambiguous'\n  ) AS triage_owner_candidate,\n  count() AS requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\nGROUP BY multiIf(\n    toUInt8(ifNull(gateway_outcome, 'unknown') = 'gateway_error')\n      + toUInt8(ifNull(auth_outcome, 'unknown') = 'auth_rejected' OR ifNull(rate_limit_outcome, 'unknown') = 'rate_limited')\n      + toUInt8(ifNull(akamai_security_denied, 0) = 1 OR (ifNull(akamai_security_deny_group, '') != '' AND ifNull(akamai_security_deny_group, '') != 'none')) > 1,\n    'ambiguous',\n    ifNull(gateway_outcome, 'unknown') = 'gateway_error',\n    'zuplo_gateway',\n    ifNull(auth_outcome, 'unknown') = 'auth_rejected' OR ifNull(rate_limit_outcome, 'unknown') = 'rate_limited',\n    'zuplo_auth_or_rate_limit',\n    ifNull(akamai_security_denied, 0) = 1 OR (ifNull(akamai_security_deny_group, '') != '' AND ifNull(akamai_security_deny_group, '') != 'none'),\n    'akamai_edge_security',\n    'ambiguous'\n  )\nORDER BY requests DESC\nLIMIT 10\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Operations Likely Triage Owner Candidates; du=${__user.login}'"
+          }
+        ]
+      }
+    ],
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1937 @@
+{
+  "dashboard": {
+    "uid": "__DASHBOARD_UUID__",
+    "title": "Gateway Geo & Raw Traffic Explorer",
+    "description": "Gateway geo and request-level traffic explorer using raw Zuplo gateway fields for locations, routes, methods, IPs, status codes, throttling, and auth outcomes.",
+    "tags": [
+      "zuplo-api-insights",
+      "zuplo",
+      "gateway",
+      "geo",
+      "raw-traffic",
+      "mvp"
+    ],
+    "timezone": "utc",
+    "refresh": "1m",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "schemaVersion": 36,
+    "version": 1,
+    "editable": true,
+    "graphTooltip": 1,
+    "links": [
+      {
+        "asDropdown": true,
+        "icon": "apps",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "zuplo-api-insights"
+        ],
+        "targetBlank": false,
+        "title": "Zuplo API Insights Suite",
+        "type": "dashboards"
+      }
+    ],
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.4"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "stat",
+        "name": "Stat",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "barchart",
+        "name": "Bar chart",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "piechart",
+        "name": "Pie chart",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "gauge",
+        "name": "Gauge",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "geomap",
+        "name": "Geomap",
+        "version": ""
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "type": "constant",
+          "skipUrlSync": true,
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "panels": [
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Gateway request distribution by normalized client country from the raw Zuplo table.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "opacity": 0.8,
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "nightColor": "#a7a6ba4D",
+                "show": "to",
+                "sun": false
+              },
+              "name": "Night/Day",
+              "opacity": 0.4,
+              "tooltip": true,
+              "type": "dayNight"
+            },
+            {
+              "config": {
+                "blur": 10,
+                "radius": 8,
+                "weight": {
+                  "fixed": 1,
+                  "max": 1,
+                  "min": 0
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "Geographic Requests"
+              },
+              "location": {
+                "lookup": "Country",
+                "mode": "lookup"
+              },
+              "name": "Requesting Geo",
+              "opacity": 0.5,
+              "tooltip": true,
+              "type": "heatmap"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "coords",
+            "lat": 16.07157,
+            "lon": 14.310928,
+            "zoom": 1.72
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  client_country AS Country,\n  count(request_id) AS requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(client_country, ''))\nGROUP BY client_country\nORDER BY requests DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Geographic Request Distribution; du=${__user.login}'",
+            "refId": "Geographic Requests"
+          }
+        ],
+        "title": "Geographic Request Distribution",
+        "transparent": true,
+        "type": "geomap",
+        "id": 6,
+        "gridPos": {
+          "h": 11,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw request count from the Zuplo gateway table for the selected time range.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#ff00bd",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short",
+            "noValue": "0"
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT count(request_id) AS total_requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total Raw Requests; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Raw Requests",
+        "transparent": true,
+        "type": "stat",
+        "id": 9,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 11
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Daily raw gateway request volume over the selected time range.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#ff00bd",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "options": {
+          "barRadius": 0.1,
+          "barWidth": 0.1,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "vertical",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "xField": "date",
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toDate(timestamp) AS date,\n  count(request_id) AS daily_requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\nGROUP BY toDate(timestamp)\nORDER BY date ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Requests Per Day; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Raw Requests Per Day",
+        "transparent": true,
+        "type": "barchart",
+        "id": 11,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 11
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "id": 15,
+        "panels": [],
+        "title": "Request Summaries",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "dashed"
+              }
+            },
+            "fieldMinMax": true,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 100
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 200
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 300
+                }
+              ]
+            },
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfMinute(timestamp) AS time,\n  count(request_id) AS requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\nGROUP BY toStartOfMinute(timestamp)\nORDER BY time ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Requests Per Minute; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Raw Requests Per Minute",
+        "transparent": true,
+        "type": "timeseries",
+        "description": "Raw gateway request volume by minute for the selected time range."
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Median, average, and p95 gateway latency from raw Zuplo telemetry.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfMinute(timestamp) AS time,\n  ifNull(quantileTDigest(0.50)(gateway_latency_ms), 0) AS median_latency_ms,\n  ifNull(avg(gateway_latency_ms), 0) AS average_latency_ms,\n  ifNull(quantileTDigest(0.95)(gateway_latency_ms), 0) AS p95_latency_ms\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND gateway_latency_ms IS NOT NULL\nGROUP BY toStartOfMinute(timestamp)\nORDER BY time ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Gateway Response Time; du=${__user.login}'",
+            "refId": "Request Times"
+          }
+        ],
+        "title": "Gateway Response Time",
+        "transparent": true,
+        "type": "timeseries",
+        "id": 19,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw route paths ranked by traffic. Route group is included for quick aggregation context.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "mode": "lcd",
+                "type": "gauge",
+                "valueDisplayMode": "text"
+              },
+              "filterable": true,
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#ff00bd",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": [],
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  route_path,\n  ifNull(route_group, 'unknown') AS normalized_route_group,\n  count(request_id) AS request_count,\n  round(ifNull(100.0 * countIf(toUInt16OrZero(response_status_code) >= 400) / nullIf(count(), 0), 0), 2) AS error_rate_pct,\n  ifNull(quantileTDigest(0.95)(gateway_latency_ms), 0) AS p95_latency_ms\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(route_path, ''))\nGROUP BY route_path, ifNull(route_group, 'unknown')\nORDER BY request_count DESC\nLIMIT 20\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top Raw Route Paths; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Raw Route Paths",
+        "transparent": true,
+        "type": "table",
+        "id": 12,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 28
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw request distribution by normalized HTTP method.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "options": {
+          "displayLabels": [
+            "name",
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "percent"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  request_method,\n  count(request_id) AS method_requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(request_method, ''))\nGROUP BY request_method\nORDER BY method_requests DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Request Method Distribution; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Request Method Distribution",
+        "transparent": true,
+        "type": "piechart",
+        "id": 3,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 28
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Average gateway latency from raw Zuplo telemetry.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "bars",
+              "fillOpacity": 0,
+              "gradientMode": "hue",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "calcs": [
+              "mean"
+            ],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 0,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfMinute(timestamp) AS time,\n  ifNull(avg(gateway_latency_ms), 0) AS average_gateway_latency_ms\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND gateway_latency_ms IS NOT NULL\nGROUP BY toStartOfMinute(timestamp)\nORDER BY time ASC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average Gateway Latency; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Average Gateway Latency",
+        "transparent": true,
+        "type": "timeseries",
+        "id": 2,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 36
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Client IPs with the highest raw gateway request volume.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "barRadius": 0.5,
+          "barWidth": 0.62,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "horizontal",
+          "showValue": "never",
+          "stacking": "none",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "xField": "client_ip",
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  client_ip,\n  count(request_id) AS request_count\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(client_ip, ''))\nGROUP BY client_ip\nORDER BY request_count DESC\nLIMIT 10\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top Requesting IP Addresses; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Requesting IP Addresses",
+        "transparent": true,
+        "type": "barchart",
+        "id": 7,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 36
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 44
+        },
+        "id": 16,
+        "panels": [],
+        "title": "Status Codes & Error Rates",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Share of raw gateway requests marked as rate limited or returned as HTTP 429.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^rate_limited_percentage$/",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  round(\n    ifNull(\n      100.0 * countIf(rate_limit_outcome = 'rate_limited' OR toUInt16OrZero(response_status_code) = 429)\n      / nullIf(count(), 0),\n      0\n    ),\n    2\n  ) AS rate_limited_percentage\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Rate Limited Requests %; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Rate Limited Requests %",
+        "transparent": true,
+        "type": "gauge",
+        "id": 17,
+        "gridPos": {
+          "h": 9,
+          "w": 7,
+          "x": 0,
+          "y": 45
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway requests by normalized response status code.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 3,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "always",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfMinute(timestamp) AS time,\n  response_status_code,\n  count(request_id) AS requests\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(response_status_code, ''))\nGROUP BY toStartOfMinute(timestamp), response_status_code\nORDER BY time ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Requests by Status Code; du=${__user.login}'",
+            "refId": "Requests by Status Code"
+          }
+        ],
+        "title": "Requests by Status Code",
+        "transparent": true,
+        "type": "timeseries",
+        "id": 8,
+        "gridPos": {
+          "h": 9,
+          "w": 17,
+          "x": 7,
+          "y": 45
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Share of raw gateway requests that were rejected by auth or returned as HTTP 401.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "options": {
+          "minVizHeight": 75,
+          "minVizWidth": 75,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^unauthorized_percentage$/",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  round(\n    ifNull(\n      100.0 * countIf(auth_outcome = 'auth_rejected' OR toUInt16OrZero(response_status_code) = 401)\n      / nullIf(count(), 0),\n      0\n    ),\n    2\n  ) AS unauthorized_percentage\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Unauthorized Requests %; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Unauthorized Requests %",
+        "transparent": true,
+        "type": "gauge",
+        "id": 18,
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 0,
+          "y": 54
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway 4xx and 5xx response counts by minute and response status code.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "Requests",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 400
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 500
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfMinute(timestamp) AS time,\n  response_status_code,\n  count(request_id) AS error_count\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND toUInt16OrZero(response_status_code) BETWEEN 400 AND 599\nGROUP BY toStartOfMinute(timestamp), response_status_code\nORDER BY time ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Error Rates by Status Code; du=${__user.login}'",
+            "refId": "Error Rates"
+          }
+        ],
+        "title": "Error Rates by Status Code",
+        "transparent": true,
+        "type": "timeseries",
+        "id": 4,
+        "gridPos": {
+          "h": 8,
+          "w": 17,
+          "x": 7,
+          "y": 54
+        }
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 62
+        },
+        "id": 14,
+        "panels": [],
+        "title": "Geo",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway request share by Zuplo-reported latitude and longitude.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 5
+                },
+                {
+                  "color": "#EF843C",
+                  "value": 10
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 20
+                },
+                {
+                  "color": "#447EBC",
+                  "value": 30
+                },
+                {
+                  "color": "#CCA300",
+                  "value": 40
+                },
+                {
+                  "color": "#508642",
+                  "value": 50
+                },
+                {
+                  "color": "#705DA0",
+                  "value": 60
+                },
+                {
+                  "color": "#BA43A9",
+                  "value": 70
+                },
+                {
+                  "color": "#1F78C1",
+                  "value": 80
+                },
+                {
+                  "color": "#E24D42",
+                  "value": 90
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": true,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "nightColor": "#a7a6ba4D",
+                "show": "to",
+                "sun": false
+              },
+              "name": "Night/Day",
+              "opacity": 0.4,
+              "tooltip": true,
+              "type": "dayNight"
+            },
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "field": "percentage_band",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "percentage",
+                    "fixed": 5,
+                    "max": 20,
+                    "min": 1
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "field": "percentage_band",
+                    "fixed": "",
+                    "mode": "fixed"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "Geo as Percentages"
+              },
+              "location": {
+                "mode": "coords",
+                "latitude": "geo_latitude",
+                "longitude": "geo_longitude"
+              },
+              "name": "Location",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "none"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "coords",
+            "lat": 12.0028,
+            "lon": 11.636296,
+            "zoom": 2
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toFloat64OrNull(zuplo_latitude) AS geo_latitude,\n  toFloat64OrNull(zuplo_longitude) AS geo_longitude,\n  multiIf(\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 5, 1,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 10, 2,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 20, 3,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 30, 4,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 40, 5,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 50, 6,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 60, 7,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 70, 8,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 80, 9,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) < 90, 10,\n    round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) <= 100, 11,\n    0\n  ) AS percentage_band,\n  round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) AS percentage\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(zuplo_latitude, ''))\n  AND notEmpty(ifNull(zuplo_longitude, ''))\nGROUP BY zuplo_latitude, zuplo_longitude\nORDER BY percentage_band\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic Location Map; du=${__user.login}'",
+            "refId": "Geo as Percentages"
+          }
+        ],
+        "title": "Traffic Location Map",
+        "transparent": true,
+        "type": "geomap",
+        "id": 13,
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 63
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway request volume by Zuplo colo using IATA-style lookup.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                },
+                {
+                  "color": "#d44a3a",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "fixed": "#ff00db"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "request_count",
+                    "fixed": 5,
+                    "max": 50,
+                    "min": 5
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "A"
+              },
+              "location": {
+                "gazetteer": "public/gazetteer/airports.geojson",
+                "lookup": "zuplo_colo",
+                "mode": "lookup"
+              },
+              "name": "COLO/IATA",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "coords",
+            "lat": 16.45913,
+            "lon": 25.699299,
+            "zoom": 1.53
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  zuplo_colo,\n  count(request_id) AS request_count\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(zuplo_colo, ''))\nGROUP BY zuplo_colo\nORDER BY request_count DESC\nLIMIT 20\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Requests by Zuplo Colo; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Requests by Zuplo Colo (Top 20)",
+        "transparent": true,
+        "type": "geomap",
+        "id": 22,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 75
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Zuplo-reported cities with the highest raw gateway request volume.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "hue",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "fieldMinMax": true,
+            "mappings": [],
+            "noValue": "N/A",
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "#299c46",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "barRadius": 0.2,
+          "barWidth": 1,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "horizontal",
+          "showValue": "auto",
+          "stacking": "normal",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "xField": "zuplo_city",
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  zuplo_city,\n  client_country,\n  count(request_id) AS request_count\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(zuplo_city, ''))\nGROUP BY zuplo_city, client_country\nORDER BY request_count DESC\nLIMIT 10\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top Cities; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Cities",
+        "transparent": true,
+        "type": "barchart",
+        "id": 20,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 75
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway request share by Zuplo-reported timezone.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  zuplo_timezone,\n  round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) AS percentage\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(zuplo_timezone, ''))\nGROUP BY zuplo_timezone\nORDER BY percentage DESC\nLIMIT 10\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Timezone Distribution; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Timezone Distribution",
+        "transparent": true,
+        "type": "piechart",
+        "id": 23,
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 0,
+          "y": 83
+        }
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Raw gateway request distribution by Zuplo colo.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "options": {
+          "displayLabels": [],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "percent",
+              "value"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^percentage$/",
+            "limit": 10,
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  zuplo_colo AS colo_with_percentage,\n  count(request_id) AS request_count,\n  round(ifNull((count(request_id) * 100.0) / nullIf(sum(count(request_id)) OVER (), 0), 0), 2) AS percentage\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds}) AND timestamp < toDateTime(${__to:date:seconds})\n  AND notEmpty(ifNull(zuplo_colo, ''))\nGROUP BY zuplo_colo\nORDER BY request_count DESC\nLIMIT 20\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Colo Distribution; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Colo Distribution",
+        "transparent": true,
+        "type": "piechart",
+        "id": 21,
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 12,
+          "y": 83
+        }
+      }
+    ],
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    }
+  }
+}
