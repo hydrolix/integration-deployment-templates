@@ -155,10 +155,6 @@ Examples:
     s2.add_argument("--channel-type", default="", help="Channel type override")
     s2.add_argument("--method", default="", help="Method override")
     s2.add_argument("--primary-dashboard", default="", help="Primary dashboard filename")
-    s2.add_argument("--folder", default="",
-                    help="Grafana folder (api-context, cdn, dns, media, security)")
-    s2.add_argument("--subfolder", default="",
-                    help="Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)")
     s2.add_argument("--beta", action="store_true", default=True, help="Mark as beta (default)")
     s2.add_argument("--no-beta", action="store_true", default=False, help="Mark as not beta")
     s2.add_argument("--config", default="", help="JSON config file for stage 2")
@@ -242,10 +238,6 @@ def _merge_config_into_args(args):
         args.bundle_name = data.get("bundle_name", "")
     if not args.description:
         args.description = data.get("description", "")
-    if not args.folder:
-        args.folder = data.get("folder", "")
-    if not args.subfolder:
-        args.subfolder = data.get("subfolder", "")
     if args.version == "1.0.0":
         # Only override if still at default — config or path-based version takes precedence
         config_version = data.get("version", "")
@@ -398,10 +390,6 @@ def build_portable_cmd(args):
         cmd.append("--skip-validation")
     if args.bundle_config:
         cmd += ["--bundle-config", args.bundle_config]
-    if args.folder:
-        cmd += ["--folder", args.folder]
-    if args.subfolder:
-        cmd += ["--subfolder", args.subfolder]
     if args.verbose:
         cmd.append("--verbose")
 
@@ -430,10 +418,6 @@ def build_configure_cmd(args):
         cmd += ["--method", args.method]
     if args.primary_dashboard:
         cmd += ["--primary-dashboard", args.primary_dashboard]
-    if args.folder:
-        cmd += ["--folder", args.folder]
-    if args.subfolder:
-        cmd += ["--subfolder", args.subfolder]
     if args.no_beta:
         cmd.append("--no-beta")
     if args.config:
