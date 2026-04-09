@@ -1,0 +1,86 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot_insights_cdn",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/Bot Insights (CDN).json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": [
+        "breadcrumbs",
+        "cmcd_object_type",
+        "cmcd_query_param",
+        "cmcd_stream_type",
+        "cmcd_streaming_format",
+        "edge_worker",
+        "edge_worker_execution"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Bot Insights Cdn Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_bot_insights_cdn",
+  "other_dashboards": [],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "bot_summary_day",
+      "parent_table_name": "your_table_name",
+      "sql": {
+        "path": "summaries/bot_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "bot_summary_hour",
+      "parent_table_name": "your_table_name",
+      "sql": {
+        "path": "summaries/bot_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
+      "name": "bot_summary_month",
+      "parent_table_name": "your_table_name",
+      "sql": {
+        "path": "summaries/bot_summary_month.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "your_table_name",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/bot_insights_cdn-integration",
+    "source": {
+      "full_title": "Trafficpeak Bot Insights Cdn",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}
