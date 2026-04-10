@@ -1,12 +1,18 @@
 """Phase 2a-2d: Transform organization, cleanup, and sample data extraction."""
 
+import calendar
 import json
 import os
 import shutil
 import sys
+import time
+from datetime import datetime, timezone
 
 from utils.file_utils import read_json, write_json
 from .constants import TRANSFORM_METADATA_FIELDS
+
+# 183 days in seconds (approximately 6 months)
+_STALENESS_THRESHOLD_SECS = 183 * 86400
 
 
 def run_transform_organization(config, state):
@@ -229,8 +235,9 @@ def _extract_sample_data(data, tinfo, config, state):
     # Update transform's sample_data to normalized single object
     settings["sample_data"] = normalized
 
-    # Write sample_data.json
+    # Write sample_data.json (shift stale timestamps only on real runs)
     if not config.dry_run:
+        _shift_stale_timestamps(normalized, data, tinfo, config)
         write_json(tinfo.sample_data_path, normalized)
         state.files_created.append(tinfo.sample_data_path)
 
@@ -244,3 +251,81 @@ def _extract_sample_data(data, tinfo, config, state):
         )
 
     return True
+
+
+_FORMAT_DIVISORS = {"s": 1, "ms": 1_000, "us": 1_000_000, "ns": 1_000_000_000}
+
+
+def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
+    """Shift stale epoch timestamps in sample_data to the 1st of the current month.
+
+    Uses the transform's output_columns schema to identify epoch-typed fields.
+    Only shifts if the primary timestamp is older than 6 months.
+    Handles epoch formats: s, ms, us, ns.
+    """
+    output_columns = transform_data.get("settings", {}).get("output_columns", [])
+    if not output_columns:
+        return
+
+    # Find the primary epoch column and its format
+    primary_col_name = None
+    primary_format = "s"
+    epoch_col_names = []
+    for col in output_columns:
+        dt = col.get("datatype", {})
+        if dt.get("type") == "epoch":
+            epoch_col_names.append(col["name"])
+            if dt.get("primary"):
+                primary_col_name = col["name"]
+                primary_format = dt.get("format", "s")
+
+    if not primary_col_name:
+        if config.verbose:
+            print(
+                f"[Transform Org] No primary epoch column found in "
+                f"{os.path.basename(tinfo.final_path)}, skipping timestamp shift",
+                file=sys.stderr,
+            )
+        return
+
+    primary_value = sample_data.get(primary_col_name)
+    if not isinstance(primary_value, (int, float)):
+        if config.verbose:
+            print(
+                f"[Transform Org] Primary timestamp '{primary_col_name}' is not numeric "
+                f"in sample_data for {os.path.basename(tinfo.final_path)}, skipping shift",
+                file=sys.stderr,
+            )
+        return
+
+    # Convert to seconds for comparison regardless of format
+    divisor = _FORMAT_DIVISORS.get(primary_format, 1)
+    primary_secs = int(primary_value) // divisor
+
+    now_epoch = int(time.time())
+    staleness = now_epoch - primary_secs
+
+    if staleness <= _STALENESS_THRESHOLD_SECS:
+        return
+
+    # Target: 1st of current month, midnight UTC
+    now_utc = datetime.now(timezone.utc)
+    first_of_month = now_utc.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    target_epoch = int(calendar.timegm(first_of_month.timetuple()))
+
+    # Delta in the native format units
+    delta = (target_epoch - primary_secs) * divisor
+
+    shifted_fields = []
+    for col_name in epoch_col_names:
+        if col_name in sample_data and isinstance(sample_data[col_name], (int, float)):
+            sample_data[col_name] = int(sample_data[col_name]) + delta
+            shifted_fields.append(col_name)
+
+    if config.verbose and shifted_fields:
+        print(
+            f"[Transform Org] Shifted stale timestamps in "
+            f"{os.path.basename(tinfo.sample_data_path)}: "
+            f"{', '.join(shifted_fields)} (delta={delta // divisor}s, format={primary_format})",
+            file=sys.stderr,
+        )
