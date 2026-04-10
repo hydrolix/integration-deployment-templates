@@ -1954,6 +1954,10 @@
         "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
         "hide": 2,
         "name": "next_dim",
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
         "options": [],
         "query": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
         "refresh": 2,
