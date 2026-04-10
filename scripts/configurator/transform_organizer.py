@@ -267,17 +267,18 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     if not output_columns:
         return
 
-    # Find the primary epoch column and its format
+    # Find the primary epoch column and build a map of epoch column formats
     primary_col_name = None
     primary_format = "s"
-    epoch_col_names = []
+    epoch_col_formats = {}  # col_name -> format string
     for col in output_columns:
         dt = col.get("datatype", {})
         if dt.get("type") == "epoch":
-            epoch_col_names.append(col["name"])
+            col_format = dt.get("format", "s")
+            epoch_col_formats[col["name"]] = col_format
             if dt.get("primary"):
                 primary_col_name = col["name"]
-                primary_format = dt.get("format", "s")
+                primary_format = col_format
 
     if not primary_col_name:
         if config.verbose:
@@ -313,19 +314,21 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     first_of_month = now_utc.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     target_epoch = int(calendar.timegm(first_of_month.timetuple()))
 
-    # Delta in the native format units
-    delta = (target_epoch - primary_secs) * divisor
+    # Delta in seconds (applied per-column in each column's native units)
+    delta_secs = target_epoch - primary_secs
 
     shifted_fields = []
-    for col_name in epoch_col_names:
+    for col_name, col_format in epoch_col_formats.items():
         if col_name in sample_data and isinstance(sample_data[col_name], (int, float)):
-            sample_data[col_name] = int(sample_data[col_name]) + delta
+            col_divisor = _FORMAT_DIVISORS.get(col_format, 1)
+            col_delta = delta_secs * col_divisor
+            sample_data[col_name] = int(sample_data[col_name]) + col_delta
             shifted_fields.append(col_name)
 
     if config.verbose and shifted_fields:
         print(
             f"[Transform Org] Shifted stale timestamps in "
             f"{os.path.basename(tinfo.sample_data_path)}: "
-            f"{', '.join(shifted_fields)} (delta={delta // divisor}s, format={primary_format})",
+            f"{', '.join(shifted_fields)} (delta={delta_secs}s)",
             file=sys.stderr,
         )

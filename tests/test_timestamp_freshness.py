@@ -162,6 +162,45 @@ class TestShiftStaleTimestamps:
         assert sample["timestamp"] == target
         assert sample["ts_sec_idx"] == extra_ts + delta
 
+    def test_mixed_format_secondary_columns(self, tmp_path):
+        """Secondary epoch columns with different formats get their own per-format delta."""
+        stale_secs = _now_epoch() - (365 * 86400)
+        secondary_ms = (stale_secs - 3600) * 1000  # 1 hour before primary, in ms
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {"type": "epoch", "primary": True, "format": "s"},
+                    },
+                    {
+                        "name": "event_time_ms",
+                        "datatype": {"type": "epoch", "format": "ms"},
+                    },
+                    {"name": "bytes", "datatype": {"type": "uint64"}},
+                ],
+                "sample_data": {
+                    "timestamp": stale_secs,
+                    "event_time_ms": secondary_ms,
+                    "bytes": 4096,
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        target = _first_of_month_epoch()
+        delta_secs = target - stale_secs
+        # Primary (seconds format) shifted by delta in seconds
+        assert sample["timestamp"] == target
+        # Secondary (ms format) shifted by delta in milliseconds
+        assert sample["event_time_ms"] == secondary_ms + (delta_secs * 1000)
+        # Non-epoch untouched
+        assert sample["bytes"] == 4096
+
     def test_non_epoch_columns_untouched(self, tmp_path):
         """Non-epoch columns should not be modified."""
         stale_ts = _now_epoch() - (365 * 86400)
