@@ -1,0 +1,1071 @@
+{
+  "name": "mcdn_imperva",
+  "description": "Imperva CDN/WAF transform for cdn-insights bundle (pre-parsed CEF to JSON)",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresult_type LIKE 'REQ_CACHED%' AS cache_was_cached,\npath(concat('http://', assumeNotNull(request))) AS request_path,\nqueryString(concat('http://', assumeNotNull(request))) AS request_query_string,\nconcat(path(concat('http://', assumeNotNull(request))), IF(length(queryString(concat('http://', assumeNotNull(request)))) > 0, concat('?', queryString(concat('http://', assumeNotNull(request)))), '')) AS request_full_path,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNumOrDefault(client_ip))),'0'), NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4OrDefault(client_ip))),'0')) AS client_asn,\n * \nFROM {STREAM}",
+    "null_values": [
+      "-"
+    ],
+    "sample_data": [
+      {
+        "start": 1708876800000,
+        "end": 1708876800234,
+        "src": "198.51.100.42",
+        "sip": "203.0.113.50",
+        "request": "www.example-store.com/api/products?category=electronics",
+        "requestMethod": "GET",
+        "cn1": 200,
+        "act": "REQ_PASSED",
+        "in": 4523,
+        "cs1": "true",
+        "cs2": "true",
+        "cs3": "true",
+        "cs4": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "cs5": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "cs6": "Microsoft Edge",
+        "requestClientApplication": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0",
+        "ref": "https://www.example-store.com/browse",
+        "sourceServiceName": "www.example-store.com",
+        "siteid": "2847391",
+        "suid": "50005477",
+        "ccode": "US",
+        "cicode": "Miami",
+        "deviceFacility": "mia",
+        "xff": "198.51.100.42",
+        "cpt": 52341,
+        "ver": "TLSv1.3 TLS_AES_256_GCM_SHA384",
+        "fileType": "",
+        "filePermission": "",
+        "imperva_event_name": "Normal",
+        "imperva_severity": "0"
+      },
+      {
+        "start": 1708876802000,
+        "end": 1708876802012,
+        "src": "192.0.2.100",
+        "sip": "",
+        "request": "www.example-store.com/static/images/logo.png",
+        "requestMethod": "GET",
+        "cn1": 200,
+        "act": "REQ_CACHED_WEBSITE",
+        "in": 28473,
+        "cs1": "true",
+        "cs2": "true",
+        "cs3": "true",
+        "cs4": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "cs5": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+        "cs6": "Safari",
+        "requestClientApplication": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        "ref": "https://www.example-store.com/",
+        "sourceServiceName": "www.example-store.com",
+        "siteid": "2847391",
+        "suid": "50005477",
+        "ccode": "US",
+        "cicode": "Los Angeles",
+        "deviceFacility": "lax",
+        "xff": "",
+        "cpt": 48221,
+        "ver": "TLSv1.3 TLS_AES_128_GCM_SHA256",
+        "fileType": "",
+        "filePermission": "",
+        "imperva_event_name": "Normal",
+        "imperva_severity": "0"
+      },
+      {
+        "start": 1708876803000,
+        "end": 1708876803005,
+        "src": "203.0.113.55",
+        "sip": "203.0.113.52",
+        "request": "www.example-store.com/api/search?q=SELECT+*+FROM+users",
+        "requestMethod": "GET",
+        "cn1": 403,
+        "act": "REQ_BLOCKED_ACL",
+        "in": 0,
+        "cs1": "NA",
+        "cs2": "false",
+        "cs3": "false",
+        "cs4": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+        "cs5": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cs6": "Bot",
+        "requestClientApplication": "python-requests/2.31.0",
+        "ref": "",
+        "sourceServiceName": "www.example-store.com",
+        "siteid": "2847391",
+        "suid": "50005477",
+        "ccode": "RU",
+        "cicode": "Moscow",
+        "deviceFacility": "ams",
+        "xff": "",
+        "cpt": 33120,
+        "ver": "TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384",
+        "fileType": "900100",
+        "filePermission": "0",
+        "cs9": "SQL Injection Protection",
+        "imperva_event_name": "SQL Injection",
+        "imperva_severity": "0"
+      },
+      {
+        "start": 1708876804000,
+        "src": "192.0.2.200",
+        "sip": "",
+        "request": "www.example-store.com/api/prices",
+        "requestMethod": "GET",
+        "cn1": 200,
+        "act": "REQ_CHALLENGE_CAPTCHA",
+        "in": 2048,
+        "cs1": "NA",
+        "cs2": "false",
+        "cs3": "false",
+        "cs4": "",
+        "cs5": "",
+        "cs6": "Bot",
+        "requestClientApplication": "curl/8.1.2",
+        "ref": "",
+        "sourceServiceName": "www.example-store.com",
+        "siteid": "2847391",
+        "suid": "50005477",
+        "ccode": "CN",
+        "cicode": "Shanghai",
+        "deviceFacility": "sin",
+        "xff": "",
+        "cpt": 55432,
+        "ver": "",
+        "fileType": "",
+        "filePermission": "",
+        "imperva_event_name": "Bot Access Control",
+        "imperva_severity": "4"
+      },
+      {
+        "start": 1708876805000,
+        "end": 1708876805187,
+        "src": "198.51.100.78",
+        "sip": "203.0.113.53",
+        "request": "www.example-store.com/products/widget-pro",
+        "requestMethod": "GET",
+        "cn1": 200,
+        "act": "REQ_PASSED",
+        "in": 15234,
+        "cs1": "true",
+        "cs2": "true",
+        "cs3": "true",
+        "cs4": "d4e5f6a7-b8c9-0123-defa-234567890123",
+        "cs5": "a948904f2f0f479b8f8564e9a07f3e4f18e2c8eb01e03e5a18e2c8eb01e03e5a",
+        "cs6": "Chrome Mobile",
+        "requestClientApplication": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+        "ref": "https://www.google.com/",
+        "sourceServiceName": "www.example-store.com",
+        "siteid": "2847391",
+        "suid": "50005477",
+        "ccode": "DE",
+        "cicode": "Frankfurt",
+        "deviceFacility": "fra",
+        "xff": "198.51.100.78",
+        "cpt": 44120,
+        "ver": "TLSv1.3 TLS_AES_256_GCM_SHA384",
+        "fileType": "",
+        "filePermission": "",
+        "imperva_event_name": "Normal",
+        "imperva_severity": "0"
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "primary": true,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "start"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "act"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "in"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cn1"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestMethod"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sourceServiceName"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_full_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ref"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestClientApplication"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "src"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ccode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cicode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "deviceFacility"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_captcha_support",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs1"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_js_support",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs2"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_cookie_support",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs3"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_visitor_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs4"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_client_signature",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs5"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_client_app",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs6"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_event_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "imperva_event_name"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_severity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "imperva_severity"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_tls_version",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ver"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_attack_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "filePermission"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_attack_type",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "fileType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_client_port",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cpt"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_account_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "suid"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_xff",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "xff"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_origin_request",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": false,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Imperva",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Imperva multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_end_time",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "end"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_app_protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "app"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_server_port",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "spt"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_site_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "siteid"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_customer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "Customer"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_request_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "deviceExternalId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_file_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "fileId"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_client_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "dproc"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_rule_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs9"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_latitude",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs7"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_longitude",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs8"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "qstr"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_additional_req_headers",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "additionalReqHeaders"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "imperva_additional_res_headers",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "additionalResHeaders"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}

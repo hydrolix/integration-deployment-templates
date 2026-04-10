@@ -9,6 +9,7 @@ SELECT
     edge_pop,
     user_agent_category,
     hdx_cdn,
+    is_origin_request,
     count() as cnt_all,
     sum(response_total_bytes) as response_total_bytes,
     avg(response_time_to_first_byte_ms) as response_ttfb_ms,
@@ -29,5 +30,6 @@ GROUP BY
     client_asn,
     edge_pop,
     user_agent_category,
-    hdx_cdn
+    hdx_cdn,
+    is_origin_request
     SETTINGS hdx_primary_key = 'timestamp'

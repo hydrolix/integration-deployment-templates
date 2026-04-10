@@ -1,5 +1,5 @@
 {
-  "description": "City Name",
-  "name": "city_name",
-  "sql": "(ip) -> dictGetString (\n  'commons_geoip_city_locations_en',\n  'city_name',\n  commons_geoname_id (assumeNotNull (ip))\n)"
+    "description": "City Name",
+    "name": "city_name",
+    "sql": "(ip) -> dictGetString (\n  'commons_geoip_city_locations_en',\n  'city_name',\n  commons_geoname_id (assumeNotNull (ip))\n)"
 }

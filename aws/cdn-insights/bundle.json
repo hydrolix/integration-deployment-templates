@@ -1,10 +1,129 @@
 {
+  "name": "multi_stream_cdn_insights",
+  "source": "cdn_insights",
+  "method": "multi_stream",
+  "beta": true,
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
-  "beta": false,
   "dashboard": {
-    "path": "dashboards/default.json",
+    "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
   },
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "cdn_insights",
+      "transforms": [
+        {
+          "path": "transformations/default/transform.json",
+          "method": "http_streaming",
+          "sha256": "64c4025b2e3bdac526db6ec0a415285a64b943e77b0bd02d1f38a2f5847e6fad"
+        },
+        {
+          "path": "transformations/mcdn_akamai_ds2/transform.json",
+          "method": "http_streaming",
+          "sha256": "31048af184324d6de839f60b965fdcc737d6215369f99438c6778554538623db"
+        },
+        {
+          "path": "transformations/mcdn_cloudflare/transform.json",
+          "method": "http_streaming",
+          "sha256": "924cf3a8048bb6028e1eb80a82e0daeee4959d35d5bb720811e96f8b07c9f6e8"
+        },
+        {
+          "path": "transformations/mcdn_cloudfront_firehose/transform.json",
+          "method": "firehose",
+          "sha256": "928bb6d00bf65f4e6e6ab87b62711d8980d300a5a8a282a2b70df8d913ca89f9"
+        },
+        {
+          "path": "transformations/mcdn_fastly/transform.json",
+          "method": "http_streaming",
+          "sha256": "679aaeb8696c73b417f0b7d3a73411e9348772759fda1bf881a5145a28c8c77d"
+        },
+        {
+          "path": "transformations/mcdn_tencent/transform.json",
+          "method": "http_streaming",
+          "sha256": "ed82d42b62c2c3ff034cebcb25c429143bb2ab2711503d539de57c1f3d0d718c"
+        },
+        {
+          "path": "transformations/mcdn_ioriver/transform.json",
+          "method": "http_streaming",
+          "sha256": "ab28a812faccce93e6132bae336677490cd2bb9beea68d8997043b9be8b5cf10"
+        },
+        {
+          "path": "transformations/mcdn_cachefly/transform.json",
+          "method": "http_streaming",
+          "sha256": "58f5c50e89a01ee821d4d9e333de720099b42b648371501f06497370699aa4c6"
+        },
+        {
+          "path": "transformations/mcdn_varnish/transform.json",
+          "method": "http_streaming",
+          "sha256": "c5c29ecbda54af8018e212da0fc1da4c61ee1f8a376daabb0e6a9b046d672ca6"
+        },
+        {
+          "path": "transformations/mcdn_byteplus/transform.json",
+          "method": "http_streaming",
+          "sha256": "bbe256bf8671b5b84c666790a3a4dbcae99fe2e0f9d14f6815a5e9a73df87db0"
+        },
+        {
+          "path": "transformations/mcdn_imperva/transform.json",
+          "method": "http_streaming",
+          "sha256": "8194921977e5719997189a33338838cfe71c0803f0f13665e09931acf15fe627"
+        },
+        {
+          "path": "transformations/mcdn_google_media/transform.json",
+          "method": "http_streaming",
+          "sha256": "6428c1cb96dea07e73c75c80809503f15168781da17698f5f36588111b1e3b49"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "source": {
+      "full_title": "CDN Insights",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
+    },
+    "data_category": "security"
+  },
+  "metadata": {
+    "version": "1.1.0",
+    "maintainer": "kevin.borkman@hydrolix.io",
+    "description": "CDN Insights Description",
+    "channel_type": "AWS"
+  },
+  "other_dashboards": [
+    {
+      "path": "dashboards/CDN Global View.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/Raw Logs.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "mcdn_summary_min",
+      "parent_table_name": "cdn_insights",
+      "sql": {
+        "path": "summaries/mcdn_summary_min.sql",
+        "sha256": "5f6d0f2e0f991eae83599d9facd8dcc74cf56d1688ff075b8926c4a39f61d6ef"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "mcdn_summary_hour",
+      "parent_table_name": "cdn_insights",
+      "sql": {
+        "path": "summaries/mcdn_summary_hour.sql",
+        "sha256": "99dd9802abb7873b8005fad1f856111dd64ecb29d4c5a5264b534861002f36c9"
+      }
+    }
+  ],
   "dependencies": {
     "hydrolix": {
       "required_dictionaries": [],
@@ -25,87 +144,9 @@
       ]
     }
   },
-  "metadata": {
-    "channel_type": "AWS",
-    "description": "Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers into a single unified view via interactive dashboards",
-    "maintainer": "kevin.borkman@hydrolix.io",
-    "version": "1.0.5"
-  },
-  "method": "multi_stream",
-  "name": "cdn_insights",
-  "other_dashboards": [
-    {
-      "path": "dashboards/global.json",
-      "project_var": "__PROJECT_NAME__"
-    },
-    {
-      "path": "dashboards/raw.json",
-      "project_var": "__PROJECT_NAME__"
-    }
-  ],
   "solution": true,
-  "source": "cdn_insights",
-  "summary_tables": [
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
-      "name": "mcdn_summary_min",
-      "parent_table_name": "cdn_insights_logs",
-      "sql": {
-        "path": "summaries/mcdn_summary_min.sql"
-      }
-    },
-    {
-      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
-      "name": "mcdn_summary_hour",
-      "parent_table_name": "cdn_insights_logs",
-      "sql": {
-        "path": "summaries/mcdn_summary_hour.sql"
-      }
-    }
-  ],
-  "tables": [
-    {
-      "dashboard_var": "__TABLE_NAME__",
-      "name": "cdn_insights_logs",
-      "transforms": [
-        {
-          "method": "http_streaming",
-          "path": "transformations/akamai_ds2/transform.json",
-          "sample": "transformations/akamai_ds2/sample_data.json"
-        },
-        {
-          "method": "http_streaming",
-          "path": "transformations/cloudflare/transform.json",
-          "sample": "transformations/cloudflare/sample_data.json"
-        },
-        {
-          "method": "firehose",
-          "path": "transformations/cloudfront_firehose/transform.json",
-          "sample": "transformations/cloudfront_firehose/sample_data.json"
-        },
-        {
-          "method": "http_streaming",
-          "path": "transformations/fastly/transform.json",
-          "sample": "transformations/fastly/sample_data.json"
-        },
-        {
-          "method": "http_streaming",
-          "path": "transformations/tencent/transform.json",
-          "sample": "transformations/tencent/sample_data.json"
-        }
-      ]
-    }
-  ],
-  "ui": {
-    "data_category": "security",
-    "method": {
-      "full_title": "Http Streaming, Firehose",
-      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
-    },
-    "primary_url": "https://docs.hydrolix.io/latest/managed/solutions/cdn-insights/#send-log-data-to-hydrolix",
-    "source": {
-      "full_title": "CDN Insights",
-      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
-    }
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
   }
 }

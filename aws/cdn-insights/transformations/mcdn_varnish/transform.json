@@ -1,0 +1,800 @@
+{
+  "name": "mcdn_varnish",
+  "description": "Version v1.0",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nif(varnish_tracing='b',true,false) AS is_origin_request,\nconcat(request_path, request_query_string) AS request_full_path,\nif(NOT is_origin_request, toUInt64(varnish_time_firstbyte_sec * 1000.0), NULL) AS response_time_to_first_byte_ms,\nif(NOT is_origin_request, varnish_time_to_last_byte_ms, NULL) AS response_time_to_last_byte_ms,\nif(is_origin_request, toUInt64(varnish_time_firstbyte_sec * 1000.0), NULL) AS origin_time_to_first_byte_ms,\nif(is_origin_request, varnish_time_to_last_byte_ms, NULL) AS origin_time_to_last_byte_ms,\nif(varnish_client_asn != '', varnish_client_asn, IF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNumOrDefault(assumeNotNull(client_ip)))),'0'), NULLIF(toString(dictGet('__SHARED_PROJECT___geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4OrDefault(assumeNotNull(client_ip)))),'0'))) AS client_asn,\nif(varnish_client_city != '', varnish_client_city, __SHARED_PROJECT___city_name(if(assumeNotNull(client_ip) IN ('', '-'), '0.0.0.0', client_ip))) AS client_city,\nif(varnish_client_country_iso_code != '', varnish_client_country_iso_code, __SHARED_PROJECT___country_iso_code(if(assumeNotNull(client_ip) IN ('', '-'), '0.0.0.0', client_ip))) AS client_country_iso_code,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n*\nFROM {STREAM}",
+    "null_values": [
+      "-"
+    ],
+    "sample_data": [
+      {
+        "tracing": "c",
+        "id": "32770",
+        "parent_id": "32769",
+        "timestamp": "1740494001.492022",
+        "result_type": "hit",
+        "varnish_client_asn": "3320",
+        "varnish_client_city": "Berlin",
+        "varnish_client_country_iso_code": "DE",
+        "client_ip": "192.0.2.44",
+        "edge_ip": "198.51.100.10",
+        "edge_pop": "FRA-1",
+        "origin_ip": "-",
+        "time_to_first_byte_s": "0.000482",
+        "time_to_last_byte_ms": "3",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/media/segment_1080p_042.ts",
+        "request_query_string": "",
+        "request_referer": "https://cdn.example.com/player.html",
+        "response_content_type": "video/mp2t",
+        "response_status_code": "200",
+        "response_total_bytes": "1832186",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15"
+      },
+      {
+        "tracing": "c",
+        "id": "32772",
+        "parent_id": "32771",
+        "timestamp": "1740494002.118400",
+        "result_type": "miss",
+        "varnish_client_asn": "3215",
+        "varnish_client_city": "Paris",
+        "varnish_client_country_iso_code": "FR",
+        "client_ip": "198.51.100.77",
+        "edge_ip": "198.51.100.10",
+        "edge_pop": "FRA-1",
+        "origin_ip": "-",
+        "time_to_first_byte_s": "0.125300",
+        "time_to_last_byte_ms": "128",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/media/segment_1080p_043.ts",
+        "request_query_string": "",
+        "request_referer": "https://cdn.example.com/player.html",
+        "response_content_type": "video/mp2t",
+        "response_status_code": "200",
+        "response_total_bytes": "2601780",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      },
+      {
+        "tracing": "b",
+        "id": "32773",
+        "parent_id": "32772",
+        "timestamp": "1740494002.118655",
+        "result_type": "-",
+        "varnish_client_asn": "",
+        "varnish_client_city": "",
+        "varnish_client_country_iso_code": "",
+        "client_ip": "-",
+        "edge_ip": "-",
+        "edge_pop": "FRA-1",
+        "origin_ip": "203.0.113.50",
+        "time_to_first_byte_s": "0.124800",
+        "time_to_last_byte_ms": "127",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/media/segment_1080p_043.ts",
+        "request_query_string": "",
+        "request_referer": "-",
+        "response_content_type": "video/mp2t",
+        "response_status_code": "200",
+        "response_total_bytes": "2601780",
+        "user_agent": "-"
+      },
+      {
+        "tracing": "c",
+        "id": "32774",
+        "parent_id": "32771",
+        "timestamp": "1740494003.045000",
+        "result_type": "pass",
+        "varnish_client_asn": "1136",
+        "varnish_client_city": "Amsterdam",
+        "varnish_client_country_iso_code": "NL",
+        "client_ip": "203.0.113.200",
+        "edge_ip": "198.51.100.11",
+        "edge_pop": "AMS-1",
+        "origin_ip": "-",
+        "time_to_first_byte_s": "0.045000",
+        "time_to_last_byte_ms": "46",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/api/v1/config",
+        "request_query_string": "?app=player&version=2.1",
+        "request_referer": "-",
+        "response_content_type": "application/json",
+        "response_status_code": "200",
+        "response_total_bytes": "1280",
+        "user_agent": "ExoPlayer/2.19.1 (Linux;Android 14) ExoPlayerLib/2.19.1"
+      },
+      {
+        "tracing": "b",
+        "id": "32775",
+        "parent_id": "32774",
+        "timestamp": "1740494003.045200",
+        "result_type": "-",
+        "varnish_client_asn": "",
+        "varnish_client_city": "",
+        "varnish_client_country_iso_code": "",
+        "client_ip": "-",
+        "edge_ip": "-",
+        "edge_pop": "AMS-1",
+        "origin_ip": "203.0.113.51",
+        "time_to_first_byte_s": "0.044500",
+        "time_to_last_byte_ms": "45",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/api/v1/config",
+        "request_query_string": "?app=player&version=2.1",
+        "request_referer": "-",
+        "response_content_type": "application/json",
+        "response_status_code": "200",
+        "response_total_bytes": "1280",
+        "user_agent": "-"
+      },
+      {
+        "tracing": "c",
+        "id": "32776",
+        "parent_id": "32771",
+        "timestamp": "1740494006.001200",
+        "result_type": "miss",
+        "varnish_client_asn": "5617",
+        "varnish_client_city": "Warsaw",
+        "varnish_client_country_iso_code": "PL",
+        "client_ip": "198.51.100.33",
+        "edge_ip": "198.51.100.14",
+        "edge_pop": "WAW-1",
+        "origin_ip": "-",
+        "time_to_first_byte_s": "5.001200",
+        "time_to_last_byte_ms": "5002",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/media/segment_1080p_044.ts",
+        "request_query_string": "",
+        "request_referer": "https://cdn.example.com/player.html",
+        "response_content_type": "text/html",
+        "response_status_code": "503",
+        "response_total_bytes": "768",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"
+      },
+      {
+        "tracing": "c",
+        "id": "32778",
+        "parent_id": "32771",
+        "timestamp": "1740494006.000060",
+        "result_type": "synth",
+        "varnish_client_asn": "",
+        "varnish_client_city": "",
+        "varnish_client_country_iso_code": "",
+        "client_ip": "203.0.113.150",
+        "edge_ip": "198.51.100.10",
+        "edge_pop": "FRA-1",
+        "origin_ip": "-",
+        "time_to_first_byte_s": "0.000060",
+        "time_to_last_byte_ms": "0",
+        "request_host": "cdn.example.com",
+        "request_method": "GET",
+        "request_path": "/robots.txt",
+        "request_query_string": "",
+        "request_referer": "-",
+        "response_content_type": "text/plain",
+        "response_status_code": "200",
+        "response_total_bytes": "384",
+        "user_agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "primary": true,
+          "format": "s",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "timestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "result_type"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "response_total_bytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "response_status_code"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "response_content_type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request_method"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request_host"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_full_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request_query_string"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request_referer"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "request_path"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "user_agent"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "edge_ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin_ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "edge_pop"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_origin_request",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Varnish CDN",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Varnish CDN multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "varnish_handling",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "result_type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "varnish_vxid",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "id"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "varnish_client_asn",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "varnish_client_asn"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "varnish_client_city",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "varnish_client_city"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "varnish_client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "varnish_client_country_iso_code"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "varnish_tracing",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "tracing"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "varnish_parent_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "parent_id"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "varnish_time_firstbyte_sec",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time_to_first_byte_s"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "varnish_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time_to_last_byte_ms"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}
