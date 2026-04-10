@@ -4,7 +4,7 @@
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\npositionCaseInsensitive(result_type, 'hit') > 0 as cacheStatus,\nakamai_city_name(cliIP) as city,\ndictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(user_agent_category)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\npositionCaseInsensitive(result_type, 'hit') > 0 as cacheStatus,\nakamai_city_name(cliIP) as city,\n * \nFROM {STREAM}",
     "null_values": [
       "-",
       "-1"
@@ -144,7 +144,7 @@
       {
         "name": "timeToFirstByte",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -159,7 +159,7 @@
       {
         "name": "transferTimeMSec",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -260,21 +260,6 @@
         }
       },
       {
-        "name": "user_agent_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
         "name": "UA",
         "datatype": {
           "type": "string",
@@ -337,7 +322,7 @@
       {
         "name": "Origin_TurnAroundTime",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -352,7 +337,7 @@
       {
         "name": "Origin_RequestEndTime",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -605,7 +590,7 @@
       {
         "name": "dnsLookupTimeMSec",
         "datatype": {
-          "type": "string",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
