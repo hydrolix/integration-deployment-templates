@@ -2170,7 +2170,7 @@
   },
   "timezone": "utc",
   "title": "CDN Global View",
-  "uid": "",
+  "uid": "__DASHBOARD_UUID__",
   "version": 44,
   "weekStart": ""
 }
