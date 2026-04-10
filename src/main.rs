@@ -244,6 +244,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("No sample data: error={e}")),
     }
 
+    // Check sample data timestamp freshness (warning only, doesn't fail validation)
+    for w in validate::sample_data_freshness::run(base, bundle).await {
+        eprintln!("WARNING: {w}");
+    }
+
     match validate::summary_table::run(bundle) {
         Ok(_) => (),
         Err(e) => return Err(format!("Bad summary table: error={e}")),

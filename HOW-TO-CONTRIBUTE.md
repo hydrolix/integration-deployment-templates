@@ -149,6 +149,7 @@ Dashboards are automatically placed in the correct Grafana folder based on `data
 **Transformations**
 - Transformation configuration JSON files
 - **Must include sample data** (`sample_data.json`) for each transformation
+- **Timestamp freshness**: Sample data timestamps should be within the last 6 months. On the full pipeline track (Track 1), stale timestamps are automatically shifted to the 1st of the current month. On the validation-only track (Track 2), stale timestamps produce a warning.
 - Organize by ingestion method or data source (e.g., `transformations/cloudflare/`, `transformations/firehose/`)
 - Place in `transformations/` folder
 
