@@ -12,6 +12,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    # labeled: fires when "bundle request" is added to any open PR
+    # opened:  fires when a PR is created with the label already applied
     if: |
       (github.event.action == 'labeled' && github.event.label.name == 'bundle request') ||
       (github.event.action == 'opened' && contains(github.event.pull_request.labels.*.name, 'bundle request'))
@@ -23,19 +25,15 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: us-west-2
 
-      - name: Load secrets from AWS Secrets Manager
+      - name: Load Slack webhook from AWS Secrets Manager
         run: |
-          secrets=$(aws secretsmanager get-secret-value \
+          webhook_url=$(aws secretsmanager get-secret-value \
             --secret-id "${{ vars.AWS_SECRET_ARN }}" \
             --query SecretString \
-            --output text)
+            --output text \
+            | jq -r '.SLACK_RUNBOOK_WEBHOOK_URL')
 
-          echo "$secrets" | python3 -c "
-          import json, sys
-          d = json.load(sys.stdin)
-          for k, v in d.items():
-              print(f'{k}={v}')
-          " >> $GITHUB_ENV
+          echo "SLACK_RUNBOOK_WEBHOOK_URL=$webhook_url" >> $GITHUB_ENV
 
       - name: Send Slack alert
         run: |
@@ -48,9 +46,9 @@ jobs:
               print("Error: SLACK_RUNBOOK_WEBHOOK_URL is not set", file=sys.stderr)
               sys.exit(1)
 
-          pr_title   = os.environ["PR_TITLE"]
-          pr_url     = os.environ["PR_URL"]
-          pr_author  = os.environ["PR_AUTHOR"]
+          pr_title  = os.environ.get("PR_TITLE", "(no title)")
+          pr_url    = os.environ.get("PR_URL", "")
+          pr_author = os.environ.get("PR_AUTHOR", "(unknown)")
 
           payload = {
               "blocks": [
@@ -75,7 +73,9 @@ jobs:
               with request.urlopen(req) as resp:
                   status = resp.read().decode("utf-8")
                   if status != "ok":
-                      print(f"Warning: Slack returned: {status!r}", file=sys.stderr)
+                      # Slack incoming webhooks return "ok" on success
+                      print(f"Slack error response: {status!r}", file=sys.stderr)
+                      sys.exit(1)
                   else:
                       print("Slack notification sent", file=sys.stderr)
           except urllib_error.HTTPError as e:
