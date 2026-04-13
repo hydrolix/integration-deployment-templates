@@ -426,8 +426,8 @@ def main():
         _output_report(args, skipped_reason="missing_credentials")
         sys.exit(0)
 
-    # Derive project name from bundle path
-    project_name = derive_project_name(bundle_dir)
+    # Derive project name from bundle path (use repo-relative path)
+    project_name = derive_project_name(os.path.relpath(bundle_dir, REPO_ROOT))
 
     if verbose:
         print(f"Target: {cluster} / project: {project_name}", file=sys.stderr)

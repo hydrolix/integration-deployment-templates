@@ -336,6 +336,18 @@ class TestPipelineIntegration:
         stage_names = [name for name, _ in stages]
         assert stage_names == ["sync"]
 
+    def test_only_sync_dry_run(self, monkeypatch):
+        monkeypatch.setattr(
+            "sys.argv",
+            ["run_pipeline.py", "--bundle-dir", "aws/test-bundle",
+             "--only-sync", "--dry-run"],
+        )
+        from scripts.run_pipeline import parse_args, resolve_stages
+        args = parse_args()
+        stages = resolve_stages(args)
+        stage_names = [name for name, _ in stages]
+        assert stage_names == ["sync"]
+
     def test_validate_only_track_includes_sync_when_env_set(self, monkeypatch):
         monkeypatch.setenv("BUNDLE_TESTING_CLUSTER", "test.cluster.dev")
         monkeypatch.setattr(

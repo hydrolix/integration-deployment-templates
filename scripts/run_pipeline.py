@@ -198,11 +198,6 @@ def resolve_stages(args):
         print("Error: only one --only-* flag allowed", file=sys.stderr)
         sys.exit(2)
 
-    # Dry-run: only stage 2 runs
-    if args.dry_run:
-        _require_stage2_args(args)
-        return [("configure", build_configure_cmd)]
-
     # --only-* mode
     if args.only_portable:
         return [("portable", build_portable_cmd)]
@@ -213,6 +208,11 @@ def resolve_stages(args):
         return [("sync", build_sync_cmd)]
     if args.only_validate:
         return [("validate", build_validate_cmd)]
+
+    # Dry-run (no --only-* flag): only stage 2 runs
+    if args.dry_run:
+        _require_stage2_args(args)
+        return [("configure", build_configure_cmd)]
 
     # Default: all stages, minus any --skip-*
     stages = []
