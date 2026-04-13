@@ -1948,37 +1948,37 @@
         },
         {
           "current": {
-            "text": "__UID_RAW_LOGS__",
-            "value": "__UID_RAW_LOGS__"
+            "text": "__DASHBOARD_UUID__",
+            "value": "__DASHBOARD_UUID__"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "__UID_RAW_LOGS__",
-              "value": "__UID_RAW_LOGS__"
+              "text": "__DASHBOARD_UUID__",
+              "value": "__DASHBOARD_UUID__"
             }
           ],
-          "query": "__UID_RAW_LOGS__",
+          "query": "__DASHBOARD_UUID__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "__UID_CDN_DASHBOARD_DEFAULT__",
-            "value": "__UID_CDN_DASHBOARD_DEFAULT__"
+            "text": "__DASHBOARD_UUID__",
+            "value": "__DASHBOARD_UUID__"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "__UID_CDN_DASHBOARD_DEFAULT__",
-              "value": "__UID_CDN_DASHBOARD_DEFAULT__"
+              "text": "__DASHBOARD_UUID__",
+              "value": "__DASHBOARD_UUID__"
             }
           ],
-          "query": "__UID_CDN_DASHBOARD_DEFAULT__",
+          "query": "__DASHBOARD_UUID__",
           "skipUrlSync": true,
           "type": "constant"
         }
