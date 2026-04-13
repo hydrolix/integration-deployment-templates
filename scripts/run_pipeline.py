@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Pipeline orchestrator for Hydrolix integration deployment bundles.
 
-Chains three stages in order:
-1. bundle_to_yaml.py  — generate portable CaC YAML manifests (before in-place edits)
-2. configure_bundle.py — configure raw bundle assets in-place
-3. Rust validator      — validate the configured bundle
+Chains up to four stages in order:
+1. bundle_to_yaml.py    — generate portable CaC YAML manifests (before in-place edits)
+2. configure_bundle.py  — configure raw bundle assets in-place
+3. sync_cluster_deps.py — sync missing functions/dictionaries to cluster (when env vars set)
+4. Rust validator        — validate the configured bundle
 
 Usage:
     python scripts/run_pipeline.py \
@@ -55,6 +56,9 @@ def main():
         elif name == "configure":
             cmd = build_configure_cmd(args)
             msg = "Configuring bundle..."
+        elif name == "sync":
+            cmd = build_sync_cmd(args)
+            msg = "Syncing cluster dependencies..."
         elif name == "validate":
             # Stage 2 report provides bundle_name for the validator filter
             stage2_report = _find_stage2_report(results)
@@ -66,20 +70,28 @@ def main():
         if not args.json:
             print(f"\n{label} {msg}")
 
-        parse_json = name == "configure"
+        parse_json = name in ("configure", "sync")
         result = run_stage(name, cmd, REPO_ROOT, args.verbose, parse_json=parse_json)
         results.append(result)
 
         if result["status"] == "error":
-            if not args.json:
-                print(f"  ✗ FAILED")
-                if result.get("stderr"):
-                    for line in result["stderr"].strip().splitlines()[-10:]:
-                        print(f"    {line}")
-            print_summary(results, args)
-            sys.exit(1)
+            if name == "sync":
+                # Sync is non-blocking — warn but continue to validation
+                if not args.json:
+                    print(f"  ⚠ Sync warnings (non-blocking)")
+                    if result.get("stderr"):
+                        for line in result["stderr"].strip().splitlines()[-5:]:
+                            print(f"    {line}")
+            else:
+                if not args.json:
+                    print(f"  ✗ FAILED")
+                    if result.get("stderr"):
+                        for line in result["stderr"].strip().splitlines()[-10:]:
+                            print(f"    {line}")
+                print_summary(results, args)
+                sys.exit(1)
 
-        if not args.json:
+        if not args.json and result["status"] != "error":
             _print_stage_success(name, result)
 
     print_summary(results, args)
@@ -126,12 +138,14 @@ Examples:
     skip = parser.add_argument_group("stage selection (skip)")
     skip.add_argument("--skip-portable", action="store_true", help="Skip stage 1")
     skip.add_argument("--skip-configure", action="store_true", help="Skip stage 2")
-    skip.add_argument("--skip-validate", action="store_true", help="Skip stage 3")
+    skip.add_argument("--skip-sync", action="store_true", help="Skip stage 3 (cluster dep sync)")
+    skip.add_argument("--skip-validate", action="store_true", help="Skip stage 4")
 
     only = parser.add_argument_group("stage selection (only)")
     only.add_argument("--only-portable", action="store_true", help="Run only stage 1")
     only.add_argument("--only-configure", action="store_true", help="Run only stage 2")
-    only.add_argument("--only-validate", action="store_true", help="Run only stage 3")
+    only.add_argument("--only-sync", action="store_true", help="Run only stage 3 (cluster dep sync)")
+    only.add_argument("--only-validate", action="store_true", help="Run only stage 4")
 
     # --- Stage 1 passthrough (bundle_to_yaml.py) ---
     s1 = parser.add_argument_group("stage 1: bundle_to_yaml")
@@ -159,13 +173,13 @@ Examples:
     s2.add_argument("--no-beta", action="store_true", default=False, help="Mark as not beta")
     s2.add_argument("--config", default="", help="JSON config file for stage 2")
 
-    # --- Stage 3 passthrough (Rust validator) ---
-    s3 = parser.add_argument_group("stage 3: validator")
-    s3.add_argument("--validator-wip", action="store_true", help="Pass --wip to validator")
-    s3.add_argument("--validator-local", action="store_true", help="Pass --local to validator")
-    s3.add_argument("--validator-strict-plugins", action="store_true",
+    # --- Stage 4 passthrough (Rust validator) ---
+    s4 = parser.add_argument_group("stage 4: validator")
+    s4.add_argument("--validator-wip", action="store_true", help="Pass --wip to validator")
+    s4.add_argument("--validator-local", action="store_true", help="Pass --local to validator")
+    s4.add_argument("--validator-strict-plugins", action="store_true",
                     help="Pass --strict-plugins to validator")
-    s3.add_argument("--validator-production", action="store_true",
+    s4.add_argument("--validator-production", action="store_true",
                     help="Pass --production to validator")
 
     return parser.parse_args()
@@ -173,8 +187,8 @@ Examples:
 
 def resolve_stages(args):
     """Determine which stages to run and validate required args."""
-    only_flags = [args.only_portable, args.only_configure, args.only_validate]
-    skip_flags = [args.skip_portable, args.skip_configure, args.skip_validate]
+    only_flags = [args.only_portable, args.only_configure, args.only_sync, args.only_validate]
+    skip_flags = [args.skip_portable, args.skip_configure, args.skip_sync, args.skip_validate]
 
     if any(only_flags) and any(skip_flags):
         print("Error: cannot combine --only-* and --skip-* flags", file=sys.stderr)
@@ -184,19 +198,21 @@ def resolve_stages(args):
         print("Error: only one --only-* flag allowed", file=sys.stderr)
         sys.exit(2)
 
-    # Dry-run: only stage 2 runs
-    if args.dry_run:
-        _require_stage2_args(args)
-        return [("configure", build_configure_cmd)]
-
     # --only-* mode
     if args.only_portable:
         return [("portable", build_portable_cmd)]
     if args.only_configure:
         _require_stage2_args(args)
         return [("configure", build_configure_cmd)]
+    if args.only_sync:
+        return [("sync", build_sync_cmd)]
     if args.only_validate:
         return [("validate", build_validate_cmd)]
+
+    # Dry-run (no --only-* flag): only stage 2 runs
+    if args.dry_run:
+        _require_stage2_args(args)
+        return [("configure", build_configure_cmd)]
 
     # Default: all stages, minus any --skip-*
     stages = []
@@ -205,6 +221,8 @@ def resolve_stages(args):
     if not args.skip_configure:
         _require_stage2_args(args)
         stages.append(("configure", build_configure_cmd))
+    if not args.skip_sync and _cluster_env_set():
+        stages.append(("sync", build_sync_cmd))
     if not args.skip_validate:
         stages.append(("validate", build_validate_cmd))
 
@@ -213,6 +231,11 @@ def resolve_stages(args):
         sys.exit(2)
 
     return stages
+
+
+def _cluster_env_set():
+    """Return True if cluster env vars are configured."""
+    return bool(os.environ.get("BUNDLE_TESTING_CLUSTER"))
 
 
 def _merge_config_into_args(args):
@@ -254,11 +277,13 @@ def _apply_track(args):
     - 'auto': detects track from bundle state, then applies accordingly
     """
     # Skip track routing if an explicit --only-* flag was provided
-    if any([args.only_portable, args.only_configure, args.only_validate]):
+    if any([args.only_portable, args.only_configure, args.only_sync, args.only_validate]):
         return
 
     if args.track == "validate-only":
-        args.only_validate = True
+        # Skip stages 1 and 2, keep sync (if cluster env set) and validate
+        args.skip_portable = True
+        args.skip_configure = True
     elif args.track == "full":
         # Full pipeline — originals management happens here
         bundle_dir = os.path.join(REPO_ROOT, args.bundle_dir) if not os.path.isabs(args.bundle_dir) else args.bundle_dir
@@ -430,8 +455,23 @@ def build_configure_cmd(args):
     return cmd
 
 
+def build_sync_cmd(args):
+    """Build command for stage 3: sync_cluster_deps.py."""
+    cmd = [sys.executable, os.path.join(SCRIPTS_DIR, "sync_cluster_deps.py"),
+           "--bundle-dir", args.bundle_dir]
+
+    if args.verbose:
+        cmd.append("--verbose")
+    if args.json:
+        cmd.append("--json")
+    if args.dry_run:
+        cmd.append("--dry-run")
+
+    return cmd
+
+
 def build_validate_cmd(args, stage2_report=None):
-    """Build command for stage 3: Rust validator (cargo run)."""
+    """Build command for stage 4: Rust validator (cargo run)."""
     cmd = ["cargo", "run", "--"]
 
     if args.validator_wip:
@@ -489,6 +529,8 @@ def _print_stage_success(name, result):
             print(f"  ✓ {phases} phases completed | {modified} files modified, {created} created {duration}")
         else:
             print(f"  ✓ Configuration complete {duration}")
+    elif name == "sync":
+        print(f"  ✓ Cluster dependencies synced {duration}")
     elif name == "validate":
         print(f"  ✓ Validation passed {duration}")
 
@@ -496,7 +538,9 @@ def _print_stage_success(name, result):
 def print_summary(results, args):
     """Print final pipeline summary."""
     passed = sum(1 for r in results if r["status"] == "success")
-    failed = sum(1 for r in results if r["status"] == "error")
+    # Sync errors are non-blocking — don't count them as pipeline failures
+    failed = sum(1 for r in results if r["status"] == "error" and r["stage"] != "sync")
+    warned = sum(1 for r in results if r["status"] == "error" and r["stage"] == "sync")
     total = len(results)
 
     if args.json:
