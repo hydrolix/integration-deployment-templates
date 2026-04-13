@@ -155,7 +155,10 @@ def authenticate(cluster, username, password):
         raise RuntimeError(f"HTTP {e.code} {e.reason}: {error_body}") from e
 
     if "auth_token" not in data or "access_token" not in data.get("auth_token", {}):
-        raise RuntimeError(f"Unexpected login response (no auth_token): {json.dumps(data)[:200]}")
+        raise RuntimeError(
+            f"Unexpected login response (no auth_token); "
+            f"response keys: {', '.join(data.keys()) if isinstance(data, dict) else type(data).__name__}"
+        )
     return data["auth_token"]["access_token"]
 
 
@@ -188,7 +191,8 @@ def find_or_create_project(cluster, token, org_uuid, project_name):
         result = _api_request(url, token, method="POST", body=body)
         return result["uuid"], True
     except RuntimeError as e:
-        if "409" in str(e):
+        cause = e.__cause__
+        if isinstance(cause, urllib.error.HTTPError) and cause.code == 409:
             # Another process created the project — re-fetch
             projects = _api_request(url, token)
             project_list = _extract_list(projects, ["results", "data"])
@@ -368,6 +372,10 @@ def derive_project_name(bundle_dir):
     # Normalize: strip leading/trailing slashes
     parts = bundle_dir.strip("/").split("/")
     vendor = parts[0] if parts else ""
+    if vendor == "..":
+        raise ValueError(
+            f"Bundle path '{bundle_dir}' is outside the repository root."
+        )
     project = PREFIX_MAP.get(vendor)
     if not project:
         raise ValueError(

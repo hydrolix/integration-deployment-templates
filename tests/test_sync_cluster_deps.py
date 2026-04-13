@@ -98,6 +98,10 @@ class TestDeriveProjectName:
     def test_strips_leading_slashes(self):
         assert derive_project_name("/aws/foo") == "commons"
 
+    def test_outside_repo_path_raises(self):
+        with pytest.raises(ValueError, match="outside the repository root"):
+            derive_project_name("../../aws/cdn-insights")
+
     def test_unknown_vendor_raises(self):
         with pytest.raises(ValueError, match="Cannot derive project name"):
             derive_project_name("azure/something")
