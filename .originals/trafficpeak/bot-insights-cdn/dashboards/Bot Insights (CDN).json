@@ -1,77 +1,77 @@
 {
+  "__elements": {},
   "__inputs": [
     {
-      "name": "DS_HDX-DEMO",
-      "label": "HDX-Demo",
       "description": "",
-      "type": "datasource",
+      "label": "HDX-Demo",
+      "name": "DS_HDX-DEMO",
       "pluginId": "hydrolix-hydrolix-datasource",
-      "pluginName": "Hydrolix"
+      "pluginName": "Hydrolix",
+      "type": "datasource"
     },
     {
+      "description": "",
+      "label": "summary_hour",
       "name": "VAR_SUMMARY_HOUR",
       "type": "constant",
-      "label": "summary_hour",
-      "value": "akamai.bot_summary_hour",
-      "description": ""
+      "value": "akamai.bot_summary_hour"
     },
     {
+      "description": "",
+      "label": "summary_day",
       "name": "VAR_SUMMARY_DAY",
       "type": "constant",
-      "label": "summary_day",
-      "value": "akamai.bot_summary_day",
-      "description": ""
+      "value": "akamai.bot_summary_day"
     },
     {
+      "description": "",
+      "label": "summary_month",
       "name": "VAR_SUMMARY_MONTH",
       "type": "constant",
-      "label": "summary_month",
-      "value": "akamai.bot_summary_month",
-      "description": ""
+      "value": "akamai.bot_summary_month"
     }
   ],
-  "__elements": {},
   "__requires": [
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "12.2.3"
     },
     {
-      "type": "datasource",
       "id": "hydrolix-hydrolix-datasource",
       "name": "Hydrolix",
+      "type": "datasource",
       "version": "0.7.0"
     },
     {
-      "type": "panel",
       "id": "piechart",
       "name": "Pie chart",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "stat",
       "name": "Stat",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "text",
       "name": "Text",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -604,7 +604,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__field.labels.ai_category}",
+          "displayName": "${__field.labels.user_agent_category}",
           "links": [],
           "mappings": [],
           "thresholds": {
@@ -657,7 +657,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    ai_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, ai_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
+          "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    user_agent_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, user_agent_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -788,7 +788,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT\n    ai_category AS \"AI Category\",\n    resource_category AS \"Resource category\",\n    cnt_all AS \"Count\"\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    ai_category, resource_category\nORDER BY\n    cnt_all DESC\nLIMIT 100  -- ✓ cap razonable; ai_cat × resource_cat es baja cardinalidad hoy\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
+          "rawSql": "SELECT\n    user_agent_category AS \"AI Category\",\n    resource_category AS \"Resource category\",\n    cnt_all AS \"Count\"\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    user_agent_category, resource_category\nORDER BY\n    cnt_all DESC\nLIMIT 100  -- ✓ cap razonable; ai_cat × resource_cat es baja cardinalidad hoy\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -865,7 +865,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "${__field.labels.ai_category} - ${__field.labels.resource_category}"
+                "value": "${__field.labels.user_agent_category} - ${__field.labels.resource_category}"
               }
             ]
           }
@@ -902,7 +902,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT\n    timestamp,\n    ai_category,\n    resource_category,\n    cnt_all AS count\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    timestamp, ai_category, resource_category\nORDER BY\n    timestamp ASC, cnt_all DESC  \nLIMIT 10000                           \nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
+          "rawSql": "SELECT\n    timestamp,\n    user_agent_category,\n    resource_category,\n    cnt_all AS count\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    timestamp, user_agent_category, resource_category\nORDER BY\n    timestamp ASC, cnt_all DESC  \nLIMIT 10000                           \nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -958,61 +958,61 @@
         "type": "query"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SUMMARY_HOUR}",
+          "value": "${VAR_SUMMARY_HOUR}"
+        },
         "hide": 2,
         "name": "summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_HOUR}",
+            "value": "${VAR_SUMMARY_HOUR}"
+          }
+        ],
         "query": "${VAR_SUMMARY_HOUR}",
         "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_SUMMARY_HOUR}",
-          "text": "${VAR_SUMMARY_HOUR}",
-          "selected": false
-        },
-        "options": [
-          {
-            "value": "${VAR_SUMMARY_HOUR}",
-            "text": "${VAR_SUMMARY_HOUR}",
-            "selected": false
-          }
-        ]
+        "type": "constant"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SUMMARY_DAY}",
+          "value": "${VAR_SUMMARY_DAY}"
+        },
         "hide": 2,
         "name": "summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_DAY}",
+            "value": "${VAR_SUMMARY_DAY}"
+          }
+        ],
         "query": "${VAR_SUMMARY_DAY}",
         "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_SUMMARY_DAY}",
-          "text": "${VAR_SUMMARY_DAY}",
-          "selected": false
-        },
-        "options": [
-          {
-            "value": "${VAR_SUMMARY_DAY}",
-            "text": "${VAR_SUMMARY_DAY}",
-            "selected": false
-          }
-        ]
+        "type": "constant"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "${VAR_SUMMARY_MONTH}",
+          "value": "${VAR_SUMMARY_MONTH}"
+        },
         "hide": 2,
         "name": "summary_month",
-        "query": "${VAR_SUMMARY_MONTH}",
-        "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_SUMMARY_MONTH}",
-          "text": "${VAR_SUMMARY_MONTH}",
-          "selected": false
-        },
         "options": [
           {
-            "value": "${VAR_SUMMARY_MONTH}",
+            "selected": false,
             "text": "${VAR_SUMMARY_MONTH}",
-            "selected": false
+            "value": "${VAR_SUMMARY_MONTH}"
           }
-        ]
+        ],
+        "query": "${VAR_SUMMARY_MONTH}",
+        "skipUrlSync": true,
+        "type": "constant"
       },
       {
         "baseFilters": [],

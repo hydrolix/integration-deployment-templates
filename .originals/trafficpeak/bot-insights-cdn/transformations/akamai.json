@@ -56,7 +56,7 @@
               "/cacheStatus"
             ]
           },
-          "suppress": true,
+          "suppress": false,
           "type": "boolean"
         },
         "name": "cacheStatus"
