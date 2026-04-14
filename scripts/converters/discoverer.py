@@ -150,15 +150,31 @@ class AssetDiscoverer:
             try:
                 dashboard_data = read_json(json_file)
 
-                # Extract __inputs array
+                # Unwrap {"dashboard": {...}} bundle format if present
+                source_data = dashboard_data
+                if (isinstance(dashboard_data, dict)
+                        and list(dashboard_data.keys()) == ['dashboard']
+                        and isinstance(dashboard_data.get('dashboard'), dict)):
+                    source_data = dashboard_data['dashboard']
+
+                # Extract __inputs array; fall back to templating.list constants
                 inputs = []
-                if '__inputs' in dashboard_data:
-                    for inp in dashboard_data['__inputs']:
+                if '__inputs' in source_data:
+                    for inp in source_data['__inputs']:
                         inputs.append(DashboardInput(
                             name=inp.get('name', ''),
                             type=inp.get('type', ''),
                             value=inp.get('value')
                         ))
+                else:
+                    # Derive inputs from constant template variables
+                    for var in source_data.get('templating', {}).get('list', []):
+                        if var.get('type') == 'constant' and var.get('name'):
+                            inputs.append(DashboardInput(
+                                name=var['name'],
+                                type='constant',
+                                value=var.get('query', '')
+                            ))
 
                 # Determine relative path and folder
                 rel_path = json_file.relative_to(folder)
