@@ -86,7 +86,7 @@
       "full_title": "CDN Insights",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
     },
-    "data_category": "security"
+    "data_category": "cdn"
   },
   "metadata": {
     "version": "1.1.0",
