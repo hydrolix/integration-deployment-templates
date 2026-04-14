@@ -1,5 +1,5 @@
 SELECT
-  toStartOfMonth(timestamp)::DateTime as timestamp,
+  toStartOfDay (timestamp) as timestamp,
   cacheStatus,
   response_status_code,
   request_host,
@@ -14,7 +14,7 @@ SELECT
   count() AS cnt_all,
   sum(response_total_bytes) AS totalBytes
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.logs
 GROUP BY
   timestamp,
   cacheStatus,
