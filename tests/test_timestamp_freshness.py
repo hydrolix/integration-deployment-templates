@@ -283,17 +283,23 @@ class TestShiftStaleTimestamps:
     def test_threshold_boundary_plus_one_shifted(self, tmp_path):
         """Data 1 second past the threshold should be shifted."""
         fixed_now = 1800000000
+        # 2027-01-15 approx — target should be 2027-01-01 00:00 UTC = 1798761600
+        fixed_target = 1798761600
         stale_ts = fixed_now - _STALENESS_THRESHOLD_SECS - 1
         data = _make_transform_data(stale_ts)
         sample = data["settings"]["sample_data"]
         config = _make_config(tmp_path)
         tinfo = _make_tinfo(tmp_path)
 
-        with patch("scripts.configurator.transform_organizer.time") as mock_time:
+        fixed_dt = datetime(2027, 1, 15, 12, 0, 0, tzinfo=timezone.utc)
+        with patch("scripts.configurator.transform_organizer.time") as mock_time, \
+             patch("scripts.configurator.transform_organizer.datetime") as mock_dt:
             mock_time.time.return_value = fixed_now
+            mock_dt.now.return_value = fixed_dt
+            mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
             _shift_stale_timestamps(sample, data, tinfo, config)
 
-        assert sample["timestamp"] == _first_of_month_epoch()
+        assert sample["timestamp"] == fixed_target
 
     def test_millisecond_format_shifted_correctly(self, tmp_path):
         """Epoch-ms timestamps should be normalized to seconds for comparison and shifted in ms."""
@@ -446,13 +452,31 @@ class TestResolveSampleKey:
         sample = {"reqTimeSec": 1700000000}
         assert _resolve_sample_key(col, sample) is None
 
-    def test_no_source_returns_none(self):
-        """When column has no source (e.g. sql_transform derived), return None if name missing."""
+    def test_source_without_json_pointers_returns_none(self):
+        """When source has from_input_field but no from_json_pointers, return None."""
         col = {
             "name": "computed_ts",
             "datatype": {"type": "epoch", "source": {"from_input_field": "sql_transform"}},
         }
         sample = {"reqTimeSec": 1700000000}
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_nested_pointer_skipped(self):
+        """Multi-segment JSON pointers (e.g. /avail/fillRate) cannot be resolved to flat keys."""
+        col = {
+            "name": "fill_rate",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/avail/fillRate"]},
+            },
+        }
+        sample = {"avail/fillRate": 1700000000}  # even if flat key exists, nested pointer skipped
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_missing_name_returns_none(self):
+        """Column without a name field returns None gracefully."""
+        col = {"datatype": {"type": "epoch"}}
+        sample = {"timestamp": 1700000000}
         assert _resolve_sample_key(col, sample) is None
 
     def test_output_name_preferred_over_pointer(self):

@@ -261,17 +261,26 @@ def _resolve_sample_key(col, sample_data):
 
     The output column name (e.g. "timestamp") may differ from the raw JSON
     input key (e.g. "reqTimeSec").  Check the output name first, then fall
-    back to from_json_pointers in the column source.
+    back to single-segment from_json_pointers in the column source.
+
+    Only single-segment pointers (e.g. "/reqTimeSec") are resolved — nested
+    pointers (e.g. "/avail/fillRate") cannot be mapped to a flat sample_data
+    key and are skipped.
     """
-    col_name = col["name"]
+    col_name = col.get("name")
+    if not col_name:
+        return None
     if col_name in sample_data:
         return col_name
 
     source = col.get("datatype", {}).get("source") or {}
     for ptr in source.get("from_json_pointers", []):
-        key = ptr.lstrip("/")
-        if key in sample_data:
-            return key
+        # Only resolve single-segment JSON pointers (e.g. "/reqTimeSec")
+        segments = ptr.strip("/").split("/")
+        if len(segments) == 1 and segments[0]:
+            key = segments[0]
+            if key in sample_data:
+                return key
 
     return None
 
