@@ -1,0 +1,16 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-bot-insights-cdn:
+    dashboard:
+      __extend__: dashboards/bot_insights_cdn.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_HOUR: akamai.bot_summary_hour
+      VAR_SUMMARY_DAY: akamai.bot_summary_day
+      VAR_SUMMARY_MONTH: akamai.bot_summary_month
