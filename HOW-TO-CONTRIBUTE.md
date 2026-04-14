@@ -183,7 +183,8 @@ Create a pull request to the `main` branch for asset review:
    - Link to your Jira ticket
    - Summarize the integration and assets provided
    - Note any dependencies or special considerations
-5. Request review from the Integration Engineer
+5. Under "Labels", add the "bundle-request" label. 
+6. Request review from the Integration Engineer
 
 **What happens next:** When your PR is opened, CI automatically determines which pipeline track to run based on what you changed:
 
