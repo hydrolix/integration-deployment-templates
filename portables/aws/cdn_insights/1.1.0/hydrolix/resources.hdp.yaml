@@ -1,0 +1,103 @@
+tables:
+  logs:
+    __extend__: tables/table_logs.yaml
+transforms:
+  logs:
+    mcdn_ioriver:
+      __extend__: transforms/mcdn_ioriver.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_ioriver_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_ioriver_sample_data.json
+    mcdn_cloudfront_firehose:
+      __extend__: transforms/mcdn_cloudfront_firehose.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_cloudfront_firehose_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_cloudfront_firehose_sample_data.json
+    mcdn_varnish:
+      __extend__: transforms/mcdn_varnish.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_varnish_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_varnish_sample_data.json
+    mcdn_fastly:
+      __extend__: transforms/mcdn_fastly.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_fastly_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_fastly_sample_data.json
+    mcdn_cachefly:
+      __extend__: transforms/mcdn_cachefly.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_cachefly_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_cachefly_sample_data.json
+    mcdn_byteplus:
+      __extend__: transforms/mcdn_byteplus.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_byteplus_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_byteplus_sample_data.json
+    default:
+      __extend__: transforms/default.json
+      settings:
+        sql_transform:
+          __extend__: transforms/default_select.sql
+        sample_data:
+          __extend__: transforms/default_sample_data.json
+    mcdn_imperva:
+      __extend__: transforms/mcdn_imperva.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_imperva_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_imperva_sample_data.json
+    mcdn_akamai_ds2:
+      __extend__: transforms/mcdn_akamai_ds2.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_akamai_ds2_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_akamai_ds2_sample_data.json
+    mcdn_google_media:
+      __extend__: transforms/mcdn_google_media.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_google_media_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_google_media_sample_data.json
+    mcdn_cloudflare:
+      __extend__: transforms/mcdn_cloudflare.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_cloudflare_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_cloudflare_sample_data.json
+    mcdn_tencent:
+      __extend__: transforms/mcdn_tencent.json
+      settings:
+        sql_transform:
+          __extend__: transforms/mcdn_tencent_select.sql
+        sample_data:
+          __extend__: transforms/mcdn_tencent_sample_data.json
+summary_tables:
+  mcdn_summary_hour:
+    __extend__: tables/mcdn_summary_hour.yaml
+  mcdn_summary_min:
+    __extend__: tables/mcdn_summary_min.yaml
+functions:
+  breadcrumbs:
+    __extend__: functions/breadcrumbs.json
+  city_name:
+    __extend__: functions/city_name.json
+  country_iso_code:
+    __extend__: functions/country_iso_code.json
+  geoname_id:
+    __extend__: functions/geoname_id.json

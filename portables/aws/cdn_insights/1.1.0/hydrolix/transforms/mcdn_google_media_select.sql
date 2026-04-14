@@ -1,0 +1,17 @@
+SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,
+arrayElement(splitByChar(',', assumeNotNull(gmcdn_cache_status_raw)), length(splitByChar(',', assumeNotNull(gmcdn_cache_status_raw)))) AS gmcdn_client_cache_status,
+gmcdn_client_cache_status IN ('hit', 'stale') AS cache_was_cached,
+multiIf(gmcdn_client_cache_status = 'hit', 'hit', gmcdn_client_cache_status = 'stale', 'stale', gmcdn_client_cache_status = 'fetch', 'miss', gmcdn_client_cache_status = 'miss', 'miss', gmcdn_client_cache_status = 'uncacheable', 'uncacheable', 'unknown') AS result_type,
+toString(assumeNotNull(google_media_response_status)) AS response_status_code,
+domain(assumeNotNull(google_media_request_url)) AS request_host,
+path(assumeNotNull(google_media_request_url)) AS request_path,
+pathFull(assumeNotNull(google_media_request_url)) AS request_full_path,
+queryString(assumeNotNull(google_media_request_url)) AS request_query_string,
+upper(assumeNotNull(google_media_metro_iata_code)) AS edge_pop,
+toUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_http_ttfb), 's', '')) * 1000))) AS response_time_to_first_byte_ms,
+toUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_latency), 's', '')) * 1000))) AS response_time_to_last_byte_ms,
+toUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_backend_initial_latency), 's', '')) * 1000))) AS origin_time_to_first_byte_ms,
+toUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_backend_latency), 's', '')) * 1000))) AS origin_time_to_last_byte_ms,
+dictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
+*
+FROM {STREAM}

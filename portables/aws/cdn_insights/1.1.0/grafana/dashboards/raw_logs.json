@@ -1,0 +1,201 @@
+{
+  "__elements": {
+    "model": {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      }
+    }
+  },
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "12.0.0"
+    },
+    {
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "type": "datasource",
+      "version": "0.6.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "#### Raw Logs\n\nRow-level inspection of the last 1000 events. Use the Filters variable to narrow results.",
+        "mode": "markdown"
+      },
+      "title": "",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 2,
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 0,
+          "rawSql": "SELECT toStartOfMinute(timestamp) AS t, count() AS events\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp < toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY t\nORDER BY t\nSETTINGS hdx_query_admin_comment='db=${__dashboard}; dp=Event Rate; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Event Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "timestamp"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "response_total_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "rawSql": "SELECT timestamp, hdx_cdn, client_ip, client_country_iso_code, client_city, client_asn, edge_pop, request_method, request_host, request_path, response_status_code, response_content_type, response_total_bytes, response_time_to_first_byte_ms, response_time_to_last_byte_ms, cache_was_cached, user_agent_category, user_agent, hdx_source_latency_sec, hdx_transform\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp < toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nORDER BY timestamp DESC\nLIMIT 1000\nSETTINGS hdx_query_admin_comment='db=${__dashboard}; dp=Events; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Events",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "__PROJECT_NAME__.__TABLE_NAME__",
+          "value": "__PROJECT_NAME__.__TABLE_NAME__"
+        },
+        "hide": 2,
+        "name": "table",
+        "query": "__PROJECT_NAME__.__TABLE_NAME__",
+        "type": "constant"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "filters": [],
+        "name": "Filters",
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timezone": "utc",
+  "title": "Raw Logs",
+  "__inputs": [
+    {
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix"
+    }
+  ]
+}

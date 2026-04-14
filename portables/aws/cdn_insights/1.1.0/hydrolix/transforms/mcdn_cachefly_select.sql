@@ -1,0 +1,15 @@
+SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,
+multiIf(result_type = 'H', 'hit', result_type = 'M', 'miss', result_type = 'S', 'stale', result_type = 'P', 'pass', 'unknown') AS result_type,
+toUInt64(round(EdgeTimeMS * 1000)) AS response_time_to_last_byte_ms,
+toUInt64(cachefly_edge_response_first_byte_time * 1000) AS response_time_to_first_byte_ms,
+toString(response_status_code) AS response_status_code,
+toString(client_asn) AS client_asn,
+upper(assumeNotNull(edge_pop)) AS edge_pop,
+toString(cachefly_service_uid) AS cachefly_service_uid,
+toUInt64OrDefault(toString(cachefly_auid)) AS cachefly_auid,
+toUInt64OrDefault(toString(cachefly_pid)) AS cachefly_pid,
+toString(cachefly_suid) AS cachefly_suid,
+__SHARED_PROJECT___city_name(client_ip) AS client_city,
+dictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,
+*
+ FROM {STREAM}
