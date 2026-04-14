@@ -256,6 +256,26 @@ def _extract_sample_data(data, tinfo, config, state):
 _FORMAT_DIVISORS = {"s": 1, "ms": 1_000, "us": 1_000_000, "ns": 1_000_000_000}
 
 
+def _resolve_sample_key(col, sample_data):
+    """Resolve the actual key in sample_data for an output column.
+
+    The output column name (e.g. "timestamp") may differ from the raw JSON
+    input key (e.g. "reqTimeSec").  Check the output name first, then fall
+    back to from_json_pointers in the column source.
+    """
+    col_name = col["name"]
+    if col_name in sample_data:
+        return col_name
+
+    source = col.get("datatype", {}).get("source") or {}
+    for ptr in source.get("from_json_pointers", []):
+        key = ptr.lstrip("/")
+        if key in sample_data:
+            return key
+
+    return None
+
+
 def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     """Shift stale epoch timestamps in sample_data to the 1st of the current month.
 
@@ -268,19 +288,22 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
         return
 
     # Find the primary epoch column and build a map of epoch column formats
-    primary_col_name = None
+    # Resolve each column's actual key in sample_data (may differ from output name)
+    primary_col = None
     primary_format = "s"
-    epoch_col_formats = {}  # col_name -> format string
+    epoch_columns = []  # list of (sample_key, format)
     for col in output_columns:
         dt = col.get("datatype", {})
         if dt.get("type") == "epoch":
             col_format = dt.get("format", "s")
-            epoch_col_formats[col["name"]] = col_format
+            sample_key = _resolve_sample_key(col, sample_data)
+            if sample_key:
+                epoch_columns.append((sample_key, col_format))
             if dt.get("primary"):
-                primary_col_name = col["name"]
+                primary_col = (sample_key, col_format)
                 primary_format = col_format
 
-    if not primary_col_name:
+    if not primary_col or not primary_col[0]:
         if config.verbose:
             print(
                 f"[Transform Org] No primary epoch column found in "
@@ -289,11 +312,12 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
             )
         return
 
-    primary_value = sample_data.get(primary_col_name)
+    primary_key = primary_col[0]
+    primary_value = sample_data.get(primary_key)
     if not isinstance(primary_value, (int, float)):
         if config.verbose:
             print(
-                f"[Transform Org] Primary timestamp '{primary_col_name}' is not numeric "
+                f"[Transform Org] Primary timestamp '{primary_key}' is not numeric "
                 f"in sample_data for {os.path.basename(tinfo.final_path)}, skipping shift",
                 file=sys.stderr,
             )
@@ -318,12 +342,12 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     delta_secs = target_epoch - primary_secs
 
     shifted_fields = []
-    for col_name, col_format in epoch_col_formats.items():
-        if col_name in sample_data and isinstance(sample_data[col_name], (int, float)):
+    for sample_key, col_format in epoch_columns:
+        if isinstance(sample_data.get(sample_key), (int, float)):
             col_divisor = _FORMAT_DIVISORS.get(col_format, 1)
             col_delta = delta_secs * col_divisor
-            sample_data[col_name] = int(sample_data[col_name]) + col_delta
-            shifted_fields.append(col_name)
+            sample_data[sample_key] = int(sample_data[sample_key]) + col_delta
+            shifted_fields.append(sample_key)
 
     if config.verbose and shifted_fields:
         print(
