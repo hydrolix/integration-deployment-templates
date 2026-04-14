@@ -3868,6 +3868,83 @@
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix"
+    },
+    {
+      "name": "raw_table",
+      "type": "constant",
+      "label": "raw_table",
+      "value": "__PROJECT_NAME__.__TABLE_NAME__",
+      "description": ""
+    },
+    {
+      "name": "summary_min",
+      "type": "constant",
+      "label": "summary_min",
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+      "description": ""
+    },
+    {
+      "name": "summary_hour",
+      "type": "constant",
+      "label": "summary_hour",
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+      "description": ""
+    },
+    {
+      "name": "quantiles_response_ttfb_50",
+      "type": "constant",
+      "label": "quantiles_response_ttfb_50",
+      "value": "quantiles_response_ttfb_ms[2]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_response_ttfb_95",
+      "type": "constant",
+      "label": "quantiles_response_ttfb_95",
+      "value": "quantiles_response_ttfb_ms[5]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_response_ttlb_50",
+      "type": "constant",
+      "label": "quantiles_response_ttlb_50",
+      "value": "quantiles_response_ttlb_ms[2]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_response_ttlb_95",
+      "type": "constant",
+      "label": "quantiles_response_ttlb_95",
+      "value": "quantiles_response_ttlb_ms[5]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_origin_ttfb_50",
+      "type": "constant",
+      "label": "quantiles_origin_ttfb_50",
+      "value": "quantiles_origin_ttfb_ms[2]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_origin_ttfb_95",
+      "type": "constant",
+      "label": "quantiles_origin_ttfb_95",
+      "value": "quantiles_origin_ttfb_ms[5]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_origin_ttlb_50",
+      "type": "constant",
+      "label": "quantiles_origin_ttlb_50",
+      "value": "quantiles_origin_ttlb_ms[2]",
+      "description": ""
+    },
+    {
+      "name": "quantiles_origin_ttlb_95",
+      "type": "constant",
+      "label": "quantiles_origin_ttlb_95",
+      "value": "quantiles_origin_ttlb_ms[5]",
+      "description": ""
     }
   ]
 }

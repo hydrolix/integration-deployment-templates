@@ -11,15 +11,33 @@ dashboards:
     folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      table: __PROJECT_NAME__.__TABLE_NAME__
   hdx-cdn-dashboard-default:
     dashboard:
       __extend__: dashboards/cdn_dashboard_default.json
     folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      raw_table: __PROJECT_NAME__.__TABLE_NAME__
+      summary_min: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      summary_hour: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      quantiles_response_ttfb_50: quantiles_response_ttfb_ms[2]
+      quantiles_response_ttfb_95: quantiles_response_ttfb_ms[5]
+      quantiles_response_ttlb_50: quantiles_response_ttlb_ms[2]
+      quantiles_response_ttlb_95: quantiles_response_ttlb_ms[5]
+      quantiles_origin_ttfb_50: quantiles_origin_ttfb_ms[2]
+      quantiles_origin_ttfb_95: quantiles_origin_ttfb_ms[5]
+      quantiles_origin_ttlb_50: quantiles_origin_ttlb_ms[2]
+      quantiles_origin_ttlb_95: quantiles_origin_ttlb_ms[5]
   hdx-cdn-global-view:
     dashboard:
       __extend__: dashboards/cdn_global_view.json
     folderUid: hdx-cdn-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      raw_table: __PROJECT_NAME__.__TABLE_NAME__
+      summary_min: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      summary_hour: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      cdn1: Akamai
+      raw_logs: __DASHBOARD_UUID__
+      cdn_panel: __DASHBOARD_UUID__

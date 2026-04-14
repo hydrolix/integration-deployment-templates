@@ -196,6 +196,13 @@
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix"
+    },
+    {
+      "name": "table",
+      "type": "constant",
+      "label": "table",
+      "value": "__PROJECT_NAME__.__TABLE_NAME__",
+      "description": ""
     }
   ]
 }

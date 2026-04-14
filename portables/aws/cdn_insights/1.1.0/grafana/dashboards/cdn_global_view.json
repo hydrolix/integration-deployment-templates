@@ -2017,6 +2017,48 @@
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix"
+    },
+    {
+      "name": "raw_table",
+      "type": "constant",
+      "label": "raw_table",
+      "value": "__PROJECT_NAME__.__TABLE_NAME__",
+      "description": ""
+    },
+    {
+      "name": "summary_min",
+      "type": "constant",
+      "label": "summary_min",
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+      "description": ""
+    },
+    {
+      "name": "summary_hour",
+      "type": "constant",
+      "label": "summary_hour",
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+      "description": ""
+    },
+    {
+      "name": "cdn1",
+      "type": "constant",
+      "label": "cdn1",
+      "value": "Akamai",
+      "description": ""
+    },
+    {
+      "name": "raw_logs",
+      "type": "constant",
+      "label": "raw_logs",
+      "value": "__DASHBOARD_UUID__",
+      "description": ""
+    },
+    {
+      "name": "cdn_panel",
+      "type": "constant",
+      "label": "cdn_panel",
+      "value": "__DASHBOARD_UUID__",
+      "description": ""
     }
   ]
 }
