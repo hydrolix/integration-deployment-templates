@@ -69,6 +69,14 @@ Or via GitHub UI: **Actions → push-to-cac-tools → Run workflow**
 
 ---
 
+### `bundle-request-alert`
+
+**Trigger:** Pull requests opened against `main` with the `bundle request` label, or when the `bundle request` label is added to an existing PR.
+
+Sends a Slack notification to `#solutions-bundles-alerts` with the PR title, author, and link. Uses the same `bundle-runbook-env` environment and AWS Secrets Manager infrastructure as `publish-runbook` — no additional secrets required.
+
+---
+
 ### `publish-runbook`
 
 **Trigger:** Pushes to `main` that modify `aws/**/bundle.json` or `trafficpeak/**/bundle.json`; also supports manual dispatch.

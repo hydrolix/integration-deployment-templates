@@ -413,7 +413,7 @@ where
 
     match s.as_str() {
         // Convert String to &str for matching
-        "video" | "cdn" | "security" => Ok(s),
+        "video" | "cdn" | "security" | "api" | "dns" => Ok(s),
         _ => Err(de::Error::custom(format!(
             "{} is an invalid data category",
             s
