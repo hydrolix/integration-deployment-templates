@@ -1,0 +1,5 @@
+{
+    "data_category": "cdn",
+    "table_name": "cdn_insights",
+    "version": "1.1.0"
+}
