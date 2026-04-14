@@ -32,14 +32,17 @@ jobs:
             --query SecretString \
             --output text)
 
-          webhook_url=$(echo "$secrets" | python3 -c "import json,sys; print(json.load(sys.stdin)['SLACK_WEBHOOK_URL'])")
+          webhook_url=$(echo "$secrets" | python3 -c "import json,sys; print(json.load(sys.stdin).get('SLACK_WEBHOOK_URL', ''))")
 
           if [ -z "$webhook_url" ] || [ "$webhook_url" = "null" ]; then
             echo "Error: SLACK_WEBHOOK_URL key not found in secret ${{ vars.AWS_SECRET_ARN }}" >&2
             exit 1
           fi
 
-          echo "SLACK_WEBHOOK_URL=$webhook_url" >> $GITHUB_ENV
+          EOF=$(openssl rand -hex 8)
+          echo "SLACK_WEBHOOK_URL<<$EOF" >> "$GITHUB_ENV"
+          echo "$webhook_url"            >> "$GITHUB_ENV"
+          echo "$EOF"                    >> "$GITHUB_ENV"
 
       - name: Send Slack alert
         run: |
@@ -49,7 +52,7 @@ jobs:
 
           webhook_url = os.environ.get("SLACK_WEBHOOK_URL", "")
           if not webhook_url:
-              print("Error: SLACK_RUNBOOK_WEBHOOK_URL is not set", file=sys.stderr)
+              print("Error: SLACK_WEBHOOK_URL is not set", file=sys.stderr)
               sys.exit(1)
 
           pr_title  = os.environ.get("PR_TITLE", "(no title)")
