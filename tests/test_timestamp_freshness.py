@@ -29,6 +29,7 @@ sys.modules.setdefault("utils.file_utils", _utils_pkg.file_utils)
 from scripts.configurator.transform_organizer import (
     _shift_stale_timestamps,
     _extract_sample_data,
+    _resolve_sample_key,
     _STALENESS_THRESHOLD_SECS,
 )
 from scripts.configurator.config import BundleConfig, BundleState, TransformInfo
@@ -282,17 +283,23 @@ class TestShiftStaleTimestamps:
     def test_threshold_boundary_plus_one_shifted(self, tmp_path):
         """Data 1 second past the threshold should be shifted."""
         fixed_now = 1800000000
+        # 2027-01-15 approx — target should be 2027-01-01 00:00 UTC = 1798761600
+        fixed_target = 1798761600
         stale_ts = fixed_now - _STALENESS_THRESHOLD_SECS - 1
         data = _make_transform_data(stale_ts)
         sample = data["settings"]["sample_data"]
         config = _make_config(tmp_path)
         tinfo = _make_tinfo(tmp_path)
 
-        with patch("scripts.configurator.transform_organizer.time") as mock_time:
+        fixed_dt = datetime(2027, 1, 15, 12, 0, 0, tzinfo=timezone.utc)
+        with patch("scripts.configurator.transform_organizer.time") as mock_time, \
+             patch("scripts.configurator.transform_organizer.datetime") as mock_dt:
             mock_time.time.return_value = fixed_now
+            mock_dt.now.return_value = fixed_dt
+            mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
             _shift_stale_timestamps(sample, data, tinfo, config)
 
-        assert sample["timestamp"] == _first_of_month_epoch()
+        assert sample["timestamp"] == fixed_target
 
     def test_millisecond_format_shifted_correctly(self, tmp_path):
         """Epoch-ms timestamps should be normalized to seconds for comparison and shifted in ms."""
@@ -405,3 +412,174 @@ class TestExtractSampleDataIntegration:
         assert ok is True
         sample = transform_data["settings"]["sample_data"]
         assert sample["timestamp"] == fresh_ts
+
+
+# ---------------------------------------------------------------------------
+# Tests for _resolve_sample_key (LOTC-1412)
+# ---------------------------------------------------------------------------
+
+
+class TestResolveSampleKey:
+    """Tests for JSON pointer resolution when output name != raw key."""
+
+    def test_output_name_matches_sample_key(self):
+        """When output name exists in sample_data, return it directly."""
+        col = {"name": "timestamp", "datatype": {"type": "epoch", "source": None}}
+        sample = {"timestamp": 1700000000}
+        assert _resolve_sample_key(col, sample) == "timestamp"
+
+    def test_json_pointer_fallback(self):
+        """When output name is missing, resolve from from_json_pointers."""
+        col = {
+            "name": "timestamp",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/reqTimeSec"]},
+            },
+        }
+        sample = {"reqTimeSec": 1700000000}
+        assert _resolve_sample_key(col, sample) == "reqTimeSec"
+
+    def test_no_match_returns_none(self):
+        """When neither output name nor pointer matches, return None."""
+        col = {
+            "name": "timestamp",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/missing_field"]},
+            },
+        }
+        sample = {"reqTimeSec": 1700000000}
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_source_without_json_pointers_returns_none(self):
+        """When source has from_input_field but no from_json_pointers, return None."""
+        col = {
+            "name": "computed_ts",
+            "datatype": {"type": "epoch", "source": {"from_input_field": "sql_transform"}},
+        }
+        sample = {"reqTimeSec": 1700000000}
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_nested_pointer_skipped(self):
+        """Multi-segment JSON pointers (e.g. /avail/fillRate) cannot be resolved to flat keys."""
+        col = {
+            "name": "fill_rate",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/avail/fillRate"]},
+            },
+        }
+        sample = {"avail/fillRate": 1700000000}  # even if flat key exists, nested pointer skipped
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_missing_name_returns_none(self):
+        """Column without a name field returns None gracefully."""
+        col = {"datatype": {"type": "epoch"}}
+        sample = {"timestamp": 1700000000}
+        assert _resolve_sample_key(col, sample) is None
+
+    def test_output_name_preferred_over_pointer(self):
+        """If output name exists in sample, use it even if pointer also matches."""
+        col = {
+            "name": "timestamp",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/reqTimeSec"]},
+            },
+        }
+        sample = {"timestamp": 1700000000, "reqTimeSec": 1699999999}
+        assert _resolve_sample_key(col, sample) == "timestamp"
+
+
+# ---------------------------------------------------------------------------
+# Tests for shifted timestamps with JSON pointer resolution (LOTC-1412)
+# ---------------------------------------------------------------------------
+
+
+class TestShiftWithJsonPointer:
+    """End-to-end shift tests where output column name != raw JSON key."""
+
+    def test_akamai_style_reqtimesec_shifted(self, tmp_path):
+        """Akamai-style transform: output 'timestamp' from raw 'reqTimeSec'."""
+        stale_ts = _now_epoch() - (365 * 86400)
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_json_pointers": ["/reqTimeSec"]},
+                        },
+                    },
+                    {"name": "bytes", "datatype": {"type": "uint64"}},
+                ],
+                "sample_data": {"reqTimeSec": stale_ts, "bytes": 4096},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        expected_target = _first_of_month_epoch()
+        assert sample["reqTimeSec"] == expected_target
+        assert sample["bytes"] == 4096
+
+    def test_fresh_akamai_style_not_shifted(self, tmp_path):
+        """Fresh Akamai-style timestamps should not be shifted."""
+        fresh_ts = _now_epoch() - (30 * 86400)
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_json_pointers": ["/reqTimeSec"]},
+                        },
+                    },
+                ],
+                "sample_data": {"reqTimeSec": fresh_ts},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        assert sample["reqTimeSec"] == fresh_ts
+
+    def test_unresolvable_primary_skips(self, tmp_path):
+        """If primary epoch column can't be resolved to a sample key, skip."""
+        stale_ts = _now_epoch() - (365 * 86400)
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_input_field": "sql_transform"},
+                        },
+                    },
+                ],
+                "sample_data": {"some_other_field": stale_ts},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path, verbose=True)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        assert sample["some_other_field"] == stale_ts
