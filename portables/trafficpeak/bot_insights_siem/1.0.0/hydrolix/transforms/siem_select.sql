@@ -58,7 +58,7 @@ multiIf( bot_type = 'Akamai', arrayFilter(x -> multiSearchAny(x, ['3991']), rule
 arrayMap(x -> (indexOf(rules, x)), BotCategoryAkamai) as arrayMapIndex,
 arrayStringConcat(arrayMap(x -> (ruleData[x] ), arrayMapIndex)) as botnet_id,
 arrayStringConcat(arrayMap(x -> (ruleMessages[x] ), arrayMapIndex)) as bot_category, 
-resource_category: multiIf(positionCaseInsensitive(assumeNotNull(path), 'robots.txt') > 0, 'robots.txt', positionCaseInsensitive(assumeNotNull(path), 'llms.txt') > 0, 'llms.txt', 'other'),
-botScoreRange: multiIf(botScore = 0, '0', botScore between 1 and 10, '1-10', botScore between 11 and 20, '11-20', botScore between 21 and 30, '21-30', botScore between 31 and 40, '31-40', botScore between 41 and 50, '41-50', botScore between 51 and 60, '51-60', botScore between 61 and 70, '61-70', botScore between 71 and 80, '71-80', botScore between 81 and 90, '81-90', botScore between 91 and 100, '91-100', ''),
+multiIf(positionCaseInsensitive(assumeNotNull(path), 'robots.txt') > 0, 'robots.txt', positionCaseInsensitive(assumeNotNull(path), 'llms.txt') > 0, 'llms.txt', 'other') AS resource_category,
+multiIf(botScore = 0, '0', botScore between 1 and 10, '1-10', botScore between 11 and 20, '11-20', botScore between 21 and 30, '21-30', botScore between 31 and 40, '31-40', botScore between 41 and 50, '41-50', botScore between 51 and 60, '51-60', botScore between 61 and 70, '61-70', botScore between 71 and 80, '71-80', botScore between 81 and 90, '81-90', botScore between 91 and 100, '91-100', '') AS botScoreRange,
 * 
 FROM {STREAM}
