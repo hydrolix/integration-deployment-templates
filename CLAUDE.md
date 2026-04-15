@@ -16,7 +16,7 @@ cargo run -- cloudfront              # validate only bundles matching "cloudfron
 cargo run -- --local                 # full testing with Grafana container + headless browser
 cargo run -- --output                # dump detailed JSON validation output
 cargo fmt                            # format
-cargo clippy                         # lint (strict: no unwrap/expect/panic/todo)
+cargo clippy                         # lint (warns on unwrap/expect/panic/todo)
 ```
 
 ### Python Pipeline
@@ -24,7 +24,7 @@ cargo clippy                         # lint (strict: no unwrap/expect/panic/todo
 python3 scripts/run_pipeline.py --bundle-dir <dir> --config <dir>/bundle-config.json --track full --verbose
 python3 scripts/configure_bundle.py --bundle-dir <dir> --table-name <name> --data-category <cat>
 python3 scripts/sync_cluster_deps.py --bundle-dir <dir> --dry-run
-python3 scripts/bundle_to_yaml.py --bundle-dir <dir>
+python3 scripts/bundle_to_yaml.py --source <dir>
 ```
 
 ### Tests
@@ -39,8 +39,10 @@ cargo test                                            # Rust tests
 ```bash
 make quick              # basic validation (no headless)
 make full               # marketplace + headless browser
-make coding-standards   # cargo fmt + clippy checks
+make coding-standards   # cargo fmt + clippy + ? operator ban
 make audit              # security audit
+make clean              # prune docker and cargo
+make git-actions-locally # run CI locally via act
 ```
 
 ## Architecture
@@ -59,9 +61,9 @@ Track detection (`scripts/detect_track.py`): if a bundle has `bundle-config.json
 
 ### Key Components
 
-**Rust Validator** (`src/`): 18 validation modules checking bundle.json schema, transform validity, sample data freshness (183-day threshold), dashboard template variables, dependency resolution, datasource UIDs, duplicate tokens across bundles, and optional Grafana headless browser rendering.
+**Rust Validator** (`src/`): 18 validation modules checking bundle.json schema, transform validity, sample data freshness (183-day threshold), dashboard template variables, dependency resolution, datasource UIDs, duplicate tokens across bundles, and optional Grafana headless browser rendering. Clippy warns on unwrap/expect/panic/todo (via `-W`), and the `?` operator is banned in `src/` via grep check in `make coding-standards`.
 
-**Configurator Engine** (`scripts/configurator/`): 7-phase Python pipeline that transforms raw vendor exports into configured bundles. Phases: discovery → transform organization → SQL analysis → bundle.json generation → summary fixing → dashboard fixing → reporting.
+**Configurator Engine** (`scripts/configurator/`): 8-phase Python pipeline that transforms raw vendor exports into configured bundles. Phases: discovery → transform organization → SQL analysis → bundle.json build → summary fixing → dashboard fixing → bundle.json update → reporting.
 
 **Deployment** (`src/deploy/`): Creates temporary Hydrolix projects, deploys transforms + dashboards, inserts sample data for validation, then cleans up.
 
