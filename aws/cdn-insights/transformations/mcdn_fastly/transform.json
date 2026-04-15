@@ -9,28 +9,30 @@
       "-1",
       "(null)"
     ],
-    "sample_data": {
-      "edge_ip": "2a04:4e42:200::498",
-      "is_edge": true,
-      "edge_pop": "SJC",
-      "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
-      "origin_ip": "(null)",
-      "timestamp": "2025-10-02T21:06:14",
-      "client_asn": "7922",
-      "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15",
-      "client_city": "yuba city",
-      "result_type": "HIT-CLUSTER",
-      "original_url": "/media/segment_1920p1080_015.ts",
-      "request_host": "bbb-fastly.hdx-demo.us",
-      "request_method": "GET",
-      "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
-      "response_status_code": "200",
-      "response_total_bytes": 1831674,
-      "response_content_type": "video/mp2t",
-      "client_country_iso_code": "USA",
-      "response_time_to_last_byte": 0.003,
-      "response_time_to_first_byte": 0
-    },
+    "sample_data": [
+      {
+        "edge_ip": "2a04:4e42:200::498",
+        "is_edge": true,
+        "edge_pop": "SJC",
+        "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
+        "origin_ip": "(null)",
+        "timestamp": "2025-10-02T21:06:14",
+        "client_asn": "7922",
+        "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15",
+        "client_city": "yuba city",
+        "result_type": "HIT-CLUSTER",
+        "original_url": "/media/segment_1920p1080_015.ts",
+        "request_host": "bbb-fastly.hdx-demo.us",
+        "request_method": "GET",
+        "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
+        "response_status_code": "200",
+        "response_total_bytes": 1831674,
+        "response_content_type": "video/mp2t",
+        "client_country_iso_code": "USA",
+        "response_time_to_last_byte": 0.003,
+        "response_time_to_first_byte": 0
+      }
+    ],
     "shadow_table": null,
     "output_columns": [
       {

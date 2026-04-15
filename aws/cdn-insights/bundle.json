@@ -16,61 +16,73 @@
         {
           "path": "transformations/default/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/default/sample_data.json",
           "sha256": "64c4025b2e3bdac526db6ec0a415285a64b943e77b0bd02d1f38a2f5847e6fad"
         },
         {
           "path": "transformations/mcdn_akamai_ds2/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_akamai_ds2/sample_data.json",
           "sha256": "31048af184324d6de839f60b965fdcc737d6215369f99438c6778554538623db"
         },
         {
           "path": "transformations/mcdn_cloudflare/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_cloudflare/sample_data.json",
           "sha256": "924cf3a8048bb6028e1eb80a82e0daeee4959d35d5bb720811e96f8b07c9f6e8"
         },
         {
           "path": "transformations/mcdn_cloudfront_firehose/transform.json",
           "method": "firehose",
+          "sample": "transformations/mcdn_cloudfront_firehose/sample_data.json",
           "sha256": "928bb6d00bf65f4e6e6ab87b62711d8980d300a5a8a282a2b70df8d913ca89f9"
         },
         {
           "path": "transformations/mcdn_fastly/transform.json",
           "method": "http_streaming",
-          "sha256": "679aaeb8696c73b417f0b7d3a73411e9348772759fda1bf881a5145a28c8c77d"
+          "sample": "transformations/mcdn_fastly/sample_data.json",
+          "sha256": "603b8329c7c3970933b0714d0adf054a03fb592c03bc71e60a3a94fd145cde39"
         },
         {
           "path": "transformations/mcdn_tencent/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_tencent/sample_data.json",
           "sha256": "ed82d42b62c2c3ff034cebcb25c429143bb2ab2711503d539de57c1f3d0d718c"
         },
         {
           "path": "transformations/mcdn_ioriver/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_ioriver/sample_data.json",
           "sha256": "ab28a812faccce93e6132bae336677490cd2bb9beea68d8997043b9be8b5cf10"
         },
         {
           "path": "transformations/mcdn_cachefly/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_cachefly/sample_data.json",
           "sha256": "58f5c50e89a01ee821d4d9e333de720099b42b648371501f06497370699aa4c6"
         },
         {
           "path": "transformations/mcdn_varnish/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_varnish/sample_data.json",
           "sha256": "c5c29ecbda54af8018e212da0fc1da4c61ee1f8a376daabb0e6a9b046d672ca6"
         },
         {
           "path": "transformations/mcdn_byteplus/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_byteplus/sample_data.json",
           "sha256": "bbe256bf8671b5b84c666790a3a4dbcae99fe2e0f9d14f6815a5e9a73df87db0"
         },
         {
           "path": "transformations/mcdn_imperva/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_imperva/sample_data.json",
           "sha256": "8194921977e5719997189a33338838cfe71c0803f0f13665e09931acf15fe627"
         },
         {
           "path": "transformations/mcdn_google_media/transform.json",
           "method": "http_streaming",
+          "sample": "transformations/mcdn_google_media/sample_data.json",
           "sha256": "6428c1cb96dea07e73c75c80809503f15168781da17698f5f36588111b1e3b49"
         }
       ]

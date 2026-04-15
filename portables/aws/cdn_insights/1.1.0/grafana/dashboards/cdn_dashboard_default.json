@@ -2994,7 +2994,7 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '199'\n      AND response_status_code < '300'\n  GROUP BY\n      timestamp\n  ORDER BY\n       timestamp",
+          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '199'\n      AND response_status_code < '300'\n  GROUP BY\n      timestamp\n  ORDER BY\n       timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=2xx Response Status Count; du=${__user.login}'",
           "refId": "CDN"
         }
       ],
@@ -3106,7 +3106,7 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '399'\n      AND response_status_code < '500'\n  GROUP BY\n      timestamp\n  ORDER BY\n      timestamp",
+          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '399'\n      AND response_status_code < '500'\n  GROUP BY\n      timestamp\n  ORDER BY\n      timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=4xx Response Status Count; du=${__user.login}'",
           "refId": "CDN"
         }
       ],
@@ -3214,7 +3214,7 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '499'\n      AND response_status_code < '600'\n  GROUP BY\n      timestamp\n  ORDER BY\n      timestamp",
+          "rawSql": "  SELECT\n      timestamp,\n      cnt_all AS Total\n  FROM\n      ${table}\n  WHERE\n      timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp < toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND response_status_code > '499'\n      AND response_status_code < '600'\n  GROUP BY\n      timestamp\n  ORDER BY\n      timestamp\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=5xx Response Status Count; du=${__user.login}'",
           "refId": "Akamai"
         }
       ],
