@@ -1,5 +1,5 @@
 SELECT
-  toStartOfDay (timestamp) AS timestamp,
+ toStartOfMonth(timestamp)::DateTime AS timestamp,
   bot_type,
   bot_category,
   resource_category,
@@ -7,11 +7,12 @@ SELECT
   botScoreRange,
   count() AS cnt_all
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.siem
 GROUP BY
   timestamp,
   bot_type,
   bot_category,
   resource_category,
   attackTypes,
-  botScoreRange SETTINGS hdx_primary_key = 'timestamp'
+  botScoreRange
+SETTINGS hdx_primary_key = 'timestamp'
