@@ -288,6 +288,187 @@ class TestDetectTrack:
         with pytest.raises(ValueError, match="bundle-config.json"):
             detect_track(str(bundle_dir), changed_files, str(repo_root))
 
+    def test_configured_no_originals_with_config_missing_bundle_json_raises(self, tmp_path):
+        """Configured assets + bundle-config.json + no bundle.json + no .originals/ → ValueError.
+
+        This is the exact bug scenario: aws/zuplo-api-insights was submitted with configured
+        assets and a bundle-config.json but no bundle.json. CI routed to validate-only and
+        the validator never saw the bundle.
+        """
+        repo_root = tmp_path
+        bundle_dir = repo_root / "aws" / "configured-no-bundle-json"
+        bundle_dir.mkdir(parents=True)
+
+        # bundle-config.json present (but no bundle.json!)
+        (bundle_dir / "bundle-config.json").write_text(json.dumps({"table_name": "test"}))
+
+        # Configured dashboard: wrapped, __DATASOURCE__, no __inputs
+        dashboards = bundle_dir / "dashboards"
+        dashboards.mkdir()
+        (dashboards / "default.json").write_text(json.dumps({
+            "dashboard": {
+                "__elements": {
+                    "model": {
+                        "datasource": {
+                            "type": "hydrolix-hydrolix-datasource",
+                            "uid": "__DATASOURCE__"
+                        }
+                    }
+                },
+                "panels": [
+                    {
+                        "datasource": {"uid": "__DATASOURCE__"},
+                        "targets": [{"rawSql": "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__"}]
+                    }
+                ],
+                "templating": {"list": []}
+            }
+        }))
+
+        # Summary SQL with template variables
+        summaries = bundle_dir / "summaries"
+        summaries.mkdir()
+        (summaries / "summary.sql").write_text(
+            "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__ GROUP BY timestamp"
+        )
+
+        # No .originals/ directory
+        # No bundle.json
+
+        changed_files = ["aws/configured-no-bundle-json/dashboards/default.json"]
+
+        with pytest.raises(ValueError, match="bundle.json"):
+            detect_track(str(bundle_dir), changed_files, str(repo_root))
+
+    def test_ambiguous_no_originals_with_config_missing_bundle_json_raises(self, tmp_path):
+        """Ambiguous assets + bundle-config.json + no bundle.json + no .originals/ → ValueError."""
+        repo_root = tmp_path
+        bundle_dir = repo_root / "aws" / "ambiguous-no-bundle-json"
+        bundle_dir.mkdir(parents=True)
+
+        # bundle-config.json present (but no bundle.json!)
+        (bundle_dir / "bundle-config.json").write_text(json.dumps({"table_name": "test"}))
+
+        # Ambiguous dashboard: wrapped (configured +1), no __inputs (configured +1),
+        # but no __DATASOURCE__ (raw +1). Combined with no bundle.json (raw +1) → 2 vs 2 → ambiguous
+        dashboards = bundle_dir / "dashboards"
+        dashboards.mkdir()
+        (dashboards / "default.json").write_text(json.dumps({
+            "dashboard": {
+                "panels": [
+                    {
+                        "datasource": {"uid": "some-uid"},
+                        "targets": [{"rawSql": "SELECT * FROM mydb.mytable"}]
+                    }
+                ],
+                "templating": {"list": []}
+            }
+        }))
+
+        # No .originals/ directory
+        # No bundle.json
+
+        changed_files = ["aws/ambiguous-no-bundle-json/dashboards/default.json"]
+
+        with pytest.raises(ValueError, match="bundle.json"):
+            detect_track(str(bundle_dir), changed_files, str(repo_root))
+
+    def test_configured_with_originals_missing_bundle_json_raises(self, tmp_path):
+        """Configured assets + .originals/ exists + no bundle.json → ValueError."""
+        repo_root = tmp_path
+        bundle_dir = repo_root / "aws" / "configured-originals-no-bj"
+        bundle_dir.mkdir(parents=True)
+
+        # Configured dashboard: wrapped, __DATASOURCE__, no __inputs
+        dashboards = bundle_dir / "dashboards"
+        dashboards.mkdir()
+        (dashboards / "default.json").write_text(json.dumps({
+            "dashboard": {
+                "__elements": {
+                    "model": {
+                        "datasource": {
+                            "type": "hydrolix-hydrolix-datasource",
+                            "uid": "__DATASOURCE__"
+                        }
+                    }
+                },
+                "panels": [
+                    {
+                        "datasource": {"uid": "__DATASOURCE__"},
+                        "targets": [{"rawSql": "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__"}]
+                    }
+                ],
+                "templating": {"list": []}
+            }
+        }))
+
+        # Summary SQL with template variables
+        summaries = bundle_dir / "summaries"
+        summaries.mkdir()
+        (summaries / "summary.sql").write_text(
+            "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__ GROUP BY timestamp"
+        )
+
+        # .originals/ exists
+        originals = repo_root / ".originals" / "aws" / "configured-originals-no-bj"
+        originals.mkdir(parents=True)
+        (originals / "something.json").write_text("{}")
+
+        # No bundle.json!
+
+        # Changed files in bundle dir, NOT in .originals/
+        changed_files = ["aws/configured-originals-no-bj/dashboards/default.json"]
+
+        with pytest.raises(ValueError, match="bundle.json"):
+            detect_track(str(bundle_dir), changed_files, str(repo_root))
+
+    def test_configured_no_originals_with_config_has_bundle_json_returns_validate_only(self, tmp_path):
+        """Configured assets + bundle-config.json + bundle.json present → 'validate-only' (no error)."""
+        repo_root = tmp_path
+        bundle_dir = repo_root / "aws" / "complete-bundle"
+        bundle_dir.mkdir(parents=True)
+
+        # Both config files present
+        (bundle_dir / "bundle-config.json").write_text(json.dumps({"table_name": "test"}))
+        (bundle_dir / "bundle.json").write_text(json.dumps({"name": "complete-bundle"}))
+
+        # Configured dashboard
+        dashboards = bundle_dir / "dashboards"
+        dashboards.mkdir()
+        (dashboards / "default.json").write_text(json.dumps({
+            "dashboard": {
+                "__elements": {
+                    "model": {
+                        "datasource": {
+                            "type": "hydrolix-hydrolix-datasource",
+                            "uid": "__DATASOURCE__"
+                        }
+                    }
+                },
+                "panels": [
+                    {
+                        "datasource": {"uid": "__DATASOURCE__"},
+                        "targets": [{"rawSql": "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__"}]
+                    }
+                ],
+                "templating": {"list": []}
+            }
+        }))
+
+        # Summary SQL with template variables
+        summaries = bundle_dir / "summaries"
+        summaries.mkdir()
+        (summaries / "summary.sql").write_text(
+            "SELECT * FROM __PROJECT_NAME__.__TABLE_NAME__ GROUP BY timestamp"
+        )
+
+        # No .originals/
+
+        changed_files = ["aws/complete-bundle/dashboards/default.json"]
+
+        result = detect_track(str(bundle_dir), changed_files, str(repo_root))
+        assert result == "validate-only"
+
     def test_real_cdn_insights_bundle_returns_validate_only(self):
         """Real bundle: aws/cdn-insights is configured, no .originals/, no bundle-config.json → 'validate-only'."""
         repo_root = "/Users/kevinborkman/Desktop/hydrolix/console/integration-deployment-templates"

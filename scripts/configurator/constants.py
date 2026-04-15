@@ -15,10 +15,6 @@ VALID_SUBFOLDERS = {
     "security": ("bots", "ds2", "siem"),
 }
 
-# Keep legacy aliases so any remaining internal references don't break
-VALID_CATEGORIES = VALID_FOLDERS
-VALID_SUBCATEGORIES = VALID_SUBFOLDERS
-
 # Prefix mapping based on bundle location
 PREFIX_MAP = {
     "aws": "commons",
@@ -43,7 +39,16 @@ VALID_METHODS = (
 VALID_CHANNEL_TYPES = ("AWS", "Azure", "GCP", "3rdParty", "Internal")
 
 # Valid data categories
-VALID_DATA_CATEGORIES = ("video", "cdn", "security")
+VALID_DATA_CATEGORIES = ("video", "cdn", "security", "api", "dns")
+
+# Maps data_category to its Grafana folder for CaC bundle export
+DATA_CATEGORY_FOLDER_MAP = {
+    "security": "security",
+    "cdn":      "cdn",
+    "video":    "media",
+    "api":      "api-context",
+    "dns":      "dns",
+}
 
 # Default channel type inference from source path
 CHANNEL_TYPE_MAP = {
