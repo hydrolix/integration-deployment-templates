@@ -1,12 +1,22 @@
 folders:
   hdx-main-folder:
     name: TrafficPeak Certified Reference Dashboards
-    children: {}
+    children:
+      hdx-security-folder:
+        name: Security
 dashboards:
+  hdx-akamai-siem:
+    dashboard:
+      __extend__: dashboards/akamai_siem.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: akamai.siem
+      VAR_LOGS: akamai.logs
   hdx-siem-raw-logs:
     dashboard:
       __extend__: dashboards/siem_raw_logs.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.siem
@@ -14,16 +24,8 @@ dashboards:
   hdx-security-analysis:
     dashboard:
       __extend__: dashboards/security_analysis.json
-    folderUid: hdx-main-folder
+    folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: akamai.siem
       VAR_TIMESTAMP: timestamp
-  hdx-akamai-siem:
-    dashboard:
-      __extend__: dashboards/akamai_siem.json
-    folderUid: hdx-main-folder
-    inputs:
-      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_TABLE: akamai.siem
-      VAR_LOGS: akamai.logs

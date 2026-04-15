@@ -1,58 +1,58 @@
 {
+  "__elements": {},
   "__inputs": [
     {
-      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
-      "label": "hydrolix-hydrolix-datasource",
       "description": "",
-      "type": "datasource",
+      "label": "Hydrolix",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
       "pluginId": "hydrolix-hydrolix-datasource",
-      "pluginName": "Hydrolix"
+      "pluginName": "Hydrolix",
+      "type": "datasource"
     },
     {
+      "description": "",
+      "label": "table",
       "name": "VAR_TABLE",
       "type": "constant",
-      "label": "table",
-      "value": "akamai.siem",
-      "description": ""
+      "value": "akamai.siem"
     },
     {
+      "description": "",
+      "label": "logs",
       "name": "VAR_LOGS",
       "type": "constant",
-      "label": "logs",
-      "value": "akamai.logs",
-      "description": ""
+      "value": "akamai.logs"
     }
   ],
-  "__elements": {},
   "__requires": [
     {
-      "type": "panel",
       "id": "geomap",
       "name": "Geomap",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
+      "type": "grafana",
       "version": "12.2.3"
     },
     {
-      "type": "datasource",
       "id": "hydrolix-hydrolix-datasource",
       "name": "Hydrolix",
+      "type": "datasource",
       "version": "0.7.0"
     },
     {
-      "type": "panel",
       "id": "table",
       "name": "Table",
+      "type": "panel",
       "version": ""
     },
     {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
+      "type": "panel",
       "version": ""
     }
   ],
@@ -1174,42 +1174,42 @@
   "templating": {
     "list": [
       {
+        "current": {
+          "selected": false,
+          "text": "${VAR_TABLE}",
+          "value": "${VAR_TABLE}"
+        },
         "hide": 2,
         "name": "table",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_TABLE}",
+            "value": "${VAR_TABLE}"
+          }
+        ],
         "query": "${VAR_TABLE}",
         "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_TABLE}",
-          "text": "${VAR_TABLE}",
-          "selected": false
-        },
-        "options": [
-          {
-            "value": "${VAR_TABLE}",
-            "text": "${VAR_TABLE}",
-            "selected": false
-          }
-        ]
+        "type": "constant"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "${VAR_LOGS}",
+          "value": "${VAR_LOGS}"
+        },
         "hide": 2,
         "name": "logs",
-        "query": "${VAR_LOGS}",
-        "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_LOGS}",
-          "text": "${VAR_LOGS}",
-          "selected": false
-        },
         "options": [
           {
-            "value": "${VAR_LOGS}",
+            "selected": false,
             "text": "${VAR_LOGS}",
-            "selected": false
+            "value": "${VAR_LOGS}"
           }
-        ]
+        ],
+        "query": "${VAR_LOGS}",
+        "skipUrlSync": true,
+        "type": "constant"
       },
       {
         "current": {},
