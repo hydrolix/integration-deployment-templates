@@ -143,7 +143,7 @@
         {
           "targetBlank": true,
           "title": "View SQL in Explore",
-          "url": "/explore?schemaVersion=1&panes=%7B%22n8y%22:%7B%22datasource%22:%22fel5k0avy5mo0b%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22hydrolix-hydrolix-datasource%22,%22uid%22:%22fel5k0avy5mo0b%22%7D,%22format%22:2,%22rawSql%22:%22SELECT%20%2A%5CnFROM%20akamai.logs%5CnWHERE%20$__timeFilter%28reqTimeSec%29%5Cn%20%20AND%20${ad_hoc_filter_for_sql}%20%5CnORDER%20BY%20reqTimeSec%20DESC%20%5CnLIMIT%201000%5CnSETTINGS%20hdx_query_max_execution_time%3D120,%20hdx_query_admin_comment%3D%27db%3DExplore%20Page%20Raw%20Logs;%20dp%3DExplore%20Page%20Raw%20Logs;%20du%3D${__user.login}%27%22%7D%5D,%22range%22:%7B%22from%22:%22${__from}%22,%22to%22:%22${__to}%22%7D%7D%7D&${__all_variables}"
+          "url": "/explore?schemaVersion=1&panes=%7B%22n8y%22:%7B%22datasource%22:%22fel5k0avy5mo0b%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22hydrolix-hydrolix-datasource%22,%22uid%22:%22fel5k0avy5mo0b%22%7D,%22format%22:2,%22rawSql%22:%22SELECT%20%2A%5CnFROM%20akamai.logs%5CnWHERE%20$__timeFilter%28timestamp%29%5Cn%20%20AND%20${ad_hoc_filter_for_sql}%20%5CnORDER%20BY%20timestamp%20DESC%20%5CnLIMIT%201000%5CnSETTINGS%20hdx_query_max_execution_time%3D120,%20hdx_query_admin_comment%3D%27db%3DExplore%20Page%20Raw%20Logs;%20dp%3DExplore%20Page%20Raw%20Logs;%20du%3D${__user.login}%27%22%7D%5D,%22range%22:%7B%22from%22:%22${__from}%22,%22to%22:%22${__to}%22%7D%7D%7D&${__all_variables}"
         }
       ],
       "options": {
@@ -245,7 +245,7 @@
             {
               "targetBlank": true,
               "title": "View SQL in Explore",
-              "url": "/explore?schemaVersion=1&panes=%7B%22n8y%22:%7B%22datasource%22:%22fel5k0avy5mo0b%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22hydrolix-hydrolix-datasource%22,%22uid%22:%22fel5k0avy5mo0b%22%7D,%22format%22:1,%22rawSql%22:%22SELECT%20%2A%5CnFROM%20akamai.logs%5CnWHERE%20$__timeFilter%28reqTimeSec%29%5Cn%20%20AND%20${ad_hoc_filter_for_sql}%20%5CnORDER%20BY%20reqTimeSec%20DESC%20%5CnLIMIT%201000%5CnSETTINGS%20hdx_query_max_execution_time%3D120,%20hdx_query_admin_comment%3D%27db%3DExplore%20Page%20Raw%20Logs;%20dp%3DExplore%20Page%20Raw%20Logs;%20du%3D${__user.login}%27%22%7D%5D,%22range%22:%7B%22from%22:%22${__from}%22,%22to%22:%22${__to}%22%7D%7D%7D&${__all_variables}"
+              "url": "/explore?schemaVersion=1&panes=%7B%22n8y%22:%7B%22datasource%22:%22fel5k0avy5mo0b%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22hydrolix-hydrolix-datasource%22,%22uid%22:%22fel5k0avy5mo0b%22%7D,%22format%22:1,%22rawSql%22:%22SELECT%20%2A%5CnFROM%20akamai.logs%5CnWHERE%20$__timeFilter%28timestamp%29%5Cn%20%20AND%20${ad_hoc_filter_for_sql}%20%5CnORDER%20BY%20timestamp%20DESC%20%5CnLIMIT%201000%5CnSETTINGS%20hdx_query_max_execution_time%3D120,%20hdx_query_admin_comment%3D%27db%3DExplore%20Page%20Raw%20Logs;%20dp%3DExplore%20Page%20Raw%20Logs;%20du%3D${__user.login}%27%22%7D%5D,%22range%22:%7B%22from%22:%22${__from}%22,%22to%22:%22${__to}%22%7D%7D%7D&${__all_variables}"
             }
           ],
           "options": {
