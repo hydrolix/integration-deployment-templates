@@ -29,7 +29,7 @@ The bundle checker performs validation in two phases:
 **Checks**:
 - **File Accessibility**: All transform files can be read from disk
 - **JSON Validity**: Transform files contain valid JSON syntax
-- **Required Fields**: 
+- **Required Fields**:
   - `name` field exists and is a non-empty string
   - `subtype` field (if present) must equal "firehose"
 - **Data Integrity**: Transform file structure matches expected schema
@@ -57,7 +57,26 @@ The bundle checker performs validation in two phases:
 - Empty sample data object or string
 - Sample data field exists but contains only whitespace
 
-### 4. Duplicate Token Validation (`no_duplicate_tokens.rs`)
+### 4. Sample Data Freshness (`sample_data_freshness.rs`)
+
+**Purpose**: Warns when sample data contains stale timestamps that may cause Grafana dashboard panels to appear empty due to default time range filters.
+
+**Checks**:
+- **Primary Timestamp Detection**: Identifies the primary epoch column from the transform's `output_columns` schema (where `datatype.type == "epoch"` and `datatype.primary == true`)
+- **Staleness Check**: Compares the primary timestamp value in `sample_data` against the current time
+- **Threshold**: Timestamps older than 6 months (183 days) are flagged as stale
+
+**Behavior**:
+- **Warning only** — does not fail validation. Stale timestamps are logged as warnings but do not block merges.
+- On the full pipeline track (Track 1), the Python configurator automatically shifts stale timestamps to the 1st of the current month before this validator runs.
+- On the validation-only track (Track 2), this check serves as a safety net to surface staleness.
+
+**Skipped when**:
+- No primary epoch column exists in the transform schema
+- The primary timestamp value is not numeric in sample_data
+- The `output_columns` field is missing from the transform
+
+### 5. Duplicate Token Validation (`no_duplicate_tokens.rs`)
 
 **Purpose**: Prevents naming conflicts within a single bundle.
 
@@ -76,7 +95,7 @@ The bundle checker performs validation in two phases:
 - Table name contains invalid characters (not alphanumeric or underscore)
 - Duplicate dashboard variable values
 
-### 5. Checksum Validation (`no_bad_checksums.rs`)
+### 6. Checksum Validation (`no_bad_checksums.rs`)
 
 **Purpose**: Ensures file integrity through SHA256 checksum verification.
 
@@ -91,7 +110,7 @@ The bundle checker performs validation in two phases:
 - Computed SHA256 doesn't match declared checksum
 - Missing checksum when expected
 
-### 6. Naming Convention Validation (`naming_is_valid.rs`)
+### 7. Naming Convention Validation (`naming_is_valid.rs`)
 
 **Purpose**: Enforces consistent naming conventions across bundle components.
 
@@ -116,7 +135,7 @@ The bundle checker performs validation in two phases:
 - Invalid email format for maintainer
 - Empty description
 
-### 7. Dashboard Validation (`dashboard_is_valid.rs`)
+### 8. Dashboard Validation (`dashboard_is_valid.rs`)
 
 **Purpose**: Validates Grafana dashboard files and their template variables.
 
@@ -128,7 +147,7 @@ The bundle checker performs validation in two phases:
   - `__DATASOURCE__` - Data source placeholder
   - `__PROJECT_NAME__` - Project name placeholder
   - All table dashboard variables from bundle configuration
-- **Dashboard Structure**: 
+- **Dashboard Structure**:
   - Top-level `dashboard` object exists
   - No hardcoded `id` field (must use placeholder)
 
@@ -141,7 +160,7 @@ The bundle checker performs validation in two phases:
 
 ## Global Cross-Bundle Validation
 
-### 8. Global Duplicate Prevention (`no_global_duplicates.rs`)
+### 9. Global Duplicate Prevention (`no_global_duplicates.rs`)
 
 **Purpose**: Prevents conflicts across all bundles in the repository.
 

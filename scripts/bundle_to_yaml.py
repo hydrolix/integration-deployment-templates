@@ -37,41 +37,45 @@ from converters.grafana_gen import GrafanaGenerator
 from converters.validator import BundleValidator
 from utils.models import BundleMetadata
 from utils.file_utils import sanitize_cac_name
-from configurator.constants import VALID_FOLDERS, VALID_SUBFOLDERS
+from configurator.constants import DATA_CATEGORY_FOLDER_MAP
 
 
-def _folder_from_bundle_json(source_path: Path) -> list:
-    """Read Grafana folder/subfolder from bundle.json ui.folder and ui.subfolder.
+def _folder_from_data_category(source_path: Path) -> list:
+    """Derive Grafana folder from data_category in bundle-config.json.
 
-    Returns ordered segments used to build the nested folder hierarchy
-    in resources.gfo.yaml, e.g. ['security'] or ['security', 'bots'].
-    Returns [] if no valid folder is declared.
-
-    bundle.json fields:
-        ui.folder    — one of: api-context, cdn, dns, media, security
-        ui.subfolder — optional, e.g. bots, ds2, siem (under security)
+    Maps data_category to its Grafana folder using DATA_CATEGORY_FOLDER_MAP.
+    Returns [] if bundle-config.json is absent or data_category is unrecognised,
+    and prints a warning so operators know dashboards will land at the root folder.
     """
-    bundle_json = source_path / "bundle.json"
-    if not bundle_json.exists():
+    config = source_path / "bundle-config.json"
+    if not config.exists():
+        print(
+            f"  Warning: bundle-config.json not found at {config} — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
         return []
 
     try:
-        with open(bundle_json, "r", encoding="utf-8") as f:
-            bundle = json.load(f)
-    except (json.JSONDecodeError, IOError):
+        with open(config, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, IOError) as e:
+        print(
+            f"  Warning: could not read bundle-config.json ({e}) — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
         return []
 
-    ui = bundle.get("ui", {})
-    folder = ui.get("folder", "")
-    subfolder = ui.get("subfolder", "")
-
-    if not folder or folder not in VALID_FOLDERS:
-        return []
-
-    if subfolder and subfolder in VALID_SUBFOLDERS.get(folder, ()):
-        return [folder, subfolder]
-
-    return [folder]
+    category = data.get("data_category", "")
+    folder = DATA_CATEGORY_FOLDER_MAP.get(category, "")
+    if not folder:
+        print(
+            f"  Warning: data_category '{category}' is not mapped to a Grafana folder — "
+            "dashboards will be placed under the root Grafana folder.",
+            file=sys.stderr,
+        )
+    return [folder] if folder else []
 
 
 def auto_detect_from_path(source_path: str):
@@ -172,16 +176,6 @@ Examples:
     )
 
     parser.add_argument(
-        '--folder',
-        help='Grafana folder (api-context, cdn, dns, media, security)'
-    )
-
-    parser.add_argument(
-        '--subfolder',
-        help='Grafana subfolder (e.g., bots, ds2, siem, multi-cdn)'
-    )
-
-    parser.add_argument(
         '--verbose',
         action='store_true',
         help='Enable verbose output'
@@ -229,23 +223,27 @@ def main():
     repo_root = Path(__file__).parent.parent
     source_path = repo_root / args.source
 
-    # Build folder path first — needed for output path
-    if args.folder and args.folder in VALID_FOLDERS:
-        folder = args.folder
-        subfolder = args.subfolder if args.subfolder and args.subfolder in VALID_SUBFOLDERS.get(folder, ()) else ""
-        folder_segments = [folder, subfolder] if subfolder else [folder]
-    else:
-        folder_segments = _folder_from_bundle_json(source_path)
+    # Auto-detect version from bundle-config.json if using the default
+    if args.version == '1.0.0':
+        config_file = source_path / "bundle-config.json"
+        if config_file.exists():
+            try:
+                with open(config_file, "r", encoding="utf-8") as f:
+                    config_data = json.load(f)
+                if "version" in config_data:
+                    args.version = config_data["version"]
+            except (json.JSONDecodeError, IOError):
+                pass
+
+    # Build folder path from data_category in bundle-config.json
+    folder_segments = _folder_from_data_category(source_path)
     folder_path = folder_segments
 
     if args.output:
         output_path = Path(args.output)
     else:
-        # Default output: portables/<folder>/[<subfolder>/]<bundle_name>/<version>
-        portables_base = repo_root / "portables"
-        for segment in folder_segments:
-            portables_base = portables_base / segment
-        output_path = portables_base / sanitize_cac_name(args.bundle_name) / args.version
+        # Default output: portables/<customer_type>/<bundle_name>/<version>
+        output_path = repo_root / "portables" / args.customer_type / sanitize_cac_name(args.bundle_name) / args.version
 
     if args.verbose:
         print(f"Source: {source_path}")

@@ -72,6 +72,7 @@ def detect_track(bundle_dir: str, changed_files: list[str], repo_root: str) -> s
         if state == "raw":
             _require_bundle_config(bundle_dir)
             return "full"
+        _require_bundle_json(bundle_dir)
         return "validate-only"  # configured or ambiguous → safe default
 
     # No .originals/ — first run or legacy
@@ -82,9 +83,11 @@ def detect_track(bundle_dir: str, changed_files: list[str], repo_root: str) -> s
     state = classify_bundle_state(bundle_dir)
     if state == "raw":
         return "full"  # First run — will create .originals/
-    if state == "configured":
+    if state in ("configured", "ambiguous"):
+        _require_bundle_json(bundle_dir)
         return "validate-only"
-    return "validate-only"  # Ambiguous → safe default
+
+    raise ValueError(f"Unexpected bundle state '{state}' for {bundle_dir}")
 
 
 def _require_bundle_config(bundle_dir: str):
@@ -93,6 +96,18 @@ def _require_bundle_config(bundle_dir: str):
         raise ValueError(
             f"Cannot run full pipeline without bundle-config.json in {bundle_dir}. "
             "Add one or use skip-bundle-format label."
+        )
+
+
+def _require_bundle_json(bundle_dir: str):
+    """Raise ValueError if bundle.json is missing for a validate-only bundle."""
+    if not os.path.isfile(os.path.join(bundle_dir, "bundle.json")):
+        raise ValueError(
+            f"Bundle routed to validate-only but bundle.json is missing in {bundle_dir}. "
+            "Either:\n"
+            "  1. Submit raw assets with a bundle-config.json so Track 1 generates bundle.json, or\n"
+            "  2. Include a valid bundle.json alongside configured assets.\n"
+            "See HOW-TO-CONTRIBUTE.md for details."
         )
 
 
