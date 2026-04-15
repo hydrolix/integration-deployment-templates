@@ -7,7 +7,7 @@ SELECT
   botScoreRange,
   count() AS cnt_all
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.siem
 GROUP BY
   timestamp,
   bot_type,
