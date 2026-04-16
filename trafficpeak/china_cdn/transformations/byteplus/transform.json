@@ -1,5 +1,5 @@
 {
-  "name": "default",
+  "name": "tp_mcdn_byteplus",
   "description": "Version v1.0",
   "settings": {
     "is_default": true,
@@ -113,7 +113,7 @@
       {
         "name": "timeToFirstByte",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -128,8 +128,8 @@
       {
         "name": "ds_req_time",
         "datatype": {
-          "type": "float",
-          "index": true,
+          "type": "double",
+          "index": false,
           "format": null,
           "resolution": null,
           "default": null,
@@ -143,7 +143,7 @@
       {
         "name": "transferTimeMSec",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -364,7 +364,7 @@
       {
         "name": "Origin_TurnAroundTime",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
@@ -377,7 +377,7 @@
       {
         "name": "Origin_RequestEndTime",
         "datatype": {
-          "type": "uint64",
+          "type": "uint32",
           "index": true,
           "format": null,
           "resolution": null,
