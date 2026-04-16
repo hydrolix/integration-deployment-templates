@@ -52,6 +52,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--production".to_string())
     };
+    static ref DELAY_MODE: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--delay".to_string())
+    };
     static ref MATCH_ONLY: String = {
         let mut value = "".to_string();
         let args: Vec<String> = std::env::args().collect();
