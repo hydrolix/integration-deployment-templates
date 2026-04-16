@@ -10,9 +10,13 @@ use crate::models::output::Output;
 use crate::models::output::OutputTable;
 use crate::models::output::OutputTransformation;
 use crate::BUNDLE_TESTING_CLUSTER;
+use crate::DELAY_MODE;
 use crate::GRAFANA_LOCATION;
 
 const TABLE_READY_DELAY_SECS: u64 = 30;
+const TABLE_PROPAGATION_DELAY_SECS: u64 = 15;
+const TABLE_PROPAGATION_DELAY_SLOW_SECS: u64 = 45;
+const TRANSFORM_READY_DELAY_SECS: u64 = 15;
 const DATA_READY_DELAY_SECS: u64 = 30;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
@@ -72,8 +76,14 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
 
     // Wait for tables to propagate to ClickHouse before creating summary tables
     if bundle.summary_tables.is_some() && !bundle.tables.is_empty() {
-        println!("Waiting for tables to propagate to ClickHouse...");
-        tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
+        let propagation_secs = if *DELAY_MODE {
+            println!("Waiting for tables to propagate to ClickHouse (--delay)...");
+            TABLE_PROPAGATION_DELAY_SLOW_SECS
+        } else {
+            println!("Waiting for tables to propagate to ClickHouse...");
+            TABLE_PROPAGATION_DELAY_SECS
+        };
+        sleep(Duration::from_secs(propagation_secs)).await;
     }
 
     // Create summary tables if present (will actively verify parent tables exist)
@@ -182,6 +192,11 @@ async fn process_table(
             Ok(v) => v,
             Err(e) => return Err(e),
         };
+
+        if *DELAY_MODE {
+            println!("Waiting for transform to propagate (--delay)...");
+            sleep(Duration::from_secs(TRANSFORM_READY_DELAY_SECS)).await;
+        }
 
         match insert_sample_data_if_present(
             bearer_token,
