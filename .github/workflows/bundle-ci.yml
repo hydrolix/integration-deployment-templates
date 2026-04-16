@@ -314,10 +314,18 @@ jobs:
       - name: Checkout integration-deployment-templates
         uses: actions/checkout@v4
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.INTEGRATIONS_APP_ID }}
+          private-key: ${{ secrets.INTEGRATIONS_APP_PRIVATE_KEY }}
+
       - name: Checkout cac-tools-test
         uses: actions/checkout@v4
         with:
           repository: Hydrolix/cac-tools-test
+          token: ${{ steps.app-token.outputs.token }}
           path: cac-tools-test
 
       - name: Setup Python 3.11
