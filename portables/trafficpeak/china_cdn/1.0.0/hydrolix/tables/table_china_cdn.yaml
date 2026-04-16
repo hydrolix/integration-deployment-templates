@@ -1,3 +1,0 @@
-__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
-description: TRAFFICPEAK China Cdn integration bundle
-type: turbine
