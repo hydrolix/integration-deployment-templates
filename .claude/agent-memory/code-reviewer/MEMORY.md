@@ -1,1 +1,0 @@
-- [Project: Bundle Validation Architecture](project_bundle_validation.md) — Rust validator + Python configurator; token/sample_data patterns and known pitfalls
