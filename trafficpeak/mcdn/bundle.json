@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/mcdn/1.0.0",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/mcdn",
   "beta": true,
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
@@ -10,6 +10,9 @@
       "required_dictionaries": [],
       "required_functions": [],
       "shared_dictionaries": [
+        "akamai_geoip_asn_blocks_ipv4",
+        "akamai_geoip_asn_blocks_ipv6",
+        "akamai_ua_cat_dict",
         "geoip_asn_blocks_ipv4",
         "geoip_asn_blocks_ipv6",
         "ua_cat_dict"
