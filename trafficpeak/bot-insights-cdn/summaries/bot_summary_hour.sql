@@ -14,7 +14,7 @@ SELECT
   count() AS cnt_all,
   sum(response_total_bytes) AS totalBytes
 FROM
-  __PROJECT_NAME__.__TABLE_NAME__
+  akamai.logs
 GROUP BY
   timestamp,
   cacheStatus,
