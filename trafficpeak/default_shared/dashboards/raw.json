@@ -336,38 +336,38 @@
         {
           "hide": 2,
           "name": "ds2",
-          "query": "${VAR_DS2}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "${VAR_DS2}",
-            "text": "${VAR_DS2}",
-            "selected": false
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
-              "value": "${VAR_DS2}",
-              "text": "${VAR_DS2}",
-              "selected": false
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "timestamp",
-          "query": "${VAR_TIMESTAMP}",
+          "query": "reqTimeSec",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "${VAR_TIMESTAMP}",
-            "text": "${VAR_TIMESTAMP}",
-            "selected": false
+            "selected": false,
+            "text": "reqTimeSec",
+            "value": "reqTimeSec"
           },
           "options": [
             {
-              "value": "${VAR_TIMESTAMP}",
-              "text": "${VAR_TIMESTAMP}",
-              "selected": false
+              "selected": false,
+              "text": "reqTimeSec",
+              "value": "reqTimeSec"
             }
           ]
         },

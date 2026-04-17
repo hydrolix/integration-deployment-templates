@@ -1807,19 +1807,19 @@
         {
           "hide": 2,
           "name": "ds2",
-          "query": "${VAR_DS2}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "${VAR_DS2}",
-            "text": "${VAR_DS2}",
-            "selected": false
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
-              "value": "${VAR_DS2}",
-              "text": "${VAR_DS2}",
-              "selected": false
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
@@ -1847,19 +1847,19 @@
           "description": "",
           "hide": 2,
           "name": "summary_day",
-          "query": "${VAR_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
-            "value": "${VAR_SUMMARY_DAY}",
-            "text": "${VAR_SUMMARY_DAY}",
-            "selected": false
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
-              "value": "${VAR_SUMMARY_DAY}",
-              "text": "${VAR_SUMMARY_DAY}",
-              "selected": false
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },

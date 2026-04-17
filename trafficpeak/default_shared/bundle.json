@@ -89,12 +89,12 @@
     }
   ],
   "ui": {
-    "data_category": "security",
+    "data_category": "cdn",
     "method": {
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://techdocs.akamai.com/trafficpeak/docs/dashboards-overview",
+    "primary_url": "https://docs.hydrolix.io/docs/default_shared-integration",
     "source": {
       "full_title": "Trafficpeak Default Shared",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
