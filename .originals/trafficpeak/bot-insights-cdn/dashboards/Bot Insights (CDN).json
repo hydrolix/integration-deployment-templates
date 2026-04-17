@@ -8,27 +8,6 @@
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix",
       "type": "datasource"
-    },
-    {
-      "description": "",
-      "label": "summary_hour",
-      "name": "VAR_SUMMARY_HOUR",
-      "type": "constant",
-      "value": "akamai.bot_summary_hour"
-    },
-    {
-      "description": "",
-      "label": "summary_day",
-      "name": "VAR_SUMMARY_DAY",
-      "type": "constant",
-      "value": "akamai.bot_summary_day"
-    },
-    {
-      "description": "",
-      "label": "summary_month",
-      "name": "VAR_SUMMARY_MONTH",
-      "type": "constant",
-      "value": "akamai.bot_summary_month"
     }
   ],
   "__requires": [
@@ -201,7 +180,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
+          "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(cnt_all,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(cnt_all,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -277,7 +256,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT\n  countMergeIf(`count()`, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(`count()`, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+          "rawSql": "SELECT\n  countMergeIf(cnt_all, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(cnt_all, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -343,7 +322,7 @@
             "uid": "${DS_HDX-DEMO}"
           },
           "format": 1,
-          "rawSql": "SELECT\n   countMergeIf(`count()`, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(`count()`, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
+          "rawSql": "SELECT\n   countMergeIf(cnt_all, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(cnt_all, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
           "refId": "A"
         }
       ],
@@ -960,57 +939,57 @@
       {
         "current": {
           "selected": false,
-          "text": "${VAR_SUMMARY_HOUR}",
-          "value": "${VAR_SUMMARY_HOUR}"
+          "text": "__PROJECT_NAME__.bot_summary_hour",
+          "value": "__PROJECT_NAME__.bot_summary_hour"
         },
         "hide": 2,
         "name": "summary_hour",
         "options": [
           {
             "selected": false,
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.bot_summary_hour",
+            "value": "__PROJECT_NAME__.bot_summary_hour"
           }
         ],
-        "query": "${VAR_SUMMARY_HOUR}",
+        "query": "__PROJECT_NAME__.bot_summary_hour",
         "skipUrlSync": true,
         "type": "constant"
       },
       {
         "current": {
           "selected": false,
-          "text": "${VAR_SUMMARY_DAY}",
-          "value": "${VAR_SUMMARY_DAY}"
+          "text": "__PROJECT_NAME__.bot_summary_day",
+          "value": "__PROJECT_NAME__.bot_summary_day"
         },
         "hide": 2,
         "name": "summary_day",
         "options": [
           {
             "selected": false,
-            "text": "${VAR_SUMMARY_DAY}",
-            "value": "${VAR_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.bot_summary_day",
+            "value": "__PROJECT_NAME__.bot_summary_day"
           }
         ],
-        "query": "${VAR_SUMMARY_DAY}",
+        "query": "__PROJECT_NAME__.bot_summary_day",
         "skipUrlSync": true,
         "type": "constant"
       },
       {
         "current": {
           "selected": false,
-          "text": "${VAR_SUMMARY_MONTH}",
-          "value": "${VAR_SUMMARY_MONTH}"
+          "text": "__PROJECT_NAME__.bot_summary_month",
+          "value": "__PROJECT_NAME__.bot_summary_month"
         },
         "hide": 2,
         "name": "summary_month",
         "options": [
           {
             "selected": false,
-            "text": "${VAR_SUMMARY_MONTH}",
-            "value": "${VAR_SUMMARY_MONTH}"
+            "text": "__PROJECT_NAME__.bot_summary_month",
+            "value": "__PROJECT_NAME__.bot_summary_month"
           }
         ],
-        "query": "${VAR_SUMMARY_MONTH}",
+        "query": "__PROJECT_NAME__.bot_summary_month",
         "skipUrlSync": true,
         "type": "constant"
       },
