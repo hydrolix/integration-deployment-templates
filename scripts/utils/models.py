@@ -6,6 +6,20 @@ from typing import List, Optional
 
 
 @dataclass
+class Function:
+    """Represents a function definition file."""
+    name: str
+    file_path: Path
+
+
+@dataclass
+class Dictionary:
+    """Represents a dictionary schema definition file."""
+    name: str
+    file_path: Path
+
+
+@dataclass
 class Transform:
     """Represents a transform file."""
     name: str
@@ -44,9 +58,13 @@ class BundleAssets:
     transforms_folder: Optional[Path] = None
     dashboards_folder: Optional[Path] = None
     summaries_folder: Optional[Path] = None
+    functions_folder: Optional[Path] = None
+    dictionaries_folder: Optional[Path] = None
     transforms: List[Transform] = field(default_factory=list)
     dashboards: List[Dashboard] = field(default_factory=list)
     summaries: List[Summary] = field(default_factory=list)
+    functions: List[Function] = field(default_factory=list)
+    dictionaries: List[Dictionary] = field(default_factory=list)
 
 
 @dataclass

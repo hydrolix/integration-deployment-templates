@@ -6,6 +6,7 @@
 //   cargo run --bin cleanup -- --tables <bundle-name>
 //   cargo run --bin cleanup -- --all <bundle-name>
 //   cargo run --bin cleanup -- --all <bundle-name> --dry-run
+//   cargo run --bin cleanup -- --project <project-name>   # Delete an entire project
 
 use bundle_validator::hdx;
 use bundle_validator::models::bundle::Bundle;
@@ -34,6 +35,54 @@ lazy_static! {
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
 
+    // Check for --project flag (delete entire project)
+    let delete_project = args.contains(&"--project".to_string());
+    let project_name_arg: Option<String> = if delete_project {
+        args.iter()
+            .position(|a| a == "--project")
+            .and_then(|i| args.get(i + 1))
+            .filter(|a| !a.starts_with("--"))
+            .cloned()
+    } else {
+        None
+    };
+
+    if delete_project {
+        let project_to_delete = match &project_name_arg {
+            Some(name) => name.clone(),
+            None => {
+                eprintln!("ERROR: --project requires a project name argument");
+                eprintln!("Usage: cargo run --bin cleanup -- --project <project-name>");
+                std::process::exit(1);
+            }
+        };
+
+        println!("\n🧹 Deleting project: {}", project_to_delete);
+        println!("   Cluster: {}", *BUNDLE_TESTING_CLUSTER);
+
+        let bearer_token = match hdx::auth::get_token().await {
+            Ok(token) => {
+                println!("✓ Authenticated successfully");
+                token
+            }
+            Err(e) => {
+                eprintln!("\n❌ Authentication failed: {}", e);
+                std::process::exit(1);
+            }
+        };
+
+        match hdx::delete_project(&bearer_token, &project_to_delete).await {
+            Ok(_) => {
+                println!("✅ Successfully deleted project: {}", project_to_delete);
+                std::process::exit(0);
+            }
+            Err(e) => {
+                eprintln!("❌ Failed to delete project '{}': {}", project_to_delete, e);
+                std::process::exit(1);
+            }
+        }
+    }
+
     let delete_functions =
         args.contains(&"--functions".to_string()) || args.contains(&"--all".to_string());
     let delete_dictionaries =
@@ -44,13 +93,26 @@ async fn main() {
         args.contains(&"--tables".to_string()) || args.contains(&"--all".to_string());
     let dry_run = args.contains(&"--dry-run".to_string());
 
-    // Get bundle name (first non-flag argument)
-    let bundle_name = args
-        .iter()
-        .skip(1)
-        .find(|arg| !arg.starts_with("--"))
-        .cloned()
-        .unwrap_or_default();
+    // Get bundle name (first non-flag argument, skip --project's arg)
+    let bundle_name = {
+        let mut name = String::new();
+        let mut skip_next = false;
+        for arg in args.iter().skip(1) {
+            if skip_next {
+                skip_next = false;
+                continue;
+            }
+            if arg == "--project" {
+                skip_next = true;
+                continue;
+            }
+            if !arg.starts_with("--") {
+                name = arg.clone();
+                break;
+            }
+        }
+        name
+    };
 
     if !delete_functions && !delete_dictionaries && !delete_tables && !delete_dictionary_files {
         print_usage();
@@ -149,9 +211,15 @@ fn print_usage() {
     println!(
         "  cargo run --bin cleanup -- --all <bundle-name> --dry-run   # Show what would be deleted"
     );
+    println!(
+        "  cargo run --bin cleanup -- --project <project-name>        # Delete an entire project"
+    );
     println!("\nNote: --all includes functions, dictionaries, dictionary files, and tables");
     println!("      Provide bundle name to delete only that bundle's resources (recommended)");
     println!("      Omit bundle name to delete ALL resources in project (dangerous!)");
+    println!(
+        "      --project deletes the entire project from the cluster (for GUID test projects)"
+    );
 }
 
 async fn load_bundle(bundle_name: &str) -> Result<Bundle, String> {

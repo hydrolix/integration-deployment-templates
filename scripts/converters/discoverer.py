@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from utils.models import BundleAssets, Transform, Dashboard, DashboardInput, Summary
+from utils.models import BundleAssets, Transform, Dashboard, DashboardInput, Summary, Function, Dictionary
 from utils.file_utils import read_json, sanitize_filename
 
 
@@ -36,6 +36,13 @@ class AssetDiscoverer:
             assets.dashboards = self._discover_dashboards(assets.dashboards_folder)
         if assets.summaries_folder:
             assets.summaries = self._discover_summaries(assets.summaries_folder)
+
+        assets.functions_folder = self._find_functions_folder()
+        if assets.functions_folder:
+            assets.functions = self._discover_functions(assets.functions_folder)
+        assets.dictionaries_folder = self._find_dictionaries_folder()
+        if assets.dictionaries_folder:
+            assets.dictionaries = self._discover_dictionaries(assets.dictionaries_folder)
 
         return assets
 
@@ -180,7 +187,7 @@ class AssetDiscoverer:
         """Find summary SQL files."""
         summaries = []
 
-        for sql_file in folder.glob('*.sql'):
+        for sql_file in sorted(folder.glob('*.sql')):
             name = sql_file.stem
             summaries.append(Summary(
                 name=name,
@@ -190,3 +197,48 @@ class AssetDiscoverer:
                 print(f"  Found summary: {name}")
 
         return summaries
+
+    def _load_dep_names(self, key: str) -> set:
+        """Return union of required_<key> and shared_<key> from bundle.json."""
+        bundle_json = self.source_path / 'bundle.json'
+        if not bundle_json.exists():
+            return set()
+        with open(bundle_json, 'r', encoding='utf-8') as f:
+            bundle = json.load(f)
+        deps = bundle.get('dependencies', {}).get('hydrolix', {})
+        required = set(deps.get(f'required_{key}', []))
+        shared = set(deps.get(f'shared_{key}', []))
+        return required | shared
+
+    def _find_functions_folder(self) -> Optional[Path]:
+        """Find the functions folder."""
+        path = self.source_path / 'functions'
+        return path if path.exists() and path.is_dir() else None
+
+    def _discover_functions(self, folder: Path) -> List[Function]:
+        """Find function JSON files, filtered by names declared in bundle.json."""
+        names = self._load_dep_names('functions')
+        results = []
+        for json_file in sorted(folder.glob('*.json')):
+            if json_file.stem in names:
+                results.append(Function(name=json_file.stem, file_path=json_file))
+                if self.verbose:
+                    print(f"  Found function: {json_file.name}")
+        return results
+
+    def _find_dictionaries_folder(self) -> Optional[Path]:
+        """Find the dictionaries folder."""
+        path = self.source_path / 'dictionaries'
+        return path if path.exists() and path.is_dir() else None
+
+    def _discover_dictionaries(self, folder: Path) -> List[Dictionary]:
+        """Find dictionary schema files for names declared in bundle.json."""
+        names = self._load_dep_names('dictionaries')
+        results = []
+        for name in sorted(names):
+            schema = folder / name / 'schema_definition.json'
+            if schema.exists():
+                results.append(Dictionary(name=name, file_path=schema))
+                if self.verbose:
+                    print(f"  Found dictionary: {name}")
+        return results

@@ -12,8 +12,9 @@ from scripts.run_pipeline import parse_args, resolve_stages, _apply_track, REPO_
 class TestTrackFlag:
     """Tests for --track flag behavior in the pipeline orchestrator."""
 
-    def test_track_validate_only_forces_only_validate(self, monkeypatch):
-        """--track validate-only should force --only-validate, running only Stage 3."""
+    def test_track_validate_only_skips_portable_and_configure(self, monkeypatch):
+        """--track validate-only should skip stages 1 and 2, keeping sync (if env set) and validate."""
+        monkeypatch.delenv("BUNDLE_TESTING_CLUSTER", raising=False)
         monkeypatch.setattr(
             "sys.argv",
             ["run_pipeline.py", "--bundle-dir", "aws/test-bundle", "--track", "validate-only"],
@@ -22,7 +23,8 @@ class TestTrackFlag:
         assert args.track == "validate-only"
 
         _apply_track(args)
-        assert args.only_validate is True
+        assert args.skip_portable is True
+        assert args.skip_configure is True
 
         stages = resolve_stages(args)
         stage_names = [name for name, _ in stages]
@@ -119,7 +121,8 @@ class TestTrackFlag:
         _apply_track(args)
 
         assert args.track == "validate-only"
-        assert args.only_validate is True
+        assert args.skip_portable is True
+        assert args.skip_configure is True
 
     def test_track_auto_raw_bundle_with_config_routes_full(self, tmp_path, monkeypatch):
         """--track auto on a raw bundle with bundle-config.json (first run) → full pipeline."""

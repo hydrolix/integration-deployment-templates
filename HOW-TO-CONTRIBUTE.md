@@ -6,7 +6,7 @@ This guide outlines the process for external teams to contribute integration ass
 
 ### 1. Create a Jira Ticket
 
-Create a Jira ticket in the **LOTC** project for your integration request.
+Create a Jira ticket in the **LOTC** project for your integration request. Use the "Bundle Request" work type.
 
 **Jira Project**: [LOTC Board](https://hydrolix.atlassian.net/jira/software/projects/LOTC/boards/635)
 
@@ -60,35 +60,33 @@ Organize your assets following the bundle structure. Assets should be placed in 
 
 #### Repository Structure
 
-Assets must be placed inside a **version folder** under your project name. Use [semantic versioning](https://semver.org/) (e.g., `1.0.0`) for the folder name.
+Assets are placed directly under your project name — no version subdirectory.
 
 ```
 integration-deployment-templates/
 ├── aws/
 │   └── your-project-name/
-│       └── 1.0.0/                    ← version folder (required)
-│           ├── bundle-config.json    ← required
-│           ├── dashboards/
-│           ├── dictionaries/
-│           ├── functions/
-│           ├── transformations/
-│           └── summaries/
+│       ├── bundle-config.json    ← required
+│       ├── dashboards/
+│       ├── dictionaries/
+│       ├── functions/
+│       ├── transformations/
+│       └── summaries/
 └── trafficpeak/
     └── your-project-name/
-        └── 1.0.0/                    ← version folder (required)
-            ├── bundle-config.json    ← required
-            ├── dashboards/
-            ├── dictionaries/
-            ├── functions/
-            ├── transformations/
-            └── summaries/
+        ├── bundle-config.json    ← required
+        ├── dashboards/
+        ├── dictionaries/
+        ├── functions/
+        ├── transformations/
+        └── summaries/
 ```
 
-For example, if you're contributing a CloudFlare integration under AWS at version 1.0.0, your assets go in `aws/cloudflare/1.0.0/`.
+For example, if you're contributing a CloudFlare integration under AWS, your assets go in `aws/cloudflare/`.
 
 #### `bundle-config.json` (Required)
 
-Every bundle version directory must include a `bundle-config.json` file. This file is used by CI to automatically format, configure, and validate your bundle when you open a PR.
+Every bundle directory must include a `bundle-config.json` file. This file is used by CI to automatically format, configure, and validate your bundle when you open a PR.
 
 **Required fields:**
 
@@ -103,7 +101,7 @@ Every bundle version directory must include a `bundle-config.json` file. This fi
 | Field | Description | Values |
 |-------|-------------|--------|
 | `table_name` | Primary table name. Letters, digits, and underscores only (no dashes). | e.g., `bot_detection`, `cdn_logs`, `siem_logs` |
-| `data_category` | Type of data the integration handles. | `video`, `cdn`, or `security` |
+| `data_category` | Type of data the integration handles. | `video`, `cdn`, `security`, `api`, or `dns` |
 | `version` | Bundle version. Must match the version folder name. | e.g., `1.0.0`, `1.1.0`, `2.0.0` |
 
 **Optional fields** (override auto-inferred values):
@@ -116,39 +114,20 @@ Every bundle version directory must include a `bundle-config.json` file. This fi
 | `method` | Ingestion method: `http_streaming`, `firehose`, `kinesis`, `multi_stream`, etc. (default: auto-detected) |
 | `description` | Integration description (default: auto-generated) |
 | `beta` | Whether this is a beta integration (default: `true`) |
-| `folder` | Grafana dashboard folder: `api-context`, `cdn`, `dns`, `media`, or `security` |
-| `subfolder` | Grafana subfolder within the folder. Valid values per folder: `cdn` → `multi-cdn`; `security` → `bots`, `ds2`, `siem` |
 
 **Grafana folder placement:**
 
-The `folder` and `subfolder` fields control where your dashboards appear in the Grafana folder hierarchy. The root folder is always **TrafficPeak Certified Reference Dashboards**. Setting a folder places dashboards one level below it; setting a subfolder nests them one level deeper.
+Dashboards are automatically placed in the correct Grafana folder based on `data_category`. No additional fields are needed.
 
-```
-TrafficPeak Certified Reference Dashboards  (always the root)
-├── API Context          (folder: api-context)
-├── CDN                  (folder: cdn)
-│   └── Multi-CDN        (subfolder: multi-cdn)
-├── DNS                  (folder: dns)
-├── Media                (folder: media)
-└── Security             (folder: security)
-    ├── Bots             (subfolder: bots)
-    ├── DS2              (subfolder: ds2)
-    └── SIEM             (subfolder: siem)
-```
+| `data_category` | Grafana folder |
+|---|---|
+| `security` | TrafficPeak Certified Reference Dashboards → Security |
+| `cdn` | TrafficPeak Certified Reference Dashboards → CDN |
+| `video` | TrafficPeak Certified Reference Dashboards → Media |
+| `api` | TrafficPeak Certified Reference Dashboards → API Context |
+| `dns` | TrafficPeak Certified Reference Dashboards → DNS |
 
-Example for a security/bots bundle:
-
-```json
-{
-  "table_name": "bot_detection",
-  "data_category": "security",
-  "version": "1.0.0",
-  "folder": "security",
-  "subfolder": "bots"
-}
-```
-
-> **Note:** Do not create a `bundle.json` file manually. It is auto-generated by CI from your assets and `bundle-config.json`.
+> **Note:** For new bundles with raw assets, do not create a `bundle.json` file manually — it is auto-generated by CI from your assets and `bundle-config.json`. If you are submitting pre-configured assets that have already been formatted, you must include a valid `bundle.json` alongside them (see [Common pitfalls](#common-pitfalls) below).
 
 #### Asset Types and Formats
 
@@ -170,6 +149,7 @@ Example for a security/bots bundle:
 **Transformations**
 - Transformation configuration JSON files
 - **Must include sample data** (`sample_data.json`) for each transformation
+- **Timestamp freshness**: Sample data timestamps should be within the last 6 months. On the full pipeline track (Track 1), stale timestamps are automatically shifted to the 1st of the current month. On the validation-only track (Track 2), stale timestamps produce a warning.
 - Organize by ingestion method or data source (e.g., `transformations/cloudflare/`, `transformations/firehose/`)
 - Place in `transformations/` folder
 
@@ -299,7 +279,7 @@ The pipeline inspects your changed files and checks for markers that indicate ra
 - **Raw markers:** `__inputs` in transforms, bare dashboard JSON (no `{"dashboard": ...}` wrapper), hardcoded SQL table references
 - **Configured markers:** template variables (`__DATASOURCE__`, `__TABLE_NAME__`), wrapped dashboards, `bundle.json` present
 
-If signals are mixed or ambiguous, the pipeline defaults to Track 2 (validation only) to avoid unintended reformatting.
+If signals are mixed or ambiguous and a `bundle.json` exists, the pipeline defaults to Track 2 (validation only) to avoid unintended reformatting. If `bundle.json` is missing, the pipeline will fail with an error explaining the two valid submission paths.
 
 ### The `.originals/` directory
 
@@ -320,6 +300,14 @@ These are escape hatches, not part of normal workflow. The auto-detection system
 - To trigger a full re-pipeline, edit files in `.originals/` and push.
 - Legacy bundles without `.originals/` always run Track 2. To opt a legacy bundle into Track 1, add a `bundle-config.json` and upload raw assets.
 - When reviewing PRs, the CAC test push happens automatically on approval. Re-approving after changes updates the existing CAC test PR (no duplicate PRs).
+
+### Common pitfalls
+
+**Missing `bundle.json` with configured assets.** If you submit assets that are already configured (wrapped dashboards with `{"dashboard": ...}`, template variables like `__DATASOURCE__` in SQL) but without a `bundle.json`, the pipeline will detect configured state and route to Track 2 (validation only). However, the validator discovers bundles through `bundle.json` — without it, your bundle is invisible and CI will fail with an error. To fix this, either:
+1. Submit raw/unformatted assets with a `bundle-config.json` so Track 1 generates `bundle.json` automatically, or
+2. Include a valid `bundle.json` alongside your configured assets.
+
+**`bundle-config.json` structured as `bundle.json`.** The `bundle-config.json` should contain only simple configuration fields (`table_name`, `data_category`, `version`, `folder`, `subfolder`). Do not put full bundle metadata (`name`, `tables`, `source`, `method`, `dependencies`, `ui`) in `bundle-config.json` — that structure belongs in `bundle.json`, which is auto-generated by the pipeline.
 
 ## Best Practices
 

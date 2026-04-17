@@ -43,7 +43,7 @@ jobs:
               exit 1
             fi
 
-            DIRS_JSON=$(echo "$BUNDLE_PATH" | jq -R -s -c '[.]')
+            DIRS_JSON=$(echo -n "$BUNDLE_PATH" | jq -R -s -c '[.]')
             echo "bundle_dirs=$DIRS_JSON" >> $GITHUB_OUTPUT
             echo "has_bundles=true" >> $GITHUB_OUTPUT
             echo "Manual trigger for: $BUNDLE_PATH"
@@ -80,6 +80,9 @@ jobs:
     if: needs.detect-bundles.outputs.has_bundles == 'true'
     runs-on: ubuntu-latest
     environment: bundle-runbook-env
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       matrix:
         bundle_dir: ${{ fromJson(needs.detect-bundles.outputs.bundle_dirs) }}
@@ -88,6 +91,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-west-2
+
+      - name: Load secrets from AWS Secrets Manager
+        run: |
+          secrets=$(aws secretsmanager get-secret-value \
+            --secret-id "${{ vars.AWS_SECRET_ARN }}" \
+            --query SecretString \
+            --output text)
+
+          echo "$secrets" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          for k, v in d.items():
+              print(f'{k}={v}')
+          " >> $GITHUB_ENV
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -113,17 +136,9 @@ jobs:
           CONFLUENCE_URL=$(echo "$RESULT" | python -c "import json,sys; print(json.load(sys.stdin)['url'])")
           echo "confluence_url=$CONFLUENCE_URL" >> $GITHUB_OUTPUT
           echo "Published runbook to: $CONFLUENCE_URL"
-        env:
-          CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
-          CONFLUENCE_USER: ${{ secrets.CONFLUENCE_USER }}
-          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
-          CONFLUENCE_SPACE_KEY: ${{ secrets.CONFLUENCE_SPACE_KEY }}
-          CONFLUENCE_PARENT_PAGE_ID: ${{ secrets.CONFLUENCE_PARENT_PAGE_ID }}
 
       - name: Notify bundle team
         run: |
           python scripts/notify_bundle_team.py \
             --runbook runbook.json \
             --confluence-url "${{ steps.publish.outputs.confluence_url }}"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RUNBOOK_WEBHOOK_URL }}

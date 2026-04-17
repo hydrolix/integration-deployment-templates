@@ -1,0 +1,100 @@
+name: bundle-request-alert
+
+on:
+  pull_request:
+    types: [opened, labeled]
+    branches: [main]
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    environment: bundle-runbook-env
+    permissions:
+      id-token: write
+      contents: read
+    # labeled: fires when "bundle request" is added to any open PR
+    # opened:  fires when a PR is created with the label already applied
+    if: |
+      (github.event.action == 'labeled' && github.event.label.name == 'bundle request') ||
+      (github.event.action == 'opened' && contains(github.event.pull_request.labels.*.name, 'bundle request'))
+
+    steps:
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-west-2
+
+      - name: Load secrets from AWS Secrets Manager
+        run: |
+          secrets=$(aws secretsmanager get-secret-value \
+            --secret-id "${{ vars.AWS_SECRET_ARN }}" \
+            --query SecretString \
+            --output text)
+
+          webhook_url=$(echo "$secrets" | python3 -c "import json,sys; print(json.load(sys.stdin).get('SLACK_WEBHOOK_URL', ''))")
+
+          if [ -z "$webhook_url" ] || [ "$webhook_url" = "null" ]; then
+            echo "Error: SLACK_WEBHOOK_URL key not found in secret ${{ vars.AWS_SECRET_ARN }}" >&2
+            exit 1
+          fi
+
+          EOF=$(openssl rand -hex 8)
+          echo "SLACK_WEBHOOK_URL<<$EOF" >> "$GITHUB_ENV"
+          echo "$webhook_url"            >> "$GITHUB_ENV"
+          echo "$EOF"                    >> "$GITHUB_ENV"
+
+      - name: Send Slack alert
+        run: |
+          python3 - <<'EOF'
+          import json, os, sys
+          from urllib import request, error as urllib_error
+
+          webhook_url = os.environ.get("SLACK_WEBHOOK_URL", "")
+          if not webhook_url:
+              print("Error: SLACK_WEBHOOK_URL is not set", file=sys.stderr)
+              sys.exit(1)
+
+          pr_title  = os.environ.get("PR_TITLE", "(no title)")
+          pr_url    = os.environ.get("PR_URL", "")
+          pr_author = os.environ.get("PR_AUTHOR", "(unknown)")
+
+          payload = {
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": (
+                              f":inbox_tray: *Bundle Request PR*\n"
+                              f"*<{pr_url}|{pr_title}>*\n"
+                              f"Submitted by: *{pr_author}*"
+                          ),
+                      },
+                  }
+              ]
+          }
+
+          data = json.dumps(payload).encode("utf-8")
+          req = request.Request(webhook_url, data=data, method="POST",
+                                headers={"Content-Type": "application/json"})
+          try:
+              with request.urlopen(req) as resp:
+                  status = resp.read().decode("utf-8")
+                  if status != "ok":
+                      # Slack incoming webhooks return "ok" on success
+                      print(f"Slack error response: {status!r}", file=sys.stderr)
+                      sys.exit(1)
+                  else:
+                      print("Slack notification sent", file=sys.stderr)
+          except urllib_error.HTTPError as e:
+              print(f"Slack API error {e.code}: {e.read().decode()}", file=sys.stderr)
+              sys.exit(1)
+          except urllib_error.URLError as e:
+              print(f"Network error: {e.reason}", file=sys.stderr)
+              sys.exit(1)
+          EOF
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}

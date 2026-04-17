@@ -138,7 +138,7 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
         query = var.get("query", "")
 
         # Check if this is a summary reference via ${VAR_*} pattern
-        var_ref_match = re.match(r"^\$\{(VAR_[A-Z_]+)\}$", query)
+        var_ref_match = re.match(r"^\$\{(VAR_[A-Z0-9_]+)\}$", query)
 
         if var_name == "raw_table":
             has_raw_table = True
@@ -160,9 +160,56 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
             new_var_list.append(var)
             continue
 
+        # Check for self-referencing VAR_TIMESTAMP constant
+        if (
+            var_ref_match
+            and var_type == "constant"
+            and var_name.lower() == "timestamp"
+            and var_ref_match.group(1) == "VAR_TIMESTAMP"
+        ):
+            ts_col = _get_primary_timestamp_column(config, state)
+            if ts_col:
+                var["query"] = ts_col
+                var["current"] = {
+                    "selected": False,
+                    "text": ts_col,
+                    "value": ts_col,
+                }
+                var["options"] = [{
+                    "selected": False,
+                    "text": ts_col,
+                    "value": ts_col,
+                }]
+                var["hide"] = 2
+                var["skipUrlSync"] = True
+            new_var_list.append(var)
+            continue
+
         if var_ref_match and var_type == "constant":
-            # This is a summary variable reference like ${VAR_SUMMARY_HOUR}
             var_ref_name = var_ref_match.group(1)
+
+            # Check if self-referencing: e.g. variable "table" with query "${VAR_TABLE}"
+            stripped_name = var_ref_name[4:]  # Remove "VAR_" prefix
+            if stripped_name.upper() == var_name.upper():
+                # Self-referencing VAR_* constant — resolve to table placeholder
+                # (timestamp is excluded here; handled separately in LOTC-1303)
+                if var_name.lower() != "timestamp":
+                    table_value = "__PROJECT_NAME__.__TABLE_NAME__"
+                    var["query"] = table_value
+                    var["current"] = {
+                        "selected": False,
+                        "text": table_value,
+                        "value": table_value,
+                    }
+                    var["options"] = [{
+                        "selected": False,
+                        "text": table_value,
+                        "value": table_value,
+                    }]
+                new_var_list.append(var)
+                continue
+
+            # This is a summary variable reference like ${VAR_SUMMARY_HOUR}
             label = inputs_map.get(var_ref_name, var_name)
 
             # Find matching summary by label/name
@@ -220,6 +267,35 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
 
     templating["list"] = new_var_list
     dashboard["templating"] = templating
+
+
+def _get_primary_timestamp_column(config, state):
+    """Read the first transform and return the name of the primary timestamp column.
+
+    Walks settings.output_columns to find the column with datatype.primary == True.
+    Returns the column name (e.g. "reqTimeSec", "timestamp"), or None if not found.
+    """
+    if not state.transforms:
+        return None
+
+    tinfo = state.transforms[0]
+    read_path = tinfo.final_path
+    if config.dry_run:
+        read_path = tinfo.original_path
+
+    if not read_path or not os.path.isfile(read_path):
+        return None
+
+    data = read_json(read_path)
+    settings = data.get("settings", {})
+    output_columns = settings.get("output_columns", [])
+
+    for col in output_columns:
+        datatype = col.get("datatype", {})
+        if datatype.get("primary") is True:
+            return col.get("name")
+
+    return None
 
 
 def _find_summary_var(label, state):
