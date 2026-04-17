@@ -8,6 +8,7 @@ pub struct Flags {
     pub dump_output: bool,
     pub strict_plugins: bool,
     pub production_mode: bool,
+    pub delay_mode: bool,
     pub use_guid: bool,
     pub cleanup_project: Option<String>,
     pub match_only: String,
@@ -25,6 +26,7 @@ impl Flags {
             dump_output: false,
             strict_plugins: false,
             production_mode: false,
+            delay_mode: false,
             use_guid: false,
             cleanup_project: None,
             match_only: String::new(),
@@ -40,6 +42,7 @@ impl Flags {
                 "--output" => flags.dump_output = true,
                 "--strict-plugins" => flags.strict_plugins = true,
                 "--production" => flags.production_mode = true,
+                "--delay" => flags.delay_mode = true,
                 "--guid" => flags.use_guid = true,
                 "--cleanup" => {
                     i += 1;
@@ -72,6 +75,11 @@ impl Flags {
         // Validate: --guid requires --local
         if flags.use_guid && !flags.is_local {
             return Err("--guid can only be used with --local".to_string());
+        }
+
+        // Validate: --delay requires --local
+        if flags.delay_mode && !flags.is_local {
+            return Err("--delay can only be used with --local".to_string());
         }
 
         Ok(flags)
@@ -136,9 +144,29 @@ mod tests {
     }
 
     #[test]
+    fn test_delay_requires_local() {
+        let result = Flags::parse(&args(&["--delay"]));
+        assert!(result.is_err(), "--delay without --local should fail");
+        let err = result.unwrap_err();
+        assert!(
+            err.contains("--local"),
+            "Error should mention --local, got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn test_delay_with_local_succeeds() {
+        let flags = Flags::parse(&args(&["--local", "--delay"])).unwrap();
+        assert!(flags.delay_mode);
+        assert!(flags.is_local);
+    }
+
+    #[test]
     fn test_default_flags() {
         let flags = Flags::parse(&args(&[])).unwrap();
         assert!(!flags.use_guid);
+        assert!(!flags.delay_mode);
         assert!(!flags.is_local);
         assert!(flags.cleanup_project.is_none());
         assert!(flags.match_only.is_empty());

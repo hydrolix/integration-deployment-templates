@@ -52,6 +52,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--production".to_string())
     };
+    static ref DELAY_MODE: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--delay".to_string())
+    };
     static ref MATCH_ONLY: String = {
         let mut value = "".to_string();
         let args: Vec<String> = std::env::args().collect();
@@ -242,6 +246,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
     match validate::sample_data_exists::run(base, bundle).await {
         Ok(_) => (),
         Err(e) => return Err(format!("No sample data: error={e}")),
+    }
+
+    // Check sample data timestamp freshness (warning only, doesn't fail validation)
+    for w in validate::sample_data_freshness::run(base, bundle).await {
+        eprintln!("WARNING: {w}");
     }
 
     match validate::summary_table::run(bundle) {
