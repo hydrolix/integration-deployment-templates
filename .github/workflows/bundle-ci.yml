@@ -362,6 +362,7 @@ jobs:
             N_ROWS="10"
           fi
 
+          cp -r .claude cac-tools-test/.claude
           cd cac-tools-test
 
           claude --dangerously-skip-permissions -p "
