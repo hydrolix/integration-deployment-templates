@@ -180,7 +180,7 @@
             "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "format": 1,
-          "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(cnt_all,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(cnt_all,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
+          "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -256,7 +256,7 @@
             "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "format": 1,
-          "rawSql": "SELECT\n  countMergeIf(cnt_all, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(cnt_all, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+          "rawSql": "SELECT\n  countMergeIf(`count()`, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(`count()`, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
           "refId": "A"
         }
       ],
@@ -322,7 +322,7 @@
             "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "format": 1,
-          "rawSql": "SELECT\n   countMergeIf(cnt_all, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(cnt_all, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
+          "rawSql": "SELECT\n   countMergeIf(`count()`, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(`count()`, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
           "refId": "A"
         }
       ],
