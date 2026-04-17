@@ -365,7 +365,7 @@ jobs:
           cp -r .claude cac-tools-test/.claude
           cd cac-tools-test
 
-          claude --dangerously-skip-permissions -p "
+          claude --dangerously-skip-permissions --output-format stream-json -p "
             Execute the bundle-deploy skill with these inputs:
             - Project name: $PROJECT_NAME
             - Bundle name: $BUNDLE_NAME
