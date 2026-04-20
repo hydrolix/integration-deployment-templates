@@ -69,13 +69,47 @@ class GrafanaGenerator:
             # Read, replace datasource UIDs, write cleaned JSON
             with open(dashboard.file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+
+            # Unwrap {"dashboard": {...}} bundle format if present
+            if isinstance(data, dict) and list(data.keys()) == ['dashboard'] and isinstance(data.get('dashboard'), dict):
+                data = data['dashboard']
+
             self._replace_datasource_uids(data)
 
-            # Normalize __inputs datasource names to standard variable
-            for inp in data.get('__inputs', []):
-                if inp.get('type') == 'datasource':
-                    inp['name'] = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
-                    inp['label'] = 'Hydrolix'
+            # Ensure __inputs contains a datasource entry
+            inputs = data.get('__inputs', [])
+            has_ds_input = any(inp.get('type') == 'datasource' for inp in inputs)
+            if has_ds_input:
+                # Normalize existing datasource input name to standard variable
+                for inp in inputs:
+                    if inp.get('type') == 'datasource':
+                        inp['name'] = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
+                        inp['label'] = 'Hydrolix'
+            else:
+                # Inject datasource input required by the portables validator
+                inputs.insert(0, {
+                    'name': 'DS_HYDROLIX-HYDROLIX-DATASOURCE',
+                    'label': 'Hydrolix',
+                    'description': '',
+                    'type': 'datasource',
+                    'pluginId': 'hydrolix-hydrolix-datasource',
+                    'pluginName': 'Hydrolix',
+                })
+
+            # Add constant template variables as inputs if not already present
+            existing_names = {inp.get('name') for inp in inputs}
+            for var in data.get('templating', {}).get('list', []):
+                if var.get('type') == 'constant' and var.get('name') and var['name'] not in existing_names:
+                    inputs.append({
+                        'name': var['name'],
+                        'type': 'constant',
+                        'label': var.get('label') or var['name'],
+                        'value': var.get('query', ''),
+                        'description': '',
+                    })
+                    existing_names.add(var['name'])
+
+            data['__inputs'] = inputs
 
             # Strip top-level dashboard uid (CaC deployments assign their own)
             data.pop('uid', None)
@@ -169,19 +203,12 @@ class GrafanaGenerator:
                 'folderUid': deepest_folder_uid
             }
 
-            # Add inputs if present - as a flat dict
-            if dashboard.inputs:
-                inputs_dict = {}
-                for inp in dashboard.inputs:
-                    # Use the input name as the key, and value/type as the value
-                    # For datasource inputs, use the predefined datasource UID
-                    if inp.type == 'datasource':
-                        inputs_dict['DS_HYDROLIX-HYDROLIX-DATASOURCE'] = 'hdx-hydrolix-datasource'
-                    elif inp.value is not None:
-                        inputs_dict[inp.name] = inp.value
-                    else:
-                        inputs_dict[inp.name] = ''
-                dashboard_entry['inputs'] = inputs_dict
+            # Build inputs dict — always include datasource, plus any constant inputs
+            inputs_dict = {'DS_HYDROLIX-HYDROLIX-DATASOURCE': 'hdx-hydrolix-datasource'}
+            for inp in dashboard.inputs:
+                if inp.type != 'datasource':
+                    inputs_dict[inp.name] = inp.value if inp.value is not None else ''
+            dashboard_entry['inputs'] = inputs_dict
 
             # Mark as home dashboard if specified
             if home_dashboard and dashboard.filename == home_dashboard:
