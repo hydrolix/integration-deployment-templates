@@ -635,6 +635,47 @@ hdx_primary_key='minute'"
 
 */
 
+/// Execute a SQL statement against the cluster's query endpoint.
+/// Returns the raw response body (TabSeparated format).
+pub async fn query_sql(bearer_token: &str, sql: &str) -> Result<String, String> {
+    let url = format!("https://{}/query", *BUNDLE_TESTING_CLUSTER);
+    let body = format!("{} FORMAT TabSeparated", sql);
+
+    let response = CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "text/plain")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .body(body)
+        .send()
+        .await
+        .map_err(|e| format!("query_sql request failed url={url}: {e}"))?;
+
+    let status = response.status();
+    let text = response
+        .text()
+        .await
+        .map_err(|e| format!("query_sql read body failed url={url}: {e}"))?;
+
+    if !status.is_success() {
+        return Err(format!("query_sql HTTP {} url={url}: {}", status, text));
+    }
+    Ok(text)
+}
+
+/// Count rows in a table via the cluster's query endpoint.
+pub async fn query_count(bearer_token: &str, full_table_name: &str) -> Result<u64, String> {
+    let sql = format!("SELECT count() FROM {}", full_table_name);
+    let body = query_sql(bearer_token, &sql).await?;
+    body.trim().parse::<u64>().map_err(|e| {
+        format!(
+            "query_count could not parse '{}' as u64: {}",
+            body.trim(),
+            e
+        )
+    })
+}
+
 pub async fn create_summary(
     bearer_token: &str,
     table_name: &str,
