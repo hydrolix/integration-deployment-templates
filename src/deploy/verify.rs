@@ -90,6 +90,10 @@ where
     }
 }
 
+/// Returns names of primary output columns that are absent from sample_data.
+/// Narrow by design: only the primary column's absence guarantees row rejection.
+/// Non-primary columns may have defaults or be optional, so we don't flag them
+/// to avoid false-positive noise in diagnose_zero_rows output.
 pub fn missing_required_fields(transform: &Value) -> Vec<String> {
     let settings = match transform.get("settings") {
         Some(s) => s,
@@ -103,6 +107,12 @@ pub fn missing_required_fields(transform: &Value) -> Vec<String> {
 
     output_columns
         .iter()
+        .filter(|col| {
+            col.get("datatype")
+                .and_then(|dt| dt.get("primary"))
+                .and_then(|p| p.as_bool())
+                == Some(true)
+        })
         .filter_map(|col| col.get("name").and_then(|n| n.as_str()).map(String::from))
         .filter(|name| match sample_data {
             Some(obj) => !obj.contains_key(name),
@@ -238,7 +248,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn diagnose_emits_missing_required_fields() {
+    async fn diagnose_emits_missing_required_fields_when_primary_absent() {
         let now = 1_704_067_200_u64;
         let transform = json!({
             "settings": {
@@ -247,10 +257,10 @@ mod tests {
                         "name": "ts",
                         "datatype": { "type": "epoch", "primary": true, "format": "s" }
                     },
-                    { "name": "bytes", "datatype": { "type": "uint64" } },
-                    { "name": "host", "datatype": { "type": "string" } }
+                    { "name": "bytes", "datatype": { "type": "uint64" } }
                 ],
-                "sample_data": { "ts": now }
+                // Primary column "ts" intentionally absent from sample_data.
+                "sample_data": { "bytes": 42 }
             }
         });
         let table_settings = json!({ "age": { "max_age_days": 1 } });
@@ -263,8 +273,8 @@ mod tests {
             "expected missing-fields finding, got: {diagnosis}"
         );
         assert!(
-            diagnosis.contains("bytes") && diagnosis.contains("host"),
-            "expected bytes/host in finding, got: {diagnosis}"
+            diagnosis.contains("ts"),
+            "expected primary column name in finding, got: {diagnosis}"
         );
     }
 
@@ -332,11 +342,51 @@ mod tests {
     }
 
     #[test]
-    fn missing_required_fields_reports_absent_output_columns() {
+    fn missing_required_fields_reports_primary_when_absent() {
         let transform = json!({
             "settings": {
                 "output_columns": [
-                    { "name": "ts", "datatype": { "type": "epoch" } },
+                    {
+                        "name": "ts",
+                        "datatype": { "type": "epoch", "primary": true }
+                    },
+                    { "name": "bytes", "datatype": { "type": "uint64" } }
+                ],
+                "sample_data": { "bytes": 42 }
+            }
+        });
+
+        assert_eq!(missing_required_fields(&transform), vec!["ts".to_string()]);
+    }
+
+    #[test]
+    fn missing_required_fields_empty_when_primary_present() {
+        let transform = json!({
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "ts",
+                        "datatype": { "type": "epoch", "primary": true }
+                    },
+                    { "name": "bytes", "datatype": { "type": "uint64" } }
+                ],
+                "sample_data": { "ts": 1, "bytes": 42 }
+            }
+        });
+
+        assert!(missing_required_fields(&transform).is_empty());
+    }
+
+    #[test]
+    fn missing_required_fields_ignores_non_primary_absences() {
+        // Non-primary columns may have defaults or be optional — don't flag them.
+        let transform = json!({
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "ts",
+                        "datatype": { "type": "epoch", "primary": true }
+                    },
                     { "name": "bytes", "datatype": { "type": "uint64" } },
                     { "name": "host", "datatype": { "type": "string" } }
                 ],
@@ -344,29 +394,9 @@ mod tests {
             }
         });
 
-        let missing = missing_required_fields(&transform);
-        assert_eq!(missing.len(), 2, "expected 2 missing, got {:?}", missing);
-        assert!(missing.contains(&"bytes".to_string()));
-        assert!(missing.contains(&"host".to_string()));
-    }
-
-    #[test]
-    fn missing_required_fields_empty_when_all_output_columns_present() {
-        let transform = json!({
-            "settings": {
-                "output_columns": [
-                    { "name": "ts", "datatype": { "type": "epoch" } },
-                    { "name": "bytes", "datatype": { "type": "uint64" } }
-                ],
-                "sample_data": { "ts": 1, "bytes": 42 }
-            }
-        });
-
-        let missing: Vec<String> = missing_required_fields(&transform);
         assert!(
-            missing.is_empty(),
-            "expected no missing fields, got {:?}",
-            missing
+            missing_required_fields(&transform).is_empty(),
+            "non-primary absences must not be reported"
         );
     }
 
