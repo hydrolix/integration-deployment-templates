@@ -285,6 +285,21 @@ def _resolve_sample_key(col, sample_data):
     return None
 
 
+def _coerce_numeric_epoch(value):
+    """Return value coerced to int if it's a numeric-looking string, else unchanged.
+
+    Raw vendor exports sometimes serialize epochs as JSON strings (e.g.
+    "1607368207"). Callers still want to treat them as numbers for the
+    staleness check and delta math. Non-numeric values (including strings
+    like "not-a-number") pass through unchanged.
+    """
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.lstrip("-").isdigit():
+            return int(stripped)
+    return value
+
+
 def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     """Shift stale epoch timestamps in sample_data to the 1st of the current month.
 
@@ -322,7 +337,7 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
         return
 
     primary_key = primary_col[0]
-    primary_value = sample_data.get(primary_key)
+    primary_value = _coerce_numeric_epoch(sample_data.get(primary_key))
     if not isinstance(primary_value, (int, float)):
         if config.verbose:
             print(
@@ -352,10 +367,13 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
 
     shifted_fields = []
     for sample_key, col_format in epoch_columns:
-        if isinstance(sample_data.get(sample_key), (int, float)):
+        raw = sample_data.get(sample_key)
+        coerced = _coerce_numeric_epoch(raw)
+        if isinstance(coerced, (int, float)):
             col_divisor = _FORMAT_DIVISORS.get(col_format, 1)
             col_delta = delta_secs * col_divisor
-            sample_data[sample_key] = int(sample_data[sample_key]) + col_delta
+            shifted = int(coerced) + col_delta
+            sample_data[sample_key] = str(shifted) if isinstance(raw, str) else shifted
             shifted_fields.append(sample_key)
 
     if config.verbose and shifted_fields:

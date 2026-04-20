@@ -265,6 +265,64 @@ class TestShiftStaleTimestamps:
 
         assert sample["timestamp"] == "not-a-number"
 
+    def test_primary_stale_string_epoch_shifted(self, tmp_path):
+        """Quoted numeric epoch (e.g. '1607368207') must be shifted like a number.
+
+        Regression for LOTC-1439: raw vendor exports sometimes serialize epochs
+        as JSON strings. The shifter must recognize them and preserve the
+        string type on writeback so downstream tooling sees the same shape.
+        """
+        stale_ts_str = "1607368207"  # Dec 7, 2020 — well over 183 days stale
+        data = _make_transform_data(stale_ts_str)
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        expected_target = _first_of_month_epoch()
+        assert sample["timestamp"] == str(expected_target)
+        assert isinstance(sample["timestamp"], str)
+
+    def test_secondary_string_epoch_shifted_preserving_type(self, tmp_path):
+        """Secondary epoch column with a quoted numeric value is shifted and stays a string.
+
+        Mirrors the real edns case: multiple columns can carry quoted epochs,
+        and every one of them must move by the same delta. The type on the
+        way out should match the type on the way in.
+        """
+        stale_secs = _now_epoch() - (365 * 86400)
+        secondary_str = str(stale_secs - 3600)  # 1 hour before primary, as string
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {"type": "epoch", "primary": True, "format": "s"},
+                    },
+                    {
+                        "name": "ts_sec_idx",
+                        "datatype": {"type": "epoch", "format": "s"},
+                    },
+                ],
+                "sample_data": {
+                    "timestamp": stale_secs,  # numeric primary
+                    "ts_sec_idx": secondary_str,  # string secondary
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        target = _first_of_month_epoch()
+        delta = target - stale_secs
+        assert sample["timestamp"] == target
+        assert sample["ts_sec_idx"] == str(int(secondary_str) + delta)
+        assert isinstance(sample["ts_sec_idx"], str)
+
     def test_threshold_boundary_not_shifted(self, tmp_path):
         """Data exactly at the 183-day threshold should not be shifted."""
         fixed_now = 1800000000  # fixed reference time
