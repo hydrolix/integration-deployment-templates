@@ -245,7 +245,7 @@ class TestShiftStaleTimestamps:
         assert sample["timestamp"] == 1000000000
 
     def test_primary_value_not_numeric_skips(self, tmp_path):
-        """If primary timestamp value is a string, skip without error."""
+        """If primary timestamp is a non-numeric string, skip without error."""
         data = {
             "settings": {
                 "output_columns": [

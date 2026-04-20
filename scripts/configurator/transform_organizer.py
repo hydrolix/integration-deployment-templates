@@ -295,7 +295,7 @@ def _coerce_numeric_epoch(value):
     """
     if isinstance(value, str):
         stripped = value.strip()
-        if stripped.lstrip("-").isdigit():
+        if stripped.removeprefix("-").isdigit():
             return int(stripped)
     return value
 
