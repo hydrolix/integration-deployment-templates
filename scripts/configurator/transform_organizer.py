@@ -3,6 +3,7 @@
 import calendar
 import json
 import os
+import re
 import shutil
 import sys
 import time
@@ -13,6 +14,39 @@ from .constants import TRANSFORM_METADATA_FIELDS
 
 # 183 days in seconds (approximately 6 months)
 _STALENESS_THRESHOLD_SECS = 183 * 86400
+
+# Go reference time tokens -> strptime directives. Longer tokens first so that a
+# positional scan picks "2006" before "06", "15" before "5", etc.
+_GO_LAYOUT_TOKENS = (
+    ("2006", "%Y"),
+    ("01", "%m"),
+    ("02", "%d"),
+    ("15", "%H"),
+    ("04", "%M"),
+    ("05", "%S"),
+)
+
+
+def _translate_go_layout(fmt):
+    """Translate a Go reference-time layout to a strptime/strftime format string.
+
+    Scans positionally so tokens never match inside strptime directives we've
+    already emitted. Unknown characters pass through as literals.
+    """
+    out = []
+    i = 0
+    while i < len(fmt):
+        matched = False
+        for go_token, py_token in _GO_LAYOUT_TOKENS:
+            if fmt.startswith(go_token, i):
+                out.append(py_token)
+                i += len(go_token)
+                matched = True
+                break
+        if not matched:
+            out.append(fmt[i])
+            i += 1
+    return "".join(out)
 
 
 def run_transform_organization(config, state):
@@ -260,8 +294,11 @@ def _resolve_sample_key(col, sample_data):
     """Resolve the actual key in sample_data for an output column.
 
     The output column name (e.g. "timestamp") may differ from the raw JSON
-    input key (e.g. "reqTimeSec").  Check the output name first, then fall
-    back to single-segment from_json_pointers in the column source.
+    input key (e.g. "reqTimeSec" or "EdgeStartTimestamp"). Prefer the output
+    name if it is present with a non-null value; otherwise fall through to
+    single-segment from_json_pointers and then from_input_field. As a last
+    resort, return the output name even if its value is null so legacy
+    callers still see the key.
 
     Only single-segment pointers (e.g. "/reqTimeSec") are resolved — nested
     pointers (e.g. "/avail/fillRate") cannot be mapped to a flat sample_data
@@ -270,7 +307,7 @@ def _resolve_sample_key(col, sample_data):
     col_name = col.get("name")
     if not col_name:
         return None
-    if col_name in sample_data:
+    if col_name in sample_data and sample_data.get(col_name) is not None:
         return col_name
 
     source = col.get("datatype", {}).get("source") or {}
@@ -279,9 +316,19 @@ def _resolve_sample_key(col, sample_data):
         segments = ptr.strip("/").split("/")
         if len(segments) == 1 and segments[0]:
             key = segments[0]
-            if key in sample_data:
+            if key in sample_data and sample_data.get(key) is not None:
                 return key
 
+    from_input = source.get("from_input_field")
+    if (
+        isinstance(from_input, str)
+        and from_input in sample_data
+        and sample_data.get(from_input) is not None
+    ):
+        return from_input
+
+    if col_name in sample_data:
+        return col_name
     return None
 
 
@@ -298,6 +345,59 @@ def _coerce_numeric_epoch(value):
         if stripped.removeprefix("-").isdigit():
             return int(stripped)
     return value
+
+
+def _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
+    """Shift a stale datetime-typed primary timestamp to 1st-of-current-month UTC.
+
+    Returns True if a datetime primary was found and processed (shifted or fresh),
+    False if no datetime primary exists so the caller can fall through.
+    """
+    if isinstance(sample_data, list):
+        processed = False
+        for row in sample_data:
+            if isinstance(row, dict):
+                if _shift_stale_datetime_primary(row, output_columns, tinfo, config):
+                    processed = True
+        return processed
+
+    primary_key = None
+    primary_fmt = None
+    for col in output_columns:
+        dt = col.get("datatype", {})
+        if dt.get("type") == "datetime" and dt.get("primary"):
+            primary_key = _resolve_sample_key(col, sample_data)
+            primary_fmt = dt.get("format", "")
+            break
+
+    if not primary_key or not primary_fmt:
+        return False
+
+    sample_value = sample_data.get(primary_key)
+    if not isinstance(sample_value, str):
+        return True
+
+    strptime_fmt = _translate_go_layout(primary_fmt)
+    try:
+        parsed = datetime.strptime(sample_value, strptime_fmt).replace(tzinfo=timezone.utc)
+    except (ValueError, re.error):
+        print(
+            f"[Transform Org] Unparseable datetime sample in "
+            f"{os.path.basename(tinfo.final_path)}: format={primary_fmt!r}, "
+            f"value={sample_value!r}",
+            file=sys.stderr,
+        )
+        return True
+    primary_secs = int(calendar.timegm(parsed.timetuple()))
+
+    now_epoch = int(time.time())
+    if now_epoch - primary_secs <= _STALENESS_THRESHOLD_SECS:
+        return True
+
+    now_utc = datetime.now(timezone.utc)
+    first_of_month = now_utc.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    sample_data[primary_key] = first_of_month.strftime(strptime_fmt)
+    return True
 
 
 def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
@@ -328,6 +428,8 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
                 primary_format = col_format
 
     if not primary_col or not primary_col[0]:
+        if _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
+            return
         if config.verbose:
             print(
                 f"[Transform Org] No primary epoch column found in "
