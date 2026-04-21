@@ -709,49 +709,6 @@ class TestDatetimePrimary:
 
         assert sample["timestamp"] == fresh_value
 
-    def test_datetime_list_sample_each_row_shifted(self, tmp_path):
-        """List-typed sample_data: every row's datetime primary shifted independently.
-
-        Mirrors Fastly bundles whose sample_data is a list of rows rather than
-        a single dict. Each row's primary drives its own shift (per ticket), so
-        every row's primary lands on the 1st of the current month UTC. Non-datetime
-        fields are untouched per row.
-        """
-        stale1 = "2020-06-15T12:34:56"
-        stale2 = "2020-07-20T08:15:30"
-        data = {
-            "settings": {
-                "output_columns": [
-                    {
-                        "name": "timestamp",
-                        "datatype": {
-                            "type": "datetime",
-                            "primary": True,
-                            "format": "2006-01-02T15:04:05",
-                        },
-                    },
-                ],
-                "sample_data": [
-                    {"timestamp": stale1, "bytes": 100},
-                    {"timestamp": stale2, "bytes": 200},
-                ],
-            }
-        }
-        sample = data["settings"]["sample_data"]
-        config = _make_config(tmp_path)
-        tinfo = _make_tinfo(tmp_path)
-
-        _shift_stale_timestamps(sample, data, tinfo, config)
-
-        now_utc = datetime.now(timezone.utc)
-        expected = now_utc.replace(
-            day=1, hour=0, minute=0, second=0, microsecond=0
-        ).strftime("%Y-%m-%dT%H:%M:%S")
-        assert sample[0]["timestamp"] == expected
-        assert sample[1]["timestamp"] == expected
-        assert sample[0]["bytes"] == 100
-        assert sample[1]["bytes"] == 200
-
     def test_datetime_null_primary_resolves_via_from_input_field(self, tmp_path):
         """Cloudflare case: output 'timestamp' is null; raw key 'EdgeStartTimestamp' gets shifted.
 

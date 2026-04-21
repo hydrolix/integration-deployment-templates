@@ -16,7 +16,10 @@ from .constants import TRANSFORM_METADATA_FIELDS
 _STALENESS_THRESHOLD_SECS = 183 * 86400
 
 # Go reference time tokens -> strptime directives. Longer tokens first so that a
-# positional scan picks "2006" before "06", "15" before "5", etc.
+# positional scan picks "2006" before "06", "15" before "5", etc. Only padded
+# tokens are supported; a layout using unpadded Go tokens (e.g. "1" for month,
+# "5" for seconds) will produce a wrong strptime pattern and degrade to the
+# warn-and-skip path in _shift_stale_datetime_primary.
 _GO_LAYOUT_TOKENS = (
     ("2006", "%Y"),
     ("01", "%m"),
@@ -352,15 +355,10 @@ def _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
 
     Returns True if a datetime primary was found and processed (shifted or fresh),
     False if no datetime primary exists so the caller can fall through.
-    """
-    if isinstance(sample_data, list):
-        processed = False
-        for row in sample_data:
-            if isinstance(row, dict):
-                if _shift_stale_datetime_primary(row, output_columns, tinfo, config):
-                    processed = True
-        return processed
 
+    Assumes sample_data has already been normalized to a dict by the upstream
+    _extract_sample_data (which takes sample_data[0] for list-typed bundles).
+    """
     primary_key = None
     primary_fmt = None
     for col in output_columns:

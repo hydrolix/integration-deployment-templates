@@ -9,6 +9,9 @@ const STALENESS_THRESHOLD_SECS: u64 = 183 * 86400;
 
 /// Go reference-time tokens translated to chrono/strptime directives.
 /// Listed in priority order so a positional scan picks the longest match first.
+/// Only padded tokens are supported; a layout using unpadded Go tokens (e.g.
+/// "1" for month, "5" for seconds) will produce a wrong strptime pattern and
+/// degrade to the skip-on-parse-failure branch below.
 const GO_LAYOUT_TOKENS: &[(&str, &str)] = &[
     ("2006", "%Y"),
     ("01", "%m"),
@@ -112,7 +115,13 @@ pub async fn run(base: &str, bundle: &Bundle) -> Vec<String> {
                     };
                     let strptime_fmt = translate_go_layout(&primary_format);
                     match NaiveDateTime::parse_from_str(&value, &strptime_fmt) {
-                        Ok(dt) => dt.and_utc().timestamp() as u64,
+                        Ok(dt) => {
+                            let ts = dt.and_utc().timestamp();
+                            if ts < 0 {
+                                continue;
+                            }
+                            ts as u64
+                        }
                         Err(_) => continue,
                     }
                 }
