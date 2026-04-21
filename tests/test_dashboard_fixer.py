@@ -23,7 +23,7 @@ _utils_pkg.file_utils.write_json = lambda *a, **kw: None
 sys.modules.setdefault("utils", _utils_pkg)
 sys.modules.setdefault("utils.file_utils", _utils_pkg.file_utils)
 
-from scripts.configurator.config import BundleConfig, BundleState, DashboardInfo, TransformInfo
+from scripts.configurator.config import BundleConfig, BundleState, DashboardInfo, SummaryInfo, TransformInfo
 from scripts.configurator.dashboard_fixer import _fix_template_variables, _get_primary_timestamp_column
 
 
@@ -451,3 +451,125 @@ class TestFixVarTimestamp:
         var = dashboard["templating"]["list"][0]
         # Still appended to list but query unchanged (no primary col found)
         assert var["query"] == "${VAR_TIMESTAMP}"
+
+
+# ---------------------------------------------------------------------------
+# LOTC-1435: ${VAR_SUMMARY_*} must resolve to summary table placeholders,
+# not to the raw-logs __TABLE_NAME__ self-reference fallback.
+# ---------------------------------------------------------------------------
+
+class TestSummaryVarPrecedence:
+    """Raw Grafana exports use constants named summary_hour/day/month with
+    queries `${VAR_SUMMARY_HOUR/DAY/MONTH}`. These must route to the matching
+    summary table placeholder, not fall through to __PROJECT_NAME__.__TABLE_NAME__.
+    """
+
+    def _make_summary(self, name, dashboard_var):
+        return SummaryInfo(path="/fake/sql", filename=f"{name}.sql", name=name, dashboard_var=dashboard_var)
+
+    def test_summary_hour_primary_dashboard(self, tmp_path):
+        """Primary dashboard: summary var omits __PROJECT_NAME__ prefix."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_SUMMARY_HOUR": "summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert var["current"]["value"] == "__SUMMARY_TABLE_NAME_1__"
+        assert var["options"][0]["value"] == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_summary_hour_non_primary_dashboard(self, tmp_path):
+        """Non-primary dashboard: summary var includes __PROJECT_NAME__ prefix."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=False)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_SUMMARY_HOUR": "summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+
+    def test_all_three_summary_buckets_resolve(self, tmp_path):
+        """summary_hour, summary_day, and summary_month must each resolve to
+        their own __SUMMARY_TABLE_NAME_N__ placeholder — the original bug
+        misrouted all three to __PROJECT_NAME__.__TABLE_NAME__."""
+        dashboard = {
+            "templating": {
+                "list": [
+                    _make_var("summary_hour", "${VAR_SUMMARY_HOUR}"),
+                    _make_var("summary_day", "${VAR_SUMMARY_DAY}"),
+                    _make_var("summary_month", "${VAR_SUMMARY_MONTH}"),
+                ]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [
+            self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__"),
+            self._make_summary("bot_summary_day", "__SUMMARY_TABLE_NAME_2__"),
+            self._make_summary("bot_summary_month", "__SUMMARY_TABLE_NAME_3__"),
+        ]
+        inputs_map = {
+            "VAR_SUMMARY_HOUR": "summary_hour",
+            "VAR_SUMMARY_DAY": "summary_day",
+            "VAR_SUMMARY_MONTH": "summary_month",
+        }
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        by_name = {v["name"]: v for v in dashboard["templating"]["list"] if v["name"].startswith("summary_")}
+        assert by_name["summary_hour"]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert by_name["summary_day"]["query"] == "__SUMMARY_TABLE_NAME_2__"
+        assert by_name["summary_month"]["query"] == "__SUMMARY_TABLE_NAME_3__"
+
+    def test_summary_var_without_match_falls_back_to_table(self, tmp_path):
+        """If no summary matches, a self-referencing VAR_SUMMARY_* constant
+        still resolves via the existing table fallback (legacy behavior)."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()  # No summaries
+
+        _fix_template_variables(dashboard, dinfo, {}, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
+
+    def test_table_var_still_resolves_when_summaries_present(self, tmp_path):
+        """Regression: ${VAR_TABLE} on a var named 'table' must still resolve
+        to the raw-logs table even when summaries exist in state."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("table", "${VAR_TABLE}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+
+        _fix_template_variables(dashboard, dinfo, {}, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"

@@ -188,31 +188,10 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
         if var_ref_match and var_type == "constant":
             var_ref_name = var_ref_match.group(1)
 
-            # Check if self-referencing: e.g. variable "table" with query "${VAR_TABLE}"
-            stripped_name = var_ref_name[4:]  # Remove "VAR_" prefix
-            if stripped_name.upper() == var_name.upper():
-                # Self-referencing VAR_* constant — resolve to table placeholder
-                # (timestamp is excluded here; handled separately in LOTC-1303)
-                if var_name.lower() != "timestamp":
-                    table_value = "__PROJECT_NAME__.__TABLE_NAME__"
-                    var["query"] = table_value
-                    var["current"] = {
-                        "selected": False,
-                        "text": table_value,
-                        "value": table_value,
-                    }
-                    var["options"] = [{
-                        "selected": False,
-                        "text": table_value,
-                        "value": table_value,
-                    }]
-                new_var_list.append(var)
-                continue
-
-            # This is a summary variable reference like ${VAR_SUMMARY_HOUR}
+            # Try summary resolution first — e.g. ${VAR_SUMMARY_HOUR} on a var
+            # named "summary_hour" must route to the matching summary table, not
+            # to the raw-logs self-reference fallback below (LOTC-1435).
             label = inputs_map.get(var_ref_name, var_name)
-
-            # Find matching summary by label/name
             matched_summary_var = _find_summary_var(label, state)
             if matched_summary_var:
                 summary_value = _get_summary_value(
@@ -230,6 +209,26 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
                     "value": summary_value,
                 }]
                 summary_vars_added.add(matched_summary_var)
+                new_var_list.append(var)
+                continue
+
+            # Fall back to self-reference: e.g. variable "table" with query
+            # "${VAR_TABLE}" resolves to the raw-logs table placeholder.
+            # (timestamp is excluded here; handled separately in LOTC-1303)
+            stripped_name = var_ref_name[4:]  # Remove "VAR_" prefix
+            if stripped_name.upper() == var_name.upper() and var_name.lower() != "timestamp":
+                table_value = "__PROJECT_NAME__.__TABLE_NAME__"
+                var["query"] = table_value
+                var["current"] = {
+                    "selected": False,
+                    "text": table_value,
+                    "value": table_value,
+                }
+                var["options"] = [{
+                    "selected": False,
+                    "text": table_value,
+                    "value": table_value,
+                }]
             new_var_list.append(var)
             continue
 
