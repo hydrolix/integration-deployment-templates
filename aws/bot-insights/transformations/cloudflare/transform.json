@@ -1,9 +1,6 @@
 {
-  "name": "cloudflare_kamil",
+  "name": "cloudflare",
   "description": "",
-  "uuid": "30d2bce1-9303-4297-8144-0418dab98ac5",
-  "created": "2026-04-21T17:41:51.997044Z",
-  "modified": "2026-04-21T20:08:25.094214Z",
   "settings": {
     "is_default": true,
     "rate_limit": null,
@@ -549,7 +546,5 @@
       }
     }
   },
-  "url": "https://cse-playpen-1.trafficpeak.live/config/v1/orgs/7bb88b20-1c38-44c5-9f41-e68eadc2a2d3/projects/a04eaba7-a68d-494e-bbae-8539ca5344f5/tables/c384374e-dadd-4423-ab75-dfb82da4bc10/transforms/30d2bce1-9303-4297-8144-0418dab98ac5",
-  "type": "json",
-  "table": "c384374e-dadd-4423-ab75-dfb82da4bc10"
+  "type": "json"
 }
