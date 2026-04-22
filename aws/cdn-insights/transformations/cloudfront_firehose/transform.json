@@ -60,7 +60,7 @@
       {
         "datatype": {
           "default": null,
-          "format": "s",
+          "format": "2006-01-02T15:04:05.999Z",
           "ignore": false,
           "index": false,
           "index_options": {
@@ -68,12 +68,11 @@
           },
           "primary": true,
           "resolution": "ms",
-          "script": null,
-          "source": {
-            "from_input_field": "data.timestamp"
-          },
+          "script": "row['data.timestamp'] ? Number(row['data.timestamp']) * 1000 : row['timestamp']",
+          "source": null,
           "suppress": false,
-          "type": "epoch"
+          "type": "datetime",
+          "virtual": true
         },
         "name": "timestamp"
       },
