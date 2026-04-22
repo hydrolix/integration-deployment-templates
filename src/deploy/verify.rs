@@ -1,17 +1,74 @@
+use chrono::NaiveDateTime;
 use serde_json::Value;
 use std::future::Future;
 
 pub fn coerce_to_epoch_secs(value: &Value, fmt: &str) -> Option<u64> {
-    let raw = value
+    if let Some(raw) = value
         .as_u64()
-        .or_else(|| value.as_str().and_then(|s| s.parse::<u64>().ok()))?;
-    let divisor: u64 = match fmt {
-        "ms" => 1_000,
-        "us" => 1_000_000,
-        "ns" => 1_000_000_000,
-        _ => 1,
-    };
-    Some(raw / divisor)
+        .or_else(|| value.as_str().and_then(|s| s.parse::<u64>().ok()))
+    {
+        let divisor: u64 = match fmt {
+            "ms" => 1_000,
+            "us" => 1_000_000,
+            "ns" => 1_000_000_000,
+            _ => 1,
+        };
+        return Some(raw / divisor);
+    }
+
+    let s = value.as_str()?;
+    let chrono_fmt = go_layout_to_chrono(fmt.trim_end_matches('Z'))?;
+    let parsed = NaiveDateTime::parse_from_str(s.trim_end_matches('Z'), &chrono_fmt).ok()?;
+    let secs = parsed.and_utc().timestamp();
+    if secs < 0 {
+        return None;
+    }
+    Some(secs as u64)
+}
+
+/// Translate a Go time layout (reference date 2006-01-02T15:04:05) into a
+/// chrono strftime format string. Returns None if the layout doesn't contain
+/// any recognizable Go date/time tokens — that signals we shouldn't try.
+fn go_layout_to_chrono(fmt: &str) -> Option<String> {
+    let mut out = String::with_capacity(fmt.len() + 4);
+    let mut rest = fmt;
+    let mut matched = false;
+    while !rest.is_empty() {
+        if let Some(stripped) = rest.strip_prefix("2006") {
+            out.push_str("%Y");
+            rest = stripped;
+            matched = true;
+        } else if let Some(stripped) = rest.strip_prefix("01") {
+            out.push_str("%m");
+            rest = stripped;
+            matched = true;
+        } else if let Some(stripped) = rest.strip_prefix("02") {
+            out.push_str("%d");
+            rest = stripped;
+            matched = true;
+        } else if let Some(stripped) = rest.strip_prefix("15") {
+            out.push_str("%H");
+            rest = stripped;
+            matched = true;
+        } else if let Some(stripped) = rest.strip_prefix("04") {
+            out.push_str("%M");
+            rest = stripped;
+            matched = true;
+        } else if let Some(stripped) = rest.strip_prefix("05") {
+            out.push_str("%S");
+            rest = stripped;
+            matched = true;
+        } else {
+            let ch = rest.chars().next()?;
+            out.push(ch);
+            rest = &rest[ch.len_utf8()..];
+        }
+    }
+    if matched {
+        Some(out)
+    } else {
+        None
+    }
 }
 
 pub async fn diagnose_zero_rows<F, Fut>(
@@ -28,7 +85,7 @@ where
 {
     let mut findings: Vec<String> = Vec::new();
 
-    if let Some((col_name, ts_value, fmt)) = primary_epoch_from_transform(transform_json) {
+    if let Some((col_name, ts_value, fmt)) = primary_timestamp_from_transform(transform_json) {
         if let Some(ts_secs) = coerce_to_epoch_secs(&ts_value, &fmt) {
             let max_age_days = table_settings
                 .get("age")
@@ -121,14 +178,15 @@ pub fn missing_required_fields(transform: &Value) -> Vec<String> {
         .collect()
 }
 
-pub fn primary_epoch_from_transform(transform: &Value) -> Option<(String, Value, String)> {
+pub fn primary_timestamp_from_transform(transform: &Value) -> Option<(String, Value, String)> {
     let settings = transform.get("settings")?;
     let output_columns = settings.get("output_columns")?.as_array()?;
     let sample_data = settings.get("sample_data")?;
 
     output_columns.iter().find_map(|col| {
         let dt = col.get("datatype")?;
-        let type_match = dt.get("type").and_then(|t| t.as_str()) == Some("epoch");
+        let type_str = dt.get("type").and_then(|t| t.as_str());
+        let type_match = matches!(type_str, Some("epoch") | Some("datetime"));
         let is_primary = dt.get("primary").and_then(|p| p.as_bool()) == Some(true);
         if !(type_match && is_primary) {
             return None;
@@ -164,8 +222,36 @@ mod tests {
         });
 
         assert_eq!(
-            primary_epoch_from_transform(&transform),
+            primary_timestamp_from_transform(&transform),
             Some(("ts".to_string(), json!(1607368207), "s".to_string()))
+        );
+    }
+
+    #[test]
+    fn primary_timestamp_recognizes_datetime_type() {
+        let transform = json!({
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": true,
+                            "format": "2006-01-02T15:04:05"
+                        }
+                    }
+                ],
+                "sample_data": { "timestamp": "2025-10-02T21:06:14" }
+            }
+        });
+
+        assert_eq!(
+            primary_timestamp_from_transform(&transform),
+            Some((
+                "timestamp".to_string(),
+                json!("2025-10-02T21:06:14"),
+                "2006-01-02T15:04:05".to_string()
+            ))
         );
     }
 
@@ -182,6 +268,49 @@ mod tests {
         assert_eq!(
             coerce_to_epoch_secs(&json!("1607368207"), "s"),
             Some(1607368207)
+        );
+    }
+
+    #[test]
+    fn coerce_to_epoch_secs_parses_go_layout_basic() {
+        // 2025-10-02T21:06:14 UTC == 1759439174
+        assert_eq!(
+            coerce_to_epoch_secs(&json!("2025-10-02T21:06:14"), "2006-01-02T15:04:05"),
+            Some(1_759_439_174)
+        );
+    }
+
+    #[test]
+    fn coerce_to_epoch_secs_parses_go_layout_with_trailing_z() {
+        assert_eq!(
+            coerce_to_epoch_secs(&json!("2025-10-02T21:06:14Z"), "2006-01-02T15:04:05Z"),
+            Some(1_759_439_174)
+        );
+    }
+
+    #[test]
+    fn coerce_to_epoch_secs_parses_go_layout_space_separator() {
+        assert_eq!(
+            coerce_to_epoch_secs(&json!("2025-10-02 21:06:14"), "2006-01-02 15:04:05"),
+            Some(1_759_439_174)
+        );
+    }
+
+    #[test]
+    fn coerce_to_epoch_secs_returns_none_for_unparseable_datetime() {
+        // Format tokens present, but value doesn't match — must not panic.
+        assert_eq!(
+            coerce_to_epoch_secs(&json!("not a date"), "2006-01-02T15:04:05"),
+            None
+        );
+    }
+
+    #[test]
+    fn coerce_to_epoch_secs_returns_none_for_format_with_no_tokens() {
+        // Format has no recognizable Go tokens — refuse to guess, don't panic.
+        assert_eq!(
+            coerce_to_epoch_secs(&json!("anything"), "weird-format"),
+            None
         );
     }
 
@@ -341,6 +470,40 @@ mod tests {
         );
     }
 
+    #[tokio::test]
+    async fn diagnose_emits_primary_timestamp_stale_for_datetime() {
+        let transform = json!({
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": true,
+                            "format": "2006-01-02T15:04:05"
+                        }
+                    }
+                ],
+                "sample_data": { "timestamp": "2025-10-02T21:06:14" }
+            }
+        });
+        let table_settings = json!({ "age": { "max_age_days": 1 } });
+        // 2026-04-22 — sample is ~200 days old.
+        let now = 1_777_017_600_u64;
+        let query = |_sql: String| async move { Ok::<_, String>(String::new()) };
+
+        let diagnosis =
+            diagnose_zero_rows(query, "proj", "tbl", &transform, &table_settings, now).await;
+        assert!(
+            diagnosis.contains("PRIMARY TIMESTAMP STALE"),
+            "expected stale finding for datetime primary, got: {diagnosis}"
+        );
+        assert!(
+            diagnosis.contains("2025-10-02T21:06:14"),
+            "expected sample_data value in finding, got: {diagnosis}"
+        );
+    }
+
     #[test]
     fn missing_required_fields_reports_primary_when_absent() {
         let transform = json!({
@@ -431,6 +594,6 @@ mod tests {
             }
         });
 
-        assert_eq!(primary_epoch_from_transform(&transform), None);
+        assert_eq!(primary_timestamp_from_transform(&transform), None);
     }
 }
