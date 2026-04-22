@@ -68,7 +68,7 @@
           },
           "primary": true,
           "resolution": "ms",
-          "script": "row['data.timestamp'] ? Number(row['data.timestamp']) * 1000 : row['timestamp']",
+          "script": "(Number(row['data.timestamp']) > 0) ? Number(row['data.timestamp']) * 1000 : row['timestamp']",
           "source": null,
           "suppress": false,
           "type": "datetime",
