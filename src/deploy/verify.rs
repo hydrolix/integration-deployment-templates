@@ -29,6 +29,11 @@ pub fn coerce_to_epoch_secs(value: &Value, fmt: &str) -> Option<u64> {
 /// Translate a Go time layout (reference date 2006-01-02T15:04:05) into a
 /// chrono strftime format string. Returns None if the layout doesn't contain
 /// any recognizable Go date/time tokens — that signals we shouldn't try.
+///
+/// Supports the zero-padded two-digit tokens: 2006, 01, 02, 15, 04, 05.
+/// Single-digit (`1`, `2`, `3`), space-padded (`_2`), and fractional-second
+/// tokens are NOT translated; layouts using them fall through to the "No
+/// obvious cause" fallback rather than produce a wrong epoch.
 fn go_layout_to_chrono(fmt: &str) -> Option<String> {
     let mut out = String::with_capacity(fmt.len() + 4);
     let mut rest = fmt;
@@ -501,6 +506,38 @@ mod tests {
         assert!(
             diagnosis.contains("2025-10-02T21:06:14"),
             "expected sample_data value in finding, got: {diagnosis}"
+        );
+    }
+
+    #[tokio::test]
+    async fn diagnose_does_not_false_positive_on_fresh_datetime() {
+        // Guards against a broken Go→chrono translation silently emitting
+        // a stale finding when the parsed epoch is wrong.
+        let transform = json!({
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": true,
+                            "format": "2006-01-02T15:04:05"
+                        }
+                    }
+                ],
+                "sample_data": { "timestamp": "2025-10-02T21:06:14" }
+            }
+        });
+        let table_settings = json!({ "age": { "max_age_days": 1 } });
+        // `now` matches the sample_data value exactly (age = 0 days).
+        let now = 1_759_439_174_u64;
+        let query = |_sql: String| async move { Ok::<_, String>(String::new()) };
+
+        let diagnosis =
+            diagnose_zero_rows(query, "proj", "tbl", &transform, &table_settings, now).await;
+        assert!(
+            !diagnosis.contains("PRIMARY TIMESTAMP STALE"),
+            "fresh datetime must not produce stale finding, got: {diagnosis}"
         );
     }
 
