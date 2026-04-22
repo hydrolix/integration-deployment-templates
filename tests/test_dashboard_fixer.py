@@ -840,3 +840,34 @@ class TestValueBasedClassification:
         _fix_template_variables(dashboard, dinfo, {}, config, state)
 
         assert dashboard["templating"]["list"][0]["query"] == "${VAR_ORPHAN}"
+
+    def test_summary_and_raw_table_name_collision_warns(self, tmp_path):
+        """Defensive: if a summary name collides with the raw-table name, the
+        summary check wins (first in resolution order). Surface a warning so
+        the bundle author can disambiguate rather than hitting a downstream
+        validator error with no trail back."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("anything", "${VAR_ANYTHING}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        bundle_dir = tmp_path / "trafficpeak" / "collision"
+        bundle_dir.mkdir(parents=True, exist_ok=True)
+        config = BundleConfig(
+            bundle_dir=str(bundle_dir),
+            table_name="logs",  # same name as the summary below
+            data_category="cdn",
+            source_name="trafficpeak",
+            bundle_name="collision",
+        )
+        state = _make_state()
+        state.summaries = [self._make_summary("logs", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_ANYTHING": "akamai.logs"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        # Summary wins resolution order.
+        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        # Warning surfaces the ambiguity.
+        assert any("collide" in w.lower() and "logs" in w for w in state.warnings)

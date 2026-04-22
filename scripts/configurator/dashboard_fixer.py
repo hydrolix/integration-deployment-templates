@@ -302,12 +302,25 @@ def _classify_input_value(value, config, state, is_primary):
         return None
 
     bare = value.split(".", 1)[1] if "." in value else value
+    bare_lower = bare.lower()
+    raw_table_lower = (config.table_name or "").lower()
 
     matched_summary_var = _find_summary_var(bare, state)
+
+    # A summary name that equals the raw-table name is ambiguous — summary
+    # wins resolution order, but flag it so the author can disambiguate rather
+    # than chasing a downstream validator error with no pointer back.
+    if matched_summary_var and bare_lower == raw_table_lower:
+        state.warnings.append(
+            f"Summary name and raw-table name collide on {bare!r} "
+            f"(__inputs value {value!r}); routing to summary placeholder. "
+            f"Rename the summary to disambiguate."
+        )
+
     if matched_summary_var:
         return _get_summary_value(matched_summary_var, is_primary)
 
-    if bare.lower() == (config.table_name or "").lower():
+    if bare_lower == raw_table_lower:
         return "__PROJECT_NAME__.__TABLE_NAME__"
 
     return None
