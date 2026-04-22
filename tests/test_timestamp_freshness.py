@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import types
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 import calendar
 
@@ -641,3 +641,170 @@ class TestShiftWithJsonPointer:
         _shift_stale_timestamps(sample, data, tinfo, config)
 
         assert sample["some_other_field"] == stale_ts
+
+
+# ---------------------------------------------------------------------------
+# Datetime-typed primary columns (Go reference time layouts) — LOTC-1447
+# ---------------------------------------------------------------------------
+
+
+class TestDatetimePrimary:
+    """Shift behavior for datatype.type == 'datetime' primaries with Go-layout formats."""
+
+    def test_datetime_stale_sample_shifted_to_first_of_month(self, tmp_path):
+        """Stale datetime primary shifted to 1st of current month UTC, same Go layout."""
+        stale_value = "2020-06-15T12:34:56"  # always well past the 183-day threshold
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05",
+                        },
+                    },
+                ],
+                "sample_data": {"timestamp": stale_value},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        now_utc = datetime.now(timezone.utc)
+        expected = now_utc.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        ).strftime("%Y-%m-%dT%H:%M:%S")
+        assert sample["timestamp"] == expected
+
+    def test_datetime_fresh_sample_not_shifted(self, tmp_path):
+        """Fresh datetime primary (within 183 days) passes through untouched."""
+        fresh_value = (
+            datetime.now(timezone.utc) - timedelta(days=30)
+        ).strftime("%Y-%m-%dT%H:%M:%S")
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05",
+                        },
+                    },
+                ],
+                "sample_data": {"timestamp": fresh_value},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        assert sample["timestamp"] == fresh_value
+
+    def test_datetime_null_primary_resolves_via_from_input_field(self, tmp_path):
+        """Cloudflare case: output 'timestamp' is null; raw key 'EdgeStartTimestamp' gets shifted.
+
+        The primary datetime column declares a source of from_input_field pointing
+        at the raw vendor key. The output column exists in sample_data but its value
+        is null, so the resolver must fall through to the raw key.
+        """
+        stale_value = "2020-06-15T12:34:56Z"
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05Z",
+                            "source": {"from_input_field": "EdgeStartTimestamp"},
+                        },
+                    },
+                ],
+                "sample_data": {
+                    "timestamp": None,
+                    "EdgeStartTimestamp": stale_value,
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        now_utc = datetime.now(timezone.utc)
+        expected = now_utc.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        ).strftime("%Y-%m-%dT%H:%M:%SZ")
+        assert sample["EdgeStartTimestamp"] == expected
+        assert sample["timestamp"] is None
+
+    def test_datetime_unparseable_format_warn_and_skip(self, tmp_path, capsys):
+        """Malformed Go layout (Tencent typo) must warn and leave sample_data alone."""
+        stale_value = "2020-06-15T12:34:56Z"
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            # Invalid Go layout: "15:05:05" collides on minutes/seconds
+                            "format": "2006-01-02T15:05:05Z",
+                        },
+                    },
+                ],
+                "sample_data": {"timestamp": stale_value},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path, verbose=True)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        # Sample unchanged, no exception raised
+        assert sample["timestamp"] == stale_value
+        # Warning emitted
+        captured = capsys.readouterr()
+        assert "Unparseable datetime sample" in captured.err
+
+    def test_datetime_format_sample_mismatch_warn_and_skip(self, tmp_path, capsys):
+        """Sample value does not match declared format (Cloudflare trailing Z) — warn + skip."""
+        # Format lacks trailing literal Z; sample has one -> strptime ValueError
+        stale_value = "2020-06-15T12:34:56Z"
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05",
+                        },
+                    },
+                ],
+                "sample_data": {"timestamp": stale_value},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path, verbose=True)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        assert sample["timestamp"] == stale_value
+        captured = capsys.readouterr()
+        assert "Unparseable datetime sample" in captured.err
