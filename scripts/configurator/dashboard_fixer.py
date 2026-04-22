@@ -104,17 +104,23 @@ def _fix_uid(dashboard):
 
 
 def _build_inputs_map(dashboard):
-    """Build a mapping from VAR_* names to their label/value from __inputs.
+    """Build a mapping from VAR_* names to their `value` from __inputs.
 
-    Returns dict like: {"VAR_SUMMARY_HOUR": "summary_hour", ...}
+    The value (e.g. `akamai.edns_summary_hour`) is the author-bound table name
+    and is the deterministic signal for classifying a VAR_* constant as a
+    summary vs. raw-logs reference (LOTC-1449). Labels were used previously
+    but are author-chosen and collide on substrings.
+
+    Datasource inputs (no `value` field) are skipped; they're handled by
+    _fix_datasource_uids.
     """
     inputs = dashboard.get("__inputs", [])
     mapping = {}
     for inp in inputs:
         name = inp.get("name", "")
-        label = inp.get("label", "")
-        if name.startswith("VAR_") and label:
-            mapping[name] = label
+        value = inp.get("value", "")
+        if name.startswith("VAR_") and value:
+            mapping[name] = value
     return mapping
 
 
@@ -188,46 +194,26 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
         if var_ref_match and var_type == "constant":
             var_ref_name = var_ref_match.group(1)
 
-            # Try summary resolution first — e.g. ${VAR_SUMMARY_HOUR} on a var
-            # named "summary_hour" must route to the matching summary table, not
-            # to the raw-logs self-reference fallback below (LOTC-1435).
-            label = inputs_map.get(var_ref_name, var_name)
-            matched_summary_var = _find_summary_var(label, state)
-            if matched_summary_var:
-                summary_value = _get_summary_value(
-                    matched_summary_var, dinfo.is_primary
-                )
-                var["query"] = summary_value
+            # LOTC-1449: classify by __inputs[VAR_X].value, not by variable
+            # name. Variable names are author-chosen and collide on substrings
+            # (e.g. `edns` as a substring of `edns_summary_hour`). Values in
+            # __inputs are the table names the author bound at export time and
+            # are deterministic.
+            input_value = inputs_map.get(var_ref_name)
+            resolved = _classify_input_value(
+                input_value, config, state, dinfo.is_primary
+            )
+            if resolved is not None:
+                var["query"] = resolved
                 var["current"] = {
                     "selected": False,
-                    "text": summary_value,
-                    "value": summary_value,
+                    "text": resolved,
+                    "value": resolved,
                 }
                 var["options"] = [{
                     "selected": False,
-                    "text": summary_value,
-                    "value": summary_value,
-                }]
-                summary_vars_added.add(matched_summary_var)
-                new_var_list.append(var)
-                continue
-
-            # Fall back to self-reference: e.g. variable "table" with query
-            # "${VAR_TABLE}" resolves to the raw-logs table placeholder.
-            # (timestamp is excluded here; handled separately in LOTC-1303)
-            stripped_name = var_ref_name[4:]  # Remove "VAR_" prefix
-            if stripped_name.upper() == var_name.upper() and var_name.lower() != "timestamp":
-                table_value = "__PROJECT_NAME__.__TABLE_NAME__"
-                var["query"] = table_value
-                var["current"] = {
-                    "selected": False,
-                    "text": table_value,
-                    "value": table_value,
-                }
-                var["options"] = [{
-                    "selected": False,
-                    "text": table_value,
-                    "value": table_value,
+                    "text": resolved,
+                    "value": resolved,
                 }]
             new_var_list.append(var)
             continue
@@ -297,15 +283,60 @@ def _get_primary_timestamp_column(config, state):
     return None
 
 
+def _classify_input_value(value, config, state, is_primary):
+    """Resolve a `__inputs[VAR_X].value` to its template placeholder, or None.
+
+    The value is the table name the dashboard author bound to VAR_X (e.g.
+    `akamai.edns_summary_hour`). A leading `<word>.` qualifier is stripped
+    before comparison, so `akamai.foo`, `commons.foo`, and bare `foo` all
+    behave the same.
+
+    Resolution order (LOTC-1449):
+      1. Matches a state.summaries[*].name → __SUMMARY_TABLE_NAME_N__
+         (or `__PROJECT_NAME__.__SUMMARY_TABLE_NAME_N__` for non-primary).
+      2. Matches config.table_name → `__PROJECT_NAME__.__TABLE_NAME__`.
+      3. Otherwise → None (caller leaves the variable untouched; mismatches
+         surface via the Rust validator rather than being silently rewritten).
+    """
+    if not value:
+        return None
+
+    bare = value.split(".", 1)[1] if "." in value else value
+    bare_lower = bare.lower()
+    raw_table_lower = (config.table_name or "").lower()
+
+    matched_summary_var = _find_summary_var(bare, state)
+
+    # A summary name that equals the raw-table name is ambiguous — summary
+    # wins resolution order, but flag it so the author can disambiguate rather
+    # than chasing a downstream validator error with no pointer back.
+    if matched_summary_var and bare_lower == raw_table_lower:
+        state.warnings.append(
+            f"Summary name and raw-table name collide on {bare!r} "
+            f"(__inputs value {value!r}); routing to summary placeholder. "
+            f"Rename the summary to disambiguate."
+        )
+
+    if matched_summary_var:
+        return _get_summary_value(matched_summary_var, is_primary)
+
+    if bare_lower == raw_table_lower:
+        return "__PROJECT_NAME__.__TABLE_NAME__"
+
+    return None
+
+
 def _find_summary_var(label, state):
-    """Find the __SUMMARY_TABLE_NAME_N__ var for a given summary label/name."""
+    """Find the __SUMMARY_TABLE_NAME_N__ var for a given summary name (exact match).
+
+    Substring/endswith matching was removed in LOTC-1449: it mis-routed raw-table
+    vars whose names were substrings of summary names (e.g. `edns` into
+    `edns_summary_hour`). Callers should pass the already-resolved summary name
+    (typically the __inputs value with any `<prefix>.` stripped).
+    """
     label_lower = label.lower().strip()
     for sinfo in state.summaries:
-        # Match by name or partial match
         if sinfo.name.lower() == label_lower:
-            return sinfo.dashboard_var
-        # Try matching summary_hour -> bot_summary_hour
-        if label_lower in sinfo.name.lower() or sinfo.name.lower().endswith(label_lower):
             return sinfo.dashboard_var
     return None
 
