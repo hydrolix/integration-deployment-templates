@@ -248,6 +248,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         Err(e) => return Err(format!("No sample data: error={e}")),
     }
 
+    match validate::sample_data_shape::run(base, bundle).await {
+        Ok(_) => (),
+        Err(e) => return Err(format!("Bad sample_data shape: error={e}")),
+    }
+
     // Check sample data timestamp freshness (warning only, doesn't fail validation)
     for w in validate::sample_data_freshness::run(base, bundle).await {
         eprintln!("WARNING: {w}");

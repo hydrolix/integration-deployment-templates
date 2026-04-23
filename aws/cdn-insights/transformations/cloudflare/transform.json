@@ -478,38 +478,36 @@
       }
     ],
     "rate_limit": null,
-    "sample_data": [
-      {
-        "CacheCacheStatus": "hit",
-        "ClientASN": 7922,
-        "ClientCity": "West Hartford",
-        "ClientCountry": "US",
-        "ClientIP": "50.205.69.23",
-        "ClientRequestHost": [
-          "https:",
-          "",
-          "hydrolix.io"
-        ],
-        "ClientRequestMethod": "GET",
-        "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestQuery": "",
-        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
-        "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-        "ClientState": "US",
-        "EdgeColoCode": "SJC",
-        "EdgeResponseBytes": 840923,
-        "EdgeResponseContentType": "video/mp4",
-        "EdgeResponseStatus": 200,
-        "EdgeServerIP": null,
-        "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
-        "EdgeTimeToFirstByteMs": 72,
-        "OriginIP": "52.75.0.2",
-        "OriginResponseDurationMs": 334,
-        "OriginResponseHeaderReceiveDurationMs": 0,
-        "OriginResponseTime": 0
-      }
-    ],
+    "sample_data": {
+      "CacheCacheStatus": "hit",
+      "ClientASN": 7922,
+      "ClientCity": "West Hartford",
+      "ClientCountry": "US",
+      "ClientIP": "50.205.69.23",
+      "ClientRequestHost": [
+        "https:",
+        "",
+        "hydrolix.io"
+      ],
+      "ClientRequestMethod": "GET",
+      "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+      "ClientRequestQuery": "",
+      "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+      "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+      "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+      "ClientState": "US",
+      "EdgeColoCode": "SJC",
+      "EdgeResponseBytes": 840923,
+      "EdgeResponseContentType": "video/mp4",
+      "EdgeResponseStatus": 200,
+      "EdgeServerIP": null,
+      "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
+      "EdgeTimeToFirstByteMs": 72,
+      "OriginIP": "52.75.0.2",
+      "OriginResponseDurationMs": 334,
+      "OriginResponseHeaderReceiveDurationMs": 0,
+      "OriginResponseTime": 0
+    },
     "shadow_table": null,
     "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresult_type IN ('hit', 'stale', 'revalidated', 'updating') as cache_was_cached,\ndecodeURLComponent(queryString(request_full_path)) as request_query_string,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n*\n FROM {STREAM}",
     "wurfl": null
