@@ -8,6 +8,7 @@ pub mod no_duplicate_tokens;
 pub mod no_global_duplicates;
 pub mod sample_data_exists;
 pub mod sample_data_freshness;
+pub mod sample_data_shape;
 pub mod summary_column_schema;
 pub mod summary_table;
 pub mod summary_table_references;
