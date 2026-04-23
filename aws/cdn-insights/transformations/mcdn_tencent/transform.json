@@ -1,0 +1,1224 @@
+{
+  "name": "mcdn_tencent",
+  "description": "Version v2.0",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "sql_transform": "SELECT\n  datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\n  positionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\n  __SHARED_PROJECT___city_name(client_ip) as client_city,\n  dictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n if(OriginResponseHeaderDuration >= 0, toUInt64(OriginResponseHeaderDuration), NULL) AS origin_time_to_first_byte_ms,\n *\nFROM {STREAM}",
+    "null_values": [
+      "-",
+      "-1"
+    ],
+    "sample_data": [
+      {
+        "BotTag": "normal",
+        "JA3Hash": "e7d705a3286e19ea42f587b344ee6865",
+        "LogTime": "2024-10-14T08:12:44Z",
+        "ClientIP": "203.0.113.42",
+        "OriginIP": "-",
+        "ClientISP": "AS13335",
+        "RequestID": "13719873400522703511",
+        "RequestUA": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+        "RemotePort": 443,
+        "RequestUrl": "/assets/js/main.bundle.js",
+        "ClientState": "US-CA",
+        "EdgeEndTime": "2024-10-14T08:12:44Z",
+        "RequestHost": "cdn.example.com",
+        "RequestTime": "2024-10-14T08:12:44Z",
+        "ClientRegion": "US",
+        "RequestRange": "-",
+        "RequestBytes": 1247,
+        "BotClassProxy": "-",
+        "EdgeServerID": "edge-sjc-001",
+        "EdgeServerIP": "198.51.100.10",
+        "RequestMethod": "GET",
+        "RequestScheme": "HTTPS",
+        "RequestStatus": "1",
+        "SecurityAction": "-",
+        "SecurityModule": "-",
+        "SecurityRuleID": "-",
+        "BotClassScanner": "-",
+        "ClientDeviceType": "Desktop",
+        "EdgeCacheStatus": "hit",
+        "EdgeResponseTime": 3,
+        "EdgeInternalTime": 2,
+        "EdgeSeverRegion": "US",
+        "RequestBodyBytes": 0,
+        "RequestProtocol": "HTTP/2.0",
+        "BotClassAttacker": "-",
+        "BotCharacteristic": "-",
+        "EdgeResponseBytes": 154823,
+        "ParentRequestID": "-",
+        "RequestReferer": "https://www.example.com/",
+        "RequestSSLProtocol": "TLS1.3",
+        "OriginSSLProtocol": "-",
+        "OriginResponseStatusCode": -1,
+        "OriginDNSResponseDuration": -1,
+        "OriginTCPHandshakeDuration": -1,
+        "OriginTLSHandshakeDuration": -1,
+        "OriginRequestHeaderSendDuration": -1,
+        "OriginResponseHeaderDuration": -1,
+        "BotClassMaliciousBot": "-",
+        "BotClassAccountTakeOver": "-",
+        "EdgeResponseBodyBytes": 148576,
+        "EdgeFunctionSubrequest": 0,
+        "EdgeResponseStatusCode": 200,
+        "RequestUrlQueryString": "-"
+      },
+      {
+        "BotTag": "normal",
+        "JA3Hash": "cd08e31494f9531f560d64c695473da9",
+        "LogTime": "2024-10-14T08:13:01Z",
+        "ClientIP": "198.51.100.73",
+        "OriginIP": "10.0.1.50",
+        "ClientISP": "AS3209",
+        "RequestID": "13719873400522703589",
+        "RequestUA": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36",
+        "RemotePort": 443,
+        "RequestUrl": "/api/v2/catalog/movies",
+        "ClientState": "-",
+        "EdgeEndTime": "2024-10-14T08:13:01Z",
+        "RequestHost": "cdn.example.com",
+        "RequestTime": "2024-10-14T08:13:01Z",
+        "ClientRegion": "DE",
+        "RequestRange": "-",
+        "RequestBytes": 892,
+        "BotClassProxy": "-",
+        "EdgeServerID": "edge-fra-003",
+        "EdgeServerIP": "203.0.113.55",
+        "RequestMethod": "GET",
+        "RequestScheme": "HTTPS",
+        "RequestStatus": "1",
+        "SecurityAction": "-",
+        "SecurityModule": "-",
+        "SecurityRuleID": "-",
+        "BotClassScanner": "-",
+        "ClientDeviceType": "Mobile",
+        "EdgeCacheStatus": "miss",
+        "EdgeResponseTime": 142,
+        "EdgeInternalTime": 131,
+        "EdgeSeverRegion": "DE",
+        "RequestBodyBytes": 0,
+        "RequestProtocol": "HTTP/2.0",
+        "BotClassAttacker": "-",
+        "BotCharacteristic": "-",
+        "EdgeResponseBytes": 52489,
+        "ParentRequestID": "-",
+        "RequestReferer": "-",
+        "RequestSSLProtocol": "TLS1.3",
+        "OriginSSLProtocol": "TLS1.2",
+        "OriginResponseStatusCode": 200,
+        "OriginDNSResponseDuration": 2.5,
+        "OriginTCPHandshakeDuration": 15.3,
+        "OriginTLSHandshakeDuration": 23.1,
+        "OriginRequestHeaderSendDuration": 0.5,
+        "OriginResponseHeaderDuration": 85.2,
+        "BotClassMaliciousBot": "-",
+        "BotClassAccountTakeOver": "-",
+        "EdgeResponseBodyBytes": 48210,
+        "EdgeFunctionSubrequest": 0,
+        "EdgeResponseStatusCode": 200,
+        "RequestUrlQueryString": "page=1&limit=50"
+      },
+      {
+        "BotTag": "evil_bot",
+        "JA3Hash": "a0e9f5d64349fb13191bc781f81f42e1",
+        "LogTime": "2024-10-14T08:14:22Z",
+        "ClientIP": "192.0.2.188",
+        "OriginIP": "-",
+        "ClientISP": "AS14061",
+        "RequestID": "13719873400522703701",
+        "RequestUA": "python-requests/2.31.0",
+        "RemotePort": 443,
+        "RequestUrl": "/api/v1/users",
+        "ClientState": "-",
+        "EdgeEndTime": "2024-10-14T08:14:22Z",
+        "RequestHost": "cdn.example.com",
+        "RequestTime": "2024-10-14T08:14:22Z",
+        "ClientRegion": "US",
+        "RequestRange": "-",
+        "RequestBytes": 534,
+        "BotClassProxy": "medium",
+        "EdgeServerID": "edge-iad-007",
+        "EdgeServerIP": "198.51.100.88",
+        "RequestMethod": "GET",
+        "RequestScheme": "HTTPS",
+        "RequestStatus": "1",
+        "SecurityAction": "Deny",
+        "SecurityModule": "BotManagement",
+        "SecurityRuleID": "2186248347",
+        "BotClassScanner": "high",
+        "ClientDeviceType": "Other",
+        "EdgeCacheStatus": "dynamic",
+        "EdgeResponseTime": 1,
+        "EdgeInternalTime": 1,
+        "EdgeSeverRegion": "US",
+        "RequestBodyBytes": 0,
+        "RequestProtocol": "HTTP/1.1",
+        "BotClassAttacker": "low",
+        "BotCharacteristic": "Python-Requests",
+        "EdgeResponseBytes": 573,
+        "ParentRequestID": "-",
+        "RequestReferer": "-",
+        "RequestSSLProtocol": "TLS1.2",
+        "OriginSSLProtocol": "-",
+        "OriginResponseStatusCode": -1,
+        "OriginDNSResponseDuration": -1,
+        "OriginTCPHandshakeDuration": -1,
+        "OriginTLSHandshakeDuration": -1,
+        "OriginRequestHeaderSendDuration": -1,
+        "OriginResponseHeaderDuration": -1,
+        "BotClassMaliciousBot": "high",
+        "BotClassAccountTakeOver": "-",
+        "EdgeResponseBodyBytes": 256,
+        "EdgeFunctionSubrequest": 0,
+        "EdgeResponseStatusCode": 403,
+        "RequestUrlQueryString": "-"
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05Z",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeCacheStatus"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "virtual": true
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseStatusCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeInternalTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestMethod"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestHost"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestUrlQueryString"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestReferer"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "virtual": true
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestUA"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeServerIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "OriginResponseHeaderDuration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHeaderDuration"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRegion"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "virtual": true
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientISP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeServerID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_origin_request",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": false,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "virtual": true
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Tencent",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Tencent multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_tag",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotTag"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_class_proxy",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassProxy"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_class_scanner",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassScanner"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_class_attacker",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassAttacker"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_class_malicious_bot",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassMaliciousBot"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_class_account_takeover",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotClassAccountTakeOver"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_bot_characteristic",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotCharacteristic"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_security_action",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityAction"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_security_module",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityModule"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_security_rule_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityRuleID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_dns_duration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginDNSResponseDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_tcp_handshake_duration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTCPHandshakeDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_tls_handshake_duration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTLSHandshakeDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_header_send_duration",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginRequestHeaderSendDuration"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_body_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestBodyBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_range",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestRange"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_protocol",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_client_device_type",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientDeviceType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_ssl_protocol",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginSSLProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_ssl_protocol",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestSSLProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_edge_function_subrequest",
+        "datatype": {
+          "type": "uint32",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeFunctionSubrequest"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_edge_response_body_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBodyBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_client_state",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientState"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_edge_server_region",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeSeverRegion"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_remote_port",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RemotePort"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_status",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_parent_request_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ParentRequestID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_ja3_hash",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "JA3Hash"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_log_time",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "LogTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_edge_end_time",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeEndTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_origin_status_code",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseStatusCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_client_connection_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientConnectionID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_client_port",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientPort"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_request_scheme",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RequestScheme"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_edge_exception",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeException"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "tencent_challenge_state",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ChallengeState"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}

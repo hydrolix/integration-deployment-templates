@@ -1,0 +1,1249 @@
+{
+  "name": "mcdn_google_media",
+  "description": "Google Media CDN transform for cdn-insights bundle",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\narrayElement(splitByChar(',', assumeNotNull(gmcdn_cache_status_raw)), length(splitByChar(',', assumeNotNull(gmcdn_cache_status_raw)))) AS gmcdn_client_cache_status,\ngmcdn_client_cache_status IN ('hit', 'stale') AS cache_was_cached,\nmultiIf(gmcdn_client_cache_status = 'hit', 'hit', gmcdn_client_cache_status = 'stale', 'stale', gmcdn_client_cache_status = 'fetch', 'miss', gmcdn_client_cache_status = 'miss', 'miss', gmcdn_client_cache_status = 'uncacheable', 'uncacheable', 'unknown') AS result_type,\ntoString(assumeNotNull(google_media_response_status)) AS response_status_code,\ndomain(assumeNotNull(google_media_request_url)) AS request_host,\npath(assumeNotNull(google_media_request_url)) AS request_path,\npathFull(assumeNotNull(google_media_request_url)) AS request_full_path,\nqueryString(assumeNotNull(google_media_request_url)) AS request_query_string,\nupper(assumeNotNull(google_media_metro_iata_code)) AS edge_pop,\ntoUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_http_ttfb), 's', '')) * 1000))) AS response_time_to_first_byte_ms,\ntoUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_latency), 's', '')) * 1000))) AS response_time_to_last_byte_ms,\ntoUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_backend_initial_latency), 's', '')) * 1000))) AS origin_time_to_first_byte_ms,\ntoUInt64OrNull(toString(round(toFloat64OrNull(replaceOne(assumeNotNull(google_media_backend_latency), 's', '')) * 1000))) AS origin_time_to_last_byte_ms,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n*\nFROM {STREAM}",
+    "null_values": [],
+    "sample_data": [
+      {
+        "insertId": "a8b3f21e-0000-4c9a-b312-e7f8a2c01d3b@a1",
+        "timestamp": "2026-02-25T14:32:07.841293100Z",
+        "receiveTimestamp": "2026-02-25T14:32:09.102445632Z",
+        "logName": "projects/sky-media-prod/logs/edgecache.googleapis.com%2Fedge_cache_request",
+        "severity": "INFO",
+        "httpRequest_requestMethod": "GET",
+        "httpRequest_requestUrl": "https://vod.sky.com/hls/premier-league/match-2841/1080p/segment_00127.ts?token=eyJhbGciOiJFZDI1NTE5IiwidHlwIjoiSldUIn0",
+        "httpRequest_requestSize": "412",
+        "httpRequest_status": 200,
+        "httpRequest_responseSize": "1048576",
+        "httpRequest_userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "httpRequest_remoteIp": "203.0.113.42",
+        "httpRequest_protocol": "HTTP/2",
+        "jsonPayload_requestId": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f80",
+        "jsonPayload_cacheStatus": "hit",
+        "jsonPayload_cacheId": "lhr-a3b4c5d6e7f8",
+        "jsonPayload_cacheKeyFingerprint": "f1e2d3c4b5a69788",
+        "jsonPayload_cacheMode": "FORCE_CACHE_ALL",
+        "jsonPayload_clientAsn": "2856",
+        "jsonPayload_clientCity": "London",
+        "jsonPayload_clientRegionCode": "GB",
+        "jsonPayload_metroIataCode": "lhr",
+        "jsonPayload_proxyRegionCode": "GB",
+        "jsonPayload_latency": "0.003217400s",
+        "jsonPayload_httpTtfb": "0.002891200s",
+        "jsonPayload_tlsVersion": "TLS 1.3",
+        "jsonPayload_tlsCipherSuite": "1301",
+        "jsonPayload_proxyStatus": "Google-Edge-Cache",
+        "jsonPayload_origin": "sky-vod-origin",
+        "jsonPayload_originIp": "",
+        "resource_labels_service_name": "sky-media-cdn",
+        "resource_labels_matched_path": "/hls/*",
+        "resource_labels_route_type": "ORIGIN",
+        "resource_labels_project_id": "sky-media-prod"
+      },
+      {
+        "insertId": "c9d0e1f2-0000-5b8a-a423-f8g9h0i1j2k3@a1",
+        "timestamp": "2026-02-25T14:32:08.123456789Z",
+        "receiveTimestamp": "2026-02-25T14:32:10.234567890Z",
+        "logName": "projects/dazn-live-prod/logs/edgecache.googleapis.com%2Fedge_cache_request",
+        "severity": "INFO",
+        "httpRequest_requestMethod": "GET",
+        "httpRequest_requestUrl": "https://live.dazn.com/dash/boxing/event-9921/video/init.mp4",
+        "httpRequest_requestSize": "380",
+        "httpRequest_status": 200,
+        "httpRequest_responseSize": "524288",
+        "httpRequest_userAgent": "DAZN/5.12.0 (Linux; Android 14; SM-S928B) ExoPlayer/2.19.1",
+        "httpRequest_remoteIp": "198.51.100.73",
+        "httpRequest_protocol": "HTTP/2",
+        "jsonPayload_requestId": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8091",
+        "jsonPayload_cacheStatus": "fetch,miss,miss",
+        "jsonPayload_cacheId": "fra-b4c5d6e7f8a9",
+        "jsonPayload_cacheKeyFingerprint": "a2b3c4d5e6f70819",
+        "jsonPayload_cacheMode": "FORCE_CACHE_ALL",
+        "jsonPayload_clientAsn": "3209",
+        "jsonPayload_clientCity": "Frankfurt",
+        "jsonPayload_clientRegionCode": "DE",
+        "jsonPayload_metroIataCode": "fra",
+        "jsonPayload_proxyRegionCode": "DE",
+        "jsonPayload_latency": "0.142871300s",
+        "jsonPayload_httpTtfb": "0.131244800s",
+        "jsonPayload_backendInitialLatency": "0.128912440s",
+        "jsonPayload_backendLatency": "0.139445100s",
+        "jsonPayload_tlsVersion": "TLS 1.3",
+        "jsonPayload_tlsCipherSuite": "1301",
+        "jsonPayload_proxyStatus": "Google-Edge-Cache",
+        "jsonPayload_origin": "dazn-live-origin",
+        "jsonPayload_originIp": "192.0.2.55",
+        "resource_labels_service_name": "dazn-live-cdn",
+        "resource_labels_matched_path": "/dash/*",
+        "resource_labels_route_type": "ORIGIN",
+        "resource_labels_project_id": "dazn-live-prod"
+      },
+      {
+        "insertId": "f1a2b3c4-0000-6d7e-b534-a9b0c1d2e3f4@a1",
+        "timestamp": "2026-02-25T14:32:09.987654321Z",
+        "receiveTimestamp": "2026-02-25T14:32:12.098765432Z",
+        "logName": "projects/crunchyroll-prod/logs/edgecache.googleapis.com%2Fedge_cache_request",
+        "severity": "WARNING",
+        "httpRequest_requestMethod": "GET",
+        "httpRequest_requestUrl": "https://cdn.crunchyroll.com/hls/anime-9182/720p/segment_00042.ts",
+        "httpRequest_requestSize": "395",
+        "httpRequest_status": 503,
+        "httpRequest_responseSize": "256",
+        "httpRequest_userAgent": "Crunchyroll/3.41.0 (iOS 17.4; iPhone15,3)",
+        "httpRequest_remoteIp": "192.0.2.188",
+        "httpRequest_protocol": "HTTP/2",
+        "jsonPayload_requestId": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "jsonPayload_cacheStatus": "fetch,miss",
+        "jsonPayload_cacheId": "nrt-c5d6e7f8a9b0",
+        "jsonPayload_cacheMode": "FORCE_CACHE_ALL",
+        "jsonPayload_clientAsn": "2516",
+        "jsonPayload_clientCity": "Tokyo",
+        "jsonPayload_clientRegionCode": "JP",
+        "jsonPayload_metroIataCode": "nrt",
+        "jsonPayload_proxyRegionCode": "JP",
+        "jsonPayload_latency": "5.002341200s",
+        "jsonPayload_httpTtfb": "5.001892100s",
+        "jsonPayload_backendInitialLatency": "5.000123400s",
+        "jsonPayload_backendLatency": "5.001234500s",
+        "jsonPayload_tlsVersion": "TLS 1.3",
+        "jsonPayload_tlsCipherSuite": "1301",
+        "jsonPayload_proxyStatus": "Google-Edge-Cache",
+        "jsonPayload_origin": "crunchyroll-origin-apac",
+        "jsonPayload_originIp": "192.0.2.201",
+        "resource_labels_service_name": "crunchyroll-cdn",
+        "resource_labels_matched_path": "/hls/*",
+        "resource_labels_route_type": "ORIGIN",
+        "resource_labels_project_id": "crunchyroll-prod"
+      },
+      {
+        "insertId": "d5e6f7a8-0000-7e8f-c645-b0c1d2e3f4a5@a1",
+        "timestamp": "2026-02-25T14:32:10.555111222Z",
+        "receiveTimestamp": "2026-02-25T14:32:12.666222333Z",
+        "logName": "projects/telus-media-prod/logs/edgecache.googleapis.com%2Fedge_cache_request",
+        "severity": "INFO",
+        "httpRequest_requestMethod": "GET",
+        "httpRequest_requestUrl": "https://media.telus.com/api/v1/catalog/movies.json",
+        "httpRequest_requestSize": "290",
+        "httpRequest_status": 200,
+        "httpRequest_responseSize": "48210",
+        "httpRequest_userAgent": "python-requests/2.31.0",
+        "httpRequest_remoteIp": "203.0.113.99",
+        "httpRequest_protocol": "HTTP/1.1",
+        "jsonPayload_requestId": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+        "jsonPayload_cacheStatus": "hit,stale",
+        "jsonPayload_cacheId": "yvr-d6e7f8a9b0c1",
+        "jsonPayload_cacheKeyFingerprint": "e3f4a5b6c7d80921",
+        "jsonPayload_cacheMode": "USE_ORIGIN_HEADERS",
+        "jsonPayload_clientAsn": "852",
+        "jsonPayload_clientCity": "Vancouver",
+        "jsonPayload_clientRegionCode": "CA",
+        "jsonPayload_metroIataCode": "yvr",
+        "jsonPayload_proxyRegionCode": "CA",
+        "jsonPayload_latency": "0.001823400s",
+        "jsonPayload_httpTtfb": "0.001612300s",
+        "jsonPayload_tlsVersion": "TLS 1.2",
+        "jsonPayload_proxyStatus": "Google-Edge-Cache",
+        "jsonPayload_origin": "telus-api-origin",
+        "jsonPayload_originIp": "",
+        "resource_labels_service_name": "telus-media-cdn",
+        "resource_labels_matched_path": "/api/*",
+        "resource_labels_route_type": "ORIGIN",
+        "resource_labels_project_id": "telus-media-prod"
+      },
+      {
+        "insertId": "e6f7a8b9-0000-8f9a-d756-c1d2e3f4a5b6@a1",
+        "timestamp": "2026-02-25T14:32:11.333444555Z",
+        "receiveTimestamp": "2026-02-25T14:32:13.444555666Z",
+        "logName": "projects/paramount-prod/logs/edgecache.googleapis.com%2Fedge_cache_request",
+        "severity": "INFO",
+        "httpRequest_requestMethod": "GET",
+        "httpRequest_requestUrl": "https://stream.paramount.com/hls/live/channel-42/1080p/segment_00891.ts?session=xK9mNp2qR",
+        "httpRequest_requestSize": "445",
+        "httpRequest_status": 206,
+        "httpRequest_responseSize": "2097152",
+        "httpRequest_userAgent": "Mozilla/5.0 (SMART-TV; Linux; Tizen 7.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/7.0 TV Safari/537.36",
+        "httpRequest_remoteIp": "198.51.100.200",
+        "httpRequest_protocol": "HTTP/2",
+        "jsonPayload_requestId": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+        "jsonPayload_cacheStatus": "hit",
+        "jsonPayload_cacheId": "iad-e7f8a9b0c1d2",
+        "jsonPayload_cacheKeyFingerprint": "d4e5f6a7b8c90a12",
+        "jsonPayload_cacheMode": "FORCE_CACHE_ALL",
+        "jsonPayload_clientAsn": "7018",
+        "jsonPayload_clientCity": "Washington",
+        "jsonPayload_clientRegionCode": "US",
+        "jsonPayload_metroIataCode": "iad",
+        "jsonPayload_proxyRegionCode": "US",
+        "jsonPayload_latency": "0.001102300s",
+        "jsonPayload_httpTtfb": "0.000981200s",
+        "jsonPayload_tlsVersion": "TLS 1.3",
+        "jsonPayload_tlsCipherSuite": "1301",
+        "jsonPayload_proxyStatus": "Google-Edge-Cache",
+        "jsonPayload_compressionAlgorithmApplied": "",
+        "jsonPayload_rangeHeader": "bytes=0-2097151",
+        "jsonPayload_origin": "paramount-live-origin",
+        "jsonPayload_originIp": "",
+        "resource_labels_service_name": "paramount-cdn",
+        "resource_labels_matched_path": "/hls/*",
+        "resource_labels_route_type": "ORIGIN",
+        "resource_labels_project_id": "paramount-prod"
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05.999999999Z",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "timestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "gmcdn_cache_status_raw",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_cacheStatus"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_client_cache_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_responseSize"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_requestMethod"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_full_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_userAgent"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_remoteIp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_originIp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_clientRegionCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_clientCity"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_clientAsn"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_origin_request",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": false,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Google Media CDN",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Google Media CDN multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "gmcdn_cache_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_cacheId"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_cache_key_fingerprint",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_cacheKeyFingerprint"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_cache_mode",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_cacheMode"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_tls_version",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_tlsVersion"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_tls_cipher_suite",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_tlsCipherSuite"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_proxy_status",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_proxyStatus"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_proxy_region_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_proxyRegionCode"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_request_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_requestId"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_origin_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_origin"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_http_protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_protocol"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_request_size",
+        "datatype": {
+          "type": "uint64",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_requestSize"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_service_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_service_name"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_matched_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_matched_path"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_route_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_route_type"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_project_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_project_id"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_insert_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "insertId"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_compression",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_compressionAlgorithmApplied"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_range_header",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_rangeHeader"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_original_request_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_originalRequestId"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_tls_sni_hostname",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_tlsSniHostname"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_flex_shielding_region",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_flexShieldingRegion"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "gmcdn_flex_shielding_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_flexShieldingStatus"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "google_media_request_url",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_requestUrl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_response_status",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "httpRequest_status"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_latency",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_latency"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_http_ttfb",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_httpTtfb"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_backend_initial_latency",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_backendInitialLatency"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_backend_latency",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_backendLatency"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_metro_iata_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_metroIataCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_log_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "logName"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_receive_timestamp",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "receiveTimestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_severity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "severity"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_location",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "jsonPayload_location"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_path_matcher_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_path_matcher_name"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_resource_container",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_resource_container"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_route_destination",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_route_destination"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "google_media_resource_location",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "resource_labels_location"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}

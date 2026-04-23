@@ -1,0 +1,1725 @@
+{
+  "name": "mcdn_cloudflare",
+  "description": "Version v1.0",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "null_values": [],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05Z",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeStartTimestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "CacheCacheStatus"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeTimeToFirstByteMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseContentType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestMethod"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestHost"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_full_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestURI"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestReferer"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestPath"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestUserAgent"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeServerIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginIP"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHeaderReceiveDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientCountry"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientCity"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientASN"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeColoCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "is_origin_request",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": false,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Cloudflare",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "Cloudflare multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_bot_score",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotScore"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_bot_score_src",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotScoreSrc"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_cache_reserve_used",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "CacheReserveUsed"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_cache_response_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "CacheResponseBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_cache_tiered_fill",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "CacheTieredFill"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_device_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientDeviceType"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_ip_class",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientIPClass"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_latitude",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientLatitude"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_longitude",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientLongitude"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_region_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRegionCode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_request_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_request_protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_request_scheme",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestScheme"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_request_source",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientRequestSource"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_ssl_cipher",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientSSLCipher"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_ssl_protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientSSLProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_src_port",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientSrcPort"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_client_tcp_rtt_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientTCPRTTMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_x_requested_with",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientXRequestedWith"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_cf_connecting_o2o",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeCFConnectingO2O"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_colo_id",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeColoID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_end_timestamp",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeEndTimestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_pathing_op",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgePathingOp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_pathing_src",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgePathingSrc"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_pathing_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgePathingStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_edge_request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeRequestHost"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_response_body_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseBodyBytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_response_compression_ratio",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "EdgeResponseCompressionRatio"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_dns_response_time_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginDNSResponseTimeMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_response_http_expires",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHTTPExpires"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_response_http_last_modified",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseHTTPLastModified"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_response_status",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginResponseStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_ssl_protocol",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginSSLProtocol"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_tcp_handshake_duration_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTCPHandshakeDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_tls_handshake_duration_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginTLSHandshakeDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_parent_ray_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ParentRayID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_ray_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "RayID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_action",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityAction"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_rule_description",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityRuleDescription"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_rule_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityRuleID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_smart_route_colo_id",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SmartRouteColoID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_upper_tier_colo_id",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "UpperTierColoID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_waf_attack_score",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WAFAttackScore"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_waf_rce_attack_score",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WAFRCEAttackScore"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_waf_sqli_attack_score",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WAFSQLiAttackScore"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_waf_xss_attack_score",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WAFXSSAttackScore"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_cpu_time",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerCPUTime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_script_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerScriptName"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_subrequest",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerSubrequest"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_subrequest_count",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerSubrequestCount"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_worker_wall_time_us",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WorkerWallTimeUs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_zone_name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ZoneName"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_bot_tags",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotTags"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_bot_detection_ids",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotDetectionIDs"
+          },
+          "elements": [
+            {
+              "type": "uint32",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_bot_detection_tags",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "BotDetectionTags"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_actions",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityActions"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_rule_ids",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecurityRuleIDs"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_security_sources",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "SecuritySources"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_ja3_hash",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "JA3Hash"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_ja4",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "JA4"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_verified_bot_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "VerifiedBotCategory"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_js_detection_passed",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "JSDetectionPassed"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_leaked_credential_check_result",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "LeakedCredentialCheckResult"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_origin_request_header_send_duration_ms",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "OriginRequestHeaderSendDurationMs"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_fraud_attack",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "FraudAttack"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_fraud_detection_ids",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "FraudDetectionIDs"
+          },
+          "elements": [
+            {
+              "type": "uint32",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_fraud_detection_tags",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "FraudDetectionTags"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_fraud_email_risk",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "FraudEmailRisk"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_fraud_user_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "FraudUserID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_content_scan_results",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ContentScanObjResults"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_content_scan_sizes",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ContentScanObjSizes"
+          },
+          "elements": [
+            {
+              "type": "uint64",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_content_scan_types",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ContentScanObjTypes"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_mtls_cert_fingerprint",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientMTLSAuthCertFingerprint"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_mtls_auth_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ClientMTLSAuthStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_pay_per_crawl_status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "PayPerCrawlStatus"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_web_assets_labels",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WebAssetsLabelsManaged"
+          },
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudflare_web_assets_operation_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "WebAssetsOperationID"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}
