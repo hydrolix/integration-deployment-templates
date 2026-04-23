@@ -60,7 +60,7 @@
       {
         "datatype": {
           "default": null,
-          "format": "s",
+          "format": "ms",
           "ignore": false,
           "index": false,
           "index_options": {
