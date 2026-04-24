@@ -6,38 +6,36 @@
     "rate_limit": null,
     "sql_transform": "SELECT \n    datediff(s, timestamp, now64(3)) AS hdx_source_latency_sec,\n    TRUE as cache_was_cached,\n    decodeURLComponent(queryString(request_full_path)) as request_query_string,\n    multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other') AS resource_category,\n    'NONE' AS user_agent_category,\n    FALSE AS is_bot_traffic,\n    *\nFROM { STREAM }",
     "null_values": [],
-    "sample_data": [
-      {
-        "ClientIP": "50.205.69.23",
-        "OriginIP": "52.75.0.2",
-        "ClientASN": 7922,
-        "ClientCity": "West Hartford",
-        "ClientState": "US",
-        "EdgeColoCode": "SJC",
-        "EdgeServerIP": null,
-        "ClientCountry": "US",
-        "CacheCacheStatus": "hit",
-        "ClientRequestURI": "/hls/Midnight Archive S01E01 Ã¢ÂÂ Ghost Signal/1200k/segment000000.m4s",
-        "ClientRequestHost": [
-          "https:",
-          "",
-          "hydrolix.io"
-        ],
-        "ClientRequestPath": "/hls/Midnight Archive S01E01 Ã¢ÂÂ Ghost Signal/1200k/segment000000.m4s",
-        "EdgeResponseBytes": 840923,
-        "ClientRequestQuery": "",
-        "EdgeResponseStatus": 200,
-        "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
-        "OriginResponseTime": 0,
-        "ClientRequestMethod": "GET",
-        "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
-        "EdgeTimeToFirstByteMs": 72,
-        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-        "EdgeResponseContentType": "video/mp4",
-        "OriginResponseDurationMs": 334,
-        "OriginResponseHeaderReceiveDurationMs": 0
-      }
-    ],
+    "sample_data": {
+      "CacheCacheStatus": "hit",
+      "ClientASN": 7922,
+      "ClientCity": "West Hartford",
+      "ClientCountry": "US",
+      "ClientIP": "50.205.69.23",
+      "ClientRequestHost": [
+        "https:",
+        "",
+        "hydrolix.io"
+      ],
+      "ClientRequestMethod": "GET",
+      "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+      "ClientRequestQuery": "",
+      "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+      "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+      "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+      "ClientState": "US",
+      "EdgeColoCode": "SJC",
+      "EdgeResponseBytes": 840923,
+      "EdgeResponseContentType": "video/mp4",
+      "EdgeResponseStatus": 200,
+      "EdgeServerIP": null,
+      "EdgeStartTimestamp": "2026-03-23T00:00:00Z",
+      "EdgeTimeToFirstByteMs": 72,
+      "OriginIP": "52.75.0.2",
+      "OriginResponseDurationMs": 334,
+      "OriginResponseHeaderReceiveDurationMs": 0,
+      "OriginResponseTime": 0
+    },
     "shadow_table": null,
     "output_columns": [
       {
