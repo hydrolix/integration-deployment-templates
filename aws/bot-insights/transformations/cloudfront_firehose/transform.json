@@ -44,7 +44,7 @@
       {
         "datatype": {
           "default": null,
-          "format": "s",
+          "format": "ms",
           "index": false,
           "primary": false,
           "resolution": "ms",
