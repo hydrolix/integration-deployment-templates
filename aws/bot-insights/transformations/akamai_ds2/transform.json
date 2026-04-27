@@ -606,7 +606,7 @@
       "reqMethod": "GET",
       "reqPath": "assets/title_1234/video/segment_00042.ts",
       "reqPort": "443",
-      "reqTimeSec": "1774224000",
+      "reqTimeSec": "1777291200",
       "rspContentLen": "524288",
       "rspContentType": "video/mp2t",
       "securityRules": "",
