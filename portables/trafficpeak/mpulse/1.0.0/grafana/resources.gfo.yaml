@@ -1,0 +1,44 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-mpulse-page-weight-by-group:
+    dashboard:
+      __extend__: dashboards/mpulse_page_weight_by_group.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_MPULSE: akamai.mpulse
+      VAR_TOPN: '10'
+      VAR_MAXTREEMAPCELLS: '50'
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+  hdx-mpulse-performance-by-group:
+    dashboard:
+      __extend__: dashboards/mpulse_performance_by_group.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_MPULSE: akamai.mpulse
+      VAR_TOPN: '10'
+      VAR_MAXTREEMAPCELLS: '50'
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+  hdx-mpulse-core-web-vitals:
+    dashboard:
+      __extend__: dashboards/mpulse_core_web_vitals.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_MPULSE: akamai.mpulse
+      VAR_BASEFILTER: and beaconTypeName != 'unload'
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+  hdx-mpulse-devops:
+    dashboard:
+      __extend__: dashboards/mpulse_devops.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_MPULSE: akamai.mpulse
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__

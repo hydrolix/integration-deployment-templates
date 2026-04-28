@@ -1,13 +1,45 @@
 {
   "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
+    "__inputs": [
+      {
+        "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+        "label": "hydrolix-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_MPULSE",
+        "type": "constant",
+        "label": "mpulse",
+        "value": "akamai.mpulse",
+        "description": ""
+      },
+      {
+        "name": "VAR_TOPN",
+        "type": "constant",
+        "label": "topN",
+        "value": "10",
+        "description": ""
+      },
+      {
+        "name": "VAR_MAXTREEMAPCELLS",
+        "type": "constant",
+        "label": "maxTreemapCells",
+        "value": "50",
+        "description": ""
+      },
+      {
+        "name": "VAR_LOGS",
+        "type": "constant",
+        "label": "logs",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
       }
-    },
+    ],
+    "__elements": {},
     "__requires": [
       {
         "type": "grafana",
@@ -82,7 +114,7 @@
             "showLineNumbers": false,
             "showMiniMap": false
           },
-          "content": "Understand how any performance measurement (LCP, PageLoad, Backend Time, INP, etc) varies across multiple dimensions (Page Group, Device Type, Country, Browser, URL etc)",
+          "content": "Find 'overweight' pages by identifying the pages/URLs with highest Total weight or highest transfer size.",
           "mode": "markdown"
         },
         "pluginVersion": "12.0.2",
@@ -106,7 +138,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "",
         "fieldConfig": {
@@ -190,7 +222,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "editorType": "sql",
             "format": 1,
@@ -207,42 +239,12 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "WITH top10 AS (\n  SELECT ${groupBy}\n  FROM ${mpulse}\n  WHERE $__timeFilter(timestamp)\n   AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n    ${omniFilter}\n  GROUP BY ${groupBy}\n  ORDER BY COUNT(*) DESC\n  LIMIT ${topN}\n)\n\nSELECT ${groupBy}, \n       COUNT(*) AS \"-\",\n       $__timeInterval(timestamp) AS time\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY time, ${groupBy}\nORDER BY time ASC\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Views per ...; du=${__user.login}'",
+            "rawSql": "WITH top10 AS (\n  SELECT ${groupBy}\n  FROM ${mpulse}\n  WHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\n  GROUP BY ${groupBy}\n  ORDER BY count(*) DESC\n  LIMIT ${topN}\n)\nSELECT ${groupBy} , \n  count(*) as \"-\", \n  $__timeInterval(timestamp) as time\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND ${groupBy} IN (SELECT ${groupBy} FROM top10)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 3, 1\nORDER BY 3\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Views per ${groupBy}; du=${__user.login}'",
             "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "hide": true,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "    select ${groupBy} , count(*) as count, $__timeInterval(timestamp) as time from ${mpulse} where $__timeFilter(timestamp) group by time , ${groupBy} order by count desc limit ${topN} \n",
-            "refId": "B"
           }
         ],
         "title": "Page Views per ${groupBy}",
         "transformations": [
-          {
-            "id": "renameByRegex",
-            "options": {
-              "regex": "count",
-              "renamePattern": "-"
-            }
-          },
           {
             "id": "prepareTimeSeries",
             "options": {
@@ -265,7 +267,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -278,7 +280,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to this item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-pageDomainName=${__data.fields.item}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-pageDomainName=${__data.fields.item}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -360,7 +362,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -370,7 +372,7 @@
               "h": 11,
               "w": 8,
               "x": 0,
-              "y": 12
+              "y": 9
             },
             "id": 5,
             "maxPerRow": 2,
@@ -388,7 +390,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -405,17 +407,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT \n  coalesce(pageDomainName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\n AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by Hostname(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(pageDomainName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by Hostname( ${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by Hostname(${aggregation}) ",
+            "title": "${metric} by Hostname( ${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -428,7 +430,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&var-pageGroupName=${__data.fields.item}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&var-pageGroupName=${__data.fields.item}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -510,7 +512,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -520,7 +522,7 @@
               "h": 11,
               "w": 8,
               "x": 8,
-              "y": 12
+              "y": 9
             },
             "id": 8,
             "maxPerRow": 2,
@@ -538,7 +540,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -555,17 +557,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(pageGroupName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by Page Group(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(pageGroupName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by Page Group( ${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by Page Group(${aggregation}) ",
+            "title": "${metric} by Page Group( ${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -578,7 +580,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&var-paramsU=${__data.fields.item}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&var-paramsU=${__data.fields.item}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -660,7 +662,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -670,7 +672,7 @@
               "h": 11,
               "w": 8,
               "x": 16,
-              "y": 12
+              "y": 9
             },
             "id": 12,
             "maxPerRow": 2,
@@ -688,7 +690,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -705,17 +707,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT replaceOne(coalesce(paramsU,'(None)'),'undefined','undefine_d') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by URL(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  replaceOne(coalesce(paramsU,'(None)'),'undefined','undefine_d') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by URL (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by URL (${aggregation}) ",
+            "title": "${metric} by URL (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -728,7 +730,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&var-deviceTypeName=${__data.fields.item}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}﻿/﻿${__dashboard}﻿/?${__all_variables}&﻿${pageDomainName:queryparam}﻿&﻿${pageGroupName:queryparam}﻿&﻿${beaconTypeName:queryparam}﻿&﻿${isp:queryparam}﻿&﻿${countryCode:queryparam}﻿&﻿${regionCode:queryparam}﻿&﻿${geoCity:queryparam}﻿&var-deviceTypeName=﻿${__data.fields.item}﻿&﻿${paramsULike:queryparam}﻿&﻿${omniFilter:queryparam}﻿&﻿${paramsU:queryparam}﻿&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -810,7 +812,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -820,7 +822,7 @@
               "h": 11,
               "w": 8,
               "x": 0,
-              "y": 37
+              "y": 34
             },
             "id": 10,
             "maxPerRow": 2,
@@ -838,7 +840,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -855,17 +857,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(deviceTypeName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by Device Type(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(deviceTypeName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by Device Type (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by Device Type (${aggregation}) ",
+            "title": "${metric} by Device Type (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -878,7 +880,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to Item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&var-beaconTypeName=${__data.fields.item}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&var-beaconTypeName=${__data.fields.item}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -960,7 +962,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -970,7 +972,7 @@
               "h": 11,
               "w": 8,
               "x": 8,
-              "y": 37
+              "y": 34
             },
             "id": 13,
             "maxPerRow": 2,
@@ -988,7 +990,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1005,17 +1007,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(beaconTypeName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by Beacon Type(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(beaconTypeName,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by Beacon Type (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by Beacon Type (${aggregation}) ",
+            "title": "${metric} by Beacon Type (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -1028,7 +1030,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to Item",
-                    "url": "/d/${__dashboard.uid}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&var-isp=${__data.fields.item}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&var-isp=${__data.fields.item}&${countryCode:queryparam}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -1110,7 +1112,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -1120,7 +1122,7 @@
               "h": 11,
               "w": 8,
               "x": 16,
-              "y": 37
+              "y": 34
             },
             "id": 14,
             "maxPerRow": 2,
@@ -1138,7 +1140,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1155,17 +1157,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(isp,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by ISP(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(isp,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by ISP (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by ISP (${aggregation}) ",
+            "title": "${metric} by ISP (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -1178,7 +1180,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to this Item",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&var-countryCode=${__data.fields.item}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&var-countryCode=${__data.fields.item}&${regionCode:queryparam}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}$&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -1260,7 +1262,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -1270,7 +1272,7 @@
               "h": 11,
               "w": 8,
               "x": 0,
-              "y": 48
+              "y": 45
             },
             "id": 9,
             "maxPerRow": 2,
@@ -1288,7 +1290,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1305,17 +1307,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(countryCode,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by Country(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(countryCode,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by Country (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by Country (${aggregation}) ",
+            "title": "${metric} by Country (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -1326,9 +1328,9 @@
                 "fieldMinMax": true,
                 "links": [
                   {
-                    "targetBlank": false,
+                    "targetBlank": true,
                     "title": "Filter to this State",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&var-regionCode=${__data.fields.item}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&var-regionCode=${__data.fields.item}&${geoCity:queryparam}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}$&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -1410,7 +1412,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -1420,7 +1422,7 @@
               "h": 11,
               "w": 8,
               "x": 8,
-              "y": 48
+              "y": 45
             },
             "id": 11,
             "maxPerRow": 2,
@@ -1438,7 +1440,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1455,17 +1457,17 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(regionCode,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by State(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(regionCode,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by State (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by State (${aggregation}) ",
+            "title": "${metric} by State (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -1478,7 +1480,7 @@
                   {
                     "targetBlank": false,
                     "title": "Filter to this City",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&var-geoCity=${__data.fields.item}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&${pageDomainName:queryparam}&${pageGroupName:queryparam}&${beaconTypeName:queryparam}&${isp:queryparam}&${countryCode:queryparam}&${regionCode:queryparam}&var-geoCity=${__data.fields.item}&${deviceTypeName:queryparam}&${paramsULike:queryparam}&${omniFilter:queryparam}&${paramsU:queryparam}&${metric:queryparam}&${resourceType:queryparam}"
                   }
                 ],
                 "mappings": [],
@@ -1560,7 +1562,7 @@
                   "properties": [
                     {
                       "id": "unit",
-                      "value": "ms"
+                      "value": "decbytes"
                     }
                   ]
                 }
@@ -1570,7 +1572,7 @@
               "h": 11,
               "w": 8,
               "x": 16,
-              "y": 48
+              "y": 45
             },
             "id": 17,
             "maxPerRow": 2,
@@ -1588,7 +1590,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1605,11 +1607,11 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT coalesce(geoCity,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${timer}) as metric\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\ngroup  by item\norder by count desc \nlimit ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=...by City(...); du=${__user.login}'",
+                "rawSql": "SELECT \n  coalesce(geoCity,'(None)') as item, \n  count(*) as count,\n  ${aggregation}(${resourceType}${metric}) as metric\nFROM ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nGROUP BY 1\nORDER BY 2 DESC \nLIMIT ${maxTreemapCells}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=${metric} by City (${aggregation}) ; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "${timer} by City (${aggregation}) ",
+            "title": "${metric} by City (${aggregation}) ",
             "type": "marcusolsson-treemap-panel"
           }
         ],
@@ -1629,7 +1631,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {},
@@ -1639,7 +1641,7 @@
               "h": 14,
               "w": 24,
               "x": 0,
-              "y": 13
+              "y": 10
             },
             "id": 16,
             "options": {
@@ -1658,7 +1660,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "editorType": "sql",
                 "format": 1,
@@ -1674,11 +1676,11 @@
                 },
                 "pluginVersion": "4.0.6",
                 "queryType": "table",
-                "rawSql": "SELECT concat(toString(timestamp), ' - ', beaconTypeName,' - ', pageGroupName) , * \nFROM  ${mpulse}\nwhere $__timeFilter(timestamp)\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n${omniFilter}\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw; du=${__user.login}'",
+                "rawSql": "SELECT concat(toString(timestamp), ' - ', beaconTypeName,' - ', pageGroupName) , * \nFROM  ${mpulse}\nWHERE $__timeFilter(timestamp)\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}) , ${pageDomainName} )\n  AND $__conditionalAll(pageGroupName in (${pageGroupName:sqlstring}),${pageGroupName} )\n  AND $__conditionalAll(deviceTypeName in (${deviceTypeName:sqlstring}),${deviceTypeName} )\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName} )\n  AND $__conditionalAll(isp in (${isp:sqlstring}),${isp} )\n  AND $__conditionalAll(countryCode in (${countryCode:sqlstring}),${countryCode} )\n  AND $__conditionalAll(regionCode in (${regionCode:sqlstring}),${regionCode} )\n  AND $__conditionalAll(geoCity in (${geoCity:sqlstring}),${geoCity} )\n  AND $__conditionalAll(paramsU in (${paramsU:sqlstring}),${paramsU} )\n  and if (empty('${paramsULike}'),true, paramsU like '${paramsULike}')\n  ${omniFilter}\nLIMIT 100\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Raw",
+            "title": "Raw Logs",
             "type": "logs"
           }
         ],
@@ -1686,7 +1688,6 @@
         "type": "row"
       }
     ],
-    "refresh": "",
     "schemaVersion": 41,
     "tags": [
       "core analysis",
@@ -1772,61 +1773,98 @@
         },
         {
           "current": {
-            "text": "timersLoaded",
-            "value": "timersLoaded"
+            "text": "total",
+            "value": "total"
           },
           "includeAll": false,
-          "name": "timer",
+          "name": "resourceType",
           "options": [
             {
-              "selected": false,
-              "text": "DNS",
-              "value": "dnsTimer"
-            },
-            {
-              "selected": false,
-              "text": "SSL",
-              "value": "sslTimer"
-            },
-            {
-              "selected": false,
-              "text": "TTFB",
-              "value": "firstByteTimer"
-            },
-            {
-              "selected": false,
-              "text": "DOM Loaded",
-              "value": "timersTDomloaded"
-            },
-            {
-              "selected": false,
-              "text": "LCP",
-              "value": "largestContentfulPaint"
-            },
-            {
               "selected": true,
-              "text": "PageLoad",
-              "value": "timersLoaded"
+              "text": "Total",
+              "value": "total"
+            },
+            {
+              "selected": false,
+              "text": "CSS",
+              "value": "css"
+            },
+            {
+              "selected": false,
+              "text": "Font",
+              "value": "font"
+            },
+            {
+              "selected": false,
+              "text": "HTML",
+              "value": "html"
+            },
+            {
+              "selected": false,
+              "text": "Image",
+              "value": "img"
+            },
+            {
+              "selected": false,
+              "text": "JavaScript",
+              "value": "js"
+            },
+            {
+              "selected": false,
+              "text": "Other",
+              "value": "other"
+            },
+            {
+              "selected": false,
+              "text": "Page",
+              "value": "page"
+            },
+            {
+              "selected": false,
+              "text": "XHR",
+              "value": "xhr"
             }
           ],
-          "query": " DNS : dnsTimer  , SSL : sslTimer , TTFB : firstByteTimer ,  DOM Loaded : timersTDomloaded , LCP : largestContentfulPaint ,  PageLoad : timersLoaded ",
+          "query": "Total : total , CSS : css , Font : font , HTML : html , Image : img , JavaScript : js , Other : other , Page : page , XHR : xhr",
           "type": "custom"
         },
         {
           "current": {
-            "text": "quantile(0.5)",
-            "value": "quantile(0.5)"
+            "text": "DecodedBodySize",
+            "value": "DecodedBodySize"
+          },
+          "includeAll": false,
+          "name": "metric",
+          "options": [
+            {
+              "selected": true,
+              "text": "Decoded Body Size",
+              "value": "DecodedBodySize"
+            },
+            {
+              "selected": false,
+              "text": "Transfer Size",
+              "value": "TransferSize"
+            }
+          ],
+          "query": " Decoded Body Size : DecodedBodySize , Transfer Size : TransferSize",
+          "type": "custom"
+        },
+        {
+          "current": {
+            "text": "avg",
+            "value": "avg"
           },
           "includeAll": false,
           "name": "aggregation",
           "options": [
             {
-              "selected": false,
+              "selected": true,
               "text": "Average",
               "value": "avg"
             },
             {
-              "selected": true,
+              "selected": false,
               "text": "Median",
               "value": "quantile(0.5)"
             },
@@ -1874,135 +1912,143 @@
           ]
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT pageDomainName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT pageDomainName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "Hostname",
           "multi": true,
           "name": "pageDomainName",
           "options": [],
-          "query": "SELECT pageDomainName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT pageDomainName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT pageGroupName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageGroupName) GROUP BY pageGroupName ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT pageGroupName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(pageGroupName) GROUP BY pageGroupName \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "Page Group Name",
           "multi": true,
           "name": "pageGroupName",
           "options": [],
-          "query": "SELECT pageGroupName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageGroupName) GROUP BY pageGroupName ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT pageGroupName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(pageGroupName) GROUP BY pageGroupName \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT beaconTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT beaconTypeName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName \nORDER BY count()\nDESC LIMIT 50",
           "includeAll": true,
           "label": "Beacon Type",
           "multi": true,
           "name": "beaconTypeName",
           "options": [],
-          "query": "SELECT beaconTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT beaconTypeName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName \nORDER BY count()\nDESC LIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT isp FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(isp) GROUP BY isp ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT isp \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(isp) \nGROUP BY isp \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "multi": true,
           "name": "isp",
           "options": [],
-          "query": "SELECT isp FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(isp) GROUP BY isp ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT isp \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(isp) \nGROUP BY isp \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT countryCode FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(countryCode) GROUP BY countryCode ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT countryCode \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(countryCode) \nGROUP BY countryCode \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "Country",
           "multi": true,
           "name": "countryCode",
           "options": [],
-          "query": "SELECT countryCode FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(countryCode) GROUP BY countryCode ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT countryCode \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(countryCode) \nGROUP BY countryCode \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT regionCode FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(regionCode) GROUP BY regionCode ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT regionCode \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(regionCode) \nGROUP BY regionCode \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "State",
           "multi": true,
           "name": "regionCode",
           "options": [],
-          "query": "SELECT regionCode FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(regionCode) GROUP BY regionCode ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT regionCode \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(regionCode) \nGROUP BY regionCode \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT geoCity FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(geoCity) GROUP BY geoCity ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT geoCity \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(geoCity) \nGROUP BY geoCity \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "City",
           "multi": true,
           "name": "geoCity",
           "options": [],
-          "query": "SELECT geoCity FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(geoCity) GROUP BY geoCity ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT geoCity \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(geoCity) \nGROUP BY geoCity \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT deviceTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(deviceTypeName) GROUP BY deviceTypeName ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT deviceTypeName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(deviceTypeName) GROUP BY deviceTypeName \nORDER BY count() DESC \nLIMIT 10",
           "includeAll": true,
           "multi": true,
           "name": "deviceTypeName",
           "options": [],
-          "query": "SELECT deviceTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(deviceTypeName) GROUP BY deviceTypeName ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT deviceTypeName \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(deviceTypeName) GROUP BY deviceTypeName \nORDER BY count() DESC \nLIMIT 10",
           "refresh": 1,
           "regex": "",
           "type": "query"
@@ -2044,40 +2090,22 @@
           "type": "textbox"
         },
         {
+          "allowCustomValue": false,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "definition": "SELECT paramsU FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(paramsU) GROUP BY paramsU ORDER BY count() DESC LIMIT 50",
+          "definition": "SELECT paramsU \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(paramsU) \nGROUP BY paramsU \nORDER BY count() DESC \nLIMIT 50",
           "includeAll": true,
           "label": "URL",
           "multi": true,
           "name": "paramsU",
           "options": [],
-          "query": "SELECT paramsU FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(paramsU) GROUP BY paramsU ORDER BY count() DESC LIMIT 50",
+          "query": "SELECT paramsU \nFROM ${mpulse} \nWHERE $__timeFilter(timestamp) AND notEmpty(paramsU) \nGROUP BY paramsU \nORDER BY count() DESC \nLIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
         }
       ]
     },
@@ -2097,15 +2125,15 @@
       ]
     },
     "timezone": "browser",
-    "title": "mPulse Performance by Group",
-    "uid": "__DASHBOARD_UUID__",
-    "version": 4,
+    "title": "mPulse Page Weight by Group",
+    "uid": "ce2lcdrvpwt1cf-mPulse",
+    "version": 2,
     "weekStart": ""
   },
   "__inputs": [
     {
       "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
-      "label": "hydrolix-hydrolix-datasource",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",

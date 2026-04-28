@@ -262,6 +262,8 @@ def _extract_sample_data(data, tinfo, config, state):
         normalized = sample_data[0]
     elif isinstance(sample_data, dict):
         normalized = sample_data
+    elif isinstance(sample_data, str):
+        normalized = sample_data
     else:
         state.errors.append(
             f"Unexpected sample_data type in '{os.path.basename(tinfo.final_path)}': "
@@ -274,7 +276,8 @@ def _extract_sample_data(data, tinfo, config, state):
 
     # Write sample_data.json (shift stale timestamps only on real runs)
     if not config.dry_run:
-        _shift_stale_timestamps(normalized, data, tinfo, config)
+        if isinstance(normalized, dict):
+            _shift_stale_timestamps(normalized, data, tinfo, config)
         write_json(tinfo.sample_data_path, normalized)
         state.files_created.append(tinfo.sample_data_path)
 

@@ -1,14 +1,38 @@
 {
   "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
+    "__inputs": [
+      {
+        "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+        "label": "hydrolix-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_MPULSE",
+        "type": "constant",
+        "label": "mpulse",
+        "value": "akamai.mpulse",
+        "description": ""
+      },
+      {
+        "name": "VAR_LOGS",
+        "type": "constant",
+        "label": "logs",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
       }
-    },
+    ],
+    "__elements": {},
     "__requires": [
+      {
+        "type": "panel",
+        "id": "geomap",
+        "name": "Geomap",
+        "version": ""
+      },
       {
         "type": "grafana",
         "id": "grafana",
@@ -69,40 +93,26 @@
     "links": [],
     "panels": [
       {
-        "description": "",
         "gridPos": {
           "h": 3,
           "w": 24,
           "x": 0,
           "y": 0
         },
-        "id": 36,
+        "id": 20,
         "options": {
           "code": {
             "language": "plaintext",
             "showLineNumbers": false,
             "showMiniMap": false
           },
-          "content": "Understand how your pages perform based on Google's key usability metrics: LCP (Largest Contentful Paint), INP (Interaction to Next Paint), CLS (Cumulative layout Shift).",
+          "content": "Provides an overview of site volume and performance and session metrics (session length, session duration, bounce rate)",
           "mode": "markdown"
         },
         "pluginVersion": "12.0.2",
         "title": "Description",
         "transparent": true,
         "type": "text"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 3
-        },
-        "id": 33,
-        "panels": [],
-        "title": "Core Web Vitals",
-        "type": "row"
       },
       {
         "datasource": {
@@ -123,11 +133,15 @@
                 },
                 {
                   "color": "yellow",
-                  "value": 2500
+                  "value": 100
+                },
+                {
+                  "color": "orange",
+                  "value": 200
                 },
                 {
                   "color": "red",
-                  "value": 4000
+                  "value": 300
                 }
               ]
             }
@@ -148,10 +162,10 @@
           ]
         },
         "gridPos": {
-          "h": 4,
-          "w": 5,
+          "h": 3,
+          "w": 3,
           "x": 0,
-          "y": 4
+          "y": 3
         },
         "id": 1,
         "options": {
@@ -161,7 +175,9 @@
           "orientation": "auto",
           "percentChangeColorMode": "standard",
           "reduceOptions": {
-            "calcs": [],
+            "calcs": [
+              "lastNotNull"
+            ],
             "fields": "",
             "values": false
           },
@@ -190,11 +206,11 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(largestContentfulPaint) as timer\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=LCP; du=${__user.login}'",
+            "rawSql": "SELECT ${aggregation}(firstByteTimer) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Back-End Time; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "LCP",
+        "title": "Back-End Time",
         "type": "stat"
       },
       {
@@ -202,6 +218,7 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
+        "description": "",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -216,11 +233,15 @@
                 },
                 {
                   "color": "yellow",
-                  "value": 2500
+                  "value": 1000
+                },
+                {
+                  "color": "orange",
+                  "value": 2000
                 },
                 {
                   "color": "red",
-                  "value": 4000
+                  "value": 3000
                 }
               ]
             }
@@ -229,24 +250,24 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "% LCP"
+                "options": "timer"
               },
               "properties": [
                 {
                   "id": "unit",
-                  "value": "percentunit"
+                  "value": "ms"
                 }
               ]
             }
           ]
         },
         "gridPos": {
-          "h": 4,
+          "h": 3,
           "w": 3,
-          "x": 5,
-          "y": 4
+          "x": 3,
+          "y": 3
         },
-        "id": 27,
+        "id": 2,
         "options": {
           "colorMode": "value",
           "graphMode": "area",
@@ -285,11 +306,11 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT countIf(largestContentfulPaint>0)/count(*) as \"% LCP\"\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=% with LCP; du=${__user.login}'",
+            "rawSql": "SELECT ${aggregation}(firstLastByteTimer) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Front-End Time; du=${__user.login}'\n\n",
             "refId": "A"
           }
         ],
-        "title": "% with LCP",
+        "title": "Front-End Time",
         "type": "stat"
       },
       {
@@ -297,7 +318,6 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "Interaction to Next Paint. Good: <200ms , Poor: > 500ms",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -308,15 +328,23 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "dark-green"
+                },
+                {
+                  "color": "green",
+                  "value": 2000
                 },
                 {
                   "color": "yellow",
-                  "value": 2500
+                  "value": 4000
+                },
+                {
+                  "color": "orange",
+                  "value": 6000
                 },
                 {
                   "color": "red",
-                  "value": 4000
+                  "value": 8000
                 }
               ]
             }
@@ -337,106 +365,12 @@
           ]
         },
         "gridPos": {
-          "h": 4,
-          "w": 5,
-          "x": 8,
-          "y": 4
-        },
-        "id": 22,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [],
-            "fields": "",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(interactionToNextPaint) as timer\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=INP; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "INP",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Interaction to Next Paint. Good: <200ms , Poor: > 500ms",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "% with INP"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percent"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
+          "h": 3,
           "w": 3,
-          "x": 13,
-          "y": 4
+          "x": 6,
+          "y": 3
         },
-        "id": 28,
+        "id": 3,
         "options": {
           "colorMode": "value",
           "graphMode": "area",
@@ -475,1156 +409,12 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT countIf(interactionToNextPaint>0)/count(*) as \"% with INP\"\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=% with INP; du=${__user.login}'\n",
+            "rawSql": "SELECT ${aggregation}(pageLoadTime) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Load Time; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "% with INP",
+        "title": "Page Load Time",
         "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Cumulative Layout Shift. Good: <.1 , Poor: > .25",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 5,
-          "x": 16,
-          "y": 4
-        },
-        "id": 23,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [],
-            "fields": "",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(cumulativeLayoutShift) as timer\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CLS; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "CLS",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Cumulative Layout Shift. Good: <.1 , Poor: > .25",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "% with CLS"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percentunit"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 3,
-          "x": 21,
-          "y": 4
-        },
-        "id": 29,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT countIf(cumulativeLayoutShift>0)/count(*) as \"% with CLS\"\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=% with CLS; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "% with CLS",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "timer"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 5,
-          "w": 8,
-          "x": 0,
-          "y": 8
-        },
-        "id": 24,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(largestContentfulPaint) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=LCP by Time; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "LCP",
-        "type": "timeseries"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Interaction to Next Paint. Good: <200ms , Poor: > 500ms",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "timer"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 5,
-          "w": 8,
-          "x": 8,
-          "y": 8
-        },
-        "id": 25,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(interactionToNextPaint) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=INP by Time; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "INP",
-        "type": "timeseries"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Cumulative Layout Shift. Good: <.1 , Poor: > .25",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 5,
-          "w": 8,
-          "x": 16,
-          "y": 8
-        },
-        "id": 26,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(cumulativeLayoutShift) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CLS by Time; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "CLS",
-        "type": "timeseries"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "timer"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "cwvLcpElement"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 238
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 8,
-          "x": 0,
-          "y": 13
-        },
-        "id": 30,
-        "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true,
-          "sortBy": []
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT cwvLcpElement,\ncount(*) as count\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by cwvLcpElement\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=LCP Element; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "LCP Element",
-        "type": "table"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "timer"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 8,
-          "x": 8,
-          "y": 13
-        },
-        "id": 31,
-        "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT cwvInpElement,\ncount(*) as count\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by cwvInpElement\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=INP Element; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "INP Element",
-        "type": "table"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "yellow",
-                  "value": 2500
-                },
-                {
-                  "color": "red",
-                  "value": 4000
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "timer"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 8,
-          "x": 16,
-          "y": 13
-        },
-        "id": 32,
-        "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT cwvClsElement,\ncount(*) as count\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by cwvClsElement\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CLS Element; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "CLS Element",
-        "type": "table"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Measured values for Core Web Vitals items, as well as what percent of beacons contained a non-zero value for that measurement.",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "LCP"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                },
-                {
-                  "id": "custom.cellOptions",
-                  "value": {
-                    "mode": "gradient",
-                    "type": "color-background"
-                  }
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green"
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 2500
-                      },
-                      {
-                        "color": "red",
-                        "value": 4000
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "INP"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "ms"
-                },
-                {
-                  "id": "custom.cellOptions",
-                  "value": {
-                    "mode": "gradient",
-                    "type": "color-background"
-                  }
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green"
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 200
-                      },
-                      {
-                        "color": "red",
-                        "value": 500
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "CLS"
-              },
-              "properties": [
-                {
-                  "id": "custom.cellOptions",
-                  "value": {
-                    "mode": "gradient",
-                    "type": "color-background"
-                  }
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green"
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 10
-                      },
-                      {
-                        "color": "red",
-                        "value": 25
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "count"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 87
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "PageLoad"
-              },
-              "properties": [
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green"
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 3000
-                      },
-                      {
-                        "color": "red",
-                        "value": 5000
-                      }
-                    ]
-                  }
-                },
-                {
-                  "id": "unit",
-                  "value": "ms"
-                },
-                {
-                  "id": "custom.cellOptions",
-                  "value": {
-                    "type": "color-background"
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "paramsU"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 480
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byRegexp",
-                "options": "/%.*/"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percentunit"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "% LCP"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 78
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "% INP"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 84
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "% CLS"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 91
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 6,
-          "w": 24,
-          "x": 0,
-          "y": 17
-        },
-        "id": 16,
-        "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true,
-          "sortBy": []
-        },
-        "pluginVersion": "12.0.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "SELECT \n  ${groupBy} as ${groupBy},\n  count(*) as count,\n  ${aggregation}(largestContentfulPaint) as LCP,\n  countIf(largestContentfulPaint>0)/count(*) as \"% LCP\",\n  ${aggregation}(interactionToNextPaint) as INP,\n  countIf(interactionToNextPaint>0)/count(*) as \"% INP\",\n  ${aggregation}(cumulativeLayoutShift) as CLS,\n  countIf(cumulativeLayoutShift>0)/count(*) as \"% CLS\",\n  ${aggregation}(pageLoadTime) as PageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by ${groupBy}\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CWV by ...; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "CWV by ${groupBy}",
-        "type": "table"
       },
       {
         "datasource": {
@@ -1714,10 +504,10 @@
           ]
         },
         "gridPos": {
-          "h": 7,
+          "h": 6,
           "w": 7,
-          "x": 0,
-          "y": 23
+          "x": 9,
+          "y": 3
         },
         "id": 14,
         "options": {
@@ -1754,12 +544,927 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT ${aggregation}(pageLoadTime) as pageLoad,\ncount(*) as pageViews,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=PageLoadTime; du=${__user.login}'",
+            "rawSql": "SELECT ${aggregation}(pageLoadTime) as pageLoad,\ncount(*) as pageViews,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=PageLoadTime by Time; du=${__user.login}'\n",
             "refId": "PageLoadTime"
           }
         ],
         "title": "PageLoadTime",
         "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pageViews"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 16,
+          "y": 3
+        },
+        "id": 10,
+        "options": {
+          "colorMode": "none",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT count(*) as pageViews,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Views; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Page Views",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "sessions"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 20,
+          "y": 3
+        },
+        "id": 11,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT count(distinct(sessionId)) as sessions\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Sessions; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Sessions",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "timer"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 0,
+          "y": 6
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT ${aggregation}(dnsTimer) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=DNS; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "DNS",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "timer"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 3,
+          "y": 6
+        },
+        "id": 5,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT ${aggregation}(tcpTimer) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time \norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=TCP; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "TCP",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "timer"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 3,
+          "x": 6,
+          "y": 6
+        },
+        "id": 6,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT ${aggregation}(sslTimer) as timer,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=TLS; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "TLS",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Avg # of pages viewed in a session.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "sessions"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 16,
+          "y": 6
+        },
+        "id": 12,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "with sessionTable as (\n  SELECT sessionId,max(sessionPages) as sessionPages\n  FROM ${mpulse}\n  where $__timeFilter(timestamp)\n  AND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n  group by sessionId\n  )\n\nselect avg(sessionPages) as avgSessionPages\nfrom sessionTable\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Session Length; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Session Length",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Avg (max(sessionLatest)-min(sessionStart))",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "avgsessionDuration"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 20,
+          "y": 6
+        },
+        "id": 17,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "with sessionTable as (\n  SELECT sessionId,max(sessionLatest) - min(sessionStart) as sessionDuration\n  FROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n  group by sessionId\n  )\n\nselect avg(sessionDuration) as avgsessionDuration\nfrom sessionTable\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Session Duration; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Session Duration",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pageLoad"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 9,
+          "x": 0,
+          "y": 9
+        },
+        "id": 7,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT countryCode,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by countryCode\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Country; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Country",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-green"
+                },
+                {
+                  "color": "green",
+                  "value": 1000
+                },
+                {
+                  "color": "super-light-green",
+                  "value": 2000
+                },
+                {
+                  "color": "yellow",
+                  "value": 3000
+                },
+                {
+                  "color": "orange",
+                  "value": 4000
+                },
+                {
+                  "color": "red",
+                  "value": 5000
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pageLoad"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 9,
+          "y": 9
+        },
+        "id": 15,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "osm-standard"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": true,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": false,
+                "style": {
+                  "color": {
+                    "field": "pageLoad",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "count",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "A"
+              },
+              "location": {
+                "gazetteer": "public/gazetteer/usa-states.json",
+                "lookup": "regionCode",
+                "mode": "lookup"
+              },
+              "name": "Layer 1",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "north-america",
+            "lat": 40,
+            "lon": -100,
+            "zoom": 4
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT ${aggregation}(pageLoadTime) as pageLoad,\ncount(*) as count,\nregionCode\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by regionCode\norder by count(*) desc\nLIMIT 60\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=PageLoadTime Map; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "PageLoadTime",
+        "type": "geomap"
       },
       {
         "datasource": {
@@ -1821,9 +1526,9 @@
         },
         "gridPos": {
           "h": 7,
-          "w": 9,
-          "x": 7,
-          "y": 23
+          "w": 8,
+          "x": 16,
+          "y": 9
         },
         "id": 9,
         "options": {
@@ -1860,7 +1565,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT operatingSystemName,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by operatingSystemName\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=OS; du=${__user.login}'",
+            "rawSql": "SELECT operatingSystemName,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by operatingSystemName\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=OS; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1876,8 +1581,14 @@
         "fieldConfig": {
           "defaults": {
             "color": {
-              "fixedColor": "green",
-              "mode": "fixed"
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
             },
             "mappings": [],
             "thresholds": {
@@ -1897,40 +1608,35 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "pageViews"
+                "options": "pageLoad"
               },
               "properties": [
                 {
                   "id": "unit",
-                  "value": "short"
+                  "value": "ms"
                 }
               ]
             }
           ]
         },
         "gridPos": {
-          "h": 3,
-          "w": 4,
-          "x": 16,
-          "y": 23
+          "h": 7,
+          "w": 9,
+          "x": 0,
+          "y": 16
         },
-        "id": 10,
+        "id": 8,
         "options": {
-          "colorMode": "none",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
               "sum"
             ],
-            "fields": "",
-            "values": false
+            "show": false
           },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
+          "showHeader": true
         },
         "pluginVersion": "12.0.2",
         "targets": [
@@ -1953,12 +1659,12 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT count(*) as pageViews,\n$__timeInterval(timestamp) as time\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\ngroup by time\norder by time asc\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Views; du=${__user.login}'",
+            "rawSql": "SELECT pageGroupName,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by pageGroupName\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Page Groups; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "Page Views",
-        "type": "stat"
+        "title": "Page Groups",
+        "type": "table"
       },
       {
         "datasource": {
@@ -1971,6 +1677,13 @@
             "color": {
               "mode": "thresholds"
             },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
             "mappings": [],
             "thresholds": {
               "mode": "absolute",
@@ -1989,40 +1702,60 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "sessions"
+                "options": "pageLoad"
               },
               "properties": [
                 {
                   "id": "unit",
-                  "value": "short"
+                  "value": "ms"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 91
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "deviceTypeName"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 136
                 }
               ]
             }
           ]
         },
         "gridPos": {
-          "h": 3,
-          "w": 4,
-          "x": 20,
-          "y": 23
+          "h": 7,
+          "w": 7,
+          "x": 9,
+          "y": 16
         },
-        "id": 11,
+        "id": 16,
         "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
             "fields": "",
-            "values": false
+            "reducer": [
+              "sum"
+            ],
+            "show": false
           },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
+          "showHeader": true,
+          "sortBy": []
         },
         "pluginVersion": "12.0.2",
         "targets": [
@@ -2045,115 +1778,29 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT uniq(sessionId) as sessions\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Sessions; du=${__user.login}'",
+            "rawSql": "SELECT deviceTypeName,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by deviceTypeName\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Device Type; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "Sessions",
-        "type": "stat"
+        "title": "Device Type",
+        "type": "table"
       },
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "Avg # of pages viewed in a session.",
         "fieldConfig": {
           "defaults": {
             "color": {
               "mode": "thresholds"
             },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green"
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "sessions"
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
               },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "short"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 4,
-          "x": 16,
-          "y": 26
-        },
-        "id": 12,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.0.0",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "editorType": "sql",
-            "format": 1,
-            "meta": {
-              "builderOptions": {
-                "columns": [],
-                "database": "",
-                "limit": 1000,
-                "mode": "list",
-                "queryType": "table",
-                "table": ""
-              }
-            },
-            "pluginVersion": "4.0.6",
-            "queryType": "table",
-            "rawSql": "with sessionTable as (\n  SELECT sessionId,max(sessionPages) as sessionPages\n  FROM ${mpulse}\n  where $__timeFilter(timestamp)\n  AND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\n  AND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\n  AND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n  ${filter}\n  ${baseFilter}\ngroup by sessionId\n  )\n\nselect avg(sessionPages) as avgSessionPages\nfrom sessionTable\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Session Length; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "Session Length",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Avg (max(sessionLatest)-min(sessionStart))",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
+              "inspect": false
             },
             "mappings": [],
             "thresholds": {
@@ -2173,7 +1820,7 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "avgsessionDuration"
+                "options": "pageLoad"
               },
               "properties": [
                 {
@@ -2181,34 +1828,42 @@
                   "value": "ms"
                 }
               ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 113
+                }
+              ]
             }
           ]
         },
         "gridPos": {
-          "h": 4,
-          "w": 4,
-          "x": 20,
-          "y": 26
+          "h": 7,
+          "w": 8,
+          "x": 16,
+          "y": 16
         },
-        "id": 17,
+        "id": 13,
         "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
             "fields": "",
-            "values": false
+            "reducer": [
+              "sum"
+            ],
+            "show": false
           },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
+          "showHeader": true,
+          "sortBy": []
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -2229,54 +1884,250 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "with sessionTable as (\n  SELECT sessionId,max(sessionLatest) - min(sessionStart) as sessionDuration\n  FROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\n${baseFilter}\n\ngroup by sessionId\n  )\n\nselect avg(sessionDuration) as avgsessionDuration\nfrom sessionTable\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Session Duration; du=${__user.login}'\n",
+            "rawSql": "SELECT userAgentName,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by userAgentName\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Browser; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "Session Duration",
-        "type": "stat"
+        "title": "Browser",
+        "type": "table"
       },
       {
-        "collapsed": true,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 30
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
         },
-        "id": 34,
-        "panels": [
-          {
-            "fieldConfig": {
-              "defaults": {},
-              "overrides": []
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
             },
-            "gridPos": {
-              "h": 11,
-              "w": 24,
-              "x": 0,
-              "y": 31
-            },
-            "id": 35,
-            "options": {
-              "code": {
-                "language": "plaintext",
-                "showLineNumbers": false,
-                "showMiniMap": false
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
               },
-              "content": "To learn more about Core Web Vitals and mPulse see this blog: [Akamai Blog | Measuring and Improving Core Web Vitals](https://www.akamai.com/blog/performance/measuring-improving-core-web-vitals#:~:text=Akamai%20mPulse%20RUM,-mPulse%20RUM%20is&text=As%20of%20September%202020%2C%20mPulse,not%20match%20Google%20results%20exactly)  ",
-              "mode": "markdown"
+              "inspect": false
             },
-            "pluginVersion": "12.0.0",
-            "title": "HELP and INFO",
-            "type": "text"
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pageLoad"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "url"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 555
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "custom.width"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 17,
+          "x": 0,
+          "y": 23
+        },
+        "id": 18,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT paramsU as url ,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by url\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top URLs (paramsU); du=${__user.login}'",
+            "refId": "A"
           }
         ],
-        "title": "Help",
-        "type": "row"
+        "title": "Top URLs (paramsU)",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pageLoad"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "url"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 555
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "count"
+              },
+              "properties": [
+                {
+                  "id": "custom.width"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 17,
+          "y": 23
+        },
+        "id": 19,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT appId ,count(*) as count,${aggregation}(pageLoadTime) as pageLoad\nFROM ${mpulse}\nwhere $__timeFilter(timestamp)\nAND if (empty ('${paramsU}'),true,paramsU like '${paramsU}')\nAND $__conditionalAll(beaconTypeName in (${beaconTypeName:sqlstring}),${beaconTypeName})\nAND $__conditionalAll(pageDomainName in (${pageDomainName:sqlstring}),${pageDomainName})\n${filter}\ngroup by appId\norder by count desc\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AppID; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "AppID",
+        "type": "table"
       }
     ],
-    "refresh": "",
     "schemaVersion": 41,
     "tags": [
       "core analysis",
@@ -2286,6 +2137,7 @@
     "templating": {
       "list": [
         {
+          "allowCustomValue": true,
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -2294,7 +2146,6 @@
           "definition": "SELECT pageDomainName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName ORDER BY count() DESC LIMIT 50",
           "includeAll": true,
           "label": "Page Domain Name",
-          "multi": true,
           "name": "pageDomainName",
           "options": [],
           "query": "SELECT pageDomainName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(pageDomainName) GROUP BY pageDomainName ORDER BY count() DESC LIMIT 50",
@@ -2304,8 +2155,8 @@
         },
         {
           "current": {
-            "text": "quantile(0.75)",
-            "value": "quantile(0.75)"
+            "text": "avg",
+            "value": "avg"
           },
           "description": "Select how the metrics should be calculated",
           "includeAll": false,
@@ -2323,7 +2174,7 @@
               "value": "quantile(0.25)"
             },
             {
-              "selected": false,
+              "selected": true,
               "text": "Average",
               "value": "avg"
             },
@@ -2333,7 +2184,7 @@
               "value": "quantile(0.5)"
             },
             {
-              "selected": true,
+              "selected": false,
               "text": "P75",
               "value": "quantile(0.75)"
             },
@@ -2411,69 +2262,6 @@
           "type": "textbox"
         },
         {
-          "current": {
-            "text": "pageGroupName",
-            "value": "pageGroupName"
-          },
-          "includeAll": false,
-          "label": "Group By",
-          "name": "groupBy",
-          "options": [
-            {
-              "selected": true,
-              "text": "Page Group",
-              "value": "pageGroupName"
-            },
-            {
-              "selected": false,
-              "text": "Device Type",
-              "value": "deviceTypeName"
-            },
-            {
-              "selected": false,
-              "text": "Country",
-              "value": "countryCode"
-            },
-            {
-              "selected": false,
-              "text": "URL",
-              "value": "paramsU"
-            },
-            {
-              "selected": false,
-              "text": "Browser",
-              "value": "userAgentName"
-            },
-            {
-              "selected": false,
-              "text": "Beacon Type",
-              "value": "beaconTypeName"
-            },
-            {
-              "selected": false,
-              "text": "Hostname",
-              "value": "pageDomainName"
-            },
-            {
-              "selected": false,
-              "text": "OS",
-              "value": "operatingSystemName"
-            },
-            {
-              "selected": false,
-              "text": "Browser",
-              "value": "userAgentName"
-            },
-            {
-              "selected": false,
-              "text": "Akamai Property Version",
-              "value": "akamaiPropertyVersionName"
-            }
-          ],
-          "query": "Page Group : pageGroupName , Device Type : deviceTypeName , Country : countryCode , URL : paramsU , Browser : userAgentName , Beacon Type : beaconTypeName ,  Hostname : pageDomainName , OS : operatingSystemName , Browser : userAgentName , Akamai Property Version : akamaiPropertyVersionName",
-          "type": "custom"
-        },
-        {
           "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -2481,53 +2269,12 @@
           },
           "definition": "SELECT beaconTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName ORDER BY count() DESC LIMIT 50",
           "includeAll": true,
-          "label": "Beacon Type",
-          "multi": true,
           "name": "beaconTypeName",
           "options": [],
           "query": "SELECT beaconTypeName FROM ${mpulse} WHERE $__timeFilter(timestamp) AND notEmpty(beaconTypeName) GROUP BY beaconTypeName ORDER BY count() DESC LIMIT 50",
           "refresh": 1,
           "regex": "",
           "type": "query"
-        },
-        {
-          "description": "A filter applied automatically to all queries to remove. Typically to remove calculation of unload beacons and other ",
-          "hide": 2,
-          "name": "baseFilter",
-          "query": "${VAR_BASEFILTER}",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "value": "${VAR_BASEFILTER}",
-            "text": "${VAR_BASEFILTER}",
-            "selected": false
-          },
-          "options": [
-            {
-              "value": "${VAR_BASEFILTER}",
-              "text": "${VAR_BASEFILTER}",
-              "selected": false
-            }
-          ]
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
         }
       ]
     },
@@ -2537,9 +2284,9 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "mPulse Core Web Vitals",
-    "uid": "__DASHBOARD_UUID__",
-    "version": 2,
+    "title": "mPulse DevOps",
+    "uid": "ddnafdkkbadxcd-mPulse",
+    "version": 4,
     "weekStart": ""
   },
   "__inputs": [
@@ -2557,13 +2304,6 @@
       "type": "constant",
       "label": "mpulse",
       "value": "akamai.mpulse",
-      "description": ""
-    },
-    {
-      "name": "VAR_BASEFILTER",
-      "type": "constant",
-      "label": "baseFilter",
-      "value": "and beaconTypeName != 'unload'",
       "description": ""
     },
     {
