@@ -1,6 +1,6 @@
-name: trafficpeak_bot_insights_cdn
+name: trafficpeak_bot_insights
 version: 1.1.9
-description: TRAFFICPEAK Bot Insights Cdn integration bundle
+description: TRAFFICPEAK Bot Insights integration bundle
 maintainer: Hydrolix Team <team@hydrolix.io>
 hydrolix:
   resources: hydrolix/resources.hdp.yaml
