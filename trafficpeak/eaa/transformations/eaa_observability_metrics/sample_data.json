@@ -1,0 +1,12 @@
+{
+  "name": "cpu",
+  "tags": {
+    "cpu": "cpu-total",
+    "agent_id": "2eac0600-b51d-11ee-8f04-0242c0a201"
+  },
+  "fields": {
+    "usage_idle": 90.26,
+    "usage_active": 9.74
+  },
+  "timestamp": 1775001600
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gc-eaa-forrestor-ActiveDirectory",
+  "dir_id": "dir://49L59MSsQcyeaRz6N8iKmA",
+  "status": 1,
+  "enabled": true,
+  "service": "ActiveDirectory",
+  "datetime": "2024-09-16T16:12:00.112396+00:00",
+  "last_sync": "2023-10-06T15:55:31.026068",
+  "conf_state": 1,
+  "sync_state": "Dirty",
+  "user_count": 8,
+  "group_count": 3,
+  "connector_count": 1,
+  "directory_status": "ok"
+}
