@@ -2295,5 +2295,37 @@
     "uid": "ddnafdkkbadxcd-mPulse",
     "version": 4,
     "weekStart": ""
-  }
+  },
+  "__inputs": [
+    {
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "hydrolix-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "value": "__DATASOURCE__"
+    },
+    {
+      "name": "VAR_MPULSE",
+      "type": "constant",
+      "label": "mpulse",
+      "value": "akamai.mpulse",
+      "description": ""
+    },
+    {
+      "name": "VAR_LOGS",
+      "type": "constant",
+      "label": "logs",
+      "value": "__PROJECT_NAME__.__TABLE_NAME__",
+      "description": ""
+    },
+    {
+      "name": "VAR_SIEM",
+      "type": "constant",
+      "label": "siem",
+      "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
+      "description": ""
+    }
+  ]
 }
