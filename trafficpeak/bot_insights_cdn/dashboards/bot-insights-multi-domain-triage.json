@@ -1,13 +1,94 @@
 {
   "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
+    "__inputs": [
+      {
+        "description": "",
+        "label": "hydrolix-hydrolix-datasource",
+        "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "type": "datasource",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "description": "",
+        "label": "raw_logs",
+        "name": "VAR_RAW_LOGS",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__"
+      },
+      {
+        "description": "",
+        "label": "summary_hour",
+        "name": "VAR_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "summary_day",
+        "name": "VAR_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "siem_summary_hour",
+        "name": "VAR_SIEM_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "siem_summary_day",
+        "name": "VAR_SIEM_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_DAY",
+        "name": "VAR_BOT_SIEM_CLASS_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_HOUR",
+        "name": "VAR_BOT_SIEM_CLASS_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_MINUTE",
+        "name": "VAR_BOT_SIEM_CLASS_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_DS2",
+        "name": "VAR_DS2",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__"
+      },
+      {
+        "description": "",
+        "label": "VAR_SIEM",
+        "name": "VAR_SIEM",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__"
+      },
+      {
+        "name": "VAR_LOGS",
+        "type": "constant",
+        "label": "logs",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
       }
-    },
+    ],
+    "__elements": {},
     "__requires": [
       {
         "id": "grafana",
@@ -1664,7 +1745,7 @@
     "style": "dark",
     "tags": [
       "bot-insights-1.1",
-      "__PROJECT_NAME__"
+      "akamai"
     ],
     "templating": {
       "list": [
@@ -1675,8 +1756,14 @@
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
-          "label": "table_name",
-          "name": "table_name",
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
           "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
@@ -1688,8 +1775,14 @@
             "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__"
           },
           "hide": 2,
-          "label": "siem_table_name",
-          "name": "siem_table_name",
+          "name": "siem_raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__"
+            }
+          ],
           "query": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
@@ -1697,169 +1790,131 @@
         {
           "current": {
             "selected": false,
-            "text": "${VAR_DS2}",
-            "value": "${VAR_DS2}"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "${VAR_DS2}",
-              "value": "${VAR_DS2}"
-            }
-          ],
-          "query": "${VAR_DS2}",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "${VAR_SIEM}",
-            "value": "${VAR_SIEM}"
-          },
-          "hide": 2,
-          "name": "siem_raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "${VAR_SIEM}",
-              "value": "${VAR_SIEM}"
-            }
-          ],
-          "query": "${VAR_SIEM}",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
           },
           "hide": 2,
           "name": "summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_HOUR}",
-              "value": "${VAR_SUMMARY_HOUR}"
+              "text": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
+              "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
             }
           ],
-          "query": "${VAR_SUMMARY_HOUR}",
+          "query": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_SUMMARY_DAY}",
-            "value": "${VAR_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
+            "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
           },
           "hide": 2,
           "name": "summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_DAY}",
-              "value": "${VAR_SUMMARY_DAY}"
+              "text": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
+              "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
             }
           ],
-          "query": "${VAR_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_SIEM_SUMMARY_HOUR}",
-            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
           },
           "hide": 2,
           "name": "siem_summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SIEM_SUMMARY_HOUR}",
-              "value": "${VAR_SIEM_SUMMARY_HOUR}"
+              "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
+              "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
             }
           ],
-          "query": "${VAR_SIEM_SUMMARY_HOUR}",
+          "query": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_SIEM_SUMMARY_DAY}",
-            "value": "${VAR_SIEM_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
           },
           "hide": 2,
           "name": "siem_summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SIEM_SUMMARY_DAY}",
-              "value": "${VAR_SIEM_SUMMARY_DAY}"
+              "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
+              "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
             }
           ],
-          "query": "${VAR_SIEM_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_BOT_SIEM_CLASS_MINUTE}",
-            "value": "${VAR_BOT_SIEM_CLASS_MINUTE}"
+            "text": "__BOT_SIEM_CLASS_MINUTE__",
+            "value": "__BOT_SIEM_CLASS_MINUTE__"
           },
           "hide": 2,
           "name": "siem_class_summary_minute",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_SIEM_CLASS_MINUTE}",
-              "value": "${VAR_BOT_SIEM_CLASS_MINUTE}"
+              "text": "__BOT_SIEM_CLASS_MINUTE__",
+              "value": "__BOT_SIEM_CLASS_MINUTE__"
             }
           ],
-          "query": "${VAR_BOT_SIEM_CLASS_MINUTE}",
+          "query": "__BOT_SIEM_CLASS_MINUTE__",
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
-            "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+            "text": "__BOT_SIEM_CLASS_HOUR__",
+            "value": "__BOT_SIEM_CLASS_HOUR__"
           },
           "hide": 2,
           "name": "siem_class_summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
-              "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+              "text": "__BOT_SIEM_CLASS_HOUR__",
+              "value": "__BOT_SIEM_CLASS_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_SIEM_CLASS_HOUR}",
+          "query": "__BOT_SIEM_CLASS_HOUR__",
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_BOT_SIEM_CLASS_DAY}",
-            "value": "${VAR_BOT_SIEM_CLASS_DAY}"
+            "text": "__BOT_SIEM_CLASS_DAY__",
+            "value": "__BOT_SIEM_CLASS_DAY__"
           },
           "hide": 2,
           "name": "siem_class_summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_SIEM_CLASS_DAY}",
-              "value": "${VAR_BOT_SIEM_CLASS_DAY}"
+              "text": "__BOT_SIEM_CLASS_DAY__",
+              "value": "__BOT_SIEM_CLASS_DAY__"
             }
           ],
-          "query": "${VAR_BOT_SIEM_CLASS_DAY}",
+          "query": "__BOT_SIEM_CLASS_DAY__",
           "type": "constant"
         },
         {
@@ -1880,8 +1935,8 @@
         },
         {
           "current": {
-            "text": "${VAR_SIEM_SUMMARY_HOUR}",
-            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -1896,8 +1951,8 @@
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
-            "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+            "text": "__BOT_SIEM_CLASS_HOUR__",
+            "value": "__BOT_SIEM_CLASS_HOUR__"
           },
           "hide": 2,
           "name": "siem_class_summary_table",
@@ -1908,8 +1963,8 @@
         },
         {
           "current": {
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",

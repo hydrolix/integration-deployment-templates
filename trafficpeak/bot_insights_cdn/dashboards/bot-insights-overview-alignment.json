@@ -1,13 +1,227 @@
 {
   "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
+    "__inputs": [
+      {
+        "description": "",
+        "label": "hydrolix-hydrolix-datasource",
+        "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "type": "datasource",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "description": "Raw bot_detection table",
+        "label": "raw_logs",
+        "name": "VAR_RAW_LOGS",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__"
+      },
+      {
+        "description": "Hourly summary table",
+        "label": "summary_hour",
+        "name": "VAR_BOT_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
+      },
+      {
+        "description": "Daily summary table",
+        "label": "summary_day",
+        "name": "VAR_BOT_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BI_SUMMARY_MINUTE",
+        "name": "VAR_BI_SUMMARY_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_ASN_DAY",
+        "name": "VAR_BOT_AGG_ASN_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_ASN_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_ASN_HOUR",
+        "name": "VAR_BOT_AGG_ASN_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_ASN_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_ASN_MINUTE",
+        "name": "VAR_BOT_AGG_ASN_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_ASN_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_DAY",
+        "name": "VAR_BOT_AGG_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_HOUR",
+        "name": "VAR_BOT_AGG_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_MINUTE",
+        "name": "VAR_BOT_AGG_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_TRAFFIC_DAY",
+        "name": "VAR_BOT_AGG_TRAFFIC_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_TRAFFIC_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_TRAFFIC_HOUR",
+        "name": "VAR_BOT_AGG_TRAFFIC_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_TRAFFIC_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_TRAFFIC_MINUTE",
+        "name": "VAR_BOT_AGG_TRAFFIC_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_TRAFFIC_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_UA_DAY",
+        "name": "VAR_BOT_AGG_UA_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_UA_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_UA_HOUR",
+        "name": "VAR_BOT_AGG_UA_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_UA_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_AGG_UA_MINUTE",
+        "name": "VAR_BOT_AGG_UA_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_AGG_UA_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_DAY",
+        "name": "VAR_BOT_SIEM_CLASS_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_HOUR",
+        "name": "VAR_BOT_SIEM_CLASS_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_CLASS_MINUTE",
+        "name": "VAR_BOT_SIEM_CLASS_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_CLASS_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_FILTER_SUMMARY_DAY",
+        "name": "VAR_BOT_SIEM_FILTER_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_FILTER_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_FILTER_SUMMARY_HOUR",
+        "name": "VAR_BOT_SIEM_FILTER_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_FILTER_SUMMARY_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_FILTER_SUMMARY_MINUTE",
+        "name": "VAR_BOT_SIEM_FILTER_SUMMARY_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BOT_SIEM_FILTER_SUMMARY_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_BOT_SIEM_SUMMARY_MINUTE",
+        "name": "VAR_BOT_SIEM_SUMMARY_MINUTE",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_MINUTE__"
+      },
+      {
+        "description": "",
+        "label": "VAR_DS2",
+        "name": "VAR_DS2",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__"
+      },
+      {
+        "description": "",
+        "label": "VAR_SIEM_SUMMARY_DAY",
+        "name": "VAR_SIEM_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_SIEM_SUMMARY_HOUR",
+        "name": "VAR_SIEM_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
+      },
+      {
+        "description": "",
+        "label": "VAR_SUMMARY_DAY",
+        "name": "VAR_SUMMARY_DAY",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
+      },
+      {
+        "description": "",
+        "label": "VAR_SUMMARY_HOUR",
+        "name": "VAR_SUMMARY_HOUR",
+        "type": "constant",
+        "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
+      },
+      {
+        "name": "VAR_LOGS",
+        "type": "constant",
+        "label": "logs",
+        "value": "__PROJECT_NAME__.__TABLE_NAME__",
+        "description": ""
+      },
+      {
+        "name": "VAR_SIEM",
+        "type": "constant",
+        "label": "siem",
+        "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
+        "description": ""
       }
-    },
+    ],
+    "__elements": {},
     "__requires": [
       {
         "id": "grafana",
@@ -1953,236 +2167,210 @@
     "schemaVersion": 41,
     "tags": [
       "bot-insights-1.1",
-      "__PROJECT_NAME__"
+      "akamai"
     ],
     "templating": {
       "list": [
         {
           "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "label": "table_name",
-          "name": "table_name",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__"
-          },
-          "hide": 2,
-          "label": "siem_table_name",
-          "name": "siem_table_name",
-          "query": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "text": "__PROJECT_NAME__",
-            "value": "__PROJECT_NAME__"
+            "text": "akamai",
+            "value": "akamai"
           },
           "hide": 2,
           "name": "project",
-          "query": "__PROJECT_NAME__",
+          "query": "akamai",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_DS2}",
-            "value": "${VAR_DS2}"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
           "name": "raw_table",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_DS2}",
-              "value": "${VAR_DS2}"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ],
-          "query": "${VAR_DS2}",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BI_SUMMARY_MINUTE}",
-            "value": "${VAR_BI_SUMMARY_MINUTE}"
+            "text": "__BI_SUMMARY_MINUTE__",
+            "value": "__BI_SUMMARY_MINUTE__"
           },
           "hide": 2,
           "name": "summary_minute",
-          "query": "${VAR_BI_SUMMARY_MINUTE}",
+          "query": "__BI_SUMMARY_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_SUMMARY_MINUTE}",
-            "value": "${VAR_BOT_SIEM_SUMMARY_MINUTE}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_MINUTE__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_MINUTE__"
           },
           "hide": 2,
           "name": "siem_summary_minute",
-          "query": "${VAR_BOT_SIEM_SUMMARY_MINUTE}",
+          "query": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_FILTER_SUMMARY_MINUTE}",
-            "value": "${VAR_BOT_SIEM_FILTER_SUMMARY_MINUTE}"
+            "text": "__BOT_SIEM_FILTER_SUMMARY_MINUTE__",
+            "value": "__BOT_SIEM_FILTER_SUMMARY_MINUTE__"
           },
           "hide": 2,
           "name": "siem_filter_summary_minute",
-          "query": "${VAR_BOT_SIEM_FILTER_SUMMARY_MINUTE}",
+          "query": "__BOT_SIEM_FILTER_SUMMARY_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
           },
           "hide": 2,
           "name": "summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_HOUR}",
-              "value": "${VAR_SUMMARY_HOUR}"
+              "text": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
+              "value": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__"
             }
           ],
-          "query": "${VAR_SUMMARY_HOUR}",
+          "query": "__PROJECT_NAME__.__BI_SUMMARY_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_SUMMARY_DAY}",
-            "value": "${VAR_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
+            "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
           },
           "hide": 2,
           "name": "summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SUMMARY_DAY}",
-              "value": "${VAR_SUMMARY_DAY}"
+              "text": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
+              "value": "__PROJECT_NAME__.__BI_SUMMARY_DAY__"
             }
           ],
-          "query": "${VAR_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__BI_SUMMARY_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_SIEM_SUMMARY_HOUR}",
-            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
           },
           "hide": 2,
           "name": "siem_summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SIEM_SUMMARY_HOUR}",
-              "value": "${VAR_SIEM_SUMMARY_HOUR}"
+              "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
+              "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__"
             }
           ],
-          "query": "${VAR_SIEM_SUMMARY_HOUR}",
+          "query": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_FILTER_SUMMARY_HOUR}",
-            "value": "${VAR_BOT_SIEM_FILTER_SUMMARY_HOUR}"
+            "text": "__BOT_SIEM_FILTER_SUMMARY_HOUR__",
+            "value": "__BOT_SIEM_FILTER_SUMMARY_HOUR__"
           },
           "hide": 2,
           "name": "siem_filter_summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_SIEM_FILTER_SUMMARY_HOUR}",
-              "value": "${VAR_BOT_SIEM_FILTER_SUMMARY_HOUR}"
+              "text": "__BOT_SIEM_FILTER_SUMMARY_HOUR__",
+              "value": "__BOT_SIEM_FILTER_SUMMARY_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_SIEM_FILTER_SUMMARY_HOUR}",
+          "query": "__BOT_SIEM_FILTER_SUMMARY_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_SIEM_SUMMARY_DAY}",
-            "value": "${VAR_SIEM_SUMMARY_DAY}"
+            "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
+            "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
           },
           "hide": 2,
           "name": "siem_summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_SIEM_SUMMARY_DAY}",
-              "value": "${VAR_SIEM_SUMMARY_DAY}"
+              "text": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
+              "value": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__"
             }
           ],
-          "query": "${VAR_SIEM_SUMMARY_DAY}",
+          "query": "__PROJECT_NAME__.__BI_SIEM_SUMMARY_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_FILTER_SUMMARY_DAY}",
-            "value": "${VAR_BOT_SIEM_FILTER_SUMMARY_DAY}"
+            "text": "__BOT_SIEM_FILTER_SUMMARY_DAY__",
+            "value": "__BOT_SIEM_FILTER_SUMMARY_DAY__"
           },
           "hide": 2,
           "name": "siem_filter_summary_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_SIEM_FILTER_SUMMARY_DAY}",
-              "value": "${VAR_BOT_SIEM_FILTER_SUMMARY_DAY}"
+              "text": "__BOT_SIEM_FILTER_SUMMARY_DAY__",
+              "value": "__BOT_SIEM_FILTER_SUMMARY_DAY__"
             }
           ],
-          "query": "${VAR_BOT_SIEM_FILTER_SUMMARY_DAY}",
+          "query": "__BOT_SIEM_FILTER_SUMMARY_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_CLASS_MINUTE}",
-            "value": "${VAR_BOT_SIEM_CLASS_MINUTE}"
+            "text": "__BOT_SIEM_CLASS_MINUTE__",
+            "value": "__BOT_SIEM_CLASS_MINUTE__"
           },
           "hide": 2,
           "name": "siem_class_summary_minute",
-          "query": "${VAR_BOT_SIEM_CLASS_MINUTE}",
+          "query": "__BOT_SIEM_CLASS_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
-            "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+            "text": "__BOT_SIEM_CLASS_HOUR__",
+            "value": "__BOT_SIEM_CLASS_HOUR__"
           },
           "hide": 2,
           "name": "siem_class_summary_hour",
-          "query": "${VAR_BOT_SIEM_CLASS_HOUR}",
+          "query": "__BOT_SIEM_CLASS_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_SIEM_CLASS_DAY}",
-            "value": "${VAR_BOT_SIEM_CLASS_DAY}"
+            "text": "__BOT_SIEM_CLASS_DAY__",
+            "value": "__BOT_SIEM_CLASS_DAY__"
           },
           "hide": 2,
           "name": "siem_class_summary_day",
-          "query": "${VAR_BOT_SIEM_CLASS_DAY}",
+          "query": "__BOT_SIEM_CLASS_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -2204,55 +2392,55 @@
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_HOUR}",
-            "value": "${VAR_BOT_AGG_HOUR}"
+            "text": "__BOT_AGG_HOUR__",
+            "value": "__BOT_AGG_HOUR__"
           },
           "hide": 2,
           "name": "agg_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_HOUR}",
-              "value": "${VAR_BOT_AGG_HOUR}"
+              "text": "__BOT_AGG_HOUR__",
+              "value": "__BOT_AGG_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_AGG_HOUR}",
+          "query": "__BOT_AGG_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_DAY}",
-            "value": "${VAR_BOT_AGG_DAY}"
+            "text": "__BOT_AGG_DAY__",
+            "value": "__BOT_AGG_DAY__"
           },
           "hide": 2,
           "name": "agg_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_DAY}",
-              "value": "${VAR_BOT_AGG_DAY}"
+              "text": "__BOT_AGG_DAY__",
+              "value": "__BOT_AGG_DAY__"
             }
           ],
-          "query": "${VAR_BOT_AGG_DAY}",
+          "query": "__BOT_AGG_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_MINUTE}",
-            "value": "${VAR_BOT_AGG_MINUTE}"
+            "text": "__BOT_AGG_MINUTE__",
+            "value": "__BOT_AGG_MINUTE__"
           },
           "hide": 2,
           "name": "agg_minute",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_MINUTE}",
-              "value": "${VAR_BOT_AGG_MINUTE}"
+              "text": "__BOT_AGG_MINUTE__",
+              "value": "__BOT_AGG_MINUTE__"
             }
           ],
-          "query": "${VAR_BOT_AGG_MINUTE}",
+          "query": "__BOT_AGG_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -2274,55 +2462,55 @@
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_ASN_HOUR}",
-            "value": "${VAR_BOT_AGG_ASN_HOUR}"
+            "text": "__BOT_AGG_ASN_HOUR__",
+            "value": "__BOT_AGG_ASN_HOUR__"
           },
           "hide": 2,
           "name": "agg_asn_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_ASN_HOUR}",
-              "value": "${VAR_BOT_AGG_ASN_HOUR}"
+              "text": "__BOT_AGG_ASN_HOUR__",
+              "value": "__BOT_AGG_ASN_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_AGG_ASN_HOUR}",
+          "query": "__BOT_AGG_ASN_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_ASN_DAY}",
-            "value": "${VAR_BOT_AGG_ASN_DAY}"
+            "text": "__BOT_AGG_ASN_DAY__",
+            "value": "__BOT_AGG_ASN_DAY__"
           },
           "hide": 2,
           "name": "agg_asn_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_ASN_DAY}",
-              "value": "${VAR_BOT_AGG_ASN_DAY}"
+              "text": "__BOT_AGG_ASN_DAY__",
+              "value": "__BOT_AGG_ASN_DAY__"
             }
           ],
-          "query": "${VAR_BOT_AGG_ASN_DAY}",
+          "query": "__BOT_AGG_ASN_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_ASN_MINUTE}",
-            "value": "${VAR_BOT_AGG_ASN_MINUTE}"
+            "text": "__BOT_AGG_ASN_MINUTE__",
+            "value": "__BOT_AGG_ASN_MINUTE__"
           },
           "hide": 2,
           "name": "agg_asn_minute",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_ASN_MINUTE}",
-              "value": "${VAR_BOT_AGG_ASN_MINUTE}"
+              "text": "__BOT_AGG_ASN_MINUTE__",
+              "value": "__BOT_AGG_ASN_MINUTE__"
             }
           ],
-          "query": "${VAR_BOT_AGG_ASN_MINUTE}",
+          "query": "__BOT_AGG_ASN_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -2344,55 +2532,55 @@
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_TRAFFIC_HOUR}",
-            "value": "${VAR_BOT_AGG_TRAFFIC_HOUR}"
+            "text": "__BOT_AGG_TRAFFIC_HOUR__",
+            "value": "__BOT_AGG_TRAFFIC_HOUR__"
           },
           "hide": 2,
           "name": "agg_traffic_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_TRAFFIC_HOUR}",
-              "value": "${VAR_BOT_AGG_TRAFFIC_HOUR}"
+              "text": "__BOT_AGG_TRAFFIC_HOUR__",
+              "value": "__BOT_AGG_TRAFFIC_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_AGG_TRAFFIC_HOUR}",
+          "query": "__BOT_AGG_TRAFFIC_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_TRAFFIC_DAY}",
-            "value": "${VAR_BOT_AGG_TRAFFIC_DAY}"
+            "text": "__BOT_AGG_TRAFFIC_DAY__",
+            "value": "__BOT_AGG_TRAFFIC_DAY__"
           },
           "hide": 2,
           "name": "agg_traffic_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_TRAFFIC_DAY}",
-              "value": "${VAR_BOT_AGG_TRAFFIC_DAY}"
+              "text": "__BOT_AGG_TRAFFIC_DAY__",
+              "value": "__BOT_AGG_TRAFFIC_DAY__"
             }
           ],
-          "query": "${VAR_BOT_AGG_TRAFFIC_DAY}",
+          "query": "__BOT_AGG_TRAFFIC_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_TRAFFIC_MINUTE}",
-            "value": "${VAR_BOT_AGG_TRAFFIC_MINUTE}"
+            "text": "__BOT_AGG_TRAFFIC_MINUTE__",
+            "value": "__BOT_AGG_TRAFFIC_MINUTE__"
           },
           "hide": 2,
           "name": "agg_traffic_minute",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_TRAFFIC_MINUTE}",
-              "value": "${VAR_BOT_AGG_TRAFFIC_MINUTE}"
+              "text": "__BOT_AGG_TRAFFIC_MINUTE__",
+              "value": "__BOT_AGG_TRAFFIC_MINUTE__"
             }
           ],
-          "query": "${VAR_BOT_AGG_TRAFFIC_MINUTE}",
+          "query": "__BOT_AGG_TRAFFIC_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -2414,55 +2602,55 @@
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_UA_HOUR}",
-            "value": "${VAR_BOT_AGG_UA_HOUR}"
+            "text": "__BOT_AGG_UA_HOUR__",
+            "value": "__BOT_AGG_UA_HOUR__"
           },
           "hide": 2,
           "name": "agg_ua_hour",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_UA_HOUR}",
-              "value": "${VAR_BOT_AGG_UA_HOUR}"
+              "text": "__BOT_AGG_UA_HOUR__",
+              "value": "__BOT_AGG_UA_HOUR__"
             }
           ],
-          "query": "${VAR_BOT_AGG_UA_HOUR}",
+          "query": "__BOT_AGG_UA_HOUR__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_UA_DAY}",
-            "value": "${VAR_BOT_AGG_UA_DAY}"
+            "text": "__BOT_AGG_UA_DAY__",
+            "value": "__BOT_AGG_UA_DAY__"
           },
           "hide": 2,
           "name": "agg_ua_day",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_UA_DAY}",
-              "value": "${VAR_BOT_AGG_UA_DAY}"
+              "text": "__BOT_AGG_UA_DAY__",
+              "value": "__BOT_AGG_UA_DAY__"
             }
           ],
-          "query": "${VAR_BOT_AGG_UA_DAY}",
+          "query": "__BOT_AGG_UA_DAY__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
-            "text": "${VAR_BOT_AGG_UA_MINUTE}",
-            "value": "${VAR_BOT_AGG_UA_MINUTE}"
+            "text": "__BOT_AGG_UA_MINUTE__",
+            "value": "__BOT_AGG_UA_MINUTE__"
           },
           "hide": 2,
           "name": "agg_ua_minute",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_BOT_AGG_UA_MINUTE}",
-              "value": "${VAR_BOT_AGG_UA_MINUTE}"
+              "text": "__BOT_AGG_UA_MINUTE__",
+              "value": "__BOT_AGG_UA_MINUTE__"
             }
           ],
-          "query": "${VAR_BOT_AGG_UA_MINUTE}",
+          "query": "__BOT_AGG_UA_MINUTE__",
           "skipUrlSync": true,
           "type": "constant"
         },
