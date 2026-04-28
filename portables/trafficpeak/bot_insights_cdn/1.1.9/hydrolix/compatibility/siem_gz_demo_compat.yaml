@@ -1,3 +1,0 @@
-# One-off compatibility patch for demo.trafficpeak.live / akamai.
-# Keep existing SIEM alias semantics while allowing additive Bot Insights fields.
-__extend__: siem_demo_compat.yaml

@@ -1,6 +1,0 @@
-__extend__: table_summary_base_defaults.yaml
-description: bi_summary_month
-settings:
-  summary:
-    sql:
-      __extend__: bi_summary_month.sql

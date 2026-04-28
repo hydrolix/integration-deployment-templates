@@ -1,0 +1,2442 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "id": "grafana",
+        "name": "Grafana",
+        "type": "grafana",
+        "version": "9.5.0"
+      },
+      {
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "type": "datasource",
+        "version": "0.6.0"
+      },
+      {
+        "id": "piechart",
+        "name": "Pie chart",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "stat",
+        "name": "Stat",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "table",
+        "name": "Table",
+        "type": "panel",
+        "version": ""
+      },
+      {
+        "id": "timeseries",
+        "name": "Time series",
+        "type": "panel",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "__DATASOURCE__"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Good-bot health and governance posture. L0 freshness + success rate + bot-health delta, L1 AI crawler attribution (sources, paths), L2 policy surface evidence and 429 watch.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "links": [
+      {
+        "asDropdown": true,
+        "icon": "external link",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "bot-insights-1.1"
+        ],
+        "targetBlank": false,
+        "title": "Bot Insights Suite",
+        "type": "dashboards"
+      }
+    ],
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 100,
+        "panels": [],
+        "title": "L0 \u2014 Crawl Health (Orientation)",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Minutes since most recent ingested event. LIVE = data flowing. STALE = pipeline delay. DOWN = no data.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 0,
+            "mappings": [
+              {
+                "options": {
+                  "from": 0,
+                  "result": {
+                    "text": "LIVE"
+                  },
+                  "to": 59
+                },
+                "type": "range"
+              }
+            ],
+            "noValue": "--",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#2DD4BF",
+                  "value": null
+                },
+                {
+                  "color": "#FCD34D",
+                  "value": 60
+                },
+                {
+                  "color": "#FB7185",
+                  "value": 360
+                }
+              ]
+            },
+            "unit": "m"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 8,
+          "x": 16,
+          "y": 1
+        },
+        "id": 1,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfHour(timestamp) AS time,\n  greatest(dateDiff('minute', max(timestamp), now()), 0) AS lag_minutes\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data freshness trend; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Data Lag",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "2xx success rate for governance pages (robots.txt, llms.txt). Should be above 98%. Below 90% is critical -- crawlers cannot discover your site policies.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 1,
+            "noValue": "--",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#FB7185",
+                  "value": null
+                },
+                {
+                  "color": "#FCD34D",
+                  "value": 90
+                },
+                {
+                  "color": "#2DD4BF",
+                  "value": 98
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 0,
+          "y": 1
+        },
+        "id": 2,
+        "links": [
+          {
+            "targetBlank": false,
+            "title": "Policy Surface Health (per-file breakdown)",
+            "url": "#panel-7"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfHour(timestamp) AS time,\n  cnt_2xx / greatest(cnt_all, 1) * 100 AS value\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND resource_category IN ('robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt')\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Policy page success rate trend; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Policy Page Success Rate",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "2xx success rate for known good bot families (Googlebot, Bingbot, Applebot, etc.). Target: above 98%. Any sustained 429 rate against good bots means rate-limiting rules are incorrectly scoped.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 1,
+            "noValue": "--",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#FB7185",
+                  "value": null
+                },
+                {
+                  "color": "#FCD34D",
+                  "value": 90
+                },
+                {
+                  "color": "#2DD4BF",
+                  "value": 98
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 8,
+          "y": 1
+        },
+        "id": 3,
+        "links": [
+          {
+            "targetBlank": false,
+            "title": "Good-Bot 429 Watch (per-bot detail)",
+            "url": "#panel-8"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  toStartOfHour(timestamp) AS time,\n  cnt_2xx / greatest(cnt_all, 1) * 100 AS value\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND bot_class IN ('search_engine_crawler', 'social_media_crawler', 'monitoring_bot')\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Good-bot health trend; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Good-Bot Health",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 5
+        },
+        "id": 101,
+        "panels": [],
+        "title": "L1 \u2014 AI Traffic Attribution",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "AI crawler volume by vendor over time. Each ai_category gets a distinct color. Trend shows whether AI pressure is growing, stable, or shifting between vendors.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisPlacement": "auto",
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "showPoints": "never",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "noValue": "--",
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "GPTBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#2DD4BF",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "ClaudeBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#88C9F2",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Bytespider"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#FB7185",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "CCBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#FCD34D",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 6
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "calcs": [
+              "sum",
+              "max",
+              "mean"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "sortBy": "Sum",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  timestamp AS time,\n  ai_category,\n  cnt_all AS vol\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND notEmpty(ai_category)\nGROUP BY time, ai_category\nORDER BY time\nLIMIT 10000\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI-labeled traffic trend; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "AI-Labeled Traffic Trend",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Share of AI crawler traffic by vendor for the current window. Donut shows relative proportion of each AI category.",
+        "fieldConfig": {
+          "defaults": {
+            "noValue": "--"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "GPTBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#2DD4BF",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "ClaudeBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#88C9F2",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Bytespider"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#FB7185",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "CCBot"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#FCD34D",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Google-Extended"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#374151",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 6
+        },
+        "id": 104,
+        "options": {
+          "displayLabels": [],
+          "legend": {
+            "calcs": [
+              "percent"
+            ],
+            "displayMode": "table",
+            "placement": "right"
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "/^vol$/",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "desc"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  ai_category,\n  cnt_all AS vol\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND notEmpty(ai_category)\nGROUP BY ai_category\nORDER BY vol DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI source composition donut; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "AI Source Composition",
+        "transparent": true,
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "ASNs ranked by AI crawler traffic volume, broken out by country.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "noValue": "--"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "client_asn"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "ASN"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": false,
+                      "title": "Investigate ASN in SOC",
+                      "url": "/d/bot-insights-soc-what-changed/bot-insights-soc-what-changed?${__url_time_range}&${__all_variables}&var-client_asn=${__data.fields.ASN}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "vol"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Volume"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "mode": "gradient",
+                    "type": "color-text",
+                    "valueDisplayMode": "text"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "transparent",
+                        "value": null
+                      },
+                      {
+                        "color": "#003D66",
+                        "value": 25
+                      },
+                      {
+                        "color": "#88C9F2",
+                        "value": 50
+                      },
+                      {
+                        "color": "#88C9F2",
+                        "value": 75
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "share_pct"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Share %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 2
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 14
+        },
+        "id": 5,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "vol"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "WITH filtered AS (\n  SELECT\n    client_asn,\n    client_country_iso_code\n  FROM ${raw_table}\n  WHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n    AND reqTimeSec < toDateTime(${__to:date:seconds})\n    AND $__adHocFilter()\n    AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n    AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n    AND notEmpty(ai_category)\n)\nSELECT\n  client_asn,\n  client_country_iso_code,\n  count() AS vol,\n  round(count() * 100.0 / greatest((SELECT count() FROM filtered), 1), 2) AS share_pct\nFROM filtered\nGROUP BY client_asn, client_country_iso_code\nORDER BY vol DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Top AI sources; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Top AI Sources (ASN + Country)",
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Request paths most targeted by AI crawlers. Shows which content is being scraped with AI share percentage.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "noValue": "--"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "request_path_norm"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Path"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 280
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": false,
+                      "title": "Investigate path in Edge/Ops",
+                      "url": "/d/bot-insights-edge-ops/bot-insights-edge-ops?${__url_time_range}&${__all_variables}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "vol"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Volume"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "mode": "gradient",
+                    "type": "color-text",
+                    "valueDisplayMode": "text"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "transparent",
+                        "value": null
+                      },
+                      {
+                        "color": "#003D66",
+                        "value": 25
+                      },
+                      {
+                        "color": "#88C9F2",
+                        "value": 50
+                      },
+                      {
+                        "color": "#88C9F2",
+                        "value": 75
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "ai_share_pct"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "AI Share %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 14
+        },
+        "id": 6,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "vol"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  request_path_norm,\n  countIf(notEmpty(ai_category)) AS vol,\n  round(countIf(notEmpty(ai_category)) * 100.0 / greatest(count(*), 1), 1) AS ai_share_pct\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND notEmpty(ai_category)\nGROUP BY request_path_norm\nORDER BY vol DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI targeting: top paths; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "AI Targeting \u2014 Top Paths",
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 22
+        },
+        "id": 102,
+        "panels": [],
+        "title": "L2 \u2014 Evidence (Governance + Good-Bot Safety)",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Status code breakdown for each governance endpoint type (robots.txt, sitemap.xml, ads.txt, llms.txt). One row per resource_category. Any non-2xx response is actionable.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "noValue": "--"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "resource_category"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Policy File"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Total"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pct_2xx"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "2xx %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#FB7185",
+                        "value": null
+                      },
+                      {
+                        "color": "#FCD34D",
+                        "value": 90
+                      },
+                      {
+                        "color": "#2DD4BF",
+                        "value": 98
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pct_4xx"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "4xx %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#2DD4BF",
+                        "value": null
+                      },
+                      {
+                        "color": "#FB7185",
+                        "value": 0.5
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pct_429"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "429 %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#2DD4BF",
+                        "value": null
+                      },
+                      {
+                        "color": "#F59E0B",
+                        "value": 0.01
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "pct_5xx"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "5xx %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                },
+                {
+                  "id": "custom.width",
+                  "value": 100
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#2DD4BF",
+                        "value": null
+                      },
+                      {
+                        "color": "#FB7185",
+                        "value": 0.5
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "request_path"
+              },
+              "properties": []
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 23
+        },
+        "id": 7,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "total"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  resource_category,\n  cnt_all AS total,\n  cnt_2xx / greatest(cnt_all, 1) * 100 AS pct_2xx,\n  cnt_4xx / greatest(cnt_all, 1) * 100 AS pct_4xx,\n  cnt_429 / greatest(cnt_all, 1) * 100 AS pct_429,\n  cnt_5xx / greatest(cnt_all, 1) * 100 AS pct_5xx\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND resource_category IN ('robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt')\nGROUP BY resource_category\nORDER BY total DESC\nLIMIT 100\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Policy surface health (status mix); du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Policy Surface Health",
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "429 rate by known good-bot family. Any sustained 429 rate against Googlebot or Bingbot means rate-limiting rules are incorrectly scoped and need immediate adjustment. Target: 0% for all good bots.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "noValue": "--"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "bot_class"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Bot Family"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 220
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": false,
+                      "title": "Filter to this bot family",
+                      "url": "/d/bot-insights-seo-governance/bot-insights-seo-governance?${__url_time_range}&${__all_variables}&var-filter=bot_class|=|${__data.fields[\"Bot Family\"]}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Total Requests"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 140
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cnt_429"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "429 Count"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "rate_429"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "429 Rate %"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 2
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "#2DD4BF",
+                        "value": null
+                      },
+                      {
+                        "color": "#FCD34D",
+                        "value": 0.01
+                      },
+                      {
+                        "color": "#F59E0B",
+                        "value": 1
+                      },
+                      {
+                        "color": "#FB7185",
+                        "value": 5
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 31
+        },
+        "id": 8,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "rate_429"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  bot_class,\n  cnt_all AS total,\n  cnt_429 AS cnt_429,\n  cnt_429 / greatest(cnt_all, 1) * 100 AS rate_429\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND bot_class IN ('search_engine_crawler', 'social_media_crawler', 'monitoring_bot')\nGROUP BY bot_class\nORDER BY rate_429 DESC, total DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Good-bot 429 watch; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Good-Bot 429 Watch",
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 39
+        },
+        "id": 105,
+        "panels": [],
+        "title": "+SIEM Enrichment",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "AI crawler behavior correlated with SIEM enforcement outcomes. Requires SIEM data source. Current SIEM summaries honor site and ASN only; traffic_type and bot_class are unavailable here.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "noValue": "NO SIEM"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "timestamp"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Timestamp"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 160
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "site"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Host"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "ai_category"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "AI Category"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 140
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "bot_class"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "UA Category"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 160
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "action_taken"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Action"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "auth_outcome"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Auth Outcome"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "response_status_code"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Status"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 80
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "client_asn"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": false,
+                      "title": "Filter by ${__data.fields.client_asn}",
+                      "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&${__all_variables}&var-client_asn=${__data.fields.client_asn}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 40
+        },
+        "id": 106,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Timestamp"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "-- AI Crawler SIEM Enrichment [+SIEM] \u2014 migrated to SIEM summary\n-- Aggregated view by policy_id and action_taken\n\nSELECT\n  policy_id,\n  action_taken,\n  total,\n  blocked,\n  auth_failures,\n  round(avg_score, 1) AS avg_bot_score\nFROM (\n  SELECT\n    policy_id,\n    action_taken,\n    cnt_all AS total,\n    cnt_blocked AS blocked,\n    cnt_auth_fail AS auth_failures,\n    avg_bot_score AS avg_score\n  FROM ${siem_summary_table}\n  WHERE timestamp >= toDateTime(${__from:date:seconds})\n    AND timestamp <= toDateTime(${__to:date:seconds})\n    AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n    AND '${siem_available}' = '1'\n  GROUP BY policy_id, action_taken\n)\nORDER BY total DESC\nLIMIT 100\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI crawler SIEM enrichment (summary); du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "AI Crawler SIEM Enrichment [+SIEM]",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Bot management action summary from SIEM data, grouped by action and policy ID. Requires SIEM data source. Current SIEM summaries honor site and ASN only; traffic_type and bot_class are unavailable here.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "noValue": "NO SIEM"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "action_taken"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Action"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "policy_id"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Policy ID"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Total"
+                },
+                {
+                  "id": "unit",
+                  "value": "short"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "avg_status"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Avg Status"
+                },
+                {
+                  "id": "decimals",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "client_asn"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": false,
+                      "title": "Filter by ${__data.fields.client_asn}",
+                      "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&${__all_variables}&var-client_asn=${__data.fields.client_asn}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 40
+        },
+        "id": 107,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Total"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "-- Bot Manager Action Summary [+SIEM] \u2014 migrated to SIEM summary\n\nSELECT\n  action_taken,\n  policy_id,\n  cnt_all AS total,\n  cnt_blocked AS blocked,\n  cnt_4xx AS client_errors,\n  cnt_5xx AS server_errors\nFROM ${siem_summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND notEmpty(action_taken)\n  AND '${siem_available}' = '1'\nGROUP BY action_taken, policy_id\nORDER BY total DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Bot manager action summary (summary); du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Bot Manager Action Summary [+SIEM]",
+        "type": "table"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 48
+        },
+        "id": 108,
+        "panels": [],
+        "title": "\u25b6 Raw Logs \u2014 Scoped Evidence",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Individual request records scoped by the active site, traffic, ASN, and bot-class filters. LIMIT 500, ORDER BY timestamp DESC. SEO-specific columns include ai_category, resource_category, and response_content_type.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "noValue": "Apply a filter to view raw logs"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "timestamp"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "client_ip"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 130
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "client_asn"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "request_method"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Method"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 70
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "site"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Host"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 160
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "request_path"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Path"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 200
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "response_status_code"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Status"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 60
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "bot_class"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Bot Class"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 140
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "user_agent_category"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "UA Category"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 160
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "user_agent_category_key"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "UA Category Key"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 170
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "ai_category"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "AI Category"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 130
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "resource_category"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Resource"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 120
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "response_content_type"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Content-Type"
+                },
+                {
+                  "id": "custom.width",
+                  "value": 140
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 24,
+          "x": 0,
+          "y": 49
+        },
+        "id": 109,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": true,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": true
+          },
+          "pageSize": 8,
+          "showHeader": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "queryType": "sql",
+            "rawSql": "SELECT\n  reqTimeSec AS timestamp,\n  client_ip,\n  client_asn,\n  request_method,\n  request_host,\n  request_path,\n  response_status_code,\n  bot_class,\n  user_agent_category,\n  ai_category,\n  resource_category,\n  response_content_type\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND $__conditionalAll(request_host IN (${site:sqlstring}), $site)\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:sqlstring}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:sqlstring}), $bot_class)\nORDER BY timestamp DESC\nLIMIT 500\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Raw logs scoped evidence; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "\u25b6 Raw Logs \u2014 Scoped Evidence",
+        "type": "table"
+      }
+    ],
+    "refresh": "5m",
+    "schemaVersion": 36,
+    "style": "dark",
+    "tags": [
+      "bot-insights-1.1",
+      "__PROJECT_NAME__"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "label": "table_name",
+          "name": "table_name",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__SIEM_TABLE_NAME__"
+          },
+          "hide": 2,
+          "label": "siem_table_name",
+          "name": "siem_table_name",
+          "query": "__PROJECT_NAME__.__SIEM_TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "${VAR_DS2}",
+            "value": "${VAR_DS2}"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_DS2}",
+              "value": "${VAR_DS2}"
+            }
+          ],
+          "query": "${VAR_DS2}",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "${VAR_SUMMARY_HOUR}",
+            "value": "${VAR_SUMMARY_HOUR}"
+          },
+          "hide": 2,
+          "name": "summary_hour",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_SUMMARY_HOUR}",
+              "value": "${VAR_SUMMARY_HOUR}"
+            }
+          ],
+          "query": "${VAR_SUMMARY_HOUR}",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "${VAR_SUMMARY_DAY}",
+            "value": "${VAR_SUMMARY_DAY}"
+          },
+          "hide": 2,
+          "name": "summary_day",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_SUMMARY_DAY}",
+              "value": "${VAR_SUMMARY_DAY}"
+            }
+          ],
+          "query": "${VAR_SUMMARY_DAY}",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_HOUR}",
+            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+          },
+          "hide": 2,
+          "name": "siem_summary_hour",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_SIEM_SUMMARY_HOUR}",
+              "value": "${VAR_SIEM_SUMMARY_HOUR}"
+            }
+          ],
+          "query": "${VAR_SIEM_SUMMARY_HOUR}",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_DAY}",
+            "value": "${VAR_SIEM_SUMMARY_DAY}"
+          },
+          "hide": 2,
+          "name": "siem_summary_day",
+          "options": [
+            {
+              "selected": false,
+              "text": "${VAR_SIEM_SUMMARY_DAY}",
+              "value": "${VAR_SIEM_SUMMARY_DAY}"
+            }
+          ],
+          "query": "${VAR_SIEM_SUMMARY_DAY}",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "text": "1",
+            "value": "1"
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 2,
+          "name": "duration",
+          "query": "SELECT greatest(dateDiff('hour', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS duration",
+          "refresh": 2,
+          "skipUrlSync": true,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "${VAR_SUMMARY_HOUR}",
+            "value": "${VAR_SUMMARY_HOUR}"
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 2,
+          "name": "summary_table",
+          "query": "SELECT if(${duration} <= 24, '${summary_hour}', '${summary_day}') AS summary_table",
+          "refresh": 2,
+          "skipUrlSync": true,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "${VAR_SIEM_SUMMARY_HOUR}",
+            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 2,
+          "name": "siem_summary_table",
+          "query": "SELECT if(${duration} <= 24, '${siem_summary_hour}', '${siem_summary_day}') AS siem_summary_table",
+          "refresh": 2,
+          "skipUrlSync": true,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": "all",
+            "value": "all"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Traffic Type",
+          "multi": false,
+          "name": "traffic_type",
+          "options": [
+            {
+              "selected": true,
+              "text": "all",
+              "value": "all"
+            },
+            {
+              "selected": false,
+              "text": "bot",
+              "value": "bot"
+            },
+            {
+              "selected": false,
+              "text": "human",
+              "value": "human"
+            },
+            {
+              "selected": false,
+              "text": "ai",
+              "value": "ai"
+            }
+          ],
+          "query": "all,bot,human,ai",
+          "type": "custom"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 0,
+          "includeAll": true,
+          "multi": true,
+          "name": "site",
+          "query": "SELECT DISTINCT request_host FROM ${summary_table} WHERE 1=1 LIMIT 1000",
+          "refresh": 2,
+          "type": "query"
+        },
+        {
+          "current": {
+            "text": "0",
+            "value": "0"
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 2,
+          "name": "siem_available",
+          "query": "SELECT if(count() > 0, '1', '0') AS has_siem FROM (SELECT 1 FROM ${siem_summary_table} LIMIT 1)",
+          "refresh": 2,
+          "skipUrlSync": true,
+          "type": "query"
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "hide": 0,
+          "includeAll": true,
+          "label": "Policy Pages",
+          "multi": true,
+          "name": "policy_pages",
+          "options": [
+            {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            {
+              "selected": false,
+              "text": "/robots.txt",
+              "value": "/robots.txt"
+            },
+            {
+              "selected": false,
+              "text": "/sitemap.xml",
+              "value": "/sitemap.xml"
+            },
+            {
+              "selected": false,
+              "text": "/ads.txt",
+              "value": "/ads.txt"
+            },
+            {
+              "selected": false,
+              "text": "/llms.txt",
+              "value": "/llms.txt"
+            }
+          ],
+          "query": "/robots.txt,/sitemap.xml,/ads.txt,/llms.txt",
+          "type": "custom"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 0,
+          "includeAll": true,
+          "label": "ASN",
+          "multi": true,
+          "name": "client_asn",
+          "query": "SELECT DISTINCT client_asn FROM ${summary_table} WHERE $__adHocFilter() AND $__conditionalAll(request_host IN (${site:sqlstring}), $site) ORDER BY client_asn LIMIT 1000",
+          "refresh": 2,
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "hide": 0,
+          "includeAll": true,
+          "label": "Cohort",
+          "multi": true,
+          "name": "bot_class",
+          "query": "SELECT DISTINCT bot_class FROM ${summary_table} WHERE $__adHocFilter() AND $__conditionalAll(request_host IN (${site:sqlstring}), $site) ORDER BY bot_class LIMIT 1000",
+          "refresh": 2,
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "time_options": [
+        "1h",
+        "6h",
+        "24h",
+        "7d",
+        "30d"
+      ]
+    },
+    "timezone": "utc",
+    "title": "Bot Insights - SEO Governance",
+    "uid": "__DASHBOARD_UUID__"
+  }
+}
