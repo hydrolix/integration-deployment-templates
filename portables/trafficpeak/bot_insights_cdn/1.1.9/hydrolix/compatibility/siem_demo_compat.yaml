@@ -1,0 +1,22 @@
+# One-off compatibility patch for demo.trafficpeak.live / akamai.
+# Keep existing SIEM alias semantics while allowing additive Bot Insights fields.
+settings:
+  sql_transform:
+    select:
+      resource_category: multiIf(positionCaseInsensitive(assumeNotNull(path), 'robots.txt') > 0, 'robots.txt', positionCaseInsensitive(assumeNotNull(path), 'llms.txt') > 0, 'llms.txt', 'other')
+      requestHeaders: akamai_extract_key_pair(requestHeadersStr, '\r\n', ':')
+      responseHeaders: akamai_extract_key_pair(responseHeadersStr, '\r\n', ':')
+      ruleMessage: |
+        multiIf(
+          arrayExists(x -> startsWith(x, 'Web Scrapers'), ruleMessages), 'Web Scrapers',
+          arrayExists(x -> startsWith(x, 'Scanning Tools'), ruleMessages), 'Scanning Tools',
+          arrayExists(x -> startsWith(x, 'Web Attackers'), ruleMessages), 'Web Attackers',
+          arrayExists(x -> startsWith(x, 'DOS Attacker'), ruleMessages), 'DOS Attacker',
+          Null
+        )
+      bot_category: arrayStringConcat(arrayMap(x -> (ruleMessages[x]), arrayMapIndex))
+      botnet_id: arrayStringConcat(arrayMap(x -> (ruleData[x]), arrayMapIndex))
+      is_bot_traffic: dictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(UA))
+      requestHeadersStr: decodeURLComponent(requestHeadersStr)
+      responseHeadersStr: decodeURLComponent(responseHeadersStr)
+      referer: regexpExtract(requestHeadersStr, 'Referer:\\s*(\\S+)', 1)

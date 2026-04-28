@@ -1,0 +1,4 @@
+upgrades:
+  "1.0.0":
+    allowed_removals: []
+    allowed_overwrites: []

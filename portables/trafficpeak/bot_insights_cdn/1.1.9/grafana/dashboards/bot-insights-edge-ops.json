@@ -1,0 +1,3064 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "hydrolix-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "type": "datasource"
+    },
+    {
+      "description": "Raw bot_detection table",
+      "label": "table",
+      "name": "__PROJECT_NAME__.bot_detection_NAME",
+      "type": "constant",
+      "value": "${VAR_DS2}"
+    },
+    {
+      "description": "Hourly summary table",
+      "label": "summary_hour",
+      "name": "VAR_BOT_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "${VAR_SUMMARY_HOUR}"
+    },
+    {
+      "description": "",
+      "label": "summary_day",
+      "name": "VAR_BOT_SUMMARY_DAY",
+      "type": "constant",
+      "value": "${VAR_SUMMARY_DAY}"
+    },
+    {
+      "description": "",
+      "label": "VAR_BI_SUMMARY_MINUTE",
+      "name": "VAR_BI_SUMMARY_MINUTE",
+      "type": "constant",
+      "value": "akamai.bi_summary_minute"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_ASN_DAY",
+      "name": "VAR_BOT_AGG_ASN_DAY",
+      "type": "constant",
+      "value": "akamai.bot_agg_asn_day"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_ASN_HOUR",
+      "name": "VAR_BOT_AGG_ASN_HOUR",
+      "type": "constant",
+      "value": "akamai.bot_agg_asn_hour"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_ASN_MINUTE",
+      "name": "VAR_BOT_AGG_ASN_MINUTE",
+      "type": "constant",
+      "value": "akamai.bot_agg_asn_minute"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_DAY",
+      "name": "VAR_BOT_AGG_DAY",
+      "type": "constant",
+      "value": "akamai.bot_agg_day"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_HOUR",
+      "name": "VAR_BOT_AGG_HOUR",
+      "type": "constant",
+      "value": "akamai.bot_agg_hour"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_AGG_MINUTE",
+      "name": "VAR_BOT_AGG_MINUTE",
+      "type": "constant",
+      "value": "akamai.bot_agg_minute"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_SIEM_CLASS_DAY",
+      "name": "VAR_BOT_SIEM_CLASS_DAY",
+      "type": "constant",
+      "value": "akamai.bot_siem_class_day"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_SIEM_CLASS_HOUR",
+      "name": "VAR_BOT_SIEM_CLASS_HOUR",
+      "type": "constant",
+      "value": "akamai.bot_siem_class_hour"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_SIEM_CLASS_MINUTE",
+      "name": "VAR_BOT_SIEM_CLASS_MINUTE",
+      "type": "constant",
+      "value": "akamai.bot_siem_class_minute"
+    },
+    {
+      "description": "",
+      "label": "VAR_BOT_SIEM_SUMMARY_MINUTE",
+      "name": "VAR_BOT_SIEM_SUMMARY_MINUTE",
+      "type": "constant",
+      "value": "akamai.bi_siem_summary_minute"
+    },
+    {
+      "description": "",
+      "label": "VAR_DS2",
+      "name": "VAR_DS2",
+      "type": "constant",
+      "value": "akamai.logs"
+    },
+    {
+      "description": "",
+      "label": "VAR_SIEM",
+      "name": "VAR_SIEM",
+      "type": "constant",
+      "value": "akamai.siem"
+    },
+    {
+      "description": "",
+      "label": "VAR_SIEM_SUMMARY_DAY",
+      "name": "VAR_SIEM_SUMMARY_DAY",
+      "type": "constant",
+      "value": "akamai.bi_siem_summary_day"
+    },
+    {
+      "description": "",
+      "label": "VAR_SIEM_SUMMARY_HOUR",
+      "name": "VAR_SIEM_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "akamai.bi_siem_summary_hour"
+    },
+    {
+      "description": "",
+      "label": "VAR_SUMMARY_DAY",
+      "name": "VAR_SUMMARY_DAY",
+      "type": "constant",
+      "value": "akamai.bi_summary_day"
+    },
+    {
+      "description": "",
+      "label": "VAR_SUMMARY_HOUR",
+      "name": "VAR_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "akamai.bi_summary_hour"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "9.5.0"
+    },
+    {
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "type": "datasource",
+      "version": "0.6.0"
+    },
+    {
+      "id": "stat",
+      "name": "Stat",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "style": "dark",
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Origin cost and cache efficiency posture. L0 cache-miss and TTFB deltas, L1 endpoint cost ranking and ASN concentration, L2 cache-thrash and querystring churn evidence.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "apps",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "bot-insights-1.1"
+      ],
+      "targetBlank": false,
+      "title": "Bot Insights Suite",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 999,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display:flex;align-items:center;gap:12px;margin-bottom:8px;\"><img src=\"data:image/png;base64,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\" style=\"height:18px\"/><span style=\"font-size:18px;font-weight:600;\">Bot Insights -- Edge/Ops</span></div><div style=\"color:#8e8e8e;margin-bottom:4px;\">Origin cost and cache efficiency posture. Identify expensive endpoints, cache thrash, and ASN concentration risk.</div><div><strong>Data Freshness:</strong> ${data_freshness}</div>",
+        "mode": "html"
+      },
+      "pluginVersion": "12.0.0",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 1,
+      "panels": [],
+      "title": "L0 -- Cache & Origin Posture (Orientation)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Cache hit rate (cached / total) over time. Solid line = current window. Dashed line = baseline (preceding window of equal length).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#2DD4BF",
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_hit_rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1.5
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "solid"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Cache Hit Rate"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "baseline_cache_hit_rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Base Cache Hit Rate"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
+      "id": 2,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Drill to Cache Thrash (L2)",
+          "url": "/d/2310781cb8024e38198b07dd/?${__url_time_range}&${__all_variables}&viewPanel=10"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max",
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "WITH duration AS (\n  SELECT greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS secs\n)\nSELECT\n  cur.time,\n  cur.cache_hit_rate,\n  base.cache_hit_rate AS baseline_cache_hit_rate\nFROM (\n  SELECT\n    timestamp AS time,\n    least(countIfMerge(`countIf(equals(cache_was_cached, true))`) * 100.0 / greatest(countIfMerge(`countIf(equals(cache_was_cached, true))`) + countIfMerge(`countIf(equals(cache_was_cached, false))`), 1), 100) AS cache_hit_rate\n  FROM ${summary_table}\n  WHERE timestamp >= toDateTime(${__from:date:seconds})\n    AND timestamp <= toDateTime(${__to:date:seconds})\n    AND $__adHocFilter()\n    AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n    AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n    AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n    AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  GROUP BY time\n) cur\nLEFT JOIN (\n  SELECT\n    timestamp + INTERVAL ${duration} MINUTE AS time,\n    least(countIfMerge(`countIf(equals(cache_was_cached, true))`) * 100.0 / greatest(countIfMerge(`countIf(equals(cache_was_cached, true))`) + countIfMerge(`countIf(equals(cache_was_cached, false))`), 1), 100) AS cache_hit_rate\n  FROM ${summary_table}\n  WHERE timestamp >= toDateTime(${__from:date:seconds}) - INTERVAL ${duration} MINUTE\n    AND timestamp < toDateTime(${__from:date:seconds})\n    AND $__adHocFilter()\n    AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n    AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n    AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n    AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  GROUP BY time\n) base ON cur.time = base.time\nORDER BY cur.time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache efficiency trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Efficiency vs Baseline",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Origin TTFB percentiles over time. p95 (blue) and p99 (pink) with baseline overlay (dashed). Hits raw table for true percentiles.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95_ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#88C9F2",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "p95"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99_ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FB7185",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1.5
+              },
+              {
+                "id": "displayName",
+                "value": "p99"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/baseline/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#6EF6D9",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1.5
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 4
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    6,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 4
+      },
+      "id": 3,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Drill to Top Endpoints by Origin Cost",
+          "url": "/d/2310781cb8024e38198b07dd/?${__url_time_range}&${__all_variables}&viewPanel=6"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  timestamp AS time,\n  ifNull(p95_origin_ttfb, 0) AS p95_ms,\n  ifNull(p99_origin_ttfb, 0) AS p99_ms\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin latency trend (p95/p99); du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Origin Latency Trend (p95/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Minutes since last ingested row. LIVE <60min, STALE 60-360min, DOWN >360min.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "index": 0,
+                  "text": "LIVE"
+                },
+                "to": 59
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 60,
+                "result": {
+                  "index": 1,
+                  "text": "STALE"
+                },
+                "to": 360
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 361,
+                "result": {
+                  "index": 2,
+                  "text": "DOWN"
+                }
+              },
+              "type": "range"
+            }
+          ],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF"
+              },
+              {
+                "color": "#FCD34D",
+                "value": 60
+              },
+              {
+                "color": "#FB7185",
+                "value": 360
+              }
+            ]
+          },
+          "unit": "min"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  toStartOfHour(timestamp) AS time,\n  greatest(dateDiff('minute', max(timestamp), toDateTime(${__to:date:seconds})), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data freshness trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Data Freshness",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Absolute volume delta vs preceding equal-length window. Positive = more requests than baseline.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  toStartOfFiveMinutes(timestamp) AS time,\n  countMerge(`count()`) * $scale_factor AS value\nFROM ${summary_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Volume trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Volume \u0394",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 5,
+      "panels": [],
+      "title": "L1 -- Attribution (Who is driving it?)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Endpoints ranked by origin cost proxy: ~p95(origin_ttfb) x request_count under the active site, traffic, ASN, and cohort filters.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_path_norm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Path"
+              },
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cache Miss %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vol"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volume"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95_origin_ms"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "~p95 TTFB"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cost_proxy"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cost Score"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-blues"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Cost Score"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  request_path_norm,\n  count() * $scale_factor AS vol,\n  ifNull(quantileTDigest(0.95)(origin_time_to_first_byte_ms), 0) AS p95_origin_ms,\n  count() * ifNull(quantileTDigest(0.95)(origin_time_to_first_byte_ms), 0) / 1000 AS cost_proxy,\n  least(countIf(equals(cache_was_cached, false)) * 100.0 / greatest(countIf(equals(cache_was_cached, false)) + countIf(equals(cache_was_cached, true)), 1), 100) AS cache_miss_pct\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  AND notEmpty(request_path_norm)\nGROUP BY request_path_norm\nORDER BY cost_proxy DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Top endpoints by origin cost; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Endpoints by Origin Cost (p95 x Volume)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Weighted-average origin TTFB by best-available traffic cohort. When Akamai SIEM categorization is authoritative and meets threshold, rows use SIEM bot_category with source metadata; otherwise they fall back to UA-derived bot_class.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cohort"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cohort"
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "links",
+                "value": []
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_requests"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Requests"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "weighted_avg_origin_ttfb_ms"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "~Avg TTFB (ms)"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#2DD4BF"
+                    },
+                    {
+                      "color": "#FCD34D",
+                      "value": 200
+                    },
+                    {
+                      "color": "#FB7185",
+                      "value": 500
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_rate"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Miss Rate %"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cohort"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cohort"
+              },
+              {
+                "id": "custom.width",
+                "value": 220
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "canonical_bot_class"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Canonical Class"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "canonical_bot_class_source"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Class Source"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "canonical_bot_class_confidence"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Confidence"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "siem_bot_category"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SIEM Category"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "siem_bot_category_source"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SIEM Source"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "siem_event_count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SIEM Events"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "siem_coverage_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SIEM Coverage"
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "~Avg TTFB (ms)"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "WITH\n  ua_counts AS (\n    SELECT\n      bot_class AS class_key,\n      is_bot_traffic,\n      countMerge(`count()`) AS volume,\n      avgMerge(`avg(origin_time_to_first_byte_ms)`) * countMerge(`count()`) AS ttfb_weighted,\n      countIfMerge(`countIf(equals(cache_was_cached, false))`) AS cache_misses\n    FROM ${summary_table}\n    WHERE timestamp >= toDateTime(${__from:date:seconds})\n      AND timestamp <= toDateTime(${__to:date:seconds})\n      AND $__adHocFilter()\n      AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n      AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n      AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n      AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n    GROUP BY bot_class, is_bot_traffic\n  ),\n  siem_counts AS (\n    SELECT\n      class_key,\n      siem_bot_category,\n      siem_bot_category_source,\n      siem_bot_type,\n      sum(volume) AS volume,\n      sum(ttfb_weighted) AS ttfb_weighted,\n      sum(cache_misses) AS cache_misses\n    FROM (\n      SELECT\n        akamai_canonical_bot_class AS class_key,\n        bot_category AS siem_bot_category,\n        bot_category_source AS siem_bot_category_source,\n        bot_type AS siem_bot_type,\n        cnt_all AS volume,\n        avg_origin_ttfb * cnt_all AS ttfb_weighted,\n        cnt_cache_miss AS cache_misses\n      FROM ${siem_class_summary_table}\n      WHERE timestamp >= toDateTime(${__from:date:seconds})\n        AND timestamp <= toDateTime(${__to:date:seconds})\n        AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n        AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n        AND notEmpty(bot_category)\n      AND $__conditionalAll(akamai_canonical_bot_class IN (${bot_class_siem:singlequote}), $bot_class_siem)\n      GROUP BY class_key, siem_bot_category, siem_bot_category_source, siem_bot_type\n    )\n    GROUP BY class_key, siem_bot_category, siem_bot_category_source, siem_bot_type\n  ),\n  traffic_total AS (\n    SELECT coalesce(sum(volume), 0) AS total FROM ua_counts\n  ),\n  siem_evidence AS (\n    SELECT\n      coalesce(sum(volume), 0) AS siem_event_count,\n      coalesce(sum(volume) / nullIf((SELECT total FROM traffic_total), 0), 0) AS siem_coverage_pct\n    FROM siem_counts\n  ),\n  siem_threshold AS (\n    SELECT\n      siem_event_count,\n      siem_coverage_pct,\n      if(siem_event_count >= 20 OR siem_coverage_pct >= 0.05, 1, 0) AS meets_threshold\n    FROM siem_evidence\n  ),\n  use_siem AS (\n    SELECT if(\n      '${classification_policy}' = 'akamai_authoritative'\n      AND '${has_akamai_siem}' = '1'\n      AND '${traffic_type}' IN ('all', 'bot')\n      AND (SELECT meets_threshold FROM siem_threshold) = 1,\n      1, 0\n    ) AS flag\n  )\nSELECT\n  cohort,\n  canonical_bot_class,\n  canonical_bot_class_source,\n  canonical_bot_class_confidence,\n  siem_bot_category,\n  siem_bot_category_source,\n  siem_bot_type,\n  siem_event_count,\n  siem_coverage_pct,\n  total_requests,\n  weighted_avg_origin_ttfb_ms,\n  cache_miss_rate\nFROM (\n  SELECT\n    multiIf(\n      is_bot_traffic = 0, 'Legitimate Browser',\n      class_key = 'search_bot', 'Search Bot',\n      class_key = 'ai_data_scraper', 'AI Data Scraper',\n      class_key = 'ai_assistant', 'AI Assistant',\n      class_key = 'ai_search_crawler', 'AI Search Crawler',\n      class_key = 'crawler', 'Crawler',\n      class_key = 'http_library', 'HTTP Library',\n      class_key = 'social_media_agent', 'Social Media Agent',\n      class_key = 'validator', 'Validator',\n      class_key\n    ) AS cohort,\n    multiIf(\n      max(is_bot_traffic) = 0, 'human',\n      argMax(class_key, volume)\n    ) AS canonical_bot_class,\n    'ua_dict' AS canonical_bot_class_source,\n    'derived' AS canonical_bot_class_confidence,\n    '' AS siem_bot_category,\n    '' AS siem_bot_category_source,\n    '' AS siem_bot_type,\n    (SELECT siem_event_count FROM siem_threshold) AS siem_event_count,\n    (SELECT siem_coverage_pct FROM siem_threshold) AS siem_coverage_pct,\n    sum(volume) AS total_requests,\n    sum(ttfb_weighted) / greatest(sum(volume), 1) AS weighted_avg_origin_ttfb_ms,\n    least(sum(cache_misses) * 100.0 / greatest(sum(volume), 1), 100) AS cache_miss_rate\n  FROM ua_counts\n  WHERE (SELECT flag FROM use_siem) = 0\n  GROUP BY cohort\n\n  UNION ALL\n\n  SELECT\n    siem_bot_category AS cohort,\n    class_key AS canonical_bot_class,\n    'akamai_siem' AS canonical_bot_class_source,\n    'authoritative' AS canonical_bot_class_confidence,\n    siem_bot_category,\n    siem_bot_category_source,\n    siem_bot_type,\n    (SELECT siem_event_count FROM siem_threshold) AS siem_event_count,\n    (SELECT siem_coverage_pct FROM siem_threshold) AS siem_coverage_pct,\n    sum(volume) AS total_requests,\n    sum(ttfb_weighted) / greatest(sum(volume), 1) AS weighted_avg_origin_ttfb_ms,\n    least(sum(cache_misses) * 100.0 / greatest(sum(volume), 1), 100) AS cache_miss_rate\n  FROM siem_counts\n  WHERE (SELECT flag FROM use_siem) = 1\n  GROUP BY cohort, canonical_bot_class, siem_bot_category, siem_bot_category_source, siem_bot_type\n)\nORDER BY weighted_avg_origin_ttfb_ms DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin latency by canonical cohort; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Origin Latency by Cohort",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Top ASNs by traffic share. Any ASN exceeding 40% share is flagged HIGH risk. Gradient gauge on share column.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_asn"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Filter by ${__data.fields.client_asn}",
+                    "url": "/d/${__dashboard.uid}/?${__url_time_range}&${__all_variables}&var-client_asn=${__data.fields.client_asn}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vol"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volume"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vol_share_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Share %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "color-text",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#2DD4BF"
+                    },
+                    {
+                      "color": "#FCD34D",
+                      "value": 15
+                    },
+                    {
+                      "color": "#FB7185",
+                      "value": 25
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_rate"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Miss Rate %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#2DD4BF"
+                    },
+                    {
+                      "color": "#FCD34D",
+                      "value": 20
+                    },
+                    {
+                      "color": "#FB7185",
+                      "value": 50
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg_ttfb_ms"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg TTFB"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#2DD4BF"
+                    },
+                    {
+                      "color": "#FCD34D",
+                      "value": 200
+                    },
+                    {
+                      "color": "#FB7185",
+                      "value": 500
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "risk"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Risk Score"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent"
+                    },
+                    {
+                      "color": "#003D66",
+                      "value": 0
+                    },
+                    {
+                      "color": "#88C9F2",
+                      "value": 75
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 8,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Drill to What Changed with ASN filter",
+          "url": "/d/289c9eb636bc56f5fffeab9d/?${__url_time_range}&${__all_variables}"
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Risk Score"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "WITH\n    asn_base AS (\n      SELECT\n        client_asn,\n        countMerge(`count()`) AS vol,\n        countIfMerge(`countIf(equals(cache_was_cached, false))`) AS cache_misses\n      FROM ${summary_table}\n      WHERE timestamp >= toDateTime(${__from:date:seconds})\n        AND timestamp <= toDateTime(${__to:date:seconds})\n        AND $__adHocFilter()\n        AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n        AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n        AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n        AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n      GROUP BY client_asn\n    ),\n    totals AS (\n      SELECT sum(vol) AS total_vol FROM asn_base\n    ),\n    asn_ttfb AS (\n      SELECT\n        client_asn,\n        round(avg(origin_time_to_first_byte_ms), 1) AS avg_ttfb_ms\n      FROM ${raw_table}\n      WHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n        AND reqTimeSec <= toDateTime(${__to:date:seconds})\n        AND $__adHocFilter()\n        AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n        AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n        AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n        AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n      GROUP BY client_asn\n    )\n  SELECT\n    a.client_asn,\n    a.vol,\n    round(a.vol / greatest((SELECT total_vol FROM totals), 1) * 100, 1) AS vol_share_pct,\n    round(a.cache_misses * 100.0 / greatest(a.vol, 1), 1) AS cache_miss_rate,\n    t.avg_ttfb_ms,\n    round(a.cache_misses * 100.0 / greatest(a.vol, 1) * a.vol / greatest((SELECT total_vol FROM totals), 1), 2) AS risk\n  FROM asn_base AS a\n  LEFT JOIN asn_ttfb AS t ON a.client_asn = t.client_asn\n  ORDER BY risk DESC\n  LIMIT 50\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Concentration risk (top ASN share); du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "ASN Concentration Risk",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 9,
+      "panels": [],
+      "title": "L2 -- Evidence (Prove the pattern)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Cache miss patterns per cohort + endpoint. High unique-QS count with high miss rate = cache thrashing. Requires at least one dimension filter.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "Select a dimension filter ($client_asn or $bot_class) to activate this panel.",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_path_norm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Path"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cohort"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cohort"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cache Misses"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_hit_count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cache Hits"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_rate"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Miss Rate %"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "unique_qs"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Unique QS"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "thrash_score"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Thrash Score"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Cache Misses"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  request_path_norm,\n  if(bot_class = '', 'Unknown', arrayStringConcat(arrayMap(w -> concat(upper(substring(w, 1, 1)), substring(w, 2)), splitByChar('_', assumeNotNull(bot_class))), ' ')) AS cohort,\n  countIf(equals(cache_was_cached, false)) AS cache_miss_count,\n  countIf(equals(cache_was_cached, true)) AS cache_hit_count,\n  least(countIf(equals(cache_was_cached, false)) * 100.0 / greatest(count(), 1), 100) AS cache_miss_rate,\n  uniq(request_query_string) AS unique_qs,\n  countIf(equals(cache_was_cached, false)) * 1.0 / greatest(count(), 1) * uniq(request_query_string) / greatest(count(), 1) AS thrash_score\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  AND notEmpty(request_path_norm)\nGROUP BY request_path_norm, bot_class\nORDER BY thrash_score DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache thrash by cohort + endpoint; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Thrash by Cohort + Endpoint",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Unique querystring patterns per path. High churn = potential cache-busting behavior. Requires dimension filter.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "Select a dimension filter to activate this panel.",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_path_norm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Path"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "unique_qs"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "~Unique QS Patterns"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "churn_ratio"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Churn Ratio"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#2DD4BF"
+                    },
+                    {
+                      "color": "#FCD34D",
+                      "value": 0.3
+                    },
+                    {
+                      "color": "#FB7185",
+                      "value": 0.7
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "churn_score"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Churn Score"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "qs_entropy_approx"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "QS Entropy"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "~Unique QS Patterns"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  request_path_norm,\n  uniq(request_query_string) AS unique_qs,\n  count() * $scale_factor AS total,\n  uniq(request_query_string) / greatest(count(), 1) AS churn_ratio,\n  round(uniq(request_query_string) / greatest(count(), 1) * 100, 1) AS churn_score,\n  log2(greatest(uniq(request_query_string), 1)) AS qs_entropy_approx\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  AND notEmpty(request_path_norm)\nGROUP BY request_path_norm\nORDER BY unique_qs DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Querystring churn indicator; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Querystring Churn Indicator",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 12,
+      "panels": [],
+      "title": "+SIEM Enrichment",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "How WAF enforcement actions (block, rate_limit, challenge) correlate with cache miss rates. Requires SIEM data source.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "NO SIEM",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "action_taken"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "WAF Action"
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocked"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Blocked"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_errors"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Client Errors"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "server_errors"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Server Errors"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Error %"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_miss_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cache Miss %"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "-- WAF Action Impact [+SIEM] - routed to raw SIEM for filter-safe grouping\nSELECT\n  action_taken,\n  count() * $scale_factor AS total,\n  countIf(or(equals(action_taken, 'deny'), equals(action_taken, 'block'))) AS blocked,\n  countIf(and(greaterOrEquals(toUInt16(response_status_code), 400), less(toUInt16(response_status_code), 500))) AS client_errors,\n  countIf(greaterOrEquals(toUInt16(response_status_code), 500)) AS server_errors,\n  round(countIf(and(greaterOrEquals(toUInt16(response_status_code), 400), less(toUInt16(response_status_code), 500))) * 100.0 / greatest(count(), 1), 1) AS error_pct,\n  round(countIf(equals(cache_was_cached, false)) * 100.0 / greatest(count(), 1), 1) AS cache_miss_pct\nFROM ${siem_raw_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND notEmpty(action_taken)\n  AND '${siem_available}' = '1'\nGROUP BY action_taken\nORDER BY total DESC\nLIMIT 100\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=WAF action impact (raw siem); du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "WAF Action Impact on Cache [+SIEM]",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Origin cost attribution by SIEM policy ID. Requires SIEM data source.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "NO SIEM",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "policy_id"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Policy ID"
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volume"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volume"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocked"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Blocked"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "server_errors"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Server Errors"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "unique_ips"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Unique IPs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bot_score"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Bot Score"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg_ttfb_ms"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 14,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Volume"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "-- Origin Cost by Policy ID [+SIEM] - routed to raw SIEM for filter-safe grouping\nSELECT\n  policy_id,\n  count() * $scale_factor AS volume,\n  countIf(or(equals(action_taken, 'deny'), equals(action_taken, 'block'))) AS blocked,\n  countIf(greaterOrEquals(toUInt16(response_status_code), 500)) AS server_errors,\n  uniq(client_ip) AS unique_ips,\n  round(avg(bot_score), 1) AS bot_score\nFROM ${siem_raw_table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp <= toDateTime(${__to:date:seconds})\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND notEmpty(policy_id)\n  AND '${siem_available}' = '1'\nGROUP BY policy_id\nORDER BY volume DESC\nLIMIT 100\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin cost by policy id (raw siem); du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Origin Cost by Policy ID [+SIEM]",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 71
+      },
+      "id": 15,
+      "panels": [],
+      "title": "\u25b6 Raw Logs - Scoped Evidence",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "description": "Individual request records scoped by active filters. LIMIT 500, 8 rows per page, ORDER BY timestamp DESC.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "Apply a filter to view raw logs",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "timestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_asn"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_method"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Method"
+              },
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_host"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Host"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_path"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Path"
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_query_string"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "QS"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "response_status_code"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status"
+              },
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_was_cached"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cached"
+              },
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "origin_time_to_first_byte_ms"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Origin TTFB"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "response_total_bytes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Bytes"
+              },
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 72
+      },
+      "id": 16,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": true,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "pageSize": 8,
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  reqTimeSec AS timestamp,\n  client_ip,\n  client_asn,\n  bot_class,\n  user_agent_category,\n  request_method,\n  request_host,\n  request_path,\n  request_query_string,\n  response_status_code,\n  cache_was_cached,\n  origin_time_to_first_byte_ms,\n  response_total_bytes\nFROM ${raw_table}\nWHERE reqTimeSec >= toDateTime(${__from:date:seconds})\n  AND reqTimeSec <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring}))\n  AND ('${traffic_type}' = 'all' OR ('${traffic_type}' = 'bot' AND is_bot_traffic = true) OR ('${traffic_type}' = 'human' AND is_bot_traffic = false) OR ('${traffic_type}' = 'ai' AND notEmpty(ai_category)))\n  AND $__conditionalAll(client_asn IN (${client_asn:singlequote}), $client_asn)\n  AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class)\n  AND (('${client_asn:text}' <> 'All' OR '${bot_class:text}' <> 'All') OR (reqTimeSec < toDateTime(${__from:date:seconds}) AND reqTimeSec >= toDateTime(${__to:date:seconds})))\nORDER BY timestamp DESC\nLIMIT 500\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Raw logs scoped evidence; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "\u25b6 Raw Logs - Scoped Evidence",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "5m",
+  "schemaVersion": 41,
+  "tags": [
+    "bot-insights-1.1",
+    "akamai"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "${VAR_DS2}",
+          "value": "${VAR_DS2}"
+        },
+        "hide": 2,
+        "name": "raw_table",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_DS2}",
+            "value": "${VAR_DS2}"
+          }
+        ],
+        "query": "${VAR_DS2}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_SIEM}",
+          "value": "${VAR_SIEM}"
+        },
+        "hide": 2,
+        "name": "siem_raw_table",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM}",
+            "value": "${VAR_SIEM}"
+          }
+        ],
+        "query": "${VAR_SIEM}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BI_SUMMARY_MINUTE}",
+          "value": "${VAR_BI_SUMMARY_MINUTE}"
+        },
+        "hide": 2,
+        "name": "summary_minute",
+        "query": "${VAR_BI_SUMMARY_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_SIEM_SUMMARY_MINUTE}",
+          "value": "${VAR_BOT_SIEM_SUMMARY_MINUTE}"
+        },
+        "hide": 2,
+        "name": "siem_summary_minute",
+        "query": "${VAR_BOT_SIEM_SUMMARY_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_SUMMARY_HOUR}",
+          "value": "${VAR_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "name": "summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_HOUR}",
+            "value": "${VAR_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_SUMMARY_DAY}",
+          "value": "${VAR_SUMMARY_DAY}"
+        },
+        "hide": 2,
+        "name": "summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SUMMARY_DAY}",
+            "value": "${VAR_SUMMARY_DAY}"
+          }
+        ],
+        "query": "${VAR_SUMMARY_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_SIEM_SUMMARY_HOUR}",
+          "value": "${VAR_SIEM_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "name": "siem_summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_HOUR}",
+            "value": "${VAR_SIEM_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_SIEM_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_SIEM_SUMMARY_DAY}",
+          "value": "${VAR_SIEM_SUMMARY_DAY}"
+        },
+        "hide": 2,
+        "name": "siem_summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_SIEM_SUMMARY_DAY}",
+            "value": "${VAR_SIEM_SUMMARY_DAY}"
+          }
+        ],
+        "query": "${VAR_SIEM_SUMMARY_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_SIEM_CLASS_MINUTE}",
+          "value": "${VAR_BOT_SIEM_CLASS_MINUTE}"
+        },
+        "hide": 2,
+        "name": "siem_class_summary_minute",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_SIEM_CLASS_MINUTE}",
+            "value": "${VAR_BOT_SIEM_CLASS_MINUTE}"
+          }
+        ],
+        "query": "${VAR_BOT_SIEM_CLASS_MINUTE}",
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
+          "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+        },
+        "hide": 2,
+        "name": "siem_class_summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_SIEM_CLASS_HOUR}",
+            "value": "${VAR_BOT_SIEM_CLASS_HOUR}"
+          }
+        ],
+        "query": "${VAR_BOT_SIEM_CLASS_HOUR}",
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_SIEM_CLASS_DAY}",
+          "value": "${VAR_BOT_SIEM_CLASS_DAY}"
+        },
+        "hide": 2,
+        "name": "siem_class_summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_SIEM_CLASS_DAY}",
+            "value": "${VAR_BOT_SIEM_CLASS_DAY}"
+          }
+        ],
+        "query": "${VAR_BOT_SIEM_CLASS_DAY}",
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "duration",
+        "query": "SELECT greatest(dateDiff('minute', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS duration",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_HOUR}",
+          "value": "${VAR_BOT_AGG_HOUR}"
+        },
+        "hide": 2,
+        "name": "agg_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_HOUR}",
+            "value": "${VAR_BOT_AGG_HOUR}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_DAY}",
+          "value": "${VAR_BOT_AGG_DAY}"
+        },
+        "hide": 2,
+        "name": "agg_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_DAY}",
+            "value": "${VAR_BOT_AGG_DAY}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_MINUTE}",
+          "value": "${VAR_BOT_AGG_MINUTE}"
+        },
+        "hide": 2,
+        "name": "agg_minute",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_MINUTE}",
+            "value": "${VAR_BOT_AGG_MINUTE}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "agg_table",
+        "query": "SELECT if(${duration} <= 120, '${agg_minute}', if(${duration} <= 2880, '${agg_hour}', '${agg_day}')) AS agg_table",
+        "refresh": 1,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_ASN_HOUR}",
+          "value": "${VAR_BOT_AGG_ASN_HOUR}"
+        },
+        "hide": 2,
+        "name": "agg_asn_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_ASN_HOUR}",
+            "value": "${VAR_BOT_AGG_ASN_HOUR}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_ASN_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_ASN_DAY}",
+          "value": "${VAR_BOT_AGG_ASN_DAY}"
+        },
+        "hide": 2,
+        "name": "agg_asn_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_ASN_DAY}",
+            "value": "${VAR_BOT_AGG_ASN_DAY}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_ASN_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "${VAR_BOT_AGG_ASN_MINUTE}",
+          "value": "${VAR_BOT_AGG_ASN_MINUTE}"
+        },
+        "hide": 2,
+        "name": "agg_asn_minute",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BOT_AGG_ASN_MINUTE}",
+            "value": "${VAR_BOT_AGG_ASN_MINUTE}"
+          }
+        ],
+        "query": "${VAR_BOT_AGG_ASN_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "agg_asn_table",
+        "query": "SELECT if(${duration} <= 120, '${agg_asn_minute}', if(${duration} <= 2880, '${agg_asn_hour}', '${agg_asn_day}')) AS agg_asn_table",
+        "refresh": 1,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "summary_table",
+        "query": "SELECT if(${duration} <= 120, '${summary_minute}', if(${duration} <= 2880, '${summary_hour}', '${summary_day}')) AS summary_table",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "siem_summary_table",
+        "query": "SELECT if(${duration} <= 120, '${siem_summary_minute}', if(${duration} <= 2880, '${siem_summary_hour}', '${siem_summary_day}')) AS siem_summary_table",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 2,
+        "name": "siem_class_summary_table",
+        "options": [],
+        "query": "SELECT if(${duration} <= 120, '${siem_class_summary_minute}', if(${duration} <= 2880, '${siem_class_summary_hour}', '${siem_class_summary_day}')) AS siem_class_summary_table",
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "all",
+          "value": "all"
+        },
+        "includeAll": false,
+        "label": "Traffic Type",
+        "name": "traffic_type",
+        "options": [
+          {
+            "selected": true,
+            "text": "all",
+            "value": "all"
+          },
+          {
+            "selected": false,
+            "text": "bot",
+            "value": "bot"
+          },
+          {
+            "selected": false,
+            "text": "human",
+            "value": "human"
+          },
+          {
+            "selected": false,
+            "text": "ai",
+            "value": "ai"
+          }
+        ],
+        "query": "all,bot,human,ai",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "includeAll": true,
+        "label": "Site",
+        "multi": true,
+        "name": "site",
+        "query": "SELECT DISTINCT request_host FROM ${agg_table} WHERE $__timeFilter(timestamp) ORDER BY request_host LIMIT 1000",
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "includeAll": true,
+        "label": "ASN",
+        "multi": true,
+        "name": "client_asn",
+        "query": "SELECT DISTINCT client_asn FROM ${agg_asn_table} WHERE $__timeFilter(timestamp) AND ('${site}' = '$__all' OR request_host IN (${site:sqlstring})) ORDER BY client_asn LIMIT 1000",
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "includeAll": true,
+        "label": "Cohort",
+        "multi": true,
+        "name": "bot_class",
+        "query": "SELECT DISTINCT bot_class FROM ${summary_table} WHERE ('${site}' = '$__all' OR request_host IN (${site:sqlstring})) ORDER BY bot_class LIMIT 1000",
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "bot_class_siem",
+        "query": "SELECT DISTINCT multiIf(bot_class = 'search_bot', 'seo_crawler', bot_class IN ('ai_data_scraper', 'ai_assistant', 'ai_search_crawler'), 'ai_crawler', bot_class = 'crawler', 'scraper', bot_class = 'social_media_agent', 'social_crawler', bot_class = 'validator', 'monitoring_bot', bot_class = 'http_library', 'unknown_bot', bot_class) AS bot_class_siem FROM ${summary_table} WHERE ('${site}' = '$__all' OR request_host IN (${site:sqlstring})) AND is_bot_traffic = true AND notEmpty(bot_class) AND $__conditionalAll(bot_class IN (${bot_class:singlequote}), $bot_class) ORDER BY bot_class_siem LIMIT 1000",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "name": "siem_available",
+        "query": "SELECT if(count() > 0, '1', '0') AS has_siem FROM (SELECT 1 FROM ${siem_raw_table} LIMIT 1)",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "0",
+          "value": "0"
+        },
+        "hide": 2,
+        "name": "has_akamai_siem",
+        "options": [],
+        "query": "SELECT if(count() > 0, '1', '0') AS has_siem FROM (SELECT 1 FROM ${siem_class_summary_table} WHERE notEmpty(bot_category) LIMIT 1)",
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "data_freshness",
+        "query": "SELECT concat(coalesce(hdx_cdn, 'default'), ': ', multiIf(dateDiff('minute', max(timestamp), toDateTime(${__to:date:seconds})) < 30, '\u2705', dateDiff('minute', max(timestamp), toDateTime(${__to:date:seconds})) < 120, '\u26a0\ufe0f', '\ud83d\udd34'), ' (', toString(dateDiff('minute', max(timestamp), toDateTime(${__to:date:seconds}))), 'm)') FROM ${summary_minute} WHERE $__timeFilter(timestamp) GROUP BY coalesce(hdx_cdn, 'default') ORDER BY 1",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "Akamai Authoritative",
+          "value": "akamai_authoritative"
+        },
+        "hide": null,
+        "includeAll": false,
+        "multi": false,
+        "name": "classification_policy",
+        "options": [
+          {
+            "selected": false,
+            "text": "UA Only",
+            "value": "ua_only"
+          },
+          {
+            "selected": true,
+            "text": "Akamai Authoritative",
+            "value": "akamai_authoritative"
+          }
+        ],
+        "query": "ua_only,akamai_authoritative",
+        "type": "custom"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "filters": [],
+        "name": "filter",
+        "type": "adhoc"
+      },
+      {
+        "current": {
+          "text": "100000",
+          "value": "100000"
+        },
+        "hide": 2,
+        "label": "Scale Factor",
+        "name": "scale_factor",
+        "query": "100000",
+        "skipUrlSync": true,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Bot Insights - Edge/Ops",
+  "uid": "__DASHBOARD_UUID__",
+  "version": 16
+}

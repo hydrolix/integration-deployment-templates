@@ -1,0 +1,6 @@
+__extend__: table_defaults.yaml
+type: summary
+settings:
+  summary:
+    enabled: true
+    sql: ""

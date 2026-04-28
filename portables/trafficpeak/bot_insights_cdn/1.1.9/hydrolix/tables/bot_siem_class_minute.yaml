@@ -1,0 +1,6 @@
+__extend__: table_summary_base_defaults.yaml
+description: bot_siem_class_minute
+settings:
+  summary:
+    sql:
+      __extend__: bot_siem_class_minute.sql
