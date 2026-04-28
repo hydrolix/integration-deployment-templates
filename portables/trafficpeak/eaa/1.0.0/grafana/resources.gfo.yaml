@@ -5,9 +5,19 @@ folders:
       hdx-security-folder:
         name: Security
 dashboards:
-  hdx-eaa-apps-observability:
+  hdx-eaa-view-global-stats:
     dashboard:
-      __extend__: dashboards/eaa_apps_observability.json
+      __extend__: dashboards/eaa_view_global_stats.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: akamai.eaa_useraccess
+      VAR_DEVICE_TABLE: akamai.eaa_deviceinventory
+      VAR_GENERALESCAPING: username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-')
+        AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'
+  hdx-eaa-origins-observability:
+    dashboard:
+      __extend__: dashboards/eaa_origins_observability.json
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
@@ -29,16 +39,29 @@ dashboards:
       VAR_GENERALESCAPING: username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-')
         AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'
       VAR_QUERIESLIMIT: '250'
-  hdx-eaa-view-global-stats:
+  hdx-eaa-connector-health:
     dashboard:
-      __extend__: dashboards/eaa_view_global_stats.json
+      __extend__: dashboards/eaa_connector_health.json
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_TABLE: akamai.eaa_useraccess
-      VAR_DEVICE_TABLE: akamai.eaa_deviceinventory
-      VAR_GENERALESCAPING: username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-')
-        AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'
+      VAR_TABLE: akamai.eaa_connectorhealth
+      VAR_TIMESTAMP: datetime
+      VAR_GENERALESCAPING: 1=1
+      VAR_QUERIESLIMIT: '250'
+      VAR_COMMONLIBRARIES: eaa-common-libraries-v5
+      VAR_CONNHEALTH_DET: eaa-connector-health-details-v5
+  hdx-eaa-connector-health-details:
+    dashboard:
+      __extend__: dashboards/eaa_connector_health_details.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: akamai.eaa_connectorhealth
+      VAR_TIMESTAMP: datetime
+      VAR_GENERALESCAPING: 1=1
+      VAR_QUERIESLIMIT: '250'
+      VAR_COMMONLIBRARIES: eaa-common-libraries-v5
   hdx-eaa-usage-stats:
     dashboard:
       __extend__: dashboards/eaa_usage_stats.json
@@ -69,9 +92,9 @@ dashboards:
         AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'
       VAR_QUERIESLIMIT: '250'
       VAR_COMMONLIBRARIES: eaa-common-libraries-v5
-  hdx-eaa-origins-observability:
+  hdx-eaa-apps-observability:
     dashboard:
-      __extend__: dashboards/eaa_origins_observability.json
+      __extend__: dashboards/eaa_apps_observability.json
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
@@ -82,26 +105,3 @@ dashboards:
         AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'
       VAR_QUERIESLIMIT: '250'
       VAR_COMMONLIBRARIES: eaa-common-libraries-v5
-  hdx-eaa-connector-health-details:
-    dashboard:
-      __extend__: dashboards/eaa_connector_health_details.json
-    folderUid: hdx-security-folder
-    inputs:
-      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_TABLE: akamai.eaa_connectorhealth
-      VAR_TIMESTAMP: datetime
-      VAR_GENERALESCAPING: 1=1
-      VAR_QUERIESLIMIT: '250'
-      VAR_COMMONLIBRARIES: eaa-common-libraries-v5
-  hdx-eaa-connector-health:
-    dashboard:
-      __extend__: dashboards/eaa_connector_health.json
-    folderUid: hdx-security-folder
-    inputs:
-      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_TABLE: akamai.eaa_connectorhealth
-      VAR_TIMESTAMP: datetime
-      VAR_GENERALESCAPING: 1=1
-      VAR_QUERIESLIMIT: '250'
-      VAR_COMMONLIBRARIES: eaa-common-libraries-v5
-      VAR_CONNHEALTH_DET: eaa-connector-health-details-v5

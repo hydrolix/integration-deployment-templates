@@ -3,13 +3,6 @@ tables:
     __extend__: tables/table_logs.yaml
 transforms:
   logs:
-    eaa_devinv:
-      __extend__: transforms/eaa_devinv.json
-      settings:
-        sql_transform:
-          __extend__: transforms/eaa_devinv_select.sql
-        sample_data:
-          __extend__: transforms/eaa_devinv_sample_data.json
     eaa_dirhealth:
       __extend__: transforms/eaa_dirhealth.json
       settings:
@@ -17,6 +10,27 @@ transforms:
           __extend__: transforms/eaa_dirhealth_select.sql
         sample_data:
           __extend__: transforms/eaa_dirhealth_sample_data.json
+    eaa_observability_metrics:
+      __extend__: transforms/eaa_observability_metrics.json
+      settings:
+        sql_transform:
+          __extend__: transforms/eaa_observability_metrics_select.sql
+        sample_data:
+          __extend__: transforms/eaa_observability_metrics_sample_data.json
+    eaa_access:
+      __extend__: transforms/eaa_access.json
+      settings:
+        sql_transform:
+          __extend__: transforms/eaa_access_select.sql
+        sample_data:
+          __extend__: transforms/eaa_access_sample_data.json
+    eaa_devinv:
+      __extend__: transforms/eaa_devinv.json
+      settings:
+        sql_transform:
+          __extend__: transforms/eaa_devinv_select.sql
+        sample_data:
+          __extend__: transforms/eaa_devinv_sample_data.json
     eaa_admin:
       __extend__: transforms/eaa_admin.json
       settings:
@@ -31,17 +45,3 @@ transforms:
           __extend__: transforms/eaa_conhealth_select.sql
         sample_data:
           __extend__: transforms/eaa_conhealth_sample_data.json
-    eaa_access:
-      __extend__: transforms/eaa_access.json
-      settings:
-        sql_transform:
-          __extend__: transforms/eaa_access_select.sql
-        sample_data:
-          __extend__: transforms/eaa_access_sample_data.json
-    eaa_observability_metrics:
-      __extend__: transforms/eaa_observability_metrics.json
-      settings:
-        sql_transform:
-          __extend__: transforms/eaa_observability_metrics_select.sql
-        sample_data:
-          __extend__: transforms/eaa_observability_metrics_sample_data.json
