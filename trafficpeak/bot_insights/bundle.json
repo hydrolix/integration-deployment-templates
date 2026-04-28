@@ -1,5 +1,5 @@
 {
-  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot_insights_cdn",
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot_insights",
   "beta": true,
   "dashboard": {
     "path": "dashboards/bot-insights-overview-alignment.json",
@@ -27,7 +27,7 @@
     "version": "1.1.9"
   },
   "method": "multi_stream",
-  "name": "trafficpeak_bot_insights_cdn",
+  "name": "trafficpeak_bot_insights",
   "other_dashboards": [
     {
       "path": "dashboards/bot-insights-soc-what-changed.json",

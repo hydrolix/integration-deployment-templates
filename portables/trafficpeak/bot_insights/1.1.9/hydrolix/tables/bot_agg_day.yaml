@@ -1,0 +1,6 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_summary_base_defaults.yaml
+description: bot_agg_day
+settings:
+  summary:
+    sql:
+      __extend__: bot_agg_day.sql
