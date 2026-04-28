@@ -23,8 +23,13 @@ _utils_pkg.file_utils.write_json = lambda *a, **kw: None
 sys.modules.setdefault("utils", _utils_pkg)
 sys.modules.setdefault("utils.file_utils", _utils_pkg.file_utils)
 
-from scripts.configurator.config import BundleConfig, BundleState, DashboardInfo, TransformInfo
-from scripts.configurator.dashboard_fixer import _fix_template_variables, _get_primary_timestamp_column
+from scripts.configurator.config import BundleConfig, BundleState, DashboardInfo, SummaryInfo, TransformInfo
+from scripts.configurator.dashboard_fixer import (
+    _build_inputs_map,
+    _find_summary_var,
+    _fix_template_variables,
+    _get_primary_timestamp_column,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -111,24 +116,29 @@ def _make_state(transform_path=None):
 
 
 # ---------------------------------------------------------------------------
-# LOTC-1302: Self-referencing VAR_TABLE / VAR_LOGS / VAR_DS2 constants
+# LOTC-1302 / LOTC-1449: VAR_X constants classified by __inputs[VAR_X].value.
+# (LOTC-1449 removed the old name-based self-reference fallback; these tests
+# now exercise the value-based classifier with a raw-table input value.)
 # ---------------------------------------------------------------------------
 
 class TestSelfReferencingVarFix:
-    """Tests for self-referencing VAR_* constant resolution in _fix_template_variables."""
+    """VAR_* constants pointing at the raw-logs table resolve to
+    __PROJECT_NAME__.__TABLE_NAME__ via value-based classification."""
 
     def test_table_var_resolved(self, tmp_path):
-        """Variable 'table' with query '${VAR_TABLE}' is resolved to __PROJECT_NAME__.__TABLE_NAME__."""
+        """Variable 'table' with VAR_TABLE bound to the raw-logs table resolves."""
         dashboard = {
             "templating": {
                 "list": [_make_var("table", "${VAR_TABLE}")]
             }
         }
         dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
-        config = _make_config(tmp_path)
+        config = _make_config(tmp_path)  # table_name="test_table"
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_TABLE": "akamai.test_table"}, config, state,
+        )
 
         var = dashboard["templating"]["list"][0]
         expected = "__PROJECT_NAME__.__TABLE_NAME__"
@@ -139,7 +149,7 @@ class TestSelfReferencingVarFix:
         assert var["options"][0]["text"] == expected
 
     def test_logs_var_resolved(self, tmp_path):
-        """Variable 'logs' with query '${VAR_LOGS}' is resolved to table placeholder."""
+        """VAR_LOGS bound to the raw-logs table resolves to table placeholder."""
         dashboard = {
             "templating": {
                 "list": [_make_var("logs", "${VAR_LOGS}")]
@@ -149,13 +159,15 @@ class TestSelfReferencingVarFix:
         config = _make_config(tmp_path)
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_LOGS": "akamai.test_table"}, config, state,
+        )
 
         var = dashboard["templating"]["list"][0]
         assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
 
     def test_ds2_var_resolved(self, tmp_path):
-        """Variable 'ds2' with query '${VAR_DS2}' is resolved to table placeholder."""
+        """VAR_DS2 bound to the raw-logs table resolves to table placeholder."""
         dashboard = {
             "templating": {
                 "list": [_make_var("ds2", "${VAR_DS2}")]
@@ -165,14 +177,15 @@ class TestSelfReferencingVarFix:
         config = _make_config(tmp_path)
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_DS2": "akamai.test_table"}, config, state,
+        )
 
         var = dashboard["templating"]["list"][0]
         assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
 
     def test_non_self_referencing_var_not_touched(self, tmp_path):
-        """A VAR_* reference that does NOT match the variable's own name is not treated
-        as self-referencing (falls through to summary matching)."""
+        """A ${VAR_X} constant with no __inputs entry is left unchanged."""
         dashboard = {
             "templating": {
                 "list": [_make_var("my_summary", "${VAR_SUMMARY_HOUR}")]
@@ -185,39 +198,43 @@ class TestSelfReferencingVarFix:
         _fix_template_variables(dashboard, dinfo, {}, config, state)
 
         var = dashboard["templating"]["list"][0]
-        # No matching summary in state, so query should remain unchanged
+        # No inputs entry, no matching summary — stays untouched.
         assert var["query"] == "${VAR_SUMMARY_HOUR}"
 
-    def test_case_insensitive_match(self, tmp_path):
-        """Self-referencing detection is case-insensitive: 'treemapCells' matches VAR_TREEMAPCELLS."""
+    def test_case_insensitive_value_match(self, tmp_path):
+        """Value matching against config.table_name is case-insensitive."""
         dashboard = {
             "templating": {
                 "list": [_make_var("treemapCells", "${VAR_TREEMAPCELLS}")]
             }
         }
         dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
-        config = _make_config(tmp_path)
+        config = _make_config(tmp_path)  # table_name="test_table"
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_TREEMAPCELLS": "AKAMAI.TEST_TABLE"}, config, state,
+        )
 
         var = dashboard["templating"]["list"][0]
         assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
 
     def test_non_constant_type_not_affected(self, tmp_path):
-        """A self-referencing pattern in a non-constant variable type is not touched."""
+        """A ${VAR_X} pattern in a non-constant variable type is not touched."""
         var = _make_var("table", "${VAR_TABLE}", var_type="query")
         dashboard = {"templating": {"list": [var]}}
         dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
         config = _make_config(tmp_path)
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_TABLE": "akamai.test_table"}, config, state,
+        )
 
         assert dashboard["templating"]["list"][0]["query"] == "${VAR_TABLE}"
 
     def test_raw_table_still_injected(self, tmp_path):
-        """raw_table injection still works alongside self-referencing fix."""
+        """raw_table injection still works alongside value-based resolution."""
         dashboard = {
             "templating": {
                 "list": [
@@ -230,7 +247,9 @@ class TestSelfReferencingVarFix:
         config = _make_config(tmp_path)
         state = _make_state()
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(
+            dashboard, dinfo, {"VAR_TABLE": "akamai.test_table"}, config, state,
+        )
 
         var_list = dashboard["templating"]["list"]
         table_var = next(v for v in var_list if v["name"] == "table")
@@ -239,8 +258,10 @@ class TestSelfReferencingVarFix:
         assert table_var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
         assert raw_table_var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
 
-    def test_multiple_self_referencing_vars(self, tmp_path):
-        """Multiple self-referencing vars in one dashboard are all resolved."""
+    def test_multiple_vars_resolved(self, tmp_path):
+        """Multiple VAR_X constants bound to the raw-logs table are all resolved.
+        VAR_TIMESTAMP has its own special-case path (LOTC-1303) independent of
+        __inputs."""
         transform_path = _make_transform_json(tmp_path, "reqTimeSec")
         dashboard = {
             "templating": {
@@ -254,8 +275,12 @@ class TestSelfReferencingVarFix:
         dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
         config = _make_config(tmp_path)
         state = _make_state(transform_path)
+        inputs_map = {
+            "VAR_TABLE": "akamai.test_table",
+            "VAR_DS2": "akamai.test_table",
+        }
 
-        _fix_template_variables(dashboard, dinfo, {}, config, state)
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
         var_list = dashboard["templating"]["list"]
         table_var = next(v for v in var_list if v["name"] == "table")
@@ -451,3 +476,398 @@ class TestFixVarTimestamp:
         var = dashboard["templating"]["list"][0]
         # Still appended to list but query unchanged (no primary col found)
         assert var["query"] == "${VAR_TIMESTAMP}"
+
+
+# ---------------------------------------------------------------------------
+# LOTC-1435 / LOTC-1449: ${VAR_SUMMARY_*} resolves to summary placeholders by
+# matching the __inputs value (e.g. `akamai.bot_summary_hour`) against the
+# state.summaries name list, not by fuzzy name matching.
+# ---------------------------------------------------------------------------
+
+class TestSummaryVarPrecedence:
+    """Raw Grafana exports use constants named summary_hour/day/month with
+    queries `${VAR_SUMMARY_HOUR/DAY/MONTH}`. These must route to the matching
+    summary table placeholder, via the __inputs value the author bound.
+    """
+
+    def _make_summary(self, name, dashboard_var):
+        return SummaryInfo(path="/fake/sql", filename=f"{name}.sql", name=name, dashboard_var=dashboard_var)
+
+    def test_summary_hour_primary_dashboard(self, tmp_path):
+        """Primary dashboard: summary var omits __PROJECT_NAME__ prefix."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_SUMMARY_HOUR": "akamai.bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert var["current"]["value"] == "__SUMMARY_TABLE_NAME_1__"
+        assert var["options"][0]["value"] == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_summary_hour_non_primary_dashboard(self, tmp_path):
+        """Non-primary dashboard: summary var includes __PROJECT_NAME__ prefix."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=False)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_SUMMARY_HOUR": "akamai.bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+
+    def test_all_three_summary_buckets_resolve(self, tmp_path):
+        """summary_hour, summary_day, and summary_month each resolve to their
+        own __SUMMARY_TABLE_NAME_N__ placeholder based on their __inputs values."""
+        dashboard = {
+            "templating": {
+                "list": [
+                    _make_var("summary_hour", "${VAR_SUMMARY_HOUR}"),
+                    _make_var("summary_day", "${VAR_SUMMARY_DAY}"),
+                    _make_var("summary_month", "${VAR_SUMMARY_MONTH}"),
+                ]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [
+            self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__"),
+            self._make_summary("bot_summary_day", "__SUMMARY_TABLE_NAME_2__"),
+            self._make_summary("bot_summary_month", "__SUMMARY_TABLE_NAME_3__"),
+        ]
+        inputs_map = {
+            "VAR_SUMMARY_HOUR": "akamai.bot_summary_hour",
+            "VAR_SUMMARY_DAY": "akamai.bot_summary_day",
+            "VAR_SUMMARY_MONTH": "akamai.bot_summary_month",
+        }
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        by_name = {v["name"]: v for v in dashboard["templating"]["list"] if v["name"].startswith("summary_")}
+        assert by_name["summary_hour"]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert by_name["summary_day"]["query"] == "__SUMMARY_TABLE_NAME_2__"
+        assert by_name["summary_month"]["query"] == "__SUMMARY_TABLE_NAME_3__"
+
+    def test_summary_var_without_match_stays_unchanged(self, tmp_path):
+        """If state has no summary matching the __inputs value, the variable
+        is left untouched (LOTC-1449: no silent rewrite — validator surfaces)."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()  # No summaries
+        inputs_map = {"VAR_SUMMARY_HOUR": "akamai.bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "${VAR_SUMMARY_HOUR}"
+
+    def test_table_var_still_resolves_when_summaries_present(self, tmp_path):
+        """Regression: ${VAR_TABLE} bound to the raw-logs table must resolve
+        to the raw-logs placeholder even when summaries exist in state."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("table", "${VAR_TABLE}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)  # table_name="test_table"
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_TABLE": "akamai.test_table"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        var = dashboard["templating"]["list"][0]
+        assert var["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
+
+
+# ---------------------------------------------------------------------------
+# LOTC-1449: _find_summary_var is exact-match only. Fuzzy substring and
+# endswith fallbacks are removed to prevent raw-table names that happen to be
+# substrings of summary names (e.g. `edns` in `edns_summary_hour`) from
+# silently hijacking the summary placeholder.
+# ---------------------------------------------------------------------------
+
+
+class TestFindSummaryVarExactMatch:
+    def _make_summary(self, name, dashboard_var):
+        return SummaryInfo(path="/fake/sql", filename=f"{name}.sql", name=name, dashboard_var=dashboard_var)
+
+    def test_exact_name_match_returns_dashboard_var(self):
+        state = BundleState()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+
+        assert _find_summary_var("bot_summary_hour", state) == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_substring_prefix_no_longer_matches(self):
+        """`edns` must not match summary `edns_summary_hour` — the filed bug."""
+        state = BundleState()
+        state.summaries = [self._make_summary("edns_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+
+        assert _find_summary_var("edns", state) is None
+
+    def test_substring_suffix_no_longer_matches(self):
+        """Legacy `summary_hour` → `bot_summary_hour` fuzzy match is gone."""
+        state = BundleState()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+
+        assert _find_summary_var("summary_hour", state) is None
+
+
+class TestBuildInputsMap:
+    """LOTC-1449: inputs map carries __inputs[].value (deterministic signal)
+    rather than __inputs[].label (author-chosen, unreliable)."""
+
+    def test_maps_var_name_to_value(self):
+        dashboard = {
+            "__inputs": [
+                {"name": "VAR_EDNS", "label": "edns", "value": "akamai.edns"},
+                {"name": "VAR_EDNS_SUMMARY_HOUR", "label": "edns_summary_hour",
+                 "value": "akamai.edns_summary_hour"},
+            ]
+        }
+
+        result = _build_inputs_map(dashboard)
+
+        assert result == {
+            "VAR_EDNS": "akamai.edns",
+            "VAR_EDNS_SUMMARY_HOUR": "akamai.edns_summary_hour",
+        }
+
+    def test_skips_entries_without_value(self):
+        """Datasource inputs (no `value`) should be skipped — they're handled
+        elsewhere via the datasource UID rewrite."""
+        dashboard = {
+            "__inputs": [
+                {"name": "DS_MY_DATASOURCE", "type": "datasource", "label": "My DS"},
+                {"name": "VAR_TABLE", "label": "table", "value": "akamai.logs"},
+            ]
+        }
+
+        result = _build_inputs_map(dashboard)
+
+        assert result == {"VAR_TABLE": "akamai.logs"}
+
+    def test_empty_when_no_inputs(self):
+        assert _build_inputs_map({}) == {}
+
+
+# ---------------------------------------------------------------------------
+# LOTC-1449: _fix_template_variables classifies ${VAR_X} constants by looking
+# up __inputs[VAR_X].value. Values match summary tables (with or without a
+# `<prefix>.` qualifier) or the raw-logs table; unknown values stay untouched.
+# ---------------------------------------------------------------------------
+
+
+class TestValueBasedClassification:
+    def _make_summary(self, name, dashboard_var):
+        return SummaryInfo(path="/fake/sql", filename=f"{name}.sql", name=name, dashboard_var=dashboard_var)
+
+    def test_value_with_prefix_matches_summary(self, tmp_path):
+        """`akamai.bot_summary_hour` should resolve to the bot_summary_hour summary."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("my_hourly", "${VAR_HOURLY}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_HOURLY": "akamai.bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_value_without_prefix_matches_summary(self, tmp_path):
+        """Bare summary name (no `<prefix>.`) still matches."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("my_hourly", "${VAR_HOURLY}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_HOURLY": "bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_non_primary_dashboard_prefixes_summary(self, tmp_path):
+        """Non-primary dashboards get __PROJECT_NAME__.__SUMMARY_TABLE_NAME_N__."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("my_hourly", "${VAR_HOURLY}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=False)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_HOURLY": "akamai.bot_summary_hour"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+
+    def test_value_with_prefix_matches_raw_table(self, tmp_path):
+        """`akamai.test_table` should resolve to __PROJECT_NAME__.__TABLE_NAME__."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("whatever", "${VAR_WHATEVER}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)  # table_name="test_table"
+        state = _make_state()
+        inputs_map = {"VAR_WHATEVER": "akamai.test_table"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
+
+    def test_value_without_prefix_matches_raw_table(self, tmp_path):
+        """Bare `test_table` also matches."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("whatever", "${VAR_WHATEVER}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+        inputs_map = {"VAR_WHATEVER": "test_table"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
+
+    def test_edns_substring_collision_is_fixed(self, tmp_path):
+        """Regression for the filed trafficpeak/edns bug: a raw-table var name
+        (`edns`) that is a substring of a summary name (`edns_summary_hour`)
+        must NOT hijack the summary placeholder. Prior to LOTC-1449 both
+        `${edns}` and `${edns_summary_hour}` were rewritten to the same
+        __SUMMARY_TABLE_NAME_1__, causing ClickHouse `code: 47` on raw-column
+        queries against the summary."""
+        dashboard = {
+            "templating": {
+                "list": [
+                    _make_var("edns", "${VAR_EDNS}"),
+                    _make_var("edns_summary_hour", "${VAR_EDNS_SUMMARY_HOUR}"),
+                ]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        # config.table_name from _make_config is "test_table"; use bundle_dir
+        # override to simulate edns table name.
+        bundle_dir = tmp_path / "trafficpeak" / "edns"
+        bundle_dir.mkdir(parents=True, exist_ok=True)
+        config = BundleConfig(
+            bundle_dir=str(bundle_dir),
+            table_name="edns",
+            data_category="dns",
+            source_name="trafficpeak",
+            bundle_name="edns",
+        )
+        state = _make_state()
+        state.summaries = [self._make_summary("edns_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {
+            "VAR_EDNS": "akamai.edns",
+            "VAR_EDNS_SUMMARY_HOUR": "akamai.edns_summary_hour",
+        }
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        by_name = {v["name"]: v for v in dashboard["templating"]["list"]}
+        assert by_name["edns"]["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
+        assert by_name["edns_summary_hour"]["query"] == "__SUMMARY_TABLE_NAME_1__"
+
+    def test_unknown_value_leaves_var_unchanged(self, tmp_path):
+        """If __inputs[VAR_X].value matches neither a summary nor the raw
+        table, don't guess — leave it alone so the validator can flag it."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("mystery", "${VAR_MYSTERY}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)  # table_name="test_table"
+        state = _make_state()
+        state.summaries = [self._make_summary("bot_summary_hour", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_MYSTERY": "akamai.some_other_thing"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "${VAR_MYSTERY}"
+
+    def test_no_inputs_entry_leaves_var_unchanged(self, tmp_path):
+        """If a ${VAR_X} constant has no matching __inputs entry, leave it.
+        The name-based self-reference fallback was removed in LOTC-1449."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("orphan", "${VAR_ORPHAN}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        config = _make_config(tmp_path)
+        state = _make_state()
+
+        _fix_template_variables(dashboard, dinfo, {}, config, state)
+
+        assert dashboard["templating"]["list"][0]["query"] == "${VAR_ORPHAN}"
+
+    def test_summary_and_raw_table_name_collision_warns(self, tmp_path):
+        """Defensive: if a summary name collides with the raw-table name, the
+        summary check wins (first in resolution order). Surface a warning so
+        the bundle author can disambiguate rather than hitting a downstream
+        validator error with no trail back."""
+        dashboard = {
+            "templating": {
+                "list": [_make_var("anything", "${VAR_ANYTHING}")]
+            }
+        }
+        dinfo = DashboardInfo(path="/fake/path.json", is_primary=True)
+        bundle_dir = tmp_path / "trafficpeak" / "collision"
+        bundle_dir.mkdir(parents=True, exist_ok=True)
+        config = BundleConfig(
+            bundle_dir=str(bundle_dir),
+            table_name="logs",  # same name as the summary below
+            data_category="cdn",
+            source_name="trafficpeak",
+            bundle_name="collision",
+        )
+        state = _make_state()
+        state.summaries = [self._make_summary("logs", "__SUMMARY_TABLE_NAME_1__")]
+        inputs_map = {"VAR_ANYTHING": "akamai.logs"}
+
+        _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
+
+        # Summary wins resolution order.
+        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        # Warning surfaces the ambiguity.
+        assert any("collide" in w.lower() and "logs" in w for w in state.warnings)

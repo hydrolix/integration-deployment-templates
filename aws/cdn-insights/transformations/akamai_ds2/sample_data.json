@@ -12,7 +12,7 @@
   "reqHost": "hydrolix.io",
   "reqMethod": "GET",
   "reqPath": "/hls/Crimson Arcade S03E08 — Garden Doors/multivariant.m3u8",
-  "reqTimeSec": 1759940340,
+  "reqTimeSec": 1777291200,
   "rspContentType": "application/vnd.apple.mpegurl",
   "statusCode": 200,
   "timeToFirstByte": 83,

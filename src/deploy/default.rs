@@ -1,8 +1,10 @@
 use serde_json::Value;
+use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::fs;
 use tokio::time::sleep;
 use tokio::time::Duration;
 
+use crate::deploy::verify;
 use crate::grafana;
 use crate::hdx;
 use crate::models::bundle::{Bundle, SummaryTable, Table};
@@ -18,6 +20,8 @@ const TABLE_PROPAGATION_DELAY_SECS: u64 = 15;
 const TABLE_PROPAGATION_DELAY_SLOW_SECS: u64 = 45;
 const TRANSFORM_READY_DELAY_SECS: u64 = 15;
 const DATA_READY_DELAY_SECS: u64 = 30;
+const ROW_VERIFY_MAX_WAIT_SECS: u64 = 60;
+const ROW_VERIFY_POLL_SECS: u64 = 5;
 
 pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec<String>, String> {
     let bearer_token = match hdx::auth::get_token().await {
@@ -211,6 +215,18 @@ async fn process_table(
             Err(e) => return Err(e),
         }
 
+        match verify_rows_ingested_if_present(
+            bearer_token,
+            project_name,
+            &table.name,
+            &transform_json,
+        )
+        .await
+        {
+            Ok(_) => (),
+            Err(e) => return Err(e),
+        }
+
         output_table.transforms.push(OutputTransformation {
             name: transform_name,
             data_type: get_transformation_type(&transform_json),
@@ -324,6 +340,18 @@ async fn seed_tables_with_data(
                 Ok(_) => (),
                 Err(e) => return Err(e),
             }
+
+            match verify_rows_ingested_if_present(
+                bearer_token,
+                project_name,
+                &table.name,
+                &transform_json,
+            )
+            .await
+            {
+                Ok(_) => (),
+                Err(e) => return Err(e),
+            }
         }
     }
     Ok(())
@@ -426,6 +454,65 @@ async fn insert_sample_data_if_present(
             full_table_name
         )),
     }
+}
+
+/// Poll the cluster until at least one row is queryable, or fail with diagnostics.
+/// Only runs when sample_data is present (same gate as insert_sample_data_if_present).
+async fn verify_rows_ingested_if_present(
+    bearer_token: &str,
+    project_name: &str,
+    table_name: &str,
+    transform_json: &Value,
+) -> Result<(), String> {
+    let sample_data = get_sample_data_as_json(transform_json);
+    if sample_data.is_null() {
+        return Ok(());
+    }
+
+    let full = format!("{}.{}", project_name, table_name);
+    let iterations = ROW_VERIFY_MAX_WAIT_SECS / ROW_VERIFY_POLL_SECS;
+
+    for _ in 0..iterations {
+        if let Ok(count) = hdx::table::query_count(bearer_token, &full).await {
+            if count > 0 {
+                println!("  ✓ Verified {count} row(s) queryable in {full}");
+                return Ok(());
+            }
+        }
+        sleep(Duration::from_secs(ROW_VERIFY_POLL_SECS)).await;
+    }
+
+    let bearer = bearer_token.to_string();
+    let query = move |sql: String| {
+        let bearer = bearer.clone();
+        async move { hdx::table::query_sql(&bearer, &sql).await }
+    };
+
+    // Matches the hardcoded age in hdx::table::create.
+    let table_settings = serde_json::json!({ "age": { "max_age_days": 1 } });
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+
+    let diagnosis = verify::diagnose_zero_rows(
+        query,
+        project_name,
+        table_name,
+        transform_json,
+        &table_settings,
+        now,
+    )
+    .await;
+
+    Err(format!(
+        "ERROR: {}.{} No rows queryable in {} after {}s.\n  {}",
+        file!(),
+        line!(),
+        full,
+        ROW_VERIFY_MAX_WAIT_SECS,
+        diagnosis
+    ))
 }
 
 // Helper functions
