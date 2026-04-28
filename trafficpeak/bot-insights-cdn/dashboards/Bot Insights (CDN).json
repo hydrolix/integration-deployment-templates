@@ -1,1052 +1,1034 @@
 {
-  "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
-      }
+  "__elements": {},
+  "__inputs": [
+    {
+      "description": "",
+      "label": "HDX-Demo",
+      "name": "DS_HDX-DEMO",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "12.2.3"
     },
-    "__requires": [
+    {
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "type": "datasource",
+      "version": "0.7.0"
+    },
+    {
+      "id": "piechart",
+      "name": "Pie chart",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "stat",
+      "name": "Stat",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
       {
-        "id": "grafana",
-        "name": "Grafana",
-        "type": "grafana",
-        "version": "12.2.3"
-      },
-      {
-        "id": "hydrolix-hydrolix-datasource",
-        "name": "Hydrolix",
-        "type": "datasource",
-        "version": "0.7.0"
-      },
-      {
-        "id": "piechart",
-        "name": "Pie chart",
-        "type": "panel",
-        "version": ""
-      },
-      {
-        "id": "stat",
-        "name": "Stat",
-        "type": "panel",
-        "version": ""
-      },
-      {
-        "id": "table",
-        "name": "Table",
-        "type": "panel",
-        "version": ""
-      },
-      {
-        "id": "text",
-        "name": "Text",
-        "type": "panel",
-        "version": ""
-      },
-      {
-        "id": "timeseries",
-        "name": "Time series",
-        "type": "panel",
-        "version": ""
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
-    ],
-    "annotations": {
-      "list": [
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 65,
+      "panels": [],
+      "title": "Description",
+      "type": "row"
+    },
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 62,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## Bot Insights\n\n**Bot Insights provides long term visibility into how known bots are interacting with your web properties.**\n\nUnderstand high-level bot request trends, with a specific focus on AI bots. This dashboard works best when querying data from multiple days, weeks, or months and is designed to surface long term trends.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.2.3",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 52,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
+      },
+      "description": "Understand how much of total request volume is originating from all bots as well as AI bots specifically",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 14,
+        "x": 0,
+        "y": 6
+      },
+      "id": 46,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
         {
-          "builtIn": 1,
           "datasource": {
-            "type": "grafana",
-            "uid": "-- Grafana --"
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
           },
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "type": "dashboard"
+          "format": 1,
+          "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
+          "refId": "A"
         }
-      ]
+      ],
+      "title": "Comparing Request Volumes",
+      "type": "stat"
     },
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": null,
-    "links": [],
-    "panels": [
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 0
-        },
-        "id": 65,
-        "panels": [],
-        "title": "Description",
-        "type": "row"
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
       },
-      {
-        "gridPos": {
-          "h": 4,
-          "w": 24,
-          "x": 0,
-          "y": 1
-        },
-        "id": 62,
-        "options": {
-          "code": {
-            "language": "plaintext",
-            "showLineNumbers": false,
-            "showMiniMap": false
+      "description": "What percentage of bot requests are served cached content from the CDN?",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "content": "## Bot Insights\n\n**Bot Insights provides long term visibility into how known bots are interacting with your web properties.**\n\nUnderstand high-level bot request trends, with a specific focus on AI bots. This dashboard works best when querying data from multiple days, weeks, or months and is designed to surface long term trends.",
-          "mode": "markdown"
-        },
-        "pluginVersion": "12.2.3",
-        "type": "text"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 5
-        },
-        "id": 52,
-        "panels": [],
-        "title": "Overview",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Understand how much of total request volume is originating from all bots as well as AI bots specifically",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                }
-              ]
-            },
-            "unit": "short"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 14,
-          "x": 0,
-          "y": 6
-        },
-        "id": 46,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "none",
-          "justifyMode": "center",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "sum"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "showPercentChange": false,
-          "text": {},
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n    cnt_all as \"Total Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1) AS \"Total Bot Requests\",\n    countMergeIf(`count()`,is_bot_traffic = 1 AND user_agent_category = 'AI LLM Crawler') AS \"AI Bot Requests\",\n    timestamp\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\nGROUP BY\n    timestamp\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Traffic breakdown; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "Comparing Request Volumes",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "What percentage of bot requests are served cached content from the CDN?",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "dark-red",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 0
-                },
-                {
-                  "color": "#EAB839",
-                  "value": 0.5
-                },
-                {
-                  "color": "dark-green",
-                  "value": 0.8
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 5,
-          "x": 14,
-          "y": 6
-        },
-        "id": 63,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "none",
-          "justifyMode": "center",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^cache_hit_rate$/",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n  countMergeIf(`count()`, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(`count()`, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "Bot Requests Cache Hit Ratio",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "What percentage of origin requests originate from bots?",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percentunit"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 5,
-          "x": 19,
-          "y": 6
-        },
-        "id": 66,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "none",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "percentChangeColorMode": "standard",
-          "reduceOptions": {
-            "calcs": [],
-            "fields": "/^bot_origin_load$/",
-            "values": false
-          },
-          "showPercentChange": false,
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n   countMergeIf(`count()`, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(`count()`, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "Bot Share of Origin Requests",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Understand the volume of requests from bots, broken down by category",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 0.5
+              },
+              {
+                "color": "dark-green",
+                "value": 0.8
               }
-            },
-            "mappings": [],
-            "unit": "short"
+            ]
           },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "cnt_all"
-              },
-              "properties": [
-                {
-                  "id": "links",
-                  "value": [
-                    {
-                      "title": "Filter to this item type",
-                      "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          "unit": "percentunit"
         },
-        "gridPos": {
-          "h": 9,
-          "w": 9,
-          "x": 0,
-          "y": 13
-        },
-        "id": 64,
-        "options": {
-          "legend": {
-            "displayMode": "table",
-            "placement": "right",
-            "showLegend": true,
-            "values": []
-          },
-          "pieType": "pie",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": true
-          },
-          "sort": "desc",
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n    user_agent_category,\n    cnt_all\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY user_agent_category\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic percentage per category; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "Bot Request Volume by Category ",
-        "type": "piechart"
+        "overrides": []
       },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Understand the volume of requests from bots, broken down by category over time",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "bars",
-              "fillOpacity": 50,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "showValues": false,
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "displayName": "${__field.labels.user_agent_category}",
-            "links": [],
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "short"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 9,
-          "w": 15,
-          "x": 9,
-          "y": 13
-        },
-        "id": 48,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "right",
-            "showLegend": true
-          },
-          "timezone": [
-            "utc"
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 14,
+        "y": 6
+      },
+      "id": 63,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
+          "fields": "/^cache_hit_rate$/",
+          "values": false
         },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT \n    timestamp,\n    cnt_all as \"All Bot Requests\",\n    user_agent_category    \nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY \n    timestamp, user_agent_category\nORDER BY\n    timestamp ASC, cnt_all DESC\nLIMIT 10000\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "Bot Request Volume by Category Over Time",
-        "transformations": [
-          {
-            "id": "prepareTimeSeries",
-            "options": {
-              "format": "multi"
-            }
-          }
-        ],
-        "type": "timeseries"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 22
-        },
-        "id": 51,
-        "panels": [],
-        "title": "AI Bot Requests",
-        "type": "row"
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n  countMergeIf(`count()`, cacheStatus AND is_bot_traffic)\n    / nullIf(countMergeIf(`count()`, is_bot_traffic), 0)\n    AS cache_hit_rate  -- ✓ nullIf → NULL cuando no hay bot traffic\nFROM ${table}\nWHERE ${time}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Requests Cache Hit Ratio",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
       },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Understand AI bot request volume by major vendors over time",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "bars",
-              "fillOpacity": 50,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
+      "description": "What percentage of origin requests originate from bots?",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
               },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "showValues": false,
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
+              {
+                "color": "red",
+                "value": 80
               }
-            },
-            "displayName": "${__field.labels.user_agent_category}",
-            "links": [],
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "short"
+            ]
           },
-          "overrides": []
+          "unit": "percentunit"
         },
-        "gridPos": {
-          "h": 8,
-          "w": 24,
-          "x": 0,
-          "y": 23
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 19,
+        "y": 6
+      },
+      "id": 66,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^bot_origin_load$/",
+          "values": false
         },
-        "id": 53,
-        "options": {
-          "legend": {
-            "calcs": [
-              "sum"
-            ],
-            "displayMode": "table",
-            "placement": "right",
-            "showLegend": true
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
           },
-          "timezone": [
-            "utc"
-          ],
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    user_agent_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, user_agent_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "AI Bot Request Volume by Category Over Time",
-        "transformations": [
-          {
-            "id": "prepareTimeSeries",
-            "options": {
-              "format": "multi"
-            }
-          }
-        ],
-        "type": "timeseries"
+          "format": 1,
+          "rawSql": "SELECT\n   countMergeIf(`count()`, is_bot_traffic AND NOT cacheStatus)\n     / nullIf(countMergeIf(`count()`, NOT cacheStatus), 0)\n     AS bot_origin_load,\n   timestamp\nFROM ${table}\nWHERE ${time}\n   AND $__adHocFilter()\nGROUP BY timestamp\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Offload by Hostname; du=${__user.login}'\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Share of Origin Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
       },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 31
-        },
-        "id": 50,
-        "panels": [],
-        "title": "AI Bots: Requested Resources",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        },
-        "description": "Understand the files bots are requesting",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "footer": {
-                "reducers": []
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
+      "description": "Understand the volume of requests from bots, broken down by category",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             }
           },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Count"
-              },
-              "properties": [
-                {
-                  "id": "custom.cellOptions",
-                  "value": {
-                    "mode": "basic",
-                    "type": "gauge",
-                    "valueDisplayMode": "text"
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cnt_all"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Filter to this item type",
+                    "url": "/d/${__dashboard.uid}/${__dashboard}/?${__all_variables}&var-filter=user_agent_category|=|${__data.fields.user_agent_category}"
                   }
-                },
-                {
-                  "id": "unit",
-                  "value": "short"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "AI Category"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 112
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Resource category"
-              },
-              "properties": [
-                {
-                  "id": "custom.width",
-                  "value": 156
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 9,
-          "w": 9,
-          "x": 0,
-          "y": 32
-        },
-        "id": 54,
-        "options": {
-          "cellHeight": "sm",
-          "showHeader": true,
-          "sortBy": []
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n    user_agent_category AS \"AI Category\",\n    resource_category AS \"Resource category\",\n    cnt_all AS \"Count\"\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    user_agent_category, resource_category\nORDER BY\n    cnt_all DESC\nLIMIT 100  -- ✓ cap razonable; ai_cat × resource_cat es baja cardinalidad hoy\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
-            "refId": "A"
+                ]
+              }
+            ]
           }
-        ],
-        "title": "Bot Request Volume by Target File & Vendor",
-        "type": "table"
+        ]
       },
+      "gridPos": {
+        "h": 9,
+        "w": 9,
+        "x": 0,
+        "y": 13
+      },
+      "id": 64,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n    user_agent_category,\n    cnt_all\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY user_agent_category\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic percentage per category; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Request Volume by Category ",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
+      },
+      "description": "Understand the volume of requests from bots, broken down by category over time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.user_agent_category}",
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 15,
+        "x": 9,
+        "y": 13
+      },
+      "id": 48,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "timezone": [
+          "utc"
+        ],
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    timestamp,\n    cnt_all as \"All Bot Requests\",\n    user_agent_category    \nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\nGROUP BY \n    timestamp, user_agent_category\nORDER BY\n    timestamp ASC, cnt_all DESC\nLIMIT 10000\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bot traffic; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Request Volume by Category Over Time",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 51,
+      "panels": [],
+      "title": "AI Bot Requests",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
+      },
+      "description": "Understand AI bot request volume by major vendors over time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.user_agent_category}",
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "timezone": [
+          "utc"
+        ],
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT \n    timestamp,\n    cnt_all,\n    user_agent_category\nFROM \n    ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY \n    timestamp, user_agent_category\nORDER BY \n    timestamp, cnt_all DESC\n    \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=AI traffic by bot; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "AI Bot Request Volume by Category Over Time",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 50,
+      "panels": [],
+      "title": "AI Bots: Requested Resources",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
+      },
+      "description": "Understand the files bots are requesting",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AI Category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 112
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Resource category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 156
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 9,
+        "x": 0,
+        "y": 32
+      },
+      "id": 54,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n    user_agent_category AS \"AI Category\",\n    resource_category AS \"Resource category\",\n    cnt_all AS \"Count\"\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    user_agent_category, resource_category\nORDER BY\n    cnt_all DESC\nLIMIT 100  -- ✓ cap razonable; ai_cat × resource_cat es baja cardinalidad hoy\nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Resource request by bot; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Request Volume by Target File & Vendor",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HDX-DEMO}"
+      },
+      "description": "Understand the files bots are requesting and how they're changing over time",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "${__field.labels.user_agent_category} - ${__field.labels.resource_category}"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 15,
+        "x": 9,
+        "y": 32
+      },
+      "id": 56,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "timezone": [
+          "utc"
+        ],
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "${DS_HDX-DEMO}"
+          },
+          "format": 1,
+          "rawSql": "SELECT\n    timestamp,\n    user_agent_category,\n    resource_category,\n    cnt_all AS count\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    timestamp, user_agent_category, resource_category\nORDER BY\n    timestamp ASC, cnt_all DESC  \nLIMIT 10000                           \nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot Request Volume by Target File & Vendor Over Time",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "v1.0",
+    "Limited Availability",
+    "SUMMARY"
+  ],
+  "templating": {
+    "list": [
       {
+        "current": {},
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HDX-DEMO}"
         },
-        "description": "Understand the files bots are requesting and how they're changing over time",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "bars",
-              "fillOpacity": 50,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "showValues": false,
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "short"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "A"
-              },
-              "properties": [
-                {
-                  "id": "displayName",
-                  "value": "${__field.labels.user_agent_category} - ${__field.labels.resource_category}"
-                }
-              ]
-            }
-          ]
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_hour}'\nWHEN ${duration} > 24 AND ${duration} <= 744 THEN '${summary_day}'\nWHEN ${duration} > 744 THEN '${summary_month}'\nEND",
+        "hide": 2,
+        "name": "table",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_hour}'\nWHEN ${duration} > 24 AND ${duration} <= 744 THEN '${summary_day}'\nWHEN ${duration} > 744 THEN '${summary_month}'\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HDX-DEMO}"
         },
-        "gridPos": {
-          "h": 9,
-          "w": 15,
-          "x": 9,
-          "y": 32
+        "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 'timestamp < toDateTime($__to/1000) AND timestamp > toDateTime($__to/1000) - INTERVAL 24 HOUR'\nWHEN ${duration} > 24 THEN '$__timeFilter(timestamp)'\nEND",
+        "hide": 2,
+        "name": "time",
+        "options": [],
+        "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 'timestamp < toDateTime($__to/1000) AND timestamp > toDateTime($__to/1000) - INTERVAL 24 HOUR'\nWHEN ${duration} > 24 THEN '$__timeFilter(timestamp)'\nEND",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "__PROJECT_NAME__.bot_summary_hour",
+          "value": "__PROJECT_NAME__.bot_summary_hour"
         },
-        "id": 56,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "table",
-            "placement": "right",
-            "showLegend": true
-          },
-          "timezone": [
-            "utc"
-          ],
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "pluginVersion": "12.2.3",
-        "targets": [
+        "hide": 2,
+        "name": "summary_hour",
+        "options": [
           {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT\n    timestamp,\n    user_agent_category,\n    resource_category,\n    cnt_all AS count\nFROM ${table}\nWHERE ${time}\n    AND $__adHocFilter()\n    AND is_bot_traffic\n    AND user_agent_category = 'AI LLM Crawler'\nGROUP BY\n    timestamp, user_agent_category, resource_category\nORDER BY\n    timestamp ASC, cnt_all DESC  \nLIMIT 10000                           \nSETTINGS hdx_query_max_execution_time=60,\n    hdx_query_admin_comment='db=${__dashboard}; dp=Timeseries Resoruce request by bot ; du=${__user.login}'",
-            "refId": "A"
-          }
-        ],
-        "title": "Bot Request Volume by Target File & Vendor Over Time",
-        "transformations": [
-          {
-            "id": "prepareTimeSeries",
-            "options": {
-              "format": "multi"
-            }
-          }
-        ],
-        "type": "timeseries"
-      }
-    ],
-    "refresh": "",
-    "schemaVersion": 42,
-    "tags": [
-      "v1.0",
-      "Limited Availability",
-      "SUMMARY"
-    ],
-    "templating": {
-      "list": [
-        {
-          "current": {},
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_hour}'\nWHEN ${duration} > 24 AND ${duration} <= 744 THEN '${summary_day}'\nWHEN ${duration} > 744 THEN '${summary_month}'\nEND",
-          "hide": 2,
-          "name": "table",
-          "options": [],
-          "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN '${summary_hour}'\nWHEN ${duration} > 24 AND ${duration} <= 744 THEN '${summary_day}'\nWHEN ${duration} > 744 THEN '${summary_month}'\nEND",
-          "refresh": 2,
-          "regex": "",
-          "type": "query"
-        },
-        {
-          "current": {},
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "definition": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 'timestamp < toDateTime($__to/1000) AND timestamp > toDateTime($__to/1000) - INTERVAL 24 HOUR'\nWHEN ${duration} > 24 THEN '$__timeFilter(timestamp)'\nEND",
-          "hide": 2,
-          "name": "time",
-          "options": [],
-          "query": "SELECT  CASE\nWHEN ${duration} <= 24 THEN 'timestamp < toDateTime($__to/1000) AND timestamp > toDateTime($__to/1000) - INTERVAL 24 HOUR'\nWHEN ${duration} > 24 THEN '$__timeFilter(timestamp)'\nEND",
-          "refresh": 2,
-          "regex": "",
-          "type": "query"
-        },
-        {
-          "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.bot_summary_hour",
             "value": "__PROJECT_NAME__.bot_summary_hour"
-          },
-          "hide": 2,
-          "name": "summary_hour",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.bot_summary_hour",
-              "value": "__PROJECT_NAME__.bot_summary_hour"
-            }
-          ],
-          "query": "__PROJECT_NAME__.bot_summary_hour",
-          "skipUrlSync": true,
-          "type": "constant"
+          }
+        ],
+        "query": "__PROJECT_NAME__.bot_summary_hour",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "__PROJECT_NAME__.bot_summary_day",
+          "value": "__PROJECT_NAME__.bot_summary_day"
         },
-        {
-          "current": {
+        "hide": 2,
+        "name": "summary_day",
+        "options": [
+          {
             "selected": false,
             "text": "__PROJECT_NAME__.bot_summary_day",
             "value": "__PROJECT_NAME__.bot_summary_day"
-          },
-          "hide": 2,
-          "name": "summary_day",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.bot_summary_day",
-              "value": "__PROJECT_NAME__.bot_summary_day"
-            }
-          ],
-          "query": "__PROJECT_NAME__.bot_summary_day",
-          "skipUrlSync": true,
-          "type": "constant"
+          }
+        ],
+        "query": "__PROJECT_NAME__.bot_summary_day",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "__PROJECT_NAME__.bot_summary_month",
+          "value": "__PROJECT_NAME__.bot_summary_month"
         },
-        {
-          "current": {
+        "hide": 2,
+        "name": "summary_month",
+        "options": [
+          {
             "selected": false,
             "text": "__PROJECT_NAME__.bot_summary_month",
             "value": "__PROJECT_NAME__.bot_summary_month"
-          },
-          "hide": 2,
-          "name": "summary_month",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.bot_summary_month",
-              "value": "__PROJECT_NAME__.bot_summary_month"
-            }
-          ],
-          "query": "__PROJECT_NAME__.bot_summary_month",
-          "skipUrlSync": true,
-          "type": "constant"
+          }
+        ],
+        "query": "__PROJECT_NAME__.bot_summary_month",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HDX-DEMO}"
         },
-        {
-          "baseFilters": [],
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "filters": [],
-          "label": "Filter",
-          "name": "filter",
-          "type": "adhoc"
+        "filters": [],
+        "label": "Filter",
+        "name": "filter",
+        "type": "adhoc"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HDX-DEMO}"
         },
-        {
-          "current": {},
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
-          "hide": 2,
-          "name": "duration",
-          "options": [],
-          "query": "SELECT datediff('h', $__fromTime, $__toTime)",
-          "refresh": 2,
-          "regex": "",
-          "type": "query"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
-        }
-      ]
-    },
-    "time": {
-      "from": "now-24d",
-      "to": "now"
-    },
-    "timepicker": {},
-    "timezone": "utc",
-    "title": "Bot Insights (CDN)",
-    "uid": "__DASHBOARD_UUID__",
-    "version": 11,
-    "weekStart": ""
-  }
+        "definition": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "hide": 2,
+        "name": "duration",
+        "options": [],
+        "query": "SELECT datediff('h', $__fromTime, $__toTime)",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Bot Insights (CDN)",
+  "uid": "",
+  "version": 11,
+  "weekStart": ""
 }
