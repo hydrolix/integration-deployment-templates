@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -78,7 +78,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "To run this dashboard please select connectors from the Connector health dashboard",
         "fieldConfig": {
@@ -148,7 +148,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  name,\n  avg(cpu) as \"cpu_avg\", \n  avg(dialoutActive) as \"dialoutactive_avg\", \n  avg(dialoutIdle) as \"dialoutidle_avg\", \n  avg(network) as \"network_avg\",\n  avg(disk) as \"disk_avg\",\n  avg(mem) as \"mem_avg\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY  d, name\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
@@ -162,7 +162,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -211,7 +211,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -221,7 +221,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -1140,7 +1140,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -1213,7 +1213,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "select * from ${table}\nwhere $__timeFilter(datetime)\nlimit 1",
@@ -1252,7 +1252,7 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "filter",
@@ -1398,12 +1398,58 @@
     "title": "EAA Connector Health_details",
     "uid": "__DASHBOARD_UUID__",
     "version": 3,
-    "weekStart": ""
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_connectorhealth",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "1=1",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      },
+      {
+        "name": "VAR_COMMONLIBRARIES",
+        "type": "constant",
+        "label": "commonlibraries",
+        "value": "eaa-common-libraries-v5",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {
-      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
-      "label": "GruppoFerroVie-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",

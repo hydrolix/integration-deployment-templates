@@ -1,0 +1,23 @@
+SELECT
+datediff('s', signalTimestamp, now64(3)) as hdx_source_latency,
+arrayMap(x -> x['name'], browsers) as browsersName,
+arrayMap(x -> x['version'], browsers) as browsersVersion,
+arrayMap(x -> x['name'], riskPostureTiers) as riskPostureTiersName, 
+arrayMap(x -> x['tier'], riskPostureTiers) as riskPostureTiersTier, 
+arrayMap(x -> x['passed'], riskPostureTiers) as riskPostureTiersPassed, 
+arrayMap(x -> x['id'], riskPostureTiers) as riskPostureTiersId, 
+arrayMap(x -> x['remediations'], riskPostureTiers) as riskPostureTiersRemediations, 
+arrayMap(x -> x['version'], browsers) as browsersVersion,
+arrayMap(x -> x['name'], riskPostureTags) as riskPostureTagsName, 
+arrayMap(x -> x['tier'], riskPostureTags) as riskPostureTagsTier, 
+arrayMap(x -> x['passed'], riskPostureTags) as riskPostureTagsPassed, 
+arrayMap(x -> x['id'], riskPostureTags) as riskPostureTagsId, 
+arrayMap(x -> x['remediations'], riskPostureTags) as riskPostureTagsRemediations, 
+arrayMap(x -> x['name'], antiMalwareStatus) as antiMalwareStatusName,
+arrayMap(x -> x['passed'], antiMalwareStatus) as antiMalwareStatusPassed,
+arrayMap(x -> x['name'], antiMalwareInfo) as antiMalwareInfoName,
+arrayMap(x -> x['passed'], antiMalwareInfo) as antiMalwareInfoPassed,
+arrayMap(x -> x['name'], certificateProfile) as certificateProfileName,
+arrayMap(x -> x['passed'], certificateProfile) as certificateProfilePassed,
+*
+FROM {STREAM}

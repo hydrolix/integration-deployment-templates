@@ -1,0 +1,107 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/eaa",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/eaa-apps-observability.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Eaa Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "multi_stream",
+  "name": "trafficpeak_eaa",
+  "other_dashboards": [
+    {
+      "path": "dashboards/eaa-common-libraries.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-connector-health-details.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-connector-health.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-origins-observability.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-usage-stats.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-username-observability.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/eaa-view-global-stats.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/eaa_access/transform.json",
+          "sample": "transformations/eaa_access/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/eaa_admin/transform.json",
+          "sample": "transformations/eaa_admin/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/eaa_conhealth/transform.json",
+          "sample": "transformations/eaa_conhealth/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/eaa_devinv/transform.json",
+          "sample": "transformations/eaa_devinv/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/eaa_dirhealth/transform.json",
+          "sample": "transformations/eaa_dirhealth/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/eaa_observability_metrics/transform.json",
+          "sample": "transformations/eaa_observability_metrics/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/eaa-integration",
+    "source": {
+      "full_title": "Trafficpeak Eaa",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}

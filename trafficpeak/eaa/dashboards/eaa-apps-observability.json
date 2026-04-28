@@ -5046,5 +5046,58 @@
     "uid": "__DASHBOARD_UUID__",
     "version": 5,
     "weekStart": ""
-  }
+  },
+  "__inputs": [
+    {
+      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+      "label": "GruppoFerroVie-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "value": "__DATASOURCE__"
+    },
+    {
+      "name": "VAR_TABLE",
+      "type": "constant",
+      "label": "table",
+      "value": "akamai.eaa_useraccess",
+      "description": ""
+    },
+    {
+      "name": "VAR_DEVICE_TABLE",
+      "type": "constant",
+      "label": "device_table",
+      "value": "akamai.eaa_deviceinventory",
+      "description": ""
+    },
+    {
+      "name": "VAR_TIMESTAMP",
+      "type": "constant",
+      "label": "timestamp",
+      "value": "datetime",
+      "description": ""
+    },
+    {
+      "name": "VAR_GENERALESCAPING",
+      "type": "constant",
+      "label": "generalescaping",
+      "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+      "description": ""
+    },
+    {
+      "name": "VAR_QUERIESLIMIT",
+      "type": "constant",
+      "label": "querieslimit",
+      "value": "250",
+      "description": ""
+    },
+    {
+      "name": "VAR_COMMONLIBRARIES",
+      "type": "constant",
+      "label": "commonlibraries",
+      "value": "eaa-common-libraries-v5",
+      "description": ""
+    }
+  ]
 }

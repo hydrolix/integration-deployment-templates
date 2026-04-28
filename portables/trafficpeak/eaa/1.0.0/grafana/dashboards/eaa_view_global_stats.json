@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -78,7 +78,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "Provides overall statistics on the total number of users, logins, applications visited, etc.",
         "fieldConfig": {
@@ -146,7 +146,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'\nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
@@ -160,7 +160,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -229,7 +229,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -244,7 +244,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -296,7 +296,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -311,7 +311,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -364,7 +364,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -379,7 +379,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -445,7 +445,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -460,7 +460,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -526,7 +526,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -541,7 +541,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -594,7 +594,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -609,7 +609,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -662,7 +662,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -677,7 +677,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -730,7 +730,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -745,7 +745,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -798,7 +798,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -812,7 +812,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -865,7 +865,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -989,7 +989,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -1075,7 +1075,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -1236,7 +1236,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -1321,7 +1321,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -1694,12 +1694,44 @@
     "title": "EAA View Global Stats",
     "uid": "__DASHBOARD_UUID__",
     "version": 2,
-    "weekStart": ""
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_useraccess",
+        "description": ""
+      },
+      {
+        "name": "VAR_DEVICE_TABLE",
+        "type": "constant",
+        "label": "device_table",
+        "value": "akamai.eaa_deviceinventory",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {
-      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
-      "label": "GruppoFerroVie-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",

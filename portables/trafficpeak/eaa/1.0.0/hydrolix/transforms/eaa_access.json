@@ -1,0 +1,682 @@
+{
+  "name": "eaa_access",
+  "description": "ULS EAA Access Logs (ACCESS) - https://github.com/akamai/uls/blob/main/docs/LOG_OVERVIEW.md#access-logs-access",
+  "settings": {
+    "is_default": true,
+    "null_values": [],
+    "output_columns": [
+      {
+        "name": "localDatetime",
+        "datatype": {
+          "type": "datetime",
+          "index": true,
+          "primary": false,
+          "format": "2006-01-02T15:04:05.999999",
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "local_datetime"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "username",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "apphost",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "httpMethod",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "http_method"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "urlPath",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "url_path"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "httpVer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "http_ver"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "statusCode",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "status_code"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "idpinfo",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "httpVerb2",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "http_verb2"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "totalRespTime",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "total_resp_time"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "connectorRespTime",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "connector_resp_time"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "datetime",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05+00:00",
+          "resolution": "seconds",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "originRespTime",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin_resp_time"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "originHost",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin_host"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "reqSize",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "req_size"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "contentType",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "content_type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "userAgent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "user_agent"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "deviceType",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "device_type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "deviceOs",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "device_os"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "geoCity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "geo_city"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "geoState",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "geo_state"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "geoStatecode",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "geo_statecode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "geoCountrycode",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "geo_countrycode"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "geoCountry",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "geo_country"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "internalHost",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "internal_host"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "sessionInfo",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "session_info"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "groups",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "sessionId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "session_id"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_id"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "denyReason",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "deny_reason"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "bytesOut",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "bytes_out"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "bytesIn",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "bytes_in"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "conIp",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "con_ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "conSrcPort",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "con_srcport"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "conUuid",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "con_uuid"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cloudZone",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cloud_zone"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "errorCode",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "error_code"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientProcess",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_process"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "primary": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_version"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "type": "json"
+}

@@ -158,11 +158,11 @@
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'  \nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
+            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'\nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "Origins Observability",
+        "title": "Apps Observability",
         "transparent": true,
         "type": "canvas"
       },
@@ -176,7 +176,7 @@
         },
         "id": 35,
         "panels": [],
-        "title": "LAST 30 MINS Analysis for EAA Destinations",
+        "title": "Realtime Analysis by EAA Application",
         "type": "row"
       },
       {
@@ -184,7 +184,6 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -234,7 +233,7 @@
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT\n    uniq(username) AS Total_Username,\n    d\nFROM (\n    SELECT\n        username,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND username != '-'\n      AND origin != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Connected users; du=${__user.login}';",
+            "rawSql": "SELECT\n    uniq(username) AS Total_Username,\n    d\nFROM (\n    SELECT\n        username,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND username != '-'\n      AND apphost != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Connected users; du=${__user.login}';\n",
             "refId": "A"
           }
         ],
@@ -246,7 +245,6 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -280,7 +278,7 @@
           "percentChangeColorMode": "standard",
           "reduceOptions": {
             "calcs": [],
-            "fields": "/^Total_Apphost$/",
+            "fields": "/^Total_Origin$/",
             "values": false
           },
           "showPercentChange": true,
@@ -296,11 +294,11 @@
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT\n    uniq(apphost) AS Total_Apphost,\n    d\nFROM (\n    SELECT\n        apphost,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND username != '-'\n      AND origin != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=EAA_Apphost; du=${__user.login}';\n",
+            "rawSql": "SELECT\n    uniq(origin) AS Total_Origin,\n    d\nFROM (\n    SELECT\n        origin,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND origin != '-'\n      AND apphost != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Origin used; du=${__user.login}';",
             "refId": "A"
           }
         ],
-        "title": "EAA_Apphost",
+        "title": "Origin used",
         "type": "stat"
       },
       {
@@ -351,7 +349,7 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "origin"
+                "options": "apphost"
               },
               "properties": [
                 {
@@ -373,7 +371,7 @@
           {
             "targetBlank": true,
             "title": "Show details",
-            "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Logged in users&var-customquery=CQnooriginusernamedash&var-customtime=CTlast30&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV       "
+            "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,username&var-etitle=Logged in users&var-customquery=CQnoapphostusernamedash&var-customtime=CTlast30&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV       "
           }
         ],
         "options": {
@@ -398,7 +396,7 @@
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT origin, username, maxOrNull(datetime) AS Last_Access FROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\nGROUP BY origin, username\nORDER BY Last_Access DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} connected users; du=${__user.login}'\n",
+            "rawSql": "SELECT apphost, username, maxOrNull(datetime) AS Last_Access FROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND username != '-'\nGROUP BY apphost, username\nORDER BY Last_Access DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} connected users; du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -471,7 +469,7 @@
               "properties": [
                 {
                   "id": "unit",
-                  "value": "Bps"
+                  "value": "bps"
                 },
                 {
                   "id": "color",
@@ -481,12 +479,12 @@
                   }
                 },
                 {
-                  "id": "custom.axisLabel",
-                  "value": "Incoming"
-                },
-                {
                   "id": "custom.axisPlacement",
                   "value": "left"
+                },
+                {
+                  "id": "custom.axisLabel",
+                  "value": "Incoming"
                 }
               ]
             },
@@ -498,7 +496,7 @@
               "properties": [
                 {
                   "id": "unit",
-                  "value": "Bps"
+                  "value": "bps"
                 },
                 {
                   "id": "color",
@@ -508,12 +506,12 @@
                   }
                 },
                 {
-                  "id": "custom.axisLabel",
-                  "value": "Outgoing"
-                },
-                {
                   "id": "custom.axisPlacement",
                   "value": "right"
+                },
+                {
+                  "id": "custom.axisLabel",
+                  "value": "Outgoing"
                 }
               ]
             }
@@ -554,7 +552,7 @@
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT sum(bytesIn)*8/60 as Incoming, sum(bytesOut)*8/60 AS Outgoing, \ntoStartOfInterval(datetime, INTERVAL 60 SECOND) AS d\nFROM ${table} \nWHERE datetime >= now() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter()\nAND origin != '-'\nAND username != '-'\nGROUP BY d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bandwidth Usage; du=${__user.login}'",
+            "rawSql": "SELECT sum(bytesIn)*8/60 as Incoming, sum(bytesOut)*8/60 AS Outgoing, \ntoStartOfInterval(datetime, INTERVAL 60 SECOND) AS d\nFROM ${table} \nWHERE datetime >= now() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter()\nAND apphost != '-'\nAND username != '-'\nGROUP BY d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bandwidth usage; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -837,7 +835,7 @@
             "type": "bargauge"
           }
         ],
-        "title": "Tops for destination",
+        "title": "Tops for EAA Application",
         "type": "row"
       },
       {
@@ -848,7 +846,7 @@
           "x": 0,
           "y": 18
         },
-        "id": 14145,
+        "id": 14144,
         "panels": [
           {
             "datasource": {
@@ -968,7 +966,7 @@
               "x": 0,
               "y": 19
             },
-            "id": 14144,
+            "id": 22225,
             "interval": "1m",
             "maxDataPoints": 100,
             "options": {
@@ -1058,7 +1056,7 @@
                         {
                           "targetBlank": true,
                           "title": "Show details",
-                          "url": "/d/${commonlibraries}?${__url_time_range}&var-filter=${__field.name}%7C%3D%7C${__value.raw}&${__all_variables}&var-eselect=username,apphost,origin,geoCity,geoCountry,clientip&var-etitle=GEO per User&var-customquery=CQnoapphostusernamed\nash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
+                          "url": "/d/${commonlibraries}?${__url_time_range}&var-filter=${__field.name}%7C%3D%7C${__value.raw}&${__all_variables}&var-eselect=username,apphost,origin,geoCity,geoCountry,clientip&var-etitle=GEO per User&var-customquery=CQnoapphostusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
                         }
                       ]
                     }
@@ -1128,7 +1126,7 @@
                   "location": {
                     "mode": "lookup"
                   },
-                  "name": "Locations",
+                  "name": "Layer 1",
                   "tooltip": true,
                   "type": "markers"
                 }
@@ -1155,11 +1153,11 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT geoCountrycode, geoCountry, uniq(username) as Total_users\nFROM ${table}\nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\nGROUP BY geoCountrycode, geoCountry\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent User locations; du=${__user.login}'",
+                "rawSql": "SELECT geoCountrycode, geoCountry, uniq(username) as Total_users\nFROM ${table}\nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND username != '-'\nGROUP BY geoCountrycode, geoCountry\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent user locations; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Recent User locations",
+            "title": "Recent user locations",
             "transparent": true,
             "type": "geomap"
           },
@@ -1168,7 +1166,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "Number of users accessing the selected Destination.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1212,7 +1209,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -1234,7 +1231,7 @@
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Users to origin&var-customquery=CQnooriginusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,username&var-etitle=Users to EAA app&var-customquery=CQnoapphostusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -1260,11 +1257,11 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, username, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\ngroup by origin, username \n\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent ${querieslimit} users; du=${__user.login}'",
+                "rawSql": "SELECT apphost, username, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND username != '-'\ngroup by apphost, username \n\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent ${querieslimit} users to EAA Application; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Recent ${querieslimit} users",
+            "title": "Recent ${querieslimit} users to EAA Application",
             "type": "table"
           },
           {
@@ -1330,7 +1327,7 @@
               "h": 9,
               "w": 12,
               "x": 12,
-              "y": 30
+              "y": 614
             },
             "id": 26,
             "options": {
@@ -1363,7 +1360,7 @@
                 "refId": "A"
               }
             ],
-            "title": "User Access Load Trend",
+            "title": "EAA Application Load Trend",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -1388,7 +1385,7 @@
             "type": "timeseries"
           }
         ],
-        "title": "Users to Destination Analysis",
+        "title": "Users to EAA Application Analysis",
         "type": "row"
       },
       {
@@ -1406,7 +1403,6 @@
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "Number of EAA Application that contains the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1457,15 +1453,16 @@
                       "color": "green"
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": []
             },
             "gridPos": {
-              "h": 8,
-              "w": 12,
+              "h": 9,
+              "w": 24,
               "x": 0,
-              "y": 295
+              "y": 2379
             },
             "id": 902,
             "options": {
@@ -1498,7 +1495,7 @@
                 "refId": "A"
               }
             ],
-            "title": "EAA Apps per Destination",
+            "title": "Origin to EAA_APP",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -1511,10 +1508,10 @@
                 "options": {
                   "include": {
                     "names": [
-                      "Total_EAA_APPS / 5m",
+                      "Total_Origin / 5m",
                       "d"
                     ],
-                    "pattern": "^Total_EAA_APPS.*"
+                    "pattern": "^Total_Origin.*"
                   }
                 }
               }
@@ -1526,7 +1523,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "Top EAA Application serving the selected destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1559,7 +1555,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "apphost"
+                    "options": "origin"
                   },
                   "properties": [
                     {
@@ -1571,7 +1567,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -1583,17 +1579,17 @@
               ]
             },
             "gridPos": {
-              "h": 8,
+              "h": 10,
               "w": 12,
-              "x": 12,
-              "y": 295
+              "x": 0,
+              "y": 2891
             },
             "id": 34,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,apphost&var-etitle=EAA app to origin&var-customquery=CQnoapphostorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,origin&var-etitle=Origin to EAA app&var-customquery=CQnoapphostorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV "
               }
             ],
             "options": {
@@ -1618,15 +1614,118 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, apphost,\n       maxOrNull(datetime) AS Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND apphost !='-'\nGROUP BY origin, apphost\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit}  EAA App per Destination; du=${__user.login}'",
+                "rawSql": "SELECT apphost, origin,\n       maxOrNull(datetime) AS Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND apphost != '-'\nGROUP BY apphost, origin\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} origin to EAA_APP; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit}  EAA App per Destination",
+            "title": "Top ${querieslimit} origin to EAA_APP",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "port"
+                  },
+                  "properties": [
+                    {
+                      "id": "links",
+                      "value": [
+                        {
+                          "targetBlank": false,
+                          "title": "filter",
+                          "url": "/d/${__dashboard.uid}/?${__all_variables}&var-filter=origin%7C%3D~%7C%2A:${__value.raw}&${__url_time_range}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 12,
+              "x": 12,
+              "y": 2891
+            },
+            "id": 89876,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=arrayElement(splitByChar(':', ifNull(origin, '')), 2) as port&var-etitle=Active destinations&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     \n"
+              }
+            ],
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": true,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "count"
+                ],
+                "show": true
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": false,
+                  "displayName": "Origin"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "hide": false,
+                "rawSql": "SELECT\n  arrayElement(splitByChar(':', ifNull(origin, '')), 2) AS port,\n  count(port) AS port_count,\n  maxOrNull(datetime) AS Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND origin IS NOT NULL\n  AND origin != '-'\nGROUP BY port\nORDER BY port_count DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time = 60,\n         hdx_query_admin_comment = 'db=${__dashboard}; dp=Top ${querieslimit} active ports; du=${__user.login}';\n",
+                "refId": "A"
+              }
+            ],
+            "title": "Top ${querieslimit} active ports",
             "type": "table"
           }
         ],
-        "title": "EAA Application serving the Destination",
+        "title": "Origins to EAA Application",
         "type": "row"
       },
       {
@@ -1644,7 +1743,6 @@
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "Number of EAA Application that contains the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1703,7 +1801,7 @@
               "h": 8,
               "w": 12,
               "x": 0,
-              "y": 127
+              "y": 22
             },
             "id": 908,
             "options": {
@@ -1736,7 +1834,7 @@
                 "refId": "A"
               }
             ],
-            "title": "Connectors to Destination",
+            "title": "Connectors to EAA_APP",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -1808,7 +1906,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -1823,14 +1921,14 @@
               "h": 8,
               "w": 12,
               "x": 12,
-              "y": 127
+              "y": 22
             },
             "id": 44,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,conUuid&var-etitle=Connectors to destination&var-customquery=CQnoconuuidorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,conUuid&var-etitle=Connectors to EAA_APP&var-customquery=CQnoapphostconuuiddash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -1861,15 +1959,15 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, conUuid, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND conUuid != '-'\ngroup by origin, conUuid \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} connectors to destination; du=${__user.login}'",
+                "rawSql": "SELECT apphost, conUuid, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND conUuid != '-'\nAND apphost != '-'\ngroup by apphost, conUuid \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} connectors to EAA_APP; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} connectors to destination",
+            "title": "Top ${querieslimit} connectors to EAA_APP",
             "type": "table"
           }
         ],
-        "title": "Connectors serving the Destination",
+        "title": "Connectors to EAA Application",
         "type": "row"
       },
       {
@@ -1887,7 +1985,6 @@
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "Shows the cloudzones that are serving the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1943,10 +2040,10 @@
               "overrides": []
             },
             "gridPos": {
-              "h": 10,
+              "h": 9,
               "w": 24,
               "x": 0,
-              "y": 297
+              "y": 23
             },
             "id": 903,
             "options": {
@@ -1977,7 +2074,7 @@
                 "refId": "A"
               }
             ],
-            "title": "Cloudzones per Destination",
+            "title": "Cloudzones to EAA_APP",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -2005,7 +2102,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "This table shows the cloudzones configured for the selected app.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2050,7 +2146,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -2062,17 +2158,17 @@
               ]
             },
             "gridPos": {
-              "h": 10,
+              "h": 8,
               "w": 12,
               "x": 0,
-              "y": 307
+              "y": 333
             },
             "id": 30,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin, cloudZone&var-etitle=CloudZone to origin&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     \n"
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,cloudZone&var-etitle=CloudZone to EAA app&var-customquery=CQnoapphostdash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -2097,11 +2193,11 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, cloudZone, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nGROUP BY origin, cloudZone\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} cloudzones per Destination; du=${__user.login}'",
+                "rawSql": "SELECT apphost, cloudZone, maxOrNull(datetime) as Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nGROUP BY apphost, cloudZone\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} cloudzones to EAA_APP; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} cloudzones per Destination",
+            "title": "Top ${querieslimit} cloudzones to EAA_APP",
             "type": "table"
           },
           {
@@ -2109,7 +2205,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "This table shows the top Geographies when the application has been accessed",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2142,7 +2237,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -2178,17 +2273,17 @@
               ]
             },
             "gridPos": {
-              "h": 10,
+              "h": 8,
               "w": 12,
               "x": 12,
-              "y": 307
+              "y": 333
             },
             "id": 33,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,geoCity,geoCountry&var-etitle=GEO to origin&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV       "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,geoCity,geoCountry&var-etitle=GEO to EAA app&var-customquery=CQnoapphostdash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
               }
             ],
             "options": {
@@ -2213,15 +2308,15 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, geoCity, geoCountry, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\ngroup by origin, geoCity, geoCountry\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} user Geographies; du=${__user.login}'",
+                "rawSql": "SELECT apphost, geoCity, geoCountry, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\ngroup by apphost, geoCity, geoCountry\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} GEO to EAA_APP; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} user Geographies",
+            "title": "Top ${querieslimit} GEO to EAA_APP",
             "type": "table"
           }
         ],
-        "title": "Cloudzone & GEOs accessing the Destination",
+        "title": "Cloudzone & GEOs to EAA Application",
         "type": "row"
       },
       {
@@ -2239,7 +2334,6 @@
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "This table shows the amount of Data exchanged by the selected destination.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2337,10 +2431,10 @@
               ]
             },
             "gridPos": {
-              "h": 12,
+              "h": 8,
               "w": 24,
               "x": 0,
-              "y": 129
+              "y": 24
             },
             "id": 29,
             "options": {
@@ -2374,7 +2468,7 @@
                 "refId": "A"
               }
             ],
-            "title": "Traffic load per Destination",
+            "title": "Traffic for EAA_APP",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -2403,7 +2497,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "This table shows the most active users on this Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2436,167 +2529,12 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Incoming"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
                     "options": "Outgoing"
                   },
                   "properties": [
                     {
                       "id": "unit",
                       "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "origin"
-                  },
-                  "properties": [
-                    {
-                      "id": "filterable",
-                      "value": true
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "username"
-                  },
-                  "properties": [
-                    {
-                      "id": "filterable",
-                      "value": true
-                    }
-                  ]
-                }
-              ]
-            },
-            "gridPos": {
-              "h": 11,
-              "w": 12,
-              "x": 0,
-              "y": 196
-            },
-            "id": 905,
-            "links": [
-              {
-                "targetBlank": true,
-                "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Traffic by user&var-customquery=CQnooriginusernamedash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
-              }
-            ],
-            "options": {
-              "cellHeight": "sm",
-              "footer": {
-                "countRows": false,
-                "enablePagination": true,
-                "fields": [],
-                "reducer": [],
-                "show": true
-              },
-              "showHeader": true,
-              "sortBy": [
-                {
-                  "desc": false,
-                  "displayName": "apphost"
-                }
-              ]
-            },
-            "pluginVersion": "12.0.4",
-            "targets": [
-              {
-                "datasource": {
-                  "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
-                },
-                "format": 1,
-                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \norigin, username FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND origin != '-'\nGROUP BY Date, origin, username \norder by Date DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} active users; du=${__user.login}'",
-                "refId": "A"
-              }
-            ],
-            "title": "Top ${querieslimit} active users",
-            "type": "table"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "description": "This table shows the traffic split for each Destination configured in the selected app.\n",
-            "fieldConfig": {
-              "defaults": {
-                "color": {
-                  "mode": "thresholds"
-                },
-                "custom": {
-                  "align": "auto",
-                  "cellOptions": {
-                    "type": "auto"
-                  },
-                  "filterable": true,
-                  "inspect": true
-                },
-                "links": [],
-                "mappings": [],
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green"
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                }
-              },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Incoming"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Outgoing"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
                     }
                   ]
                 },
@@ -2623,21 +2561,33 @@
                       "value": true
                     }
                   ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Incoming"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
                 }
               ]
             },
             "gridPos": {
-              "h": 11,
+              "h": 8,
               "w": 12,
-              "x": 12,
-              "y": 196
+              "x": 0,
+              "y": 295
             },
             "id": 755,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,apphost&var-etitle=Traffic by EAA App&var-customquery=CQnoapphostorigindash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost, origin&var-etitle=Traffic by destination&var-customquery=CQnoapphostorigindash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
               }
             ],
             "options": {
@@ -2666,15 +2616,145 @@
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \norigin, apphost FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND origin != '-'\nGROUP BY Date, origin, apphost \norder by Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} traffic per Destination; du=${__user.login}'",
+                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \napphost, origin FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND origin != '-'\nGROUP BY Date, apphost, origin \norder by Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} total traffic split by destination; du=${__user.login}';",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} traffic per Destination",
+            "title": "Top ${querieslimit} total traffic split by destination",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Incoming"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Outgoing"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "apphost"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 295
+            },
+            "id": 905,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=apphost,username&var-etitle=Traffic by user&var-customquery=CQnoapphostusernamedash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
+              }
+            ],
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "enablePagination": true,
+                "fields": [],
+                "reducer": [],
+                "show": true
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": false,
+                  "displayName": "apphost"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \napphost, username FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND username != '-'\nGROUP BY Date, apphost, username \norder by Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} total traffic split by user; du=${__user.login}';",
+                "refId": "A"
+              }
+            ],
+            "title": "Top ${querieslimit} total traffic split by user",
             "type": "table"
           }
         ],
-        "title": "Traffic metrics for the Destination",
+        "title": "Traffic metrics to EAA Application",
         "type": "row"
       },
       {
@@ -2765,7 +2845,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 130
+              "y": 25
             },
             "id": 544,
             "interval": "1m",
@@ -2888,7 +2968,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 130
+              "y": 25
             },
             "id": 542,
             "options": {
@@ -2913,7 +2993,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    toString(statusCode) AS statusCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  statusCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    toString(statusCode) AS statusCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  statusCode\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -2998,7 +3078,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 174
+              "y": 109
             },
             "id": 557,
             "interval": "1m",
@@ -3121,7 +3201,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 174
+              "y": 109
             },
             "id": 558,
             "options": {
@@ -3146,7 +3226,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    toString(errorCode) AS errorCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  errorCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    toString(errorCode) AS errorCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  errorCode\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -3245,7 +3325,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 300
+              "y": 26
             },
             "id": 22224,
             "links": [
@@ -3363,7 +3443,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 300
+              "y": 26
             },
             "id": 556,
             "links": [
@@ -3480,7 +3560,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 311
+              "y": 37
             },
             "id": 559,
             "links": [
@@ -3597,7 +3677,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 311
+              "y": 37
             },
             "id": 554,
             "links": [
@@ -3714,7 +3794,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 322
+              "y": 48
             },
             "id": 555,
             "links": [
@@ -3831,7 +3911,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 322
+              "y": 48
             },
             "id": 22223,
             "links": [
@@ -3968,7 +4048,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 132
+              "y": 195
             },
             "id": 547,
             "interval": "1m",
@@ -4094,7 +4174,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 132
+              "y": 195
             },
             "id": 548,
             "options": {
@@ -4119,7 +4199,7 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    httpMethod,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpMethod\nORDER BY Total desc\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP method; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    httpMethod,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpMethod\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP Method; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -4204,7 +4284,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 143
+              "y": 213
             },
             "id": 549,
             "links": [
@@ -4321,7 +4401,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 143
+              "y": 213
             },
             "id": 550,
             "links": [
@@ -4438,7 +4518,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 154
+              "y": 224
             },
             "id": 546,
             "links": [
@@ -4555,7 +4635,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 154
+              "y": 224
             },
             "id": 560,
             "links": [
@@ -4613,7 +4693,6 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "This table shows the access log for the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -4757,14 +4836,14 @@
               "h": 7,
               "w": 24,
               "x": 0,
-              "y": 262
+              "y": 196
             },
             "id": 15,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=datetime, origin, apphost, username, clientip, cloudZone, geoCountry, geoCity, originRespTime, totalRespTime, errorCode, httpMethod, httpVerb2, idpinfo, referer, sessionId, sessionInfo, statusCode, urlPath, userAgent, clientId&var-etitle=Access logs&var-customquery=CQnoapphostoriginusernamedash&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=datetime, origin, apphost, username, clientip, cloudZone, geoCountry, geoCity, originRespTime, totalRespTime, errorCode, httpMethod, httpVerb2, idpinfo, referer, sessionId, sessionInfo, statusCode, urlPath, userAgent, clientId&var-etitle=Access logs&var-customquery=CQnoapphostusernamedash&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -4794,15 +4873,15 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "rawSql": "SELECT datetime, \n       origin,\n       apphost,\n       username, \n       clientip, \n       cloudZone, \n       geoCountry, \n       geoCity, \n       originRespTime, \n       totalRespTime, \n       errorCode,\n       httpMethod,\n       httpVerb2,\n       idpinfo,\n       referer,\n       sessionId,\n       sessionInfo,\n       statusCode,\n       urlPath,\n       userAgent,\n\n       IF(clientId != '-', 'tunnel', 'application') AS application_type, \n       clientId\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\nAND apphost != '-'\nAND origin != '-'\nAND username != '-'\n\nORDER BY datetime DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} access logs ; du=${__user.login}'\n",
+                "rawSql": "SELECT datetime, \n       origin,\n       apphost,\n       username, \n       clientip, \n       cloudZone, \n       geoCountry, \n       geoCity, \n       originRespTime, \n       totalRespTime, \n       errorCode,\n       httpMethod,\n       httpVerb2,\n       idpinfo,\n       referer,\n       sessionId,\n       sessionInfo,\n       statusCode,\n       urlPath,\n       userAgent,\n\n       IF(clientId != '-', 'tunnel', 'application') AS application_type, \n       clientId\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\nAND apphost != '-'\n-- AND origin != '-'\nAND username != '-'\n\n\nORDER BY datetime DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} access logs; du=${__user.login}'\n",
                 "refId": "A"
               }
             ],
-            "title": "Last ${querieslimit} access logs ",
+            "title": "Last ${querieslimit} access logs",
             "type": "table"
           }
         ],
-        "title": "Destination Access details",
+        "title": "EAA Application access details",
         "type": "row"
       }
     ],
@@ -4963,10 +5042,63 @@
     },
     "timepicker": {},
     "timezone": "Europe/Rome",
-    "title": "EAA Origins Observability",
+    "title": "EAA Apps Observability",
     "uid": "__DASHBOARD_UUID__",
-    "version": 4,
-    "weekStart": ""
+    "version": 5,
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_useraccess",
+        "description": ""
+      },
+      {
+        "name": "VAR_DEVICE_TABLE",
+        "type": "constant",
+        "label": "device_table",
+        "value": "akamai.eaa_deviceinventory",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      },
+      {
+        "name": "VAR_COMMONLIBRARIES",
+        "type": "constant",
+        "label": "commonlibraries",
+        "value": "eaa-common-libraries-v5",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {

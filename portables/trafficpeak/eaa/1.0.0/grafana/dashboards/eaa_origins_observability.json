@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -84,7 +84,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "To run this dashboard, start from Usage Stats, selecting the desired EAA_APP.",
         "fieldConfig": {
@@ -154,7 +154,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -182,7 +182,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
@@ -230,7 +230,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -244,7 +244,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
@@ -292,7 +292,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -306,7 +306,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -394,7 +394,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -408,7 +408,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -550,7 +550,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
@@ -575,7 +575,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -650,7 +650,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n  username, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY username\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 username by hits; du=${__user.login}'",
@@ -663,7 +663,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -738,7 +738,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n  cloudZone, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY cloudZone\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 cloudzone by hits; du=${__user.login}'",
@@ -751,7 +751,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -826,7 +826,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT \n  conUuid, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY conUuid\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 connectors by hits; du=${__user.login}'",
@@ -853,7 +853,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -989,7 +989,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "\nSELECT\n  $__timeInterval(datetime) AS d,\n  avg(originRespTime) as \"Origin_Response_Time\",\n  avg(connectorRespTime) as \"Connector_Response_Time\",\n  avg(totalRespTime) as \"Total_Response_Time\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-' \n  and totalRespTime is not null\n  and connectorRespTime is not null\n  and originRespTime is not null\nGROUP BY  d --, connectorRespTime, originRespTime, totalRespTime\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Response time; du=${__user.login}'\n \n \n ",
@@ -1016,7 +1016,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -1151,7 +1151,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -1166,7 +1166,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "Number of users accessing the selected Destination.",
             "fieldConfig": {
@@ -1256,7 +1256,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -1524,7 +1524,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "Top EAA Application serving the selected destination",
             "fieldConfig": {
@@ -1614,7 +1614,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -1762,7 +1762,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -1857,7 +1857,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -2003,7 +2003,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "This table shows the cloudzones configured for the selected app.",
             "fieldConfig": {
@@ -2093,7 +2093,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -2107,7 +2107,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "This table shows the top Geographies when the application has been accessed",
             "fieldConfig": {
@@ -2209,7 +2209,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -2401,7 +2401,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "This table shows the most active users on this Destination",
             "fieldConfig": {
@@ -2525,7 +2525,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \norigin, username FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND origin != '-'\nGROUP BY Date, origin, username \norder by Date DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} active users; du=${__user.login}'",
@@ -2538,7 +2538,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "This table shows the traffic split for each Destination configured in the selected app.\n",
             "fieldConfig": {
@@ -2662,7 +2662,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -2690,7 +2690,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -2792,7 +2792,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    statusCode,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, statusCode\nORDER BY time ASC, statusCode\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
@@ -2826,7 +2826,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -2910,7 +2910,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    toString(statusCode) AS statusCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  statusCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
@@ -2923,7 +2923,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -3025,7 +3025,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    errorCode,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, errorCode\nORDER BY time ASC, errorCode\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
@@ -3059,7 +3059,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3143,7 +3143,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    toString(errorCode) AS errorCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  errorCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
@@ -3170,7 +3170,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3274,7 +3274,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -3288,7 +3288,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3392,7 +3392,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    deviceType,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  deviceType\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} device type; du=${__user.login}';\n",
@@ -3405,7 +3405,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3509,7 +3509,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    userAgent,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  userAgent\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} user agent; du=${__user.login}';\n",
@@ -3522,7 +3522,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3626,7 +3626,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    clientProcess,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  clientProcess\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} client process; du=${__user.login}';\n",
@@ -3639,7 +3639,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3743,7 +3743,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    clientip,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  clientip\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} client IP; du=${__user.login}';\n",
@@ -3756,7 +3756,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3865,7 +3865,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -3893,7 +3893,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -3995,7 +3995,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    httpMethod,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, httpMethod\nORDER BY time ASC, httpMethod\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP method; du=${__user.login}';\n",
@@ -4029,7 +4029,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4116,7 +4116,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    httpMethod,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpMethod\nORDER BY Total desc\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP method; du=${__user.login}';\n",
@@ -4129,7 +4129,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4233,7 +4233,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    urlPath,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  urlPath\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} URL Path; du=${__user.login}';\n",
@@ -4246,7 +4246,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4350,7 +4350,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    referer,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  referer\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} referer; du=${__user.login}';\n",
@@ -4363,7 +4363,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4467,7 +4467,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    contentType,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  contentType\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} content type; du=${__user.login}';\n",
@@ -4480,7 +4480,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4584,7 +4584,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    httpVer,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpVer\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} HTTP version; du=${__user.login}';\n",
@@ -4611,7 +4611,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "This table shows the access log for the selected Destination",
             "fieldConfig": {
@@ -4791,7 +4791,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT datetime, \n       origin,\n       apphost,\n       username, \n       clientip, \n       cloudZone, \n       geoCountry, \n       geoCity, \n       originRespTime, \n       totalRespTime, \n       errorCode,\n       httpMethod,\n       httpVerb2,\n       idpinfo,\n       referer,\n       sessionId,\n       sessionInfo,\n       statusCode,\n       urlPath,\n       userAgent,\n\n       IF(clientId != '-', 'tunnel', 'application') AS application_type, \n       clientId\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\nAND apphost != '-'\nAND origin != '-'\nAND username != '-'\n\nORDER BY datetime DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} access logs ; du=${__user.login}'\n",
@@ -4853,7 +4853,7 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "filter",
@@ -4966,12 +4966,65 @@
     "title": "EAA Origins Observability",
     "uid": "__DASHBOARD_UUID__",
     "version": 4,
-    "weekStart": ""
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_useraccess",
+        "description": ""
+      },
+      {
+        "name": "VAR_DEVICE_TABLE",
+        "type": "constant",
+        "label": "device_table",
+        "value": "akamai.eaa_deviceinventory",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      },
+      {
+        "name": "VAR_COMMONLIBRARIES",
+        "type": "constant",
+        "label": "commonlibraries",
+        "value": "eaa-common-libraries-v5",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {
-      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
-      "label": "GruppoFerroVie-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",

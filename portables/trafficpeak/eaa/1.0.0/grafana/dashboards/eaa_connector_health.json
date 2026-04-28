@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -66,7 +66,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "description": "Health metrics (CPU, memory, disk, and dialout activity)",
         "fieldConfig": {
@@ -134,7 +134,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT\n  $__timeInterval(datetime) AS d\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n\nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
@@ -148,7 +148,7 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -225,7 +225,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "rawSql": "SELECT\n    t.1 AS name,\n    t.2 AS version,\n    t.3 AS osVersion,\n    t.4 AS privateip,\n    t.5 AS publicip,\n    t.6 AS reachable,\n    t.7 AS last_update\nFROM (\n    SELECT argMax(tuple(name, version, osVersion, privateip, publicip, reachable, lastUpdate), lastUpdate) AS t\n    FROM ${table}\n    WHERE $__timeFilter(datetime)\n      AND ${generalescaping}\n      AND $__adHocFilter()\n    GROUP BY name\n) sub\nORDER BY name ASC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Connectors; du=${__user.login}'\n",
@@ -248,7 +248,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -315,7 +315,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(cpu) AS last_cpu,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_cpu DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by CPU; du=${__user.login}'",
@@ -328,7 +328,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -408,7 +408,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(mem) AS last_mem,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_mem DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by memory; du=${__user.login}'",
@@ -421,7 +421,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -501,7 +501,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(disk) AS last_disk,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_disk DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by disk; du=${__user.login}'",
@@ -514,7 +514,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -594,7 +594,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(dialoutActive) AS last_dialouts,\n        name,\n        concat('', ' (avg:', toString(round(avg(dialoutActive), 0)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_dialouts DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by active dialouts; du=${__user.login}'",
@@ -621,7 +621,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -688,7 +688,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(cpu) AS last_cpu,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_cpu ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by CPU; du=${__user.login}'",
@@ -701,7 +701,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -781,7 +781,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(mem) AS last_mem,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_mem ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by memory; du=${__user.login}'",
@@ -794,7 +794,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -874,7 +874,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(disk) AS last_disk,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_disk ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by disk; du=${__user.login}'",
@@ -887,7 +887,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -967,7 +967,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT       \n        anyLast(dialoutActive) AS last_dialouts,\n        name,\n        concat('', ' (avg:', toString(round(avg(dialoutActive), 0)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nHAVING last_dialouts IS NOT NULL\nORDER BY last_dialouts ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by active dialouts; du=${__user.login}'",
@@ -1010,7 +1010,7 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "filter",
@@ -1143,12 +1143,65 @@
     "title": "EAA Connector Health",
     "uid": "__DASHBOARD_UUID__",
     "version": 2,
-    "weekStart": ""
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_connectorhealth",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "1=1",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      },
+      {
+        "name": "VAR_COMMONLIBRARIES",
+        "type": "constant",
+        "label": "commonlibraries",
+        "value": "eaa-common-libraries-v5",
+        "description": ""
+      },
+      {
+        "name": "VAR_CONNHEALTH_DET",
+        "type": "constant",
+        "label": "connhealth_det",
+        "value": "eaa-connector-health-details-v5",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {
-      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
-      "label": "GruppoFerroVie-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",

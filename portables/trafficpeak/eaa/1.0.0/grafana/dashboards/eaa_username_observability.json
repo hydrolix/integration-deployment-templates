@@ -4,7 +4,7 @@
       "model": {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         }
       }
     },
@@ -84,9 +84,9 @@
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
-        "description": "To run this dashboard, start from Usage Stats, selecting the desired EAA_APP.",
+        "description": "To run this dashboard, start from Usage Stats, selecting the desired user.",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -114,7 +114,7 @@
           "x": 0,
           "y": 0
         },
-        "id": 906,
+        "id": 882,
         "interval": "1m",
         "maxDataPoints": 100,
         "options": {
@@ -137,7 +137,7 @@
               "vertical": "top"
             },
             "elements": [],
-            "name": "Element 1748004947883",
+            "name": "Element 1748267184893",
             "placement": {
               "height": 100,
               "left": 0,
@@ -154,15 +154,14 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
-            "hide": false,
-            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'  \nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
+            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  uniq(geoCity) as \"Total_geoCity\",\n  uniq(geoCountry) as \"Total_geoCountry\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'  \nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
             "refId": "A"
           }
         ],
-        "title": "Origins Observability",
+        "title": "Username Observability",
         "transparent": true,
         "type": "canvas"
       },
@@ -174,23 +173,23 @@
           "x": 0,
           "y": 1
         },
-        "id": 35,
+        "id": 31,
         "panels": [],
-        "title": "LAST 30 MINS Analysis for EAA Destinations",
+        "title": "LAST 30 MINS for User",
         "type": "row"
       },
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
-        "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
           "defaults": {
             "color": {
               "mode": "continuous-BlPu"
             },
             "mappings": [],
+            "noValue": "Filter by only one user",
             "thresholds": {
               "mode": "absolute",
               "steps": [
@@ -204,24 +203,26 @@
           "overrides": []
         },
         "gridPos": {
-          "h": 6,
-          "w": 5,
+          "h": 4,
+          "w": 6,
           "x": 0,
           "y": 2
         },
-        "id": 31,
+        "id": 8,
         "options": {
           "colorMode": "value",
-          "graphMode": "none",
+          "graphMode": "area",
           "justifyMode": "auto",
           "orientation": "auto",
           "percentChangeColorMode": "standard",
           "reduceOptions": {
-            "calcs": [],
-            "fields": "/^Total_Username$/",
-            "values": false
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^qres$/",
+            "values": true
           },
-          "showPercentChange": true,
+          "showPercentChange": false,
           "textMode": "auto",
           "wideLayout": true
         },
@@ -230,29 +231,63 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT\n    uniq(username) AS Total_Username,\n    d\nFROM (\n    SELECT\n        username,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND username != '-'\n      AND origin != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Connected users; du=${__user.login}';",
+            "rawSql": "SELECT\n  if(count() > 0, 'Connected', 'Not Connected') AS qres,\n  99 AS v\nFROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter() \nSETTINGS \n  hdx_query_max_execution_time=60, \n  hdx_query_admin_comment='db=${__dashboard}; dp=Status; du=${__user.login}'",
             "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT count(DISTINCT username) AS querycontroller, 99 as v\nFROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ActiveUserCount; du=${__user.login}'",
+            "refId": "querycontroller"
           }
         ],
-        "title": "Connected users",
+        "title": "Status",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "greater",
+                    "options": {
+                      "value": "1"
+                    }
+                  },
+                  "fieldName": "querycontroller"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          }
+        ],
         "type": "stat"
       },
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
-        "description": "This indicator shows the current logged in users for the last 30 Minutes, and the trend over the 30 minutes before. \n\nUp Arrow: Positive Trend\nDown Arrow: Negative Trend",
         "fieldConfig": {
           "defaults": {
             "color": {
               "mode": "continuous-BlPu"
             },
             "mappings": [],
+            "noValue": "N/A",
             "thresholds": {
               "mode": "absolute",
               "steps": [
@@ -260,30 +295,31 @@
                   "color": "green"
                 }
               ]
-            },
-            "unit": "short"
+            }
           },
           "overrides": []
         },
         "gridPos": {
-          "h": 6,
-          "w": 5,
-          "x": 5,
+          "h": 4,
+          "w": 6,
+          "x": 6,
           "y": 2
         },
-        "id": 909,
+        "id": 5,
         "options": {
           "colorMode": "value",
-          "graphMode": "none",
+          "graphMode": "area",
           "justifyMode": "auto",
-          "orientation": "auto",
+          "orientation": "horizontal",
           "percentChangeColorMode": "standard",
           "reduceOptions": {
-            "calcs": [],
-            "fields": "/^Total_Apphost$/",
-            "values": false
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^datetime$/",
+            "values": true
           },
-          "showPercentChange": true,
+          "showPercentChange": false,
           "textMode": "auto",
           "wideLayout": true
         },
@@ -292,36 +328,63 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "rawSql": "  SELECT datetime,  99 as v FROM ${table} \n  WHERE $__timeFilter(datetime)\nAND ${generalescaping}\n  AND $__adHocFilter() \n\nAND (\n  urlPath = '/saml/sp/response'\n  AND\n  idpinfo = 'UNSPEC|D'\n  AND\n  username != '-'\n)\n\n  order by datetime desc\n  limit 1\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last login time; du=${__user.login}'",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT\n    uniq(apphost) AS Total_Apphost,\n    d\nFROM (\n    SELECT\n        apphost,\n        CASE\n            WHEN datetime >= now() - INTERVAL 45 MINUTE\n             AND datetime <  now() - INTERVAL 15 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 15 MINUTE)\n            WHEN datetime >= now() - INTERVAL 75 MINUTE\n             AND datetime <  now() - INTERVAL 45 MINUTE\n                THEN toStartOfMinute(now() - INTERVAL 45 MINUTE)\n        END AS d\n    FROM ${table}\n    WHERE datetime >= now() - INTERVAL 75 MINUTE\n      AND username != '-'\n      AND origin != '-'\n      AND ${generalescaping}\n      AND $__adHocFilter()\n) t\nWHERE d IS NOT NULL\nGROUP BY d\nORDER BY d ASC\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=EAA_Apphost; du=${__user.login}';\n",
-            "refId": "A"
+            "rawSql": "SELECT count(DISTINCT username) AS querycontroller, 99 as v\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ActiveUserCount; du=${__user.login}'",
+            "refId": "querycontroller"
           }
         ],
-        "title": "EAA_Apphost",
+        "title": "Last login time",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "greater",
+                    "options": {
+                      "value": "1"
+                    }
+                  },
+                  "fieldName": "querycontroller"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          }
+        ],
         "type": "stat"
       },
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "thresholds"
+              "mode": "continuous-BlPu"
             },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "filterable": true,
-              "inspect": true
-            },
+            "links": [],
             "mappings": [],
+            "noValue": "N/A",
             "thresholds": {
               "mode": "absolute",
               "steps": [
@@ -339,19 +402,404 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "username"
+                "options": "clientip"
               },
               "properties": [
                 {
-                  "id": "filterable",
-                  "value": true
+                  "id": "actions",
+                  "value": [
+                    {
+                      "fetch": {
+                        "body": "{}",
+                        "headers": [
+                          [
+                            "Content-Type",
+                            "application/json"
+                          ]
+                        ],
+                        "method": "GET",
+                        "queryParams": [],
+                        "url": "https://whois.domaintools.com/1.1.1.1"
+                      },
+                      "title": "whois",
+                      "type": "fetch"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 2
+        },
+        "id": 21,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^clientip$/",
+            "values": true
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "rawSql": "SELECT clientip, 99 as v FROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \norder by datetime desc\nlimit 1\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Current Client IP; du=${__user.login}'\n",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT count(DISTINCT username) AS querycontroller, 99 as v\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ActiveUserCount; du=${__user.login}'",
+            "refId": "querycontroller"
+          }
+        ],
+        "title": "Last Client IP",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "greater",
+                    "options": {
+                      "value": "1"
+                    }
+                  },
+                  "fieldName": "querycontroller"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlPu"
+            },
+            "mappings": [],
+            "noValue": "N/A",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 2
+        },
+        "id": 22,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "/.*/",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "rawSql": "SELECT geoCity as City, geoCountry as Country, 99 as v FROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \norder by datetime desc\nlimit 1\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Current connecting Geo; du=${__user.login}'",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT count(DISTINCT username) AS querycontroller, 99 as v\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ActiveUserCount; du=${__user.login}'",
+            "refId": "querycontroller"
+          }
+        ],
+        "title": "Last connecting Geo",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "greater",
+                    "options": {
+                      "value": "1"
+                    }
+                  },
+                  "fieldName": "querycontroller"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "City",
+                  "Country"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
                 }
               ]
             },
+            "unit": "none"
+          },
+          "overrides": [
             {
               "matcher": {
                 "id": "byName",
-                "options": "origin"
+                "options": "geoCountry"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "Show details",
+                      "url": "/d/${commonlibraries}?${__url_time_range}&var-filter=${__field.name}%7C%3D%7C${__value.raw}&${__all_variables}&var-eselect=username,apphost,origin,geoCity,geoCountry,clientip&var-etitle=GEO per User&var-customquery=CQnoapphostusernamed\nash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 0,
+          "y": 6
+        },
+        "id": 431,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "tooltip": true,
+            "type": "osm-standard"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": true,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "fixed": "orange"
+                  },
+                  "opacity": 1,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "location": {
+                "mode": "lookup"
+              },
+              "name": "Layer 1",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "fit",
+            "lastOnly": false,
+            "lat": 46,
+            "layer": "Layer 1",
+            "lon": 14,
+            "zoom": 2
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "rawSql": "SELECT geoCountrycode, geoCountry, uniq(username) as Total_users\nFROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter() \nGROUP BY geoCountrycode, geoCountry\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 Origins; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "User Location",
+        "transparent": true,
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "description": "Groups associated with the user",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "filterable": true,
+              "inspect": true
+            },
+            "mappings": [],
+            "noValue": "N/A",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Name"
               },
               "properties": [
                 {
@@ -363,19 +811,12 @@
           ]
         },
         "gridPos": {
-          "h": 15,
-          "w": 14,
-          "x": 10,
-          "y": 2
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 6
         },
-        "id": 901,
-        "links": [
-          {
-            "targetBlank": true,
-            "title": "Show details",
-            "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Logged in users&var-customquery=CQnooriginusernamedash&var-customtime=CTlast30&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV       "
-          }
-        ],
+        "id": 19,
         "options": {
           "cellHeight": "sm",
           "footer": {
@@ -394,21 +835,65 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
             "hide": false,
-            "rawSql": "SELECT origin, username, maxOrNull(datetime) AS Last_Access FROM ${table}\nWHERE datetime > NOW() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\nGROUP BY origin, username\nORDER BY Last_Access DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} connected users; du=${__user.login}'\n",
+            "rawSql": "SELECT \n  DISTINCT arrayJoin(splitByChar(',', assumeNotNull(groups))) AS Name, 99 as v\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND groups != '-'\n\nORDER BY datetime DESC\nLIMIT 500\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=User Groups ; du=${__user.login}'\n",
             "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT count(DISTINCT username) AS querycontroller, 99 as v\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND datetime > NOW() - INTERVAL 30 MINUTE\n  AND ${generalescaping}\n  AND $__adHocFilter()\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=ActiveUserCount; du=${__user.login}'",
+            "refId": "querycontroller"
           }
         ],
-        "title": "Last ${querieslimit} connected users",
+        "title": "User Groups ",
+        "transformations": [
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "greater",
+                    "options": {
+                      "value": "1"
+                    }
+                  },
+                  "fieldName": "querycontroller"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Name"
+                ]
+              }
+            }
+          }
+        ],
         "type": "table"
       },
       {
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "fieldConfig": {
           "defaults": {
@@ -446,7 +931,7 @@
               "spanNulls": false,
               "stacking": {
                 "group": "A",
-                "mode": "normal"
+                "mode": "none"
               },
               "thresholdsStyle": {
                 "mode": "off"
@@ -471,7 +956,7 @@
               "properties": [
                 {
                   "id": "unit",
-                  "value": "Bps"
+                  "value": "bps"
                 },
                 {
                   "id": "color",
@@ -481,12 +966,12 @@
                   }
                 },
                 {
-                  "id": "custom.axisLabel",
-                  "value": "Incoming"
-                },
-                {
                   "id": "custom.axisPlacement",
                   "value": "left"
+                },
+                {
+                  "id": "custom.axisLabel",
+                  "value": "Incoming"
                 }
               ]
             },
@@ -498,7 +983,7 @@
               "properties": [
                 {
                   "id": "unit",
-                  "value": "Bps"
+                  "value": "bps"
                 },
                 {
                   "id": "color",
@@ -508,28 +993,27 @@
                   }
                 },
                 {
-                  "id": "custom.axisLabel",
-                  "value": "Outgoing"
-                },
-                {
                   "id": "custom.axisPlacement",
                   "value": "right"
+                },
+                {
+                  "id": "custom.axisLabel",
+                  "value": "Outgoing"
                 }
               ]
             }
           ]
         },
         "gridPos": {
-          "h": 9,
-          "w": 10,
-          "x": 0,
-          "y": 8
+          "h": 7,
+          "w": 12,
+          "x": 12,
+          "y": 15
         },
-        "id": 32,
+        "id": 352,
         "options": {
           "legend": {
             "calcs": [
-              "min",
               "max",
               "mean"
             ],
@@ -541,7 +1025,7 @@
           },
           "tooltip": {
             "hideZeros": false,
-            "mode": "multi",
+            "mode": "single",
             "sort": "none"
           }
         },
@@ -550,16 +1034,15 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "format": 1,
-            "hide": false,
-            "rawSql": "SELECT sum(bytesIn)*8/60 as Incoming, sum(bytesOut)*8/60 AS Outgoing, \ntoStartOfInterval(datetime, INTERVAL 60 SECOND) AS d\nFROM ${table} \nWHERE datetime >= now() - INTERVAL 30 MINUTE\nAND ${generalescaping}\nAND $__adHocFilter()\nAND origin != '-'\nAND username != '-'\nGROUP BY d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bandwidth Usage; du=${__user.login}'",
+            "rawSql": "SELECT sum(bytesIn)*8/60 as Incoming, sum(bytesOut)*8/60 as Outgoing, \ntoStartOfInterval(datetime, INTERVAL 60 SECOND) AS d\n--datetime as d\nFROM ${table} \nWHERE datetime > (now() - interval 30 minute)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nGROUP BY d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Near realtime bandwidth usage; du=${__user.login}'",
             "refId": "A"
           }
         ],
         "timeFrom": "30m",
-        "title": "Bandwidth usage",
+        "title": "Near realtime bandwidth usage",
         "type": "timeseries"
       },
       {
@@ -568,14 +1051,14 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 17
+          "y": 22
         },
-        "id": 910,
+        "id": 11,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -597,7 +1080,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -616,11 +1100,11 @@
             },
             "gridPos": {
               "h": 8,
-              "w": 8,
+              "w": 12,
               "x": 0,
-              "y": 18
+              "y": 284
             },
-            "id": 14141,
+            "id": 14,
             "options": {
               "displayMode": "gradient",
               "legend": {
@@ -650,22 +1134,21 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT \n  username, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY username\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 username by hits; du=${__user.login}'",
+                "rawSql": "SELECT \n  origin, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY origin\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 Destinations by hits; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top 5 username by hits",
+            "title": "Top 5 Destinations by hits",
             "type": "bargauge"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -685,7 +1168,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -704,11 +1188,11 @@
             },
             "gridPos": {
               "h": 8,
-              "w": 8,
-              "x": 8,
-              "y": 18
+              "w": 12,
+              "x": 12,
+              "y": 284
             },
-            "id": 14142,
+            "id": 9,
             "options": {
               "displayMode": "gradient",
               "legend": {
@@ -738,106 +1222,18 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT \n  cloudZone, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY cloudZone\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 cloudzone by hits; du=${__user.login}'",
+                "rawSql": "SELECT apphost, count(*) as Total FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\n\ngroup by apphost\norder by Total desc\nlimit 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 EAA_APP by hits; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top 5 cloudzone by hits",
-            "type": "bargauge"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "description": "",
-            "fieldConfig": {
-              "defaults": {
-                "color": {
-                  "mode": "continuous-BlPu"
-                },
-                "displayName": "${__field.labels}",
-                "links": [],
-                "mappings": [],
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green"
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                }
-              },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Total"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "short"
-                    }
-                  ]
-                }
-              ]
-            },
-            "gridPos": {
-              "h": 8,
-              "w": 8,
-              "x": 16,
-              "y": 18
-            },
-            "id": 14143,
-            "options": {
-              "displayMode": "gradient",
-              "legend": {
-                "calcs": [],
-                "displayMode": "list",
-                "placement": "bottom",
-                "showLegend": false
-              },
-              "maxVizHeight": 300,
-              "minVizHeight": 16,
-              "minVizWidth": 8,
-              "namePlacement": "auto",
-              "orientation": "horizontal",
-              "reduceOptions": {
-                "calcs": [
-                  "lastNotNull"
-                ],
-                "fields": "",
-                "values": true
-              },
-              "showUnfilled": true,
-              "sizing": "auto",
-              "valueMode": "color"
-            },
-            "pluginVersion": "12.0.4",
-            "targets": [
-              {
-                "datasource": {
-                  "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
-                },
-                "format": 1,
-                "rawSql": "SELECT \n  conUuid, count() as Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\nGROUP BY conUuid\nORDER BY Total DESC\nLIMIT 5\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 5 connectors by hits; du=${__user.login}'",
-                "refId": "A"
-              }
-            ],
-            "title": "Top 5 connectors by hits",
+            "title": "Top 5 EAA_APP by hits",
             "type": "bargauge"
           }
         ],
-        "title": "Tops for destination",
+        "title": "Tops for user",
         "type": "row"
       },
       {
@@ -846,32 +1242,30 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 18
+          "y": 23
         },
-        "id": 14145,
+        "id": 22225,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
                 "color": {
-                  "mode": "palette-classic"
+                  "mode": "continuous-BlPu"
                 },
                 "custom": {
                   "axisBorderShow": false,
                   "axisCenteredZero": false,
                   "axisColorMode": "text",
-                  "axisGridShow": true,
                   "axisLabel": "",
-                  "axisPlacement": "right",
-                  "axisWidth": 1,
+                  "axisPlacement": "auto",
                   "barAlignment": 0,
                   "barWidthFactor": 0.6,
                   "drawStyle": "line",
-                  "fillOpacity": 10,
+                  "fillOpacity": 0,
                   "gradientMode": "none",
                   "hideFrom": {
                     "legend": false,
@@ -880,11 +1274,8 @@
                   },
                   "insertNulls": false,
                   "lineInterpolation": "linear",
-                  "lineStyle": {
-                    "fill": "solid"
-                  },
                   "lineWidth": 1,
-                  "pointSize": 1,
+                  "pointSize": 5,
                   "scaleDistribution": {
                     "type": "linear"
                   },
@@ -892,13 +1283,12 @@
                   "spanNulls": false,
                   "stacking": {
                     "group": "A",
-                    "mode": "normal"
+                    "mode": "none"
                   },
                   "thresholdsStyle": {
                     "mode": "off"
                   }
                 },
-                "fieldMinMax": false,
                 "mappings": [],
                 "thresholds": {
                   "mode": "absolute",
@@ -911,76 +1301,29 @@
                       "value": 80
                     }
                   ]
-                },
-                "unit": "ms"
-              },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/^Total_Response_Time.*/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "fixedColor": "red",
-                        "mode": "fixed"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/^Connector_Response_Time.*/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "fixedColor": "yellow",
-                        "mode": "fixed"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byRegexp",
-                    "options": "/^Origin_Response_Time.*/"
-                  },
-                  "properties": [
-                    {
-                      "id": "color",
-                      "value": {
-                        "fixedColor": "green",
-                        "mode": "fixed"
-                      }
-                    }
-                  ]
                 }
-              ]
+              },
+              "overrides": []
             },
             "gridPos": {
               "h": 8,
-              "w": 24,
+              "w": 12,
               "x": 0,
-              "y": 19
+              "y": 285
             },
-            "id": 14144,
+            "id": 34535,
             "interval": "1m",
             "maxDataPoints": 100,
             "options": {
               "legend": {
                 "calcs": [],
-                "displayMode": "table",
-                "placement": "right",
+                "displayMode": "list",
+                "placement": "bottom",
                 "showLegend": true
               },
               "tooltip": {
                 "hideZeros": false,
-                "mode": "multi",
+                "mode": "single",
                 "sort": "none"
               }
             },
@@ -989,186 +1332,22 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
-                },
-                "format": 1,
-                "rawSql": "\nSELECT\n  $__timeInterval(datetime) AS d,\n  avg(originRespTime) as \"Origin_Response_Time\",\n  avg(connectorRespTime) as \"Connector_Response_Time\",\n  avg(totalRespTime) as \"Total_Response_Time\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-' \n  and totalRespTime is not null\n  and connectorRespTime is not null\n  and originRespTime is not null\nGROUP BY  d --, connectorRespTime, originRespTime, totalRespTime\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Response time; du=${__user.login}'\n \n \n ",
-                "refId": "A"
-              }
-            ],
-            "title": "Response time",
-            "type": "timeseries"
-          }
-        ],
-        "title": "Response time",
-        "type": "row"
-      },
-      {
-        "collapsed": true,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 19
-        },
-        "id": 12,
-        "panels": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "fieldConfig": {
-              "defaults": {
-                "color": {
-                  "mode": "thresholds"
-                },
-                "custom": {
-                  "hideFrom": {
-                    "legend": false,
-                    "tooltip": false,
-                    "viz": false
-                  }
-                },
-                "mappings": [],
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green"
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                },
-                "unit": "none"
-              },
-              "overrides": [
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "geoCountry"
-                  },
-                  "properties": [
-                    {
-                      "id": "links",
-                      "value": [
-                        {
-                          "targetBlank": true,
-                          "title": "Show details",
-                          "url": "/d/${commonlibraries}?${__url_time_range}&var-filter=${__field.name}%7C%3D%7C${__value.raw}&${__all_variables}&var-eselect=username,apphost,origin,geoCity,geoCountry,clientip&var-etitle=GEO per User&var-customquery=CQnoapphostusernamed\nash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            "gridPos": {
-              "h": 19,
-              "w": 12,
-              "x": 0,
-              "y": 20
-            },
-            "id": 311,
-            "options": {
-              "basemap": {
-                "config": {},
-                "name": "Layer 0",
-                "tooltip": true,
-                "type": "osm-standard"
-              },
-              "controls": {
-                "mouseWheelZoom": true,
-                "showAttribution": true,
-                "showDebug": false,
-                "showMeasure": false,
-                "showScale": true,
-                "showZoom": true
-              },
-              "layers": [
-                {
-                  "config": {
-                    "showLegend": true,
-                    "style": {
-                      "color": {
-                        "fixed": "orange"
-                      },
-                      "opacity": 1,
-                      "rotation": {
-                        "fixed": 0,
-                        "max": 360,
-                        "min": -360,
-                        "mode": "mod"
-                      },
-                      "size": {
-                        "fixed": 5,
-                        "max": 15,
-                        "min": 2
-                      },
-                      "symbol": {
-                        "fixed": "img/icons/marker/circle.svg",
-                        "mode": "fixed"
-                      },
-                      "symbolAlign": {
-                        "horizontal": "center",
-                        "vertical": "center"
-                      },
-                      "textConfig": {
-                        "fontSize": 12,
-                        "offsetX": 0,
-                        "offsetY": 0,
-                        "textAlign": "center",
-                        "textBaseline": "middle"
-                      }
-                    }
-                  },
-                  "location": {
-                    "mode": "lookup"
-                  },
-                  "name": "Locations",
-                  "tooltip": true,
-                  "type": "markers"
-                }
-              ],
-              "tooltip": {
-                "mode": "details"
-              },
-              "view": {
-                "allLayers": true,
-                "id": "fit",
-                "lastOnly": false,
-                "lat": 46,
-                "layer": "Layer 1",
-                "lon": 14,
-                "zoom": 2
-              }
-            },
-            "pluginVersion": "12.0.4",
-            "targets": [
-              {
-                "datasource": {
-                  "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT geoCountrycode, geoCountry, uniq(username) as Total_users\nFROM ${table}\nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\nGROUP BY geoCountrycode, geoCountry\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent User locations; du=${__user.login}'",
+                "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  count(*) as \"Total\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND idpinfo IN ('LOGIN|F', 'MFA|MF')\nGROUP BY  d, denyReason, statusCode\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Failed logins; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Recent User locations",
-            "transparent": true,
-            "type": "geomap"
+            "title": "Failed logins",
+            "type": "timeseries"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "Number of users accessing the selected Destination.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1182,6 +1361,8 @@
                   "filterable": true,
                   "inspect": true
                 },
+                "fieldMinMax": false,
+                "links": [],
                 "mappings": [],
                 "thresholds": {
                   "mode": "absolute",
@@ -1212,7 +1393,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "clientip"
                   },
                   "properties": [
                     {
@@ -1220,21 +1401,37 @@
                       "value": true
                     }
                   ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "denyReason"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    },
+                    {
+                      "id": "custom.width",
+                      "value": 382
+                    }
+                  ]
                 }
               ]
             },
             "gridPos": {
-              "h": 10,
+              "h": 8,
               "w": 12,
               "x": 12,
-              "y": 20
+              "y": 285
             },
-            "id": 28,
+            "id": 25536,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Users to origin&var-customquery=CQnooriginusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,denyReason,clientip,datetime&var-etitle=Failed login&var-customquery=CQuserfailedlogin&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV "
               }
             ],
             "options": {
@@ -1248,25 +1445,39 @@
                 ],
                 "show": true
               },
-              "frameIndex": 0,
-              "showHeader": true
+              "showHeader": true,
+              "sortBy": []
             },
             "pluginVersion": "12.0.4",
             "targets": [
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
-                "rawSql": "SELECT origin, username, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND username != '-'\ngroup by origin, username \n\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Recent ${querieslimit} users; du=${__user.login}'",
+                "rawSql": "SELECT\n  username, denyReason, clientip, datetime\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n  AND username != '-'\nGROUP BY  username, denyReason, clientip, datetime\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} failed login users list; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Recent ${querieslimit} users",
+            "title": "Top ${querieslimit} failed login users list",
             "type": "table"
-          },
+          }
+        ],
+        "title": "Login errors",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 24
+        },
+        "id": 29,
+        "panels": [
           {
             "datasource": {
               "type": "datasource",
@@ -1328,146 +1539,11 @@
             },
             "gridPos": {
               "h": 9,
-              "w": 12,
-              "x": 12,
-              "y": 30
-            },
-            "id": 26,
-            "options": {
-              "legend": {
-                "calcs": [
-                  "min",
-                  "max",
-                  "mean"
-                ],
-                "displayMode": "table",
-                "placement": "bottom",
-                "showLegend": true,
-                "sortBy": "Total",
-                "sortDesc": true
-              },
-              "tooltip": {
-                "hideZeros": false,
-                "mode": "single",
-                "sort": "none"
-              }
-            },
-            "pluginVersion": "12.0.4",
-            "targets": [
-              {
-                "datasource": {
-                  "type": "datasource",
-                  "uid": "-- Dashboard --"
-                },
-                "panelId": 906,
-                "refId": "A"
-              }
-            ],
-            "title": "User Access Load Trend",
-            "transformations": [
-              {
-                "id": "prepareTimeSeries",
-                "options": {
-                  "format": "multi"
-                }
-              },
-              {
-                "id": "filterFieldsByName",
-                "options": {
-                  "byVariable": false,
-                  "include": {
-                    "names": [
-                      "Total_Username / 5m",
-                      "d"
-                    ],
-                    "pattern": "^Total_Username.*"
-                  }
-                }
-              }
-            ],
-            "type": "timeseries"
-          }
-        ],
-        "title": "Users to Destination Analysis",
-        "type": "row"
-      },
-      {
-        "collapsed": true,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 20
-        },
-        "id": 39,
-        "panels": [
-          {
-            "datasource": {
-              "type": "datasource",
-              "uid": "-- Dashboard --"
-            },
-            "description": "Number of EAA Application that contains the selected Destination",
-            "fieldConfig": {
-              "defaults": {
-                "color": {
-                  "mode": "continuous-BlPu"
-                },
-                "custom": {
-                  "axisBorderShow": false,
-                  "axisCenteredZero": false,
-                  "axisColorMode": "text",
-                  "axisLabel": "",
-                  "axisPlacement": "auto",
-                  "barAlignment": 0,
-                  "barWidthFactor": 0.6,
-                  "drawStyle": "line",
-                  "fillOpacity": 0,
-                  "gradientMode": "none",
-                  "hideFrom": {
-                    "legend": false,
-                    "tooltip": false,
-                    "viz": false
-                  },
-                  "insertNulls": false,
-                  "lineInterpolation": "smooth",
-                  "lineStyle": {
-                    "fill": "solid"
-                  },
-                  "lineWidth": 1,
-                  "pointSize": 5,
-                  "scaleDistribution": {
-                    "type": "linear"
-                  },
-                  "showPoints": "auto",
-                  "spanNulls": false,
-                  "stacking": {
-                    "group": "A",
-                    "mode": "none"
-                  },
-                  "thresholdsStyle": {
-                    "mode": "line"
-                  }
-                },
-                "decimals": 0,
-                "mappings": [],
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green"
-                    }
-                  ]
-                }
-              },
-              "overrides": []
-            },
-            "gridPos": {
-              "h": 8,
-              "w": 12,
+              "w": 24,
               "x": 0,
-              "y": 295
+              "y": 286
             },
-            "id": 902,
+            "id": 677,
             "options": {
               "legend": {
                 "calcs": [
@@ -1494,11 +1570,11 @@
                   "type": "datasource",
                   "uid": "-- Dashboard --"
                 },
-                "panelId": 906,
+                "panelId": 882,
                 "refId": "A"
               }
             ],
-            "title": "EAA Apps per Destination",
+            "title": "Total origins accessed",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -1511,10 +1587,10 @@
                 "options": {
                   "include": {
                     "names": [
-                      "Total_EAA_APPS / 5m",
+                      "Total_Origin / 5m",
                       "d"
                     ],
-                    "pattern": "^Total_EAA_APPS.*"
+                    "pattern": "^Total_Origin.*"
                   }
                 }
               }
@@ -1524,9 +1600,8 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "Top EAA Application serving the selected destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1559,7 +1634,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "apphost"
+                    "options": "username"
                   },
                   "properties": [
                     {
@@ -1583,17 +1658,17 @@
               ]
             },
             "gridPos": {
-              "h": 8,
+              "h": 10,
               "w": 12,
-              "x": 12,
-              "y": 295
+              "x": 0,
+              "y": 483
             },
-            "id": 34,
+            "id": 353,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,apphost&var-etitle=EAA app to origin&var-customquery=CQnoapphostorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,origin&var-etitle=Origin per users&var-customquery=CQnooriginusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
               }
             ],
             "options": {
@@ -1614,19 +1689,122 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "hide": false,
-                "rawSql": "SELECT origin, apphost,\n       maxOrNull(datetime) AS Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND apphost !='-'\nGROUP BY origin, apphost\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit}  EAA App per Destination; du=${__user.login}'",
+                "rawSql": "SELECT username, origin, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND origin != '-'\ngroup by username, origin \norder by Last_Access desc\nlimit ${querieslimit} \nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} origin details; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit}  EAA App per Destination",
+            "title": "Last ${querieslimit} origin details",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "port"
+                  },
+                  "properties": [
+                    {
+                      "id": "links",
+                      "value": [
+                        {
+                          "targetBlank": false,
+                          "title": "filter",
+                          "url": "/d/${__dashboard.uid}/?${__all_variables}&var-filter=origin%7C%3D~%7C%2A:${__value.raw}&${__url_time_range}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 12,
+              "x": 12,
+              "y": 483
+            },
+            "id": 89887,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=arrayElement(splitByChar(':', ifNull(origin, '')), 2) as port&var-etitle=Active destinations&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     \n"
+              }
+            ],
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": true,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "count"
+                ],
+                "show": true
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": false,
+                  "displayName": "Origin"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "hide": false,
+                "rawSql": "SELECT\n  arrayElement(splitByChar(':', ifNull(origin, '')), 2) AS port,\n  count(port) AS port_count,\n  maxOrNull(datetime) AS Last_Access\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND origin IS NOT NULL\n  AND origin != '-'\nGROUP BY port\nORDER BY port_count DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time = 60,\n         hdx_query_admin_comment = 'db=${__dashboard}; dp=Top ${querieslimit} active ports; du=${__user.login}';\n",
+                "refId": "A"
+              }
+            ],
+            "title": "Top ${querieslimit} active ports",
             "type": "table"
           }
         ],
-        "title": "EAA Application serving the Destination",
+        "title": "Origins analysis for user",
         "type": "row"
       },
       {
@@ -1635,16 +1813,15 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 21
+          "y": 25
         },
-        "id": 907,
+        "id": 28,
         "panels": [
           {
             "datasource": {
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "Number of EAA Application that contains the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1703,7 +1880,242 @@
               "h": 8,
               "w": 12,
               "x": 0,
-              "y": 127
+              "y": 287
+            },
+            "id": 678,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "min",
+                  "max",
+                  "mean"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "datasource",
+                  "uid": "-- Dashboard --"
+                },
+                "panelId": 882,
+                "refId": "A"
+              }
+            ],
+            "title": "EAA_APP per User",
+            "transformations": [
+              {
+                "id": "prepareTimeSeries",
+                "options": {
+                  "format": "multi"
+                }
+              },
+              {
+                "id": "filterFieldsByName",
+                "options": {
+                  "include": {
+                    "names": [
+                      "Total_EAA_APPS / 5m",
+                      "d"
+                    ],
+                    "pattern": "^Total_EAA_APPS.*"
+                  }
+                }
+              }
+            ],
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "apphost"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 287
+            },
+            "id": 679,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,apphost&var-etitle=EAA app to username&var-customquery=CQnoapphostusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV "
+              }
+            ],
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": true,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "count"
+                ],
+                "show": true
+              },
+              "showHeader": true
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "rawSql": "SELECT username, apphost, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND apphost != '-'\ngroup by username, apphost \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} EAA_APP to username; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Last ${querieslimit} EAA_APP to username",
+            "type": "table"
+          }
+        ],
+        "title": "EAA_APP for User",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        },
+        "id": 907,
+        "panels": [
+          {
+            "datasource": {
+              "type": "datasource",
+              "uid": "-- Dashboard --"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 0,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "line"
+                  }
+                },
+                "decimals": 0,
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 288
             },
             "id": 908,
             "options": {
@@ -1732,11 +2144,11 @@
                   "type": "datasource",
                   "uid": "-- Dashboard --"
                 },
-                "panelId": 906,
+                "panelId": 882,
                 "refId": "A"
               }
             ],
-            "title": "Connectors to Destination",
+            "title": "Connectors per User",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -1762,7 +2174,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -1796,7 +2208,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "conUuid"
+                    "options": "username"
                   },
                   "properties": [
                     {
@@ -1808,7 +2220,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "conUuid"
                   },
                   "properties": [
                     {
@@ -1823,14 +2235,14 @@
               "h": 8,
               "w": 12,
               "x": 12,
-              "y": 127
+              "y": 288
             },
-            "id": 44,
+            "id": 909,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,conUuid&var-etitle=Connectors to destination&var-customquery=CQnoconuuidorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,conUuid&var-etitle=Connectors to User&var-customquery=CQnoconuuidusernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -1844,32 +2256,25 @@
                 ],
                 "show": true
               },
-              "showHeader": true,
-              "sortBy": [
-                {
-                  "desc": true,
-                  "displayName": "Last_Access"
-                }
-              ]
+              "showHeader": true
             },
             "pluginVersion": "12.0.4",
             "targets": [
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "hide": false,
-                "rawSql": "SELECT origin, conUuid, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nAND conUuid != '-'\ngroup by origin, conUuid \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} connectors to destination; du=${__user.login}'",
+                "rawSql": "SELECT username, conUuid, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND conUuid != '-'\ngroup by username, conUuid \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} connectors to User; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} connectors to destination",
+            "title": "Last ${querieslimit} connectors to User",
             "type": "table"
           }
         ],
-        "title": "Connectors serving the Destination",
+        "title": "Connectors for User",
         "type": "row"
       },
       {
@@ -1878,16 +2283,15 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 22
+          "y": 27
         },
-        "id": 38,
+        "id": 23,
         "panels": [
           {
             "datasource": {
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "Shows the cloudzones that are serving the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1943,20 +2347,22 @@
               "overrides": []
             },
             "gridPos": {
-              "h": 10,
-              "w": 24,
+              "h": 8,
+              "w": 12,
               "x": 0,
-              "y": 297
+              "y": 289
             },
             "id": 903,
             "options": {
               "legend": {
                 "calcs": [
-                  "sum"
+                  "min",
+                  "max",
+                  "median"
                 ],
                 "displayMode": "table",
                 "placement": "bottom",
-                "showLegend": false,
+                "showLegend": true,
                 "sortBy": "Total",
                 "sortDesc": true
               },
@@ -1973,11 +2379,11 @@
                   "type": "datasource",
                   "uid": "-- Dashboard --"
                 },
-                "panelId": 906,
+                "panelId": 882,
                 "refId": "A"
               }
             ],
-            "title": "Cloudzones per Destination",
+            "title": "Cloudzones per User",
             "transformations": [
               {
                 "id": "prepareTimeSeries",
@@ -2003,9 +2409,8 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "This table shows the cloudzones configured for the selected app.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2038,7 +2443,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "cloudZone"
+                    "options": "username"
                   },
                   "properties": [
                     {
@@ -2050,7 +2455,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "cloudZone"
                   },
                   "properties": [
                     {
@@ -2062,17 +2467,17 @@
               ]
             },
             "gridPos": {
-              "h": 10,
+              "h": 8,
               "w": 12,
-              "x": 0,
-              "y": 307
+              "x": 12,
+              "y": 289
             },
             "id": 30,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin, cloudZone&var-etitle=CloudZone to origin&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV     \n"
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,cloudZone&var-etitle=CloudZone per User&var-customquery=CQnousernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
               }
             ],
             "options": {
@@ -2093,23 +2498,175 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "hide": false,
-                "rawSql": "SELECT origin, cloudZone, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\nGROUP BY origin, cloudZone\nORDER BY Last_Access DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} cloudzones per Destination; du=${__user.login}'",
+                "rawSql": "SELECT username, cloudZone, maxOrNull(datetime) as Last_Access FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter()\nAND username != '-' \ngroup by username, cloudZone \norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} CloudZone per User; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} cloudzones per Destination",
+            "title": "Last ${querieslimit} CloudZone per User",
             "type": "table"
           },
           {
             "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "type": "datasource",
+              "uid": "-- Dashboard --"
             },
-            "description": "This table shows the top Geographies when the application has been accessed",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 0,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "line"
+                  }
+                },
+                "decimals": 0,
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/^Total_geoCity.*/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "fixedColor": "purple",
+                        "mode": "fixed"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byRegexp",
+                    "options": "/^Total_geoCountry.*/"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "fixedColor": "blue",
+                        "mode": "fixed"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 415
+            },
+            "id": 904,
+            "options": {
+              "legend": {
+                "calcs": [
+                  "min",
+                  "max",
+                  "mean"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true
+              },
+              "timezone": [
+                "browser"
+              ],
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "datasource",
+                  "uid": "-- Dashboard --"
+                },
+                "panelId": 882,
+                "refId": "A"
+              }
+            ],
+            "title": "GEO per User",
+            "transformations": [
+              {
+                "id": "prepareTimeSeries",
+                "options": {
+                  "format": "multi"
+                }
+              },
+              {
+                "id": "filterFieldsByName",
+                "options": {
+                  "include": {
+                    "names": [
+                      "Total_geoCity / 5m",
+                      "Total_geoCountry / 5m",
+                      "d"
+                    ],
+                    "pattern": "^Total_geoCity.*|^Total_geoCountry.*"
+                  }
+                }
+              }
+            ],
+            "type": "timeseries"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2142,7 +2699,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "username"
                   },
                   "properties": [
                     {
@@ -2178,17 +2735,17 @@
               ]
             },
             "gridPos": {
-              "h": 10,
+              "h": 8,
               "w": 12,
               "x": 12,
-              "y": 307
+              "y": 415
             },
-            "id": 33,
+            "id": 905,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,geoCity,geoCountry&var-etitle=GEO to origin&var-customquery=CQnoorigindash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV       "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username,geoCity,geoCountry&var-etitle=GEO per User&var-customquery=CQnousernamedash&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV  "
               }
             ],
             "options": {
@@ -2202,26 +2759,31 @@
                 ],
                 "show": true
               },
-              "showHeader": true
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": false,
+                  "displayName": "geoCountry"
+                }
+              ]
             },
             "pluginVersion": "12.0.4",
             "targets": [
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "hide": false,
-                "rawSql": "SELECT origin, geoCity, geoCountry, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND origin != '-'\ngroup by origin, geoCity, geoCountry\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} user Geographies; du=${__user.login}'",
+                "rawSql": "SELECT username, geoCity, geoCountry, maxOrNull(datetime) as Last_Access\nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\ngroup by username, geoCity, geoCountry\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} GEO per User; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} user Geographies",
+            "title": "Top ${querieslimit} GEO per User",
             "type": "table"
           }
         ],
-        "title": "Cloudzone & GEOs accessing the Destination",
+        "title": "Cloudzones & GEOs for User",
         "type": "row"
       },
       {
@@ -2230,16 +2792,15 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 23
+          "y": 28
         },
-        "id": 37,
+        "id": 26,
         "panels": [
           {
             "datasource": {
               "type": "datasource",
               "uid": "-- Dashboard --"
             },
-            "description": "This table shows the amount of Data exchanged by the selected destination.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2249,6 +2810,7 @@
                   "axisBorderShow": false,
                   "axisCenteredZero": false,
                   "axisColorMode": "text",
+                  "axisGridShow": true,
                   "axisLabel": "",
                   "axisPlacement": "auto",
                   "barAlignment": 0,
@@ -2293,7 +2855,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "none"
               },
               "overrides": [
                 {
@@ -2337,12 +2900,12 @@
               ]
             },
             "gridPos": {
-              "h": 12,
+              "h": 9,
               "w": 24,
               "x": 0,
-              "y": 129
+              "y": 290
             },
-            "id": 29,
+            "id": 6,
             "options": {
               "legend": {
                 "calcs": [
@@ -2353,9 +2916,7 @@
                 ],
                 "displayMode": "table",
                 "placement": "bottom",
-                "showLegend": true,
-                "sortBy": "Total",
-                "sortDesc": true
+                "showLegend": true
               },
               "tooltip": {
                 "hideZeros": false,
@@ -2370,25 +2931,17 @@
                   "type": "datasource",
                   "uid": "-- Dashboard --"
                 },
-                "panelId": 906,
+                "panelId": 882,
                 "refId": "A"
               }
             ],
-            "title": "Traffic load per Destination",
+            "title": "Traffic for user",
             "transformations": [
-              {
-                "id": "prepareTimeSeries",
-                "options": {
-                  "format": "multi"
-                }
-              },
               {
                 "id": "filterFieldsByName",
                 "options": {
                   "include": {
                     "names": [
-                      "Incoming / 5m",
-                      "Outgoing / 5m",
                       "d"
                     ],
                     "pattern": "^Incoming.*|^Outgoing.*"
@@ -2401,9 +2954,8 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "This table shows the most active users on this Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2417,7 +2969,6 @@
                   "filterable": true,
                   "inspect": true
                 },
-                "links": [],
                 "mappings": [],
                 "thresholds": {
                   "mode": "absolute",
@@ -2436,37 +2987,31 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Incoming"
+                    "options": "bytesin"
                   },
                   "properties": [
                     {
                       "id": "unit",
                       "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
                     }
                   ]
                 },
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Outgoing"
+                    "options": "bytesout"
                   },
                   "properties": [
                     {
                       "id": "unit",
                       "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
                     }
                   ]
                 },
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -2490,17 +3035,17 @@
               ]
             },
             "gridPos": {
-              "h": 11,
+              "h": 8,
               "w": 12,
               "x": 0,
-              "y": 196
+              "y": 362
             },
-            "id": 905,
+            "id": 7,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,username&var-etitle=Traffic by user&var-customquery=CQnooriginusernamedash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username, apphost&var-etitle=Traffic by EAA_APP&var-customquery=CQnoapphostusernamedash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV "
               }
             ],
             "options": {
@@ -2515,8 +3060,8 @@
               "showHeader": true,
               "sortBy": [
                 {
-                  "desc": false,
-                  "displayName": "apphost"
+                  "desc": true,
+                  "displayName": "GBsIn"
                 }
               ]
             },
@@ -2525,22 +3070,164 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \norigin, username FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\nAND origin != '-'\nGROUP BY Date, origin, username \norder by Date DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} active users; du=${__user.login}'",
+                "rawSql": "SELECT sum(bytesIn) bytesin, sum(bytesOut) bytesout, toDate(datetime) as Date, username, apphost FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter()\nAND username != '-'\nAND apphost != '-'  \nGROUP BY Date, username, apphost \norder by Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} total traffic split by EAA_APP; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} active users",
+            "title": "Last ${querieslimit} total traffic split by EAA_APP",
             "type": "table"
           },
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "This table shows the traffic split for each Destination configured in the selected app.\n",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "bytesin"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "bytesout"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "decbytes"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "origin"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 362
+            },
+            "id": 906,
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=username, origin&var-etitle=Traffic by destination&var-customquery=CQnooriginusernamedash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
+              }
+            ],
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "enablePagination": true,
+                "fields": [],
+                "reducer": [],
+                "show": true
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "GBsIn"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "rawSql": "SELECT sum(bytesIn) bytesin, sum(bytesOut) bytesout, toDate(datetime) as Date, username, origin FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter()  \nAND username != '-'\nAND origin != '-'\nGROUP BY Date, username, origin \norder by  Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} total traffic split by destination; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Last ${querieslimit} total traffic split by destination",
+            "type": "table"
+          }
+        ],
+        "title": "Traffic metrics for User",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 29
+        },
+        "id": 10,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2573,37 +3260,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "Incoming"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "Outgoing"
-                  },
-                  "properties": [
-                    {
-                      "id": "unit",
-                      "value": "decbytes"
-                    },
-                    {
-                      "id": "links"
-                    }
-                  ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "origin"
+                    "options": "clientVersion"
                   },
                   "properties": [
                     {
@@ -2615,7 +3272,31 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "apphost"
+                    "options": "clientId"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "deviceType"
                   },
                   "properties": [
                     {
@@ -2627,54 +3308,154 @@
               ]
             },
             "gridPos": {
-              "h": 11,
+              "h": 8,
               "w": 12,
-              "x": 12,
-              "y": 196
+              "x": 0,
+              "y": 291
             },
-            "id": 755,
+            "id": 2,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=origin,apphost&var-etitle=Traffic by EAA App&var-customquery=CQnoapphostorigindash&viewPanel=panel-999&inspect=panel-999#:~:text=Formatted%20data-,Download,-CSV  "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=clientVersion,clientId,username&var-etitle=Client version&var-customquery=%24%7BCQclientversion%7D&viewPanel=panel-994&inspect=panel-994#:~:text=Formatted%20data-,Download,-CSV   "
               }
             ],
             "options": {
               "cellHeight": "sm",
               "footer": {
                 "countRows": false,
-                "enablePagination": true,
-                "fields": [],
-                "reducer": [],
-                "show": true
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
               },
-              "showHeader": true,
-              "sortBy": [
-                {
-                  "desc": false,
-                  "displayName": "apphost"
-                }
-              ]
+              "showHeader": true
             },
             "pluginVersion": "12.0.4",
             "targets": [
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "hide": false,
-                "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, \norigin, apphost FROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND apphost != '-'\nAND origin != '-'\nGROUP BY Date, origin, apphost \norder by Date desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} traffic per Destination; du=${__user.login}'",
+                "rawSql": "SELECT clientVersion, clientId, deviceType, username, maxOrNull(datetime) as Last_Access FROM ${table}\nWHERE clientVersion IS NOT NULL and clientVersion != '-'\nand username != '-'\nAND $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nGROUP BY clientVersion, clientId, deviceType, username\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Client list ; du=${__user.login}'\n",
                 "refId": "A"
               }
             ],
-            "title": "Top ${querieslimit} traffic per Destination",
+            "title": "Client list ",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "clientVersion"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "clientId"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 291
+            },
+            "id": 16,
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": true,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "count"
+                ],
+                "show": true
+              },
+              "showHeader": true
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "rawSql": "WITH f AS (\n    SELECT\n        clientVersion, clientId, username, maxOrNull(datetime) AS Last_Access\n    FROM ${table}\n    WHERE\n        clientVersion IS NOT NULL AND clientVersion != '-'\n        AND $__timeFilter(datetime)\n        AND ${generalescaping}\n        AND $__adHocFilter()\n    GROUP BY clientVersion, clientId, username\n),\nd AS (\n    SELECT antiMalwareRunning, firewallStatus, deviceName, deviceId, joinedDomains, mobileDevice, osAutoUpdate, osName, riskPostureTagsName, riskPostureTagsPassed, riskPostureTagsRemediations, riskPostureTiersName, riskPostureTiersPassed, riskPostureTiersRemediations\n    FROM ${device_table}\n    WHERE $__timeFilter(signalTimestamp) \n)\nSELECT\n    f.clientVersion, f.clientId, f.username, f.Last_Access,\n    d.antiMalwareRunning, d.firewallStatus, d.deviceName, d.joinedDomains, d.mobileDevice, d.osAutoUpdate, d.osName,\n    d.riskPostureTagsName, d.riskPostureTagsPassed, d.riskPostureTagsRemediations, d.riskPostureTiersName, d.riskPostureTiersPassed, d.riskPostureTiersRemediations\nFROM f\nANY INNER JOIN d ON f.clientId = d.deviceId\n\nSETTINGS \n    hdx_query_max_execution_time = 60, \n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Device DP; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Device DP",
             "type": "table"
           }
         ],
-        "title": "Traffic metrics for the Destination",
+        "title": "Client versions for User",
         "type": "row"
       },
       {
@@ -2683,14 +3464,14 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 24
+          "y": 30
         },
         "id": 551,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -2744,7 +3525,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -2765,7 +3547,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 130
+              "y": 292
             },
             "id": 544,
             "interval": "1m",
@@ -2792,7 +3574,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    statusCode,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, statusCode\nORDER BY time ASC, statusCode\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
@@ -2826,7 +3608,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -2855,7 +3637,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -2888,7 +3671,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 130
+              "y": 292
             },
             "id": 542,
             "options": {
@@ -2910,10 +3693,10 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    toString(statusCode) AS statusCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  statusCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    toString(statusCode) AS statusCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  statusCode\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Status codes; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -2923,7 +3706,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -2977,7 +3760,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -2998,7 +3782,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 174
+              "y": 336
             },
             "id": 557,
             "interval": "1m",
@@ -3025,7 +3809,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    errorCode,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, errorCode\nORDER BY time ASC, errorCode\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
@@ -3059,7 +3843,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3121,7 +3905,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 174
+              "y": 336
             },
             "id": 558,
             "options": {
@@ -3143,10 +3927,10 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    toString(errorCode) AS errorCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  errorCode\nORDER BY Total desc\nlimit 100\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    toString(errorCode) AS errorCode,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  errorCode\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Error codes; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -3163,14 +3947,14 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 25
+          "y": 31
         },
         "id": 552,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3198,7 +3982,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3245,7 +4030,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 300
+              "y": 293
             },
             "id": 22224,
             "links": [
@@ -3274,7 +4059,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -3288,7 +4073,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3316,7 +4101,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3363,7 +4149,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 300
+              "y": 293
             },
             "id": 556,
             "links": [
@@ -3392,7 +4178,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    deviceType,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  deviceType\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} device type; du=${__user.login}';\n",
@@ -3405,7 +4191,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3433,7 +4219,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3480,7 +4267,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 311
+              "y": 304
             },
             "id": 559,
             "links": [
@@ -3509,7 +4296,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    userAgent,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  userAgent\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} user agent; du=${__user.login}';\n",
@@ -3522,7 +4309,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3550,7 +4337,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3597,7 +4385,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 311
+              "y": 304
             },
             "id": 554,
             "links": [
@@ -3626,7 +4414,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    clientProcess,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  clientProcess\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} client process; du=${__user.login}';\n",
@@ -3639,7 +4427,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3667,7 +4455,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3714,7 +4503,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 322
+              "y": 315
             },
             "id": 555,
             "links": [
@@ -3743,7 +4532,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    clientip,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  clientip\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} client IP; du=${__user.login}';\n",
@@ -3756,7 +4545,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -3784,7 +4573,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -3831,7 +4621,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 322
+              "y": 315
             },
             "id": 22223,
             "links": [
@@ -3865,7 +4655,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "hide": false,
@@ -3886,14 +4676,14 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 26
+          "y": 32
         },
         "id": 541,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "description": "",
             "fieldConfig": {
@@ -3968,7 +4758,7 @@
               "h": 11,
               "w": 14,
               "x": 0,
-              "y": 132
+              "y": 643
             },
             "id": 547,
             "interval": "1m",
@@ -3995,7 +4785,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n  $__timeInterval(datetime) AS time,\n    httpMethod,\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, httpMethod\nORDER BY time ASC, httpMethod\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP method; du=${__user.login}';\n",
@@ -4029,7 +4819,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4057,7 +4847,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -4094,7 +4885,7 @@
               "h": 11,
               "w": 10,
               "x": 14,
-              "y": 132
+              "y": 643
             },
             "id": 548,
             "options": {
@@ -4116,10 +4907,10 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT\n    httpMethod,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpMethod\nORDER BY Total desc\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP method; du=${__user.login}';\n",
+                "rawSql": "SELECT\n    httpMethod,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpMethod\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=HTTP Method; du=${__user.login}';\n",
                 "refId": "A"
               }
             ],
@@ -4129,7 +4920,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4157,7 +4948,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -4204,7 +4996,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 143
+              "y": 654
             },
             "id": 549,
             "links": [
@@ -4233,7 +5025,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    urlPath,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  urlPath\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} URL Path; du=${__user.login}';\n",
@@ -4246,7 +5038,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4274,7 +5066,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -4321,7 +5114,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 143
+              "y": 654
             },
             "id": 550,
             "links": [
@@ -4350,7 +5143,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    referer,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  referer\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} referer; du=${__user.login}';\n",
@@ -4363,7 +5156,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4391,7 +5184,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -4438,7 +5232,7 @@
               "h": 11,
               "w": 12,
               "x": 0,
-              "y": 154
+              "y": 665
             },
             "id": 546,
             "links": [
@@ -4467,7 +5261,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    contentType,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  contentType\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} content type; du=${__user.login}';\n",
@@ -4480,7 +5274,7 @@
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
             "fieldConfig": {
               "defaults": {
@@ -4508,7 +5302,8 @@
                       "value": 80
                     }
                   ]
-                }
+                },
+                "unit": "short"
               },
               "overrides": [
                 {
@@ -4555,7 +5350,7 @@
               "h": 11,
               "w": 12,
               "x": 12,
-              "y": 154
+              "y": 665
             },
             "id": 560,
             "links": [
@@ -4584,7 +5379,7 @@
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
                 "rawSql": "SELECT\n    httpVer,\n    count(*) AS Total\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY  httpVer\nORDER BY Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Top ${querieslimit} HTTP version; du=${__user.login}';\n",
@@ -4604,16 +5399,15 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 27
+          "y": 33
         },
-        "id": 27,
+        "id": 13,
         "panels": [
           {
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
             },
-            "description": "This table shows the access log for the selected Destination",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -4646,7 +5440,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "origin"
+                    "options": "apphost"
                   },
                   "properties": [
                     {
@@ -4655,6 +5449,343 @@
                     }
                   ]
                 },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "clientip"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "cloudZone"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "geoCountry"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "geoCity"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "userAgent"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 15,
+              "w": 24,
+              "x": 0,
+              "y": 295
+            },
+            "id": 1,
+            "interval": "1h",
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show details",
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=datetime, username, apphost, clientip, cloudZone, geoCountry, geoCity, userAgent&var-etitle=Login list&var-customquery=CQlastuserlogin&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV     "
+              }
+            ],
+            "maxDataPoints": 10000,
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "datetime"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "rawSql": "SELECT datetime, username, apphost, clientip, cloudZone, geoCountry, geoCity, userAgent\nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\nAND (\n  urlPath = '/saml/sp/response'\n  AND\n  idpinfo = 'UNSPEC|D'\n  AND\n  username != '-'\n)\n\nAND username != '-'\norder by datetime desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} login list; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Last ${querieslimit} login list",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "username"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "apphost"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "denyReason"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "statusCode"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "clientip"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "cloudZone"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "geoCountry"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "geoCity"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "userAgent"
+                  },
+                  "properties": [
+                    {
+                      "id": "filterable",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 15,
+              "w": 24,
+              "x": 0,
+              "y": 310
+            },
+            "id": 20,
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "enablePagination": true,
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+                },
+                "format": 1,
+                "rawSql": "SELECT  datetime, username, apphost, denyReason, statusCode, clientip, cloudZone, geoCountry, geoCity, userAgent\nFROM ${table} \nWHERE $__timeFilter(datetime) \nAND ${generalescaping}\nAND $__adHocFilter() \nAND ( denyReason IS NOT NULL ) \nAND idpinfo IN ('LOGIN|F', 'MFA|MF')\norder by datetime desc\n--limit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Failed Logins list; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Failed logins",
+            "type": "table"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "filterable": true,
+                  "inspect": true
+                },
+                "links": [],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
                 {
                   "matcher": {
                     "id": "byName",
@@ -4718,7 +5849,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "clientId"
+                    "options": "origin"
                   },
                   "properties": [
                     {
@@ -4738,33 +5869,21 @@
                       "value": true
                     }
                   ]
-                },
-                {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "clientId"
-                  },
-                  "properties": [
-                    {
-                      "id": "filterable",
-                      "value": true
-                    }
-                  ]
                 }
               ]
             },
             "gridPos": {
-              "h": 7,
+              "h": 15,
               "w": 24,
               "x": 0,
-              "y": 262
+              "y": 325
             },
             "id": 15,
             "links": [
               {
                 "targetBlank": true,
                 "title": "Show details",
-                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=datetime, origin, apphost, username, clientip, cloudZone, geoCountry, geoCity, originRespTime, totalRespTime, errorCode, httpMethod, httpVerb2, idpinfo, referer, sessionId, sessionInfo, statusCode, urlPath, userAgent, clientId&var-etitle=Access logs&var-customquery=CQnoapphostoriginusernamedash&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV     "
+                "url": "/d/${commonlibraries}?${__url_time_range}&${__all_variables}&var-eselect=datetime, origin, apphost, username, clientip, cloudZone, geoCountry, geoCity, originRespTime, totalRespTime, errorCode, httpMethod, httpVerb2, idpinfo, referer, sessionId, sessionInfo, statusCode, urlPath, userAgent, clientId&var-etitle=Access logs&var-customquery=CQnousernamedash&viewPanel=panel-1004&inspect=panel-1004#:~:text=Formatted%20data-,Download,-CSV     "
               }
             ],
             "options": {
@@ -4778,23 +5897,17 @@
                 ],
                 "show": false
               },
-              "showHeader": true,
-              "sortBy": [
-                {
-                  "desc": true,
-                  "displayName": "datetime"
-                }
-              ]
+              "showHeader": true
             },
             "pluginVersion": "12.0.4",
             "targets": [
               {
                 "datasource": {
                   "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
+                  "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
                 },
                 "format": 1,
-                "rawSql": "SELECT datetime, \n       origin,\n       apphost,\n       username, \n       clientip, \n       cloudZone, \n       geoCountry, \n       geoCity, \n       originRespTime, \n       totalRespTime, \n       errorCode,\n       httpMethod,\n       httpVerb2,\n       idpinfo,\n       referer,\n       sessionId,\n       sessionInfo,\n       statusCode,\n       urlPath,\n       userAgent,\n\n       IF(clientId != '-', 'tunnel', 'application') AS application_type, \n       clientId\nFROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\nAND apphost != '-'\nAND origin != '-'\nAND username != '-'\n\nORDER BY datetime DESC\nLIMIT ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} access logs ; du=${__user.login}'\n",
+                "rawSql": "SELECT datetime, \n      username,\n       origin,\n       apphost,\n       clientip, \n       cloudZone, \n       geoCountry, \n       geoCity, \n       originRespTime, \n       totalRespTime, \n       errorCode,\n       httpMethod,\n       httpVerb2,\n       idpinfo,\n       referer,\n       sessionId,\n       sessionInfo,\n       statusCode,\n       urlPath,\n       userAgent,\n       IF(clientId != '-', 'tunnel', 'application') AS application_type\n       FROM ${table}\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \nAND username != '-'\n--AND origin != '-'\n--AND apphost != '-'\nORDER BY datetime DESC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last ${querieslimit} access logs ; du=${__user.login}'\n",
                 "refId": "A"
               }
             ],
@@ -4802,7 +5915,7 @@
             "type": "table"
           }
         ],
-        "title": "Destination Access details",
+        "title": "User tracking for User",
         "type": "row"
       }
     ],
@@ -4832,6 +5945,25 @@
         },
         {
           "hide": 2,
+          "name": "table_deviceinventory",
+          "query": "${VAR_TABLE_DEVICEINVENTORY}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_TABLE_DEVICEINVENTORY}",
+            "text": "${VAR_TABLE_DEVICEINVENTORY}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_TABLE_DEVICEINVENTORY}",
+              "text": "${VAR_TABLE_DEVICEINVENTORY}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
           "name": "device_table",
           "query": "${VAR_DEVICE_TABLE}",
           "skipUrlSync": true,
@@ -4853,7 +5985,7 @@
           "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "filters": [],
           "name": "filter",
@@ -4963,15 +6095,75 @@
     },
     "timepicker": {},
     "timezone": "Europe/Rome",
-    "title": "EAA Origins Observability",
+    "title": "EAA Username Observability",
     "uid": "__DASHBOARD_UUID__",
-    "version": 4,
-    "weekStart": ""
+    "version": 5,
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_useraccess",
+        "description": ""
+      },
+      {
+        "name": "VAR_TABLE_DEVICEINVENTORY",
+        "type": "constant",
+        "label": "table_deviceinventory",
+        "value": "akamai.eaa_deviceinventory",
+        "description": ""
+      },
+      {
+        "name": "VAR_DEVICE_TABLE",
+        "type": "constant",
+        "label": "device_table",
+        "value": "akamai.eaa_deviceinventory",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      },
+      {
+        "name": "VAR_COMMONLIBRARIES",
+        "type": "constant",
+        "label": "commonlibraries",
+        "value": "eaa-common-libraries-v5",
+        "description": ""
+      }
+    ]
   },
   "__inputs": [
     {
-      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
-      "label": "GruppoFerroVie-hydrolix-datasource",
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
       "description": "",
       "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",
@@ -4983,6 +6175,13 @@
       "type": "constant",
       "label": "table",
       "value": "akamai.eaa_useraccess",
+      "description": ""
+    },
+    {
+      "name": "VAR_TABLE_DEVICEINVENTORY",
+      "type": "constant",
+      "label": "table_deviceinventory",
+      "value": "akamai.eaa_deviceinventory",
       "description": ""
     },
     {
