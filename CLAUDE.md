@@ -65,7 +65,7 @@ Track detection (`scripts/detect_track.py`): if a bundle has `bundle-config.json
 
 **Configurator Engine** (`scripts/configurator/`): 8-phase Python pipeline that transforms raw vendor exports into configured bundles. Phases: discovery → transform organization → SQL analysis → bundle.json build → summary fixing → dashboard fixing → bundle.json update → reporting.
 
-**Deployment** (`src/deploy/`): Creates temporary Hydrolix projects, deploys transforms + dashboards, inserts sample data for validation, then cleans up.
+**Deployment** (`src/deploy/`): Creates temporary Hydrolix projects, deploys transforms + dashboards, inserts sample data for validation, then cleans up. After each ingest, `verify_rows_ingested_if_present` (in `default.rs`, backed by pure helpers in `verify.rs`) polls `SELECT count()` on the test table for up to 60s. On a zero-count timeout it runs four diagnostics — primary-timestamp staleness, `system.parts`, `system.ingest_errors`, missing sample_data fields — and fails the deploy with the findings embedded in the error. HTTP 2xx from `/ingest/event` alone is not sufficient to consider a bundle valid.
 
 ### The `.originals/` Directory
 

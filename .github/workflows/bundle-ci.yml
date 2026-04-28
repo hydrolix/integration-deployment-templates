@@ -1,6 +1,21 @@
 name: bundle-ci
 
 on:
+  workflow_dispatch:
+    inputs:
+      bundle_name:
+        description: 'Bundle name from latest_versions.yaml'
+        required: true
+        type: string
+      project_name:
+        description: 'Project name (default: ci_<bundle>_<run_id>)'
+        required: false
+        type: string
+      n_rows:
+        description: 'Sample rows to ingest'
+        required: false
+        default: '10'
+        type: string
   pull_request:
     branches: [main]
     paths:
@@ -288,3 +303,80 @@ jobs:
           BUNDLE_TESTING_CLUSTER: ${{ secrets.BUNDLE_TESTING_CLUSTER }}
           BUNDLE_TESTING_USERNAME: ${{ secrets.BUNDLE_TESTING_USERNAME }}
           BUNDLE_TESTING_PASSWORD: ${{ secrets.BUNDLE_TESTING_PASSWORD }}
+
+  # ── Deploy bundle (Claude Code headless) ──────────────────────────
+  deploy-bundle:
+    runs-on: ubuntu-latest
+    environment: bundle-deploy-env
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout integration-deployment-templates
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.INTEGRATIONS_APP_ID }}
+          private-key: ${{ secrets.INTEGRATIONS_APP_PRIVATE_KEY }}
+
+      - name: Checkout cac-tools-test
+        uses: actions/checkout@v4
+        with:
+          repository: Hydrolix/cac-tools-test
+          token: ${{ steps.app-token.outputs.token }}
+          path: cac-tools-test
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install uv
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          npm install -g @anthropic-ai/claude-code
+
+      - name: Run bundle-deploy via Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HDX_CLUSTER_URL: ${{ secrets.HDX_CLUSTER_URL }}
+          HDX_CLUSTER_USERNAME: ${{ secrets.HDX_CLUSTER_USERNAME }}
+          HDX_CLUSTER_PASSWORD: ${{ secrets.HDX_CLUSTER_PASSWORD }}
+          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+          GRAFANA_USER: ${{ secrets.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}
+        run: |
+          BUNDLE_NAME="${{ github.event.inputs.bundle_name }}"
+          PROJECT_NAME="${{ github.event.inputs.project_name }}"
+          N_ROWS="${{ github.event.inputs.n_rows }}"
+
+          if [ -z "$PROJECT_NAME" ]; then
+            PROJECT_NAME="ci_${BUNDLE_NAME}_${{ github.run_id }}"
+          fi
+          if [ -z "$N_ROWS" ]; then
+            N_ROWS="10"
+          fi
+
+          cd cac-tools-test
+
+          claude --dangerously-skip-permissions -p "
+            Execute the bundle-deploy skill with these inputs:
+            - Project name: $PROJECT_NAME
+            - Bundle name: $BUNDLE_NAME
+            - Credentials mode: manual
+            - Cluster URL: $HDX_CLUSTER_URL
+            - HDX user: $HDX_CLUSTER_USERNAME
+            - HDX password: $HDX_CLUSTER_PASSWORD
+            - Grafana URL: $GRAFANA_URL
+            - Grafana user: $GRAFANA_USER
+            - Grafana password: $GRAFANA_PASSWORD
+            - Rows to ingest: $N_ROWS
+
+            This is a CI run. Do NOT ask questions — all inputs are provided above.
+            Execute all steps of the skill sequentially.
+            If a step fails, update the deploy report with FAIL and continue to finalize.
+          "
