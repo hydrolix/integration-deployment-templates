@@ -1,0 +1,61 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-zuplo-main-dashboard:
+    dashboard:
+      __extend__: dashboards/zuplo_main_dashboard.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-zuplo-request-summaries:
+    dashboard:
+      __extend__: dashboards/zuplo_request_summaries.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-zuplo-high-level:
+    dashboard:
+      __extend__: dashboards/zuplo_high_level.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-zuplo-standard-metrics:
+    dashboard:
+      __extend__: dashboards/zuplo_standard_metrics.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-zuplo-geo-distribution:
+    dashboard:
+      __extend__: dashboards/zuplo_geo_distribution.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-zuplo-status-codes-error-rates:
+    dashboard:
+      __extend__: dashboards/zuplo_status_codes_error_rates.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: zuplo.zuplo
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
