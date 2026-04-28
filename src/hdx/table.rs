@@ -424,15 +424,7 @@ pub async fn insert_into(
         let status = response.status();
         let error_body = response.text().await.unwrap_or_default();
 
-        // Check if this is a retryable error
-        let is_retryable = match status.as_u16() {
-            // Client errors that shouldn't be retried
-            400..=499 if status != 408 && status != 429 => false,
-            // Server errors and rate limiting - retryable
-            500..=599 | 408 | 429 => true,
-            // Other status codes - retryable
-            _ => true,
-        };
+        let is_retryable = is_insert_retryable(status.as_u16(), &error_body);
 
         eprintln!(
             "Hydrolix insert failed on attempt {}/{}, status: {} (retryable: {}) url={url} {}.{}",
@@ -635,6 +627,47 @@ hdx_primary_key='minute'"
 
 */
 
+/// Execute a SQL statement against the cluster's query endpoint.
+/// Returns the raw response body (TabSeparated format).
+pub async fn query_sql(bearer_token: &str, sql: &str) -> Result<String, String> {
+    let url = format!("https://{}/query", *BUNDLE_TESTING_CLUSTER);
+    let body = format!("{} FORMAT TabSeparated", sql);
+
+    let response = CLIENT
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", bearer_token))
+        .header("Content-Type", "text/plain")
+        .timeout(Duration::from_secs(HTTP_TIMEOUT))
+        .body(body)
+        .send()
+        .await
+        .map_err(|e| format!("query_sql request failed url={url}: {e}"))?;
+
+    let status = response.status();
+    let text = response
+        .text()
+        .await
+        .map_err(|e| format!("query_sql read body failed url={url}: {e}"))?;
+
+    if !status.is_success() {
+        return Err(format!("query_sql HTTP {} url={url}: {}", status, text));
+    }
+    Ok(text)
+}
+
+/// Count rows in a table via the cluster's query endpoint.
+pub async fn query_count(bearer_token: &str, full_table_name: &str) -> Result<u64, String> {
+    let sql = format!("SELECT count() FROM {}", full_table_name);
+    let body = query_sql(bearer_token, &sql).await?;
+    body.trim().parse::<u64>().map_err(|e| {
+        format!(
+            "query_count could not parse '{}' as u64: {}",
+            body.trim(),
+            e
+        )
+    })
+}
+
 pub async fn create_summary(
     bearer_token: &str,
     table_name: &str,
@@ -695,4 +728,49 @@ pub async fn create_summary(
         ));
     }
     Ok(table_name.to_string())
+}
+
+fn is_insert_retryable(status: u16, error_body: &str) -> bool {
+    // "unknown transform" is eventual-consistency lag after transform creation,
+    // not a real 4xx — retry with backoff until the ingest endpoint sees it.
+    if status == 400 && error_body.contains("unknown transform") {
+        return true;
+    }
+    match status {
+        400..=499 if status != 408 && status != 429 => false,
+        500..=599 | 408 | 429 => true,
+        _ => true,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unknown_transform_400_is_retryable() {
+        let body = r#"{"code":400,"message":"unknown transform 'akamai'"}"#;
+        assert!(is_insert_retryable(400, body));
+    }
+
+    #[test]
+    fn other_400_is_not_retryable() {
+        assert!(!is_insert_retryable(
+            400,
+            r#"{"code":400,"message":"bad input"}"#
+        ));
+        assert!(!is_insert_retryable(404, "not found"));
+    }
+
+    #[test]
+    fn rate_limit_and_timeout_are_retryable() {
+        assert!(is_insert_retryable(408, ""));
+        assert!(is_insert_retryable(429, "rate limited"));
+    }
+
+    #[test]
+    fn server_errors_are_retryable() {
+        assert!(is_insert_retryable(500, ""));
+        assert!(is_insert_retryable(503, ""));
+    }
 }
