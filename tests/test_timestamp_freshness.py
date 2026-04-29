@@ -29,7 +29,7 @@ sys.modules.setdefault("utils.file_utils", _utils_pkg.file_utils)
 from scripts.configurator.transform_organizer import (
     _shift_stale_timestamps,
     _extract_sample_data,
-    _resolve_sample_key,
+    _resolve_sample_path,
     _STALENESS_THRESHOLD_SECS,
 )
 from scripts.configurator.config import BundleConfig, BundleState, TransformInfo
@@ -473,18 +473,18 @@ class TestExtractSampleDataIntegration:
 
 
 # ---------------------------------------------------------------------------
-# Tests for _resolve_sample_key (LOTC-1412)
+# Tests for _resolve_sample_path (LOTC-1412 + LOTC-1523 nested-pointer support)
 # ---------------------------------------------------------------------------
 
 
-class TestResolveSampleKey:
+class TestResolveSamplePath:
     """Tests for JSON pointer resolution when output name != raw key."""
 
     def test_output_name_matches_sample_key(self):
-        """When output name exists in sample_data, return it directly."""
+        """When output name exists in sample_data, return it as a 1-tuple."""
         col = {"name": "timestamp", "datatype": {"type": "epoch", "source": None}}
         sample = {"timestamp": 1700000000}
-        assert _resolve_sample_key(col, sample) == "timestamp"
+        assert _resolve_sample_path(col, sample) == ("timestamp",)
 
     def test_json_pointer_fallback(self):
         """When output name is missing, resolve from from_json_pointers."""
@@ -496,7 +496,7 @@ class TestResolveSampleKey:
             },
         }
         sample = {"reqTimeSec": 1700000000}
-        assert _resolve_sample_key(col, sample) == "reqTimeSec"
+        assert _resolve_sample_path(col, sample) == ("reqTimeSec",)
 
     def test_no_match_returns_none(self):
         """When neither output name nor pointer matches, return None."""
@@ -508,7 +508,7 @@ class TestResolveSampleKey:
             },
         }
         sample = {"reqTimeSec": 1700000000}
-        assert _resolve_sample_key(col, sample) is None
+        assert _resolve_sample_path(col, sample) is None
 
     def test_source_without_json_pointers_returns_none(self):
         """When source has from_input_field but no from_json_pointers, return None."""
@@ -517,10 +517,34 @@ class TestResolveSampleKey:
             "datatype": {"type": "epoch", "source": {"from_input_field": "sql_transform"}},
         }
         sample = {"reqTimeSec": 1700000000}
-        assert _resolve_sample_key(col, sample) is None
+        assert _resolve_sample_path(col, sample) is None
 
-    def test_nested_pointer_skipped(self):
-        """Multi-segment JSON pointers (e.g. /avail/fillRate) cannot be resolved to flat keys."""
+    def test_nested_pointer_returns_full_path(self):
+        """Multi-segment pointer (LOTC-1523): walk the nested dict, return path tuple."""
+        col = {
+            "name": "timestamp",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/httpMessage/start"]},
+            },
+        }
+        sample = {"httpMessage": {"start": 1700000000}}
+        assert _resolve_sample_path(col, sample) == ("httpMessage", "start")
+
+    def test_nested_pointer_missing_segment_returns_none(self):
+        """Nested pointer with the parent key but a missing leaf returns None."""
+        col = {
+            "name": "timestamp",
+            "datatype": {
+                "type": "epoch",
+                "source": {"from_json_pointers": ["/httpMessage/start"]},
+            },
+        }
+        sample = {"httpMessage": {"host": "example.com"}}  # no 'start'
+        assert _resolve_sample_path(col, sample) is None
+
+    def test_flat_key_with_slash_is_not_walked(self):
+        """A literal key containing a slash is NOT a nested-pointer match."""
         col = {
             "name": "fill_rate",
             "datatype": {
@@ -528,14 +552,15 @@ class TestResolveSampleKey:
                 "source": {"from_json_pointers": ["/avail/fillRate"]},
             },
         }
-        sample = {"avail/fillRate": 1700000000}  # even if flat key exists, nested pointer skipped
-        assert _resolve_sample_key(col, sample) is None
+        # Sample has a flat key "avail/fillRate" (literal slash) but no nested dict
+        sample = {"avail/fillRate": 1700000000}
+        assert _resolve_sample_path(col, sample) is None
 
     def test_missing_name_returns_none(self):
         """Column without a name field returns None gracefully."""
         col = {"datatype": {"type": "epoch"}}
         sample = {"timestamp": 1700000000}
-        assert _resolve_sample_key(col, sample) is None
+        assert _resolve_sample_path(col, sample) is None
 
     def test_output_name_preferred_over_pointer(self):
         """If output name exists in sample, use it even if pointer also matches."""
@@ -547,7 +572,7 @@ class TestResolveSampleKey:
             },
         }
         sample = {"timestamp": 1700000000, "reqTimeSec": 1699999999}
-        assert _resolve_sample_key(col, sample) == "timestamp"
+        assert _resolve_sample_path(col, sample) == ("timestamp",)
 
 
 # ---------------------------------------------------------------------------
@@ -641,6 +666,111 @@ class TestShiftWithJsonPointer:
         _shift_stale_timestamps(sample, data, tinfo, config)
 
         assert sample["some_other_field"] == stale_ts
+
+    def test_fresh_nested_pointer_primary_not_shifted(self, tmp_path):
+        """Fresh nested primary (within 183-day threshold) passes through untouched."""
+        fresh_ts = _now_epoch() - (30 * 86400)  # 30 days ago
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_json_pointers": ["/httpMessage/start"]},
+                        },
+                    },
+                ],
+                "sample_data": {"httpMessage": {"start": fresh_ts}},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        assert sample["httpMessage"]["start"] == fresh_ts
+
+    def test_nested_pointer_string_epoch_shifted_preserves_type(self, tmp_path):
+        """SIEM real shape: primary epoch at /httpMessage/start is a JSON string.
+
+        The actual trafficpeak/siem fixture stores epochs as strings (e.g.
+        "1491303422"). The shifter must recognize them, shift, and write back
+        as a string so downstream tooling sees the same type.
+        """
+        stale_str = "1491303422"  # 2017-04-04 — well over 183 days stale
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_json_pointers": ["/httpMessage/start"]},
+                        },
+                    },
+                ],
+                "sample_data": {
+                    "httpMessage": {"start": stale_str, "host": "siem.example.com"},
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        expected_target = str(_first_of_month_epoch())
+        assert sample["httpMessage"]["start"] == expected_target
+        assert isinstance(sample["httpMessage"]["start"], str)
+
+    def test_nested_pointer_numeric_epoch_shifted(self, tmp_path):
+        """SIEM-shaped: primary epoch sourced from /httpMessage/start gets shifted at the nested path.
+
+        Regression for LOTC-1523. The configurator previously bailed on multi-segment
+        pointers in _resolve_sample_key and never shifted, so SIEM bundles passed
+        validation with arbitrarily stale fixtures.
+        """
+        stale_ts = _now_epoch() - (365 * 86400)  # 1 year ago
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "epoch",
+                            "primary": True,
+                            "format": "s",
+                            "source": {"from_json_pointers": ["/httpMessage/start"]},
+                        },
+                    },
+                ],
+                "sample_data": {
+                    "type": "akamai_siem",
+                    "httpMessage": {
+                        "host": "www.example.com",
+                        "start": stale_ts,
+                    },
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        expected_target = _first_of_month_epoch()
+        assert sample["httpMessage"]["start"] == expected_target
+        # Sibling fields untouched
+        assert sample["httpMessage"]["host"] == "www.example.com"
+        assert sample["type"] == "akamai_siem"
 
 
 # ---------------------------------------------------------------------------
@@ -779,6 +909,79 @@ class TestDatetimePrimary:
         # Warning emitted
         captured = capsys.readouterr()
         assert "Unparseable datetime sample" in captured.err
+
+    def test_datetime_nested_pointer_stale_shifted(self, tmp_path):
+        """Stale datetime primary at a nested pointer is shifted in-place (LOTC-1523)."""
+        stale_value = "2020-06-15T12:34:56"
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "timestamp",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05",
+                            "source": {"from_json_pointers": ["/event/occurred_at"]},
+                        },
+                    },
+                ],
+                "sample_data": {"event": {"occurred_at": stale_value, "id": "abc"}},
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        now_utc = datetime.now(timezone.utc)
+        expected = now_utc.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        ).strftime("%Y-%m-%dT%H:%M:%S")
+        assert sample["event"]["occurred_at"] == expected
+        assert sample["event"]["id"] == "abc"  # sibling untouched
+
+    def test_datetime_renamed_column_microseconds_shifted(self, tmp_path):
+        """apicontext shape (LOTC-1523): datetime primary `startTime` sourced
+        from single-segment `/start_time`; sample_data is keyed snake_case.
+        Format includes Go fractional-second token `.999999` (microseconds).
+        """
+        stale_value = "2024-10-07T06:27:17.160556Z"  # well past 183 days
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "startTime",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05.999999Z",
+                            "source": {"from_json_pointers": ["/start_time"]},
+                        },
+                    }
+                ],
+                "sample_data": {
+                    "start_time": stale_value,
+                    "result": "HTTP_CLIENT_ERROR",
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        now_utc = datetime.now(timezone.utc)
+        expected = now_utc.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        assert sample["start_time"] == expected
+        # Sibling untouched
+        assert sample["result"] == "HTTP_CLIENT_ERROR"
+        # Output column key never created
+        assert "startTime" not in sample
 
     def test_datetime_format_sample_mismatch_warn_and_skip(self, tmp_path, capsys):
         """Sample value does not match declared format (Cloudflare trailing Z) — warn + skip."""

@@ -16,11 +16,19 @@ from .constants import TRANSFORM_METADATA_FIELDS
 _STALENESS_THRESHOLD_SECS = 183 * 86400
 
 # Go reference time tokens -> strptime directives. Longer tokens first so that a
-# positional scan picks "2006" before "06", "15" before "5", etc. Only padded
-# tokens are supported; a layout using unpadded Go tokens (e.g. "1" for month,
-# "5" for seconds) will produce a wrong strptime pattern and degrade to the
+# positional scan picks "2006" before "06", "15" before "5", etc. Fractional-
+# second tokens come first (longest variants ahead of shorter ones) so e.g.
+# ".999999" doesn't mis-resolve as ".999" + "999". Only padded tokens are
+# supported; a layout using unpadded Go tokens (e.g. "1" for month, "5" for
+# seconds) will produce a wrong strptime pattern and degrade to the
 # warn-and-skip path in _shift_stale_datetime_primary.
 _GO_LAYOUT_TOKENS = (
+    (".000000000", ".%f"),
+    (".999999999", ".%f"),
+    (".000000", ".%f"),
+    (".999999", ".%f"),
+    (".000", ".%f"),
+    (".999", ".%f"),
     ("2006", "%Y"),
     ("01", "%m"),
     ("02", "%d"),
@@ -293,34 +301,51 @@ def _extract_sample_data(data, tinfo, config, state):
 _FORMAT_DIVISORS = {"s": 1, "ms": 1_000, "us": 1_000_000, "ns": 1_000_000_000}
 
 
-def _resolve_sample_key(col, sample_data):
-    """Resolve the actual key in sample_data for an output column.
+def _get_at_path(obj, path):
+    """Walk a tuple path through nested dicts. Returns None if any segment is missing."""
+    cur = obj
+    for seg in path:
+        if not isinstance(cur, dict) or seg not in cur:
+            return None
+        cur = cur[seg]
+    return cur
+
+
+def _set_at_path(obj, path, value):
+    """Write `value` at `path` inside `obj`. Intermediate dicts must already exist."""
+    cur = obj
+    for seg in path[:-1]:
+        cur = cur[seg]
+    cur[path[-1]] = value
+
+
+def _resolve_sample_path(col, sample_data):
+    """Resolve the path tuple in sample_data for an output column.
 
     The output column name (e.g. "timestamp") may differ from the raw JSON
     input key (e.g. "reqTimeSec" or "EdgeStartTimestamp"). Prefer the output
     name if it is present with a non-null value; otherwise fall through to
-    single-segment from_json_pointers and then from_input_field. As a last
-    resort, return the output name even if its value is null so legacy
-    callers still see the key.
+    from_json_pointers (single- or multi-segment) and then from_input_field.
+    As a last resort, return the output name as a 1-tuple even if its value
+    is null so legacy callers still see the key.
 
-    Only single-segment pointers (e.g. "/reqTimeSec") are resolved — nested
-    pointers (e.g. "/avail/fillRate") cannot be mapped to a flat sample_data
-    key and are skipped.
+    Multi-segment pointers (e.g. "/httpMessage/start") are walked through
+    nested dicts in sample_data — required for SIEM-style transforms where
+    the primary timestamp lives at a nested location.
     """
     col_name = col.get("name")
     if not col_name:
         return None
     if col_name in sample_data and sample_data.get(col_name) is not None:
-        return col_name
+        return (col_name,)
 
     source = col.get("datatype", {}).get("source") or {}
     for ptr in source.get("from_json_pointers", []):
-        # Only resolve single-segment JSON pointers (e.g. "/reqTimeSec")
-        segments = ptr.strip("/").split("/")
-        if len(segments) == 1 and segments[0]:
-            key = segments[0]
-            if key in sample_data and sample_data.get(key) is not None:
-                return key
+        segments = tuple(s for s in ptr.strip("/").split("/") if s)
+        if not segments:
+            continue
+        if _get_at_path(sample_data, segments) is not None:
+            return segments
 
     from_input = source.get("from_input_field")
     if (
@@ -328,10 +353,10 @@ def _resolve_sample_key(col, sample_data):
         and from_input in sample_data
         and sample_data.get(from_input) is not None
     ):
-        return from_input
+        return (from_input,)
 
     if col_name in sample_data:
-        return col_name
+        return (col_name,)
     return None
 
 
@@ -359,19 +384,19 @@ def _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
     Assumes sample_data has already been normalized to a dict by the upstream
     _extract_sample_data (which takes sample_data[0] for list-typed bundles).
     """
-    primary_key = None
+    primary_path = None
     primary_fmt = None
     for col in output_columns:
         dt = col.get("datatype", {})
         if dt.get("type") == "datetime" and dt.get("primary"):
-            primary_key = _resolve_sample_key(col, sample_data)
+            primary_path = _resolve_sample_path(col, sample_data)
             primary_fmt = dt.get("format", "")
             break
 
-    if not primary_key or not primary_fmt:
+    if not primary_path or not primary_fmt:
         return False
 
-    sample_value = sample_data.get(primary_key)
+    sample_value = _get_at_path(sample_data, primary_path)
     if not isinstance(sample_value, str):
         return True
 
@@ -394,7 +419,7 @@ def _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
 
     now_utc = datetime.now(timezone.utc)
     first_of_month = now_utc.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    sample_data[primary_key] = first_of_month.strftime(strptime_fmt)
+    _set_at_path(sample_data, primary_path, first_of_month.strftime(strptime_fmt))
     return True
 
 
@@ -409,23 +434,24 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     if not output_columns:
         return
 
-    # Find the primary epoch column and build a map of epoch column formats
-    # Resolve each column's actual key in sample_data (may differ from output name)
-    primary_col = None
+    # Find the primary epoch column and build a map of epoch column formats.
+    # Resolve each column's path in sample_data (may differ from output name and
+    # may be nested, e.g. /httpMessage/start for SIEM-shaped transforms).
+    primary_path = None
     primary_format = "s"
-    epoch_columns = []  # list of (sample_key, format)
+    epoch_columns = []  # list of (sample_path, format)
     for col in output_columns:
         dt = col.get("datatype", {})
         if dt.get("type") == "epoch":
             col_format = dt.get("format", "s")
-            sample_key = _resolve_sample_key(col, sample_data)
-            if sample_key:
-                epoch_columns.append((sample_key, col_format))
+            sample_path = _resolve_sample_path(col, sample_data)
+            if sample_path:
+                epoch_columns.append((sample_path, col_format))
             if dt.get("primary"):
-                primary_col = (sample_key, col_format)
+                primary_path = sample_path
                 primary_format = col_format
 
-    if not primary_col or not primary_col[0]:
+    if not primary_path:
         if _shift_stale_datetime_primary(sample_data, output_columns, tinfo, config):
             return
         if config.verbose:
@@ -436,12 +462,11 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
             )
         return
 
-    primary_key = primary_col[0]
-    primary_value = _coerce_numeric_epoch(sample_data.get(primary_key))
+    primary_value = _coerce_numeric_epoch(_get_at_path(sample_data, primary_path))
     if not isinstance(primary_value, (int, float)):
         if config.verbose:
             print(
-                f"[Transform Org] Primary timestamp '{primary_key}' is not numeric "
+                f"[Transform Org] Primary timestamp '{'/'.join(primary_path)}' is not numeric "
                 f"in sample_data for {os.path.basename(tinfo.final_path)}, skipping shift",
                 file=sys.stderr,
             )
@@ -466,15 +491,19 @@ def _shift_stale_timestamps(sample_data, transform_data, tinfo, config):
     delta_secs = target_epoch - primary_secs
 
     shifted_fields = []
-    for sample_key, col_format in epoch_columns:
-        raw = sample_data.get(sample_key)
+    for sample_path, col_format in epoch_columns:
+        raw = _get_at_path(sample_data, sample_path)
         coerced = _coerce_numeric_epoch(raw)
         if isinstance(coerced, (int, float)):
             col_divisor = _FORMAT_DIVISORS.get(col_format, 1)
             col_delta = delta_secs * col_divisor
             shifted = int(coerced) + col_delta
-            sample_data[sample_key] = str(shifted) if isinstance(raw, str) else shifted
-            shifted_fields.append(sample_key)
+            _set_at_path(
+                sample_data,
+                sample_path,
+                str(shifted) if isinstance(raw, str) else shifted,
+            )
+            shifted_fields.append("/".join(sample_path))
 
     if config.verbose and shifted_fields:
         print(
