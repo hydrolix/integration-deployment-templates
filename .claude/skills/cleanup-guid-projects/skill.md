@@ -31,6 +31,18 @@ Collect these values — use defaults when the user doesn't override:
 
 If any env var is unset, ask the user.
 
+## How to carry state across Bash calls
+
+Each Bash tool call runs in a fresh shell — `$TOKEN` and other variables set in one call do NOT survive to the next. **Do not work around this by writing the token to a file** (that violates the security rule below).
+
+The right pattern: re-authenticate at the top of any Bash call that needs the token. Auth is ~1s and idempotent. Concretely:
+
+- Combine Phase 2 (auth) + Phase 3 (list) into a single Bash call so `$TOKEN` is in scope for both.
+- Phase 5 (delete) is its own Bash call — re-auth from `$BUNDLE_TESTING_USERNAME` / `$BUNDLE_TESTING_PASSWORD` at the top.
+- Phase 6 (verify) can either run in the same call as Phase 5 (preferred) or re-auth.
+
+The TSV at `/tmp/cleanup_targets.tsv` is fine to leave on disk between calls — it only contains public project names + UUIDs.
+
 ## Phase 2: Authenticate
 
 ```bash
@@ -77,7 +89,16 @@ Skip this prompt only if the user explicitly asked for `--force` or a non-intera
 
 **Use this exact loop pattern** — `while IFS=$'\t' read -r ... < file` with `curl --max-time 60`. Do NOT use `cat file | xargs -P N bash -c '...'` or process substitution `< <(...)` — those patterns hang silently inside the Bash tool for 10+ minutes with zero output (see `memory/feedback_bash_loop_patterns.md`).
 
+The snippet re-authenticates at the top so it's self-contained and the token never has to cross Bash invocations:
+
 ```bash
+TOKEN=$(curl -sf --max-time 30 -X POST "https://${BUNDLE_TESTING_CLUSTER}/config/v1/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"username\":\"${BUNDLE_TESTING_USERNAME}\",\"password\":\"${BUNDLE_TESTING_PASSWORD}\"}" \
+  | jq -r '.auth_token.access_token')
+[ -z "$TOKEN" ] || [ "$TOKEN" = "null" ] && { echo "AUTH FAILED"; exit 1; }
+TOTAL=$(wc -l < /tmp/cleanup_targets.tsv | tr -d ' ')
+
 OK=0; FAIL=0; i=0
 while IFS=$'\t' read -r NAME UUID; do
   i=$((i+1))
@@ -119,7 +140,7 @@ If non-zero, report which names remain and suggest re-running.
 
 ## Security
 
-- Never write `BUNDLE_TESTING_PASSWORD` or `$TOKEN` to disk.
+- Never write `BUNDLE_TESTING_PASSWORD` or `$TOKEN` to disk. If you need the token in a later Bash call, re-authenticate (see "How to carry state across Bash calls" above) — auth is ~1s and idempotent, there's no reason to persist the token.
 - Use `curl -s` (silent) so progress output doesn't leak headers.
 - The target list TSV only contains public project names + UUIDs — safe to keep in `/tmp`.
 
