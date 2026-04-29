@@ -10,39 +10,39 @@
     },
     "__requires": [
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
         "version": "12.0.2"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
         "version": "0.6.0"
       },
       {
+        "type": "panel",
         "id": "stat",
         "name": "Stat",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "table",
         "name": "Table",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -1053,29 +1053,10 @@
     "refresh": "",
     "schemaVersion": 41,
     "tags": [
-      "v1.1"
+      "v1.1.1"
     ],
     "templating": {
       "list": [
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
         {
           "allowCustomValue": false,
           "current": {},
@@ -1107,14 +1088,33 @@
           "name": "catalog_union",
           "options": [],
           "query": "SELECT arrayStringConcat(\n    groupArray(\n        concat('SELECT index_size, manifest_size, data_size, raw_size, rows, min_timestamp FROM ', splitByChar('.', t)[1], '.`', splitByChar('.', t)[2], '#.catalog` WHERE $__timeFilter(min_timestamp)')\n    ),\n    ' UNION ALL '\n)\nFROM (\n    SELECT arrayJoin(splitByChar(',', '${table:csv}')) AS t\n)\n",
-          "refresh": 1,
+          "refresh": 2,
           "regex": "",
           "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         }
       ]
     },
     "time": {
-      "from": "now-30d",
+      "from": "now/M",
       "to": "now"
     },
     "timepicker": {

@@ -10,51 +10,51 @@
     },
     "__requires": [
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
         "version": "12.0.2"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
         "version": "0.6.0"
       },
       {
+        "type": "panel",
         "id": "marcusolsson-treemap-panel",
         "name": "Treemap",
-        "type": "panel",
         "version": "2.0.1"
       },
       {
+        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "stat",
         "name": "Stat",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "table",
         "name": "Table",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -1436,25 +1436,6 @@
     "templating": {
       "list": [
         {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
           "allowCustomValue": false,
           "current": {
             "text": "reqTimeSec",
@@ -1490,61 +1471,61 @@
           "type": "query"
         },
         {
+          "hide": 2,
+          "name": "ds2",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
-          "hide": 2,
-          "name": "ds2",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME__.__TABLE_NAME__",
               "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
-          },
           "hide": 2,
           "name": "summary_hour",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
+          "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
-          "hide": 2,
-          "name": "summary_day",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "summary_day",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
-          "type": "constant"
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ]
         },
         {
           "current": {},
@@ -2022,6 +2003,25 @@
           "filters": [],
           "name": "filter",
           "type": "adhoc"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         }
       ]
     },

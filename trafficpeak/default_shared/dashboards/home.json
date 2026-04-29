@@ -10,39 +10,39 @@
     },
     "__requires": [
       {
+        "type": "panel",
         "id": "canvas",
         "name": "Canvas",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "dashlist",
         "name": "Dashboard list",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
         "version": "12.0.0"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
         "version": "0.2.0"
       },
       {
+        "type": "panel",
         "id": "news",
         "name": "News",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -141,12 +141,12 @@
         "pluginVersion": "12.0.0",
         "targets": [
           {
+            "format": 1,
+            "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "refId": "A"
+            }
           }
         ],
         "transparent": true,
@@ -164,6 +164,22 @@
         "panels": [],
         "title": "Platform Health / List of Dashboards",
         "type": "row"
+      },
+      {
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 3
+        },
+        "id": 13,
+        "options": {
+          "feedUrl": "https://script.google.com/macros/s/AKfycbw41RtpCMHffIYgtSiN7uDLLW5l5-42jBhFcjkpRocETGTX9TGVIbKHbSF8iNcSE21bkQ/exec?feed=${GRAFANA_REGION}",
+          "showImage": true
+        },
+        "pluginVersion": "12.0.0",
+        "title": "TrafficPeak Grafana Platform Live Feed Information",
+        "type": "news"
       },
       {
         "gridPos": {
