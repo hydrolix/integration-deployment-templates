@@ -1,0 +1,347 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot_insights",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/bot-insights-overview-alignment.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [
+        "asn_type_dict",
+        "bot_ip_dict",
+        "ua_cat_dict"
+      ],
+      "required_functions": [
+        "extract_key_pair",
+        "siem_extract"
+      ],
+      "shared_dictionaries": [],
+      "shared_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Role-based bot traffic analytics with persona dashboards and multi-CDN support.",
+    "maintainer": "kevin.borkman@hydrolix.io",
+    "version": "1.1.9"
+  },
+  "method": "multi_stream",
+  "name": "trafficpeak_bot_insights",
+  "other_dashboards": [
+    {
+      "path": "dashboards/bot-insights-soc-what-changed.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-edge-ops.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-seo-governance.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-multi-domain-triage.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-what-changed-investigation.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__BI_SUMMARY_MINUTE__",
+      "name": "bi_summary_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SUMMARY_HOUR__",
+      "name": "bi_summary_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SUMMARY_DAY__",
+      "name": "bi_summary_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SUMMARY_MONTH__",
+      "name": "bi_summary_month",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_month.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SIEM_SUMMARY_HOUR__",
+      "name": "bi_siem_summary_hour",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bi_siem_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SIEM_SUMMARY_MINUTE__",
+      "name": "bi_siem_summary_minute",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bi_siem_summary_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BI_SIEM_SUMMARY_DAY__",
+      "name": "bi_siem_summary_day",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bi_siem_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_FILTER_SUMMARY_HOUR__",
+      "name": "bot_siem_filter_summary_hour",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_filter_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_FILTER_SUMMARY_MINUTE__",
+      "name": "bot_siem_filter_summary_minute",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_filter_summary_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_FILTER_SUMMARY_DAY__",
+      "name": "bot_siem_filter_summary_day",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_filter_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_CLASS_MINUTE__",
+      "name": "bot_siem_class_minute",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_class_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_CLASS_HOUR__",
+      "name": "bot_siem_class_hour",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_class_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_SIEM_CLASS_DAY__",
+      "name": "bot_siem_class_day",
+      "parent_table_name": "siem",
+      "sql": {
+        "path": "summaries/bot_siem_class_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_MINUTE__",
+      "name": "bot_agg_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_HOUR__",
+      "name": "bot_agg_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_DAY__",
+      "name": "bot_agg_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_PATH_MINUTE__",
+      "name": "bot_agg_path_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_path_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_PATH_HOUR__",
+      "name": "bot_agg_path_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_path_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_PATH_DAY__",
+      "name": "bot_agg_path_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_path_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_ASN_MINUTE__",
+      "name": "bot_agg_asn_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_asn_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_ASN_HOUR__",
+      "name": "bot_agg_asn_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_asn_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_ASN_DAY__",
+      "name": "bot_agg_asn_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_asn_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_TRAFFIC_MINUTE__",
+      "name": "bot_agg_traffic_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_traffic_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_TRAFFIC_HOUR__",
+      "name": "bot_agg_traffic_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_traffic_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_TRAFFIC_DAY__",
+      "name": "bot_agg_traffic_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_traffic_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_RESOURCE_MINUTE__",
+      "name": "bot_agg_resource_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_resource_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_RESOURCE_HOUR__",
+      "name": "bot_agg_resource_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_resource_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_RESOURCE_DAY__",
+      "name": "bot_agg_resource_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_resource_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_UA_MINUTE__",
+      "name": "bot_agg_ua_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_ua_minute.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_UA_HOUR__",
+      "name": "bot_agg_ua_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_ua_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__BOT_AGG_UA_DAY__",
+      "name": "bot_agg_ua_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bot_agg_ua_day.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/akamai_ds2/transform.json",
+          "sample": "transformations/akamai_ds2/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    },
+    {
+      "dashboard_var": "__SIEM_TABLE_NAME__",
+      "name": "siem",
+      "transforms": [
+        {
+          "path": "transformations/siem/transform.json",
+          "sample": "transformations/siem/sample_data.json",
+          "method": "http_streaming"
+        },
+        {
+          "path": "transformations/siem_gz/transform.json",
+          "sample": "transformations/siem_gz/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "folder": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://techdocs.akamai.com/trafficpeak/docs/trafficpeak-overview",
+    "source": {
+      "full_title": "TrafficPeak Bot Insights CDN",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}
