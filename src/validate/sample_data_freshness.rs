@@ -21,6 +21,50 @@ const GO_LAYOUT_TOKENS: &[(&str, &str)] = &[
     ("05", "%S"),
 ];
 
+/// Resolve the sample_data value for a primary timestamp column. Mirrors the
+/// Python `_resolve_sample_path` algorithm: prefer the post-transform output
+/// name when it has a non-null value; otherwise walk each `from_json_pointers`
+/// entry (single- or multi-segment, e.g. `/httpMessage/start` for SIEM); finally
+/// fall back to `from_input_field`. Returns None when nothing resolves to a
+/// non-null value, so the caller can `continue` past columns whose fixture is
+/// missing entirely.
+fn resolve_primary_value<'a>(col: &Value, sample_data: &'a Value) -> Option<&'a Value> {
+    let col_name = col.get("name").and_then(|v| v.as_str())?;
+
+    let by_name = sample_data.get(col_name);
+    if matches!(by_name, Some(v) if !v.is_null()) {
+        return by_name;
+    }
+
+    let source = col.get("datatype").and_then(|d| d.get("source"));
+    if let Some(ptrs) = source
+        .and_then(|s| s.get("from_json_pointers"))
+        .and_then(|p| p.as_array())
+    {
+        for ptr in ptrs {
+            if let Some(p) = ptr.as_str() {
+                if let Some(v) = sample_data.pointer(p) {
+                    if !v.is_null() {
+                        return Some(v);
+                    }
+                }
+            }
+        }
+    }
+
+    if let Some(fif) = source
+        .and_then(|s| s.get("from_input_field"))
+        .and_then(|v| v.as_str())
+    {
+        let by_input = sample_data.get(fif);
+        if matches!(by_input, Some(v) if !v.is_null()) {
+            return by_input;
+        }
+    }
+
+    by_name
+}
+
 /// Translate a Go reference-time layout (e.g. `2006-01-02T15:04:05`) to the
 /// chrono/strftime equivalent (`%Y-%m-%dT%H:%M:%S`). Unknown characters pass
 /// through as literals.
@@ -76,41 +120,52 @@ pub async fn run(base: &str, bundle: &Bundle) -> Vec<String> {
                 None => continue,
             };
 
-            // Find the primary timestamp column (epoch or datetime) and capture its
-            // type + format so the parse path can dispatch.
-            let primary_info = output_columns.iter().find_map(|col| {
-                let dt = col.get("datatype")?;
+            // Find the primary timestamp column (epoch or datetime).
+            let primary_col = match output_columns.iter().find(|col| {
+                let dt = match col.get("datatype") {
+                    Some(d) => d,
+                    None => return false,
+                };
                 let type_str = dt.get("type").and_then(|v| v.as_str()).unwrap_or("");
                 let is_ts = type_str == "epoch" || type_str == "datetime";
                 let is_primary = dt.get("primary").and_then(|v| v.as_bool()).unwrap_or(false);
-                if is_ts && is_primary {
-                    let name = col.get("name").and_then(|v| v.as_str())?.to_string();
-                    let default_format = if type_str == "datetime" { "" } else { "s" };
-                    let format = dt
-                        .get("format")
-                        .and_then(|f| f.as_str())
-                        .unwrap_or(default_format)
-                        .to_string();
-                    Some((name, format, type_str.to_string()))
-                } else {
-                    None
-                }
-            });
-
-            let (primary_col_name, primary_format, primary_type) = match primary_info {
-                Some(info) => info,
+                is_ts && is_primary
+            }) {
+                Some(c) => c,
                 None => continue,
             };
 
+            let dt = &primary_col["datatype"];
+            let primary_type = dt
+                .get("type")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
+            let primary_col_name = primary_col
+                .get("name")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
+            let default_format = if primary_type == "datetime" { "" } else { "s" };
+            let primary_format = dt
+                .get("format")
+                .and_then(|f| f.as_str())
+                .unwrap_or(default_format)
+                .to_string();
+
             let sample_data = &transform_json["settings"]["sample_data"];
+            let primary_value = match resolve_primary_value(primary_col, sample_data) {
+                Some(v) => v,
+                None => continue,
+            };
 
             let primary_secs: u64 = match primary_type.as_str() {
                 "datetime" => {
                     if primary_format.is_empty() {
                         continue;
                     }
-                    let value = match sample_data.get(&primary_col_name) {
-                        Some(Value::String(s)) => s.clone(),
+                    let value = match primary_value {
+                        Value::String(s) => s.clone(),
                         _ => continue,
                     };
                     let strptime_fmt = translate_go_layout(&primary_format);
@@ -126,13 +181,17 @@ pub async fn run(base: &str, bundle: &Bundle) -> Vec<String> {
                     }
                 }
                 _ => {
-                    let primary_value = match sample_data.get(&primary_col_name) {
-                        Some(Value::Number(n)) => match n.as_u64() {
+                    let raw_secs = match primary_value {
+                        Value::Number(n) => match n.as_u64() {
                             Some(v) => v,
                             None => match n.as_f64() {
                                 Some(v) => v as u64,
                                 None => continue,
                             },
+                        },
+                        Value::String(s) => match s.trim().parse::<u64>() {
+                            Ok(v) => v,
+                            Err(_) => continue,
                         },
                         _ => continue,
                     };
@@ -142,7 +201,7 @@ pub async fn run(base: &str, bundle: &Bundle) -> Vec<String> {
                         "ns" => 1_000_000_000,
                         _ => 1,
                     };
-                    primary_value / divisor
+                    raw_secs / divisor
                 }
             };
 
@@ -363,6 +422,130 @@ mod tests {
         assert!(
             !warnings.is_empty(),
             "Stale datetime should produce warnings"
+        );
+        assert!(
+            warnings[0].contains("Stale sample_data"),
+            "Warning should mention staleness: {}",
+            warnings[0]
+        );
+    }
+
+    /// SIEM-shaped transform: primary epoch sourced from a multi-segment
+    /// JSON pointer with the value at a nested location in sample_data.
+    fn make_nested_pointer_transform_json(primary_ts_literal: &str) -> String {
+        format!(
+            r#"{{
+                "name": "siem_transform",
+                "settings": {{
+                    "output_columns": [
+                        {{
+                            "name": "timestamp",
+                            "datatype": {{
+                                "type": "epoch",
+                                "primary": true,
+                                "format": "s",
+                                "source": {{ "from_json_pointers": ["/httpMessage/start"] }}
+                            }}
+                        }}
+                    ],
+                    "sample_data": {{
+                        "type": "akamai_siem",
+                        "httpMessage": {{
+                            "host": "siem.example.com",
+                            "start": {primary_ts_literal}
+                        }}
+                    }}
+                }}
+            }}"#
+        )
+    }
+
+    #[tokio::test]
+    async fn test_stale_nested_pointer_numeric_epoch_warns() {
+        // LOTC-1523: SIEM-style nested-pointer primary must produce a warning
+        // when stale. Previously the validator silently skipped because it
+        // looked up sample_data["timestamp"] (post-transform name) and
+        // missed the actual location at /httpMessage/start.
+        let dir = tempfile::tempdir().unwrap();
+        let transform_path = "transformations/siem/transform.json";
+        let full_path = dir.path().join(transform_path);
+        fs::create_dir_all(full_path.parent().unwrap())
+            .await
+            .unwrap();
+
+        let stale_ts = now_epoch() - (365 * 86400); // 1 year ago
+        fs::write(
+            &full_path,
+            make_nested_pointer_transform_json(&stale_ts.to_string()),
+        )
+        .await
+        .unwrap();
+
+        let bundle = make_bundle(transform_path);
+        let warnings = run(dir.path().to_str().unwrap(), &bundle).await;
+        assert!(
+            !warnings.is_empty(),
+            "Stale nested-pointer epoch should produce warnings"
+        );
+        assert!(
+            warnings[0].contains("Stale sample_data"),
+            "Warning should mention staleness: {}",
+            warnings[0]
+        );
+    }
+
+    #[tokio::test]
+    async fn test_fresh_nested_pointer_epoch_passes() {
+        // LOTC-1523: nested-pointer primary within the freshness threshold
+        // must not produce a warning.
+        let dir = tempfile::tempdir().unwrap();
+        let transform_path = "transformations/siem/transform.json";
+        let full_path = dir.path().join(transform_path);
+        fs::create_dir_all(full_path.parent().unwrap())
+            .await
+            .unwrap();
+
+        let fresh_ts = now_epoch() - 86400; // 1 day ago
+        fs::write(
+            &full_path,
+            make_nested_pointer_transform_json(&fresh_ts.to_string()),
+        )
+        .await
+        .unwrap();
+
+        let bundle = make_bundle(transform_path);
+        let warnings = run(dir.path().to_str().unwrap(), &bundle).await;
+        assert!(
+            warnings.is_empty(),
+            "Fresh nested-pointer epoch should produce no warnings: {:?}",
+            warnings
+        );
+    }
+
+    #[tokio::test]
+    async fn test_stale_nested_pointer_string_epoch_warns() {
+        // LOTC-1523: real SIEM shape stores epochs as JSON strings (e.g.
+        // "1491303422"). Validator must accept Value::String at nested paths
+        // and parse as a numeric epoch.
+        let dir = tempfile::tempdir().unwrap();
+        let transform_path = "transformations/siem/transform.json";
+        let full_path = dir.path().join(transform_path);
+        fs::create_dir_all(full_path.parent().unwrap())
+            .await
+            .unwrap();
+
+        let stale_ts = now_epoch() - (365 * 86400);
+        // Note the surrounding quotes: stored as a JSON string, not a number.
+        let literal = format!("\"{stale_ts}\"");
+        fs::write(&full_path, make_nested_pointer_transform_json(&literal))
+            .await
+            .unwrap();
+
+        let bundle = make_bundle(transform_path);
+        let warnings = run(dir.path().to_str().unwrap(), &bundle).await;
+        assert!(
+            !warnings.is_empty(),
+            "Stale string-typed nested epoch should produce warnings"
         );
         assert!(
             warnings[0].contains("Stale sample_data"),
