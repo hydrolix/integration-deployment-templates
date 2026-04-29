@@ -20,7 +20,7 @@
       "name": "VAR_APICONTEXT_SAMPLED_DAY",
       "type": "constant",
       "label": "apicontext_sampled_day",
-      "value": "__PROJECT_NAME__.__APICONTEXT_SAMPLED_DAY__",
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
       "description": ""
     },
     {
@@ -2495,18 +2495,18 @@
       {
         "hide": 2,
         "name": "apicontext_sampled_day",
-        "query": "__APICONTEXT_SAMPLED_DAY__",
+        "query": "__SUMMARY_TABLE_NAME_1__",
         "skipUrlSync": true,
         "type": "constant",
         "current": {
-          "value": "__APICONTEXT_SAMPLED_DAY__",
-          "text": "__APICONTEXT_SAMPLED_DAY__",
+          "value": "__SUMMARY_TABLE_NAME_1__",
+          "text": "__SUMMARY_TABLE_NAME_1__",
           "selected": false
         },
         "options": [
           {
-            "value": "__APICONTEXT_SAMPLED_DAY__",
-            "text": "__APICONTEXT_SAMPLED_DAY__",
+            "value": "__SUMMARY_TABLE_NAME_1__",
+            "text": "__SUMMARY_TABLE_NAME_1__",
             "selected": false
           }
         ]

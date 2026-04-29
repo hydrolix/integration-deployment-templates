@@ -12,7 +12,7 @@ dashboards:
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TIMESTAMP: startTime
-      VAR_APICONTEXT_SAMPLED_DAY: __PROJECT_NAME__.__APICONTEXT_SAMPLED_DAY__
+      VAR_APICONTEXT_SAMPLED_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
       VAR_LOGS: akamai.apicontext
       VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
   hdx-api-observability:
@@ -22,6 +22,6 @@ dashboards:
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TIMESTAMP: startTime
-      VAR_APICONTEXT_SAMPLED_DAY: __PROJECT_NAME__.__APICONTEXT_SAMPLED_DAY__
+      VAR_APICONTEXT_SAMPLED_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
       VAR_LOGS: akamai.apicontext
       VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
