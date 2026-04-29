@@ -3,7 +3,6 @@
   "name": "default_context_logs",
   "settings": {
     "compression": "",
-    "data_mirroring_target": null,
     "format_details": {
       "flattening": {
         "active": false,

@@ -10,51 +10,51 @@
     },
     "__requires": [
       {
-        "type": "panel",
         "id": "barchart",
         "name": "Bar chart",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "geomap",
         "name": "Geomap",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.0.2"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.6.0"
       },
       {
-        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "table",
         "name": "Table",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -544,7 +544,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tcp_connect_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average TCP connect time; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_tcp_connect_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average TCP connect time; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -666,7 +666,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average SSL handshake time; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_tls_handshake_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average SSL handshake time; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -788,7 +788,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_dns_lookup_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nORDER BY AVG DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average DNS lookup time; du=${__user.login}'\n",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_dns_lookup_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nORDER BY AVG DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average DNS lookup time; du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -910,7 +910,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_responseTime} AS AVG,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average response time; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_responseTime} AS AVG,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average response time; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1032,7 +1032,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (DNS + TCP + SSL); du=${__user.login}'\n",
+            "rawSql": "SELECT toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (DNS + TCP + SSL); du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -1154,7 +1154,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time, \n  cloud\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, cloud\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (By Cloud); du=${__user.login}'\n",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time, \n  cloud\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, cloud\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (By Cloud); du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -2004,7 +2004,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "timeseries",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  contextCategory,\n  ${cnt_all} AS Total\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, contextCategory\nORDER BY time\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Categories; du=${__user.login}'",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  contextCategory,\n  ${cnt_all} AS Total\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, contextCategory\nORDER BY time\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Categories; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -2293,7 +2293,7 @@
             },
             "pluginVersion": "4.0.6",
             "queryType": "table",
-            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  toString(httpCode) as statusCode,\n  ${cnt_all} as Code\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, statusCode\nORDER BY Code DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=\"Total Code\" codes; du=${__user.login}'\n",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL $__interval_s SECOND) AS time,\n  toString(httpCode) as statusCode,\n  ${cnt_all} as Code\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, statusCode\nORDER BY Code DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=\"Total Code\" codes; du=${__user.login}'\n",
             "refId": "A"
           }
         ],
@@ -2422,23 +2422,23 @@
           "type": "query"
         },
         {
-          "hide": 2,
-          "name": "timestamp",
-          "query": "startTime",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "startTime",
             "value": "startTime"
           },
+          "hide": 2,
+          "name": "timestamp",
           "options": [
             {
               "selected": false,
               "text": "startTime",
               "value": "startTime"
             }
-          ]
+          ],
+          "query": "startTime",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "baseFilters": [],
@@ -2462,42 +2462,42 @@
           "type": "query"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+          },
           "hide": 2,
           "name": "apicontext_sampled_day",
-          "query": "__SUMMARY_TABLE_NAME_1__",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "value": "__SUMMARY_TABLE_NAME_1__",
-            "text": "__SUMMARY_TABLE_NAME_1__",
-            "selected": false
-          },
           "options": [
             {
-              "value": "__SUMMARY_TABLE_NAME_1__",
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "selected": false
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
           "hide": 2,
           "name": "logs",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "value": "__PROJECT_NAME__.__TABLE_NAME__",
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "selected": false
-          },
           "options": [
             {
-              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false,
               "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "selected": false
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {},
