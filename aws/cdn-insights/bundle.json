@@ -32,6 +32,10 @@
     "version": "1.0.5"
   },
   "method": "multi_stream",
+  "method_overrides": {
+    "region": "us-east-1",
+    "stream_prefix": "aws-waf-logs-hdx"
+  },
   "name": "cdn_insights",
   "other_dashboards": [
     {
