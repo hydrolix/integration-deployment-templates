@@ -1,0 +1,6 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_summary_base_defaults.yaml
+description: apicontext_sampled_day
+settings:
+  summary:
+    sql:
+      __extend__: apicontext_sampled_day.sql

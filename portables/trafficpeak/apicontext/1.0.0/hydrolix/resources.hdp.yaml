@@ -1,0 +1,15 @@
+tables:
+  apicontext:
+    __extend__: tables/table_apicontext.yaml
+transforms:
+  apicontext:
+    default_context_logs:
+      __extend__: transforms/default_context_logs.json
+      settings:
+        sql_transform:
+          __extend__: transforms/default_context_logs_select.sql
+        sample_data:
+          __extend__: transforms/default_context_logs_sample_data.json
+summary_tables:
+  apicontext_sampled_day:
+    __extend__: tables/apicontext_sampled_day.yaml

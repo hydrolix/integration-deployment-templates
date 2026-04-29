@@ -1,0 +1,2743 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "panel",
+        "id": "barchart",
+        "name": "Bar chart",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "geomap",
+        "name": "Geomap",
+        "version": ""
+      },
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.2"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "piechart",
+        "name": "Pie chart",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "text",
+        "name": "Text",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "description": "",
+        "gridPos": {
+          "h": 2,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 18,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "Reports on network times, multi-cloud information, and API workflows.",
+          "mode": "markdown"
+        },
+        "pluginVersion": "12.0.2",
+        "title": "Network Monitoring Dashboard (Synthetics)",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows network issues and for each Cloud and Region",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [
+              {
+                "options": {
+                  "1-green": {
+                    "color": "green",
+                    "index": 2
+                  },
+                  "2-yellow": {
+                    "color": "orange",
+                    "index": 1
+                  },
+                  "3-red": {
+                    "color": "dark-red",
+                    "index": 0
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 19,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 17,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "arrow": 1,
+                "edgeStyle": {
+                  "color": {
+                    "field": "edge_color_text",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "edge_thickness",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "field": "network_time",
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                },
+                "showLegend": false,
+                "style": {
+                  "color": {
+                    "field": "cloud_provider",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "cloud_provider",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "location": {
+                "latitude": "latitude",
+                "longitude": "longitude",
+                "mode": "coords"
+              },
+              "name": "Layer 3",
+              "tooltip": true,
+              "type": "network"
+            },
+            {
+              "config": {
+                "showLegend": false,
+                "style": {
+                  "color": {
+                    "field": "cloud_provider",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "network_time",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "field": "cloud_provider",
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "right",
+                    "textBaseline": "bottom"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "nodes"
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "Layer 2",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "coords",
+            "lat": 15.767144,
+            "lon": -1.234589,
+            "zoom": 2
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "builderOptions": {
+              "aggregates": [],
+              "columns": [
+                {
+                  "custom": false,
+                  "name": "call_id",
+                  "type": "String"
+                }
+              ],
+              "database": "default",
+              "filters": [],
+              "groupBy": [],
+              "limit": 1000,
+              "meta": {},
+              "mode": "list",
+              "orderBy": [],
+              "queryType": "table",
+              "table": "apic2"
+            },
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "hide": false,
+            "meta": {
+              "builderOptions": {
+                "aggregates": [],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "call_id",
+                    "type": "String"
+                  }
+                ],
+                "database": "default",
+                "filters": [],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "list",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "apic2"
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT DISTINCT \n    CONCAT(callID, '_', resultID) AS id,  \n    ipAddr AS ip_address,\n    ${ipAddr_latitude} AS latitude,  \n    ${ipAddr_longitude} AS longitude,\n    cloud AS cloud_provider,\n    ${ipAddr_city} AS city\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\nAND callID != '~~~SAMPLED_OUT~~~'\nAND resultID != '~~~SAMPLED_OUT~~~'\nAND ipAddr != '~~~SAMPLED_OUT~~~'\n-- 🔴 Remove Private IPs & Blank Target IPs\nAND notEmpty(cloud_provider)\nAND NOT (\n    -- Exclude Private IPs\n    ipAddr LIKE '10.%' OR ipAddr LIKE '172.16.%' OR ipAddr LIKE '172.17.%' OR ipAddr LIKE '172.18.%' \n    OR ipAddr LIKE '172.19.%' OR ipAddr LIKE '172.20.%' OR ipAddr LIKE '172.21.%' OR ipAddr LIKE '172.22.%' \n    OR ipAddr LIKE '172.23.%' OR ipAddr LIKE '172.24.%' OR ipAddr LIKE '172.25.%' OR ipAddr LIKE '172.26.%' \n    OR ipAddr LIKE '172.27.%' OR ipAddr LIKE '172.28.%' OR ipAddr LIKE '172.29.%' OR ipAddr LIKE '172.30.%' \n    OR ipAddr LIKE '172.31.%' OR ipAddr LIKE '192.168.%' OR ipAddr LIKE '169.254.%' OR ipAddr LIKE '127.%'\n)\nLIMIT 300\n\nUNION ALL \n\nSELECT DISTINCT \n    CONCAT(resultID, '_', callID) AS id,  \n    targetIPAddr AS ip_address,\n    ${targetIPAddr_latitude} AS latitude,  \n    ${targetIPAddr_longitude} AS longitude,\n    targetCloud AS cloud_provider,\n    ${targetIPAddr_city} AS city\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\nAND callID != '~~~SAMPLED_OUT~~~'\nAND resultID != '~~~SAMPLED_OUT~~~'\nAND targetIPAddr != '~~~SAMPLED_OUT~~~'\n-- 🔴 Remove Private IPs & Blank Target IPs\nAND notEmpty(cloud_provider)\nAND NOT (\n    -- Exclude Private IPs\n    targetIPAddr LIKE '10.%' OR targetIPAddr LIKE '172.16.%' OR targetIPAddr LIKE '172.17.%' OR targetIPAddr LIKE '172.18.%' \n    OR targetIPAddr LIKE '172.19.%' OR targetIPAddr LIKE '172.20.%' OR targetIPAddr LIKE '172.21.%' OR targetIPAddr LIKE '172.22.%' \n    OR targetIPAddr LIKE '172.23.%' OR targetIPAddr LIKE '172.24.%' OR targetIPAddr LIKE '172.25.%' OR targetIPAddr LIKE '172.26.%' \n    OR targetIPAddr LIKE '172.27.%' OR targetIPAddr LIKE '172.28.%' OR targetIPAddr LIKE '172.29.%' OR targetIPAddr LIKE '172.30.%' \n    OR targetIPAddr LIKE '172.31.%' OR targetIPAddr LIKE '192.168.%' OR targetIPAddr LIKE '169.254.%' OR targetIPAddr LIKE '127.%'\n)\n\nORDER BY id\nLIMIT 300\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Networking issues for all API calls; query=nodes; du=${__user.login}'",
+            "refId": "nodes"
+          },
+          {
+            "builderOptions": {
+              "aggregates": [],
+              "columns": [
+                {
+                  "custom": false,
+                  "name": "call_id",
+                  "type": "String"
+                }
+              ],
+              "database": "default",
+              "filters": [],
+              "groupBy": [],
+              "limit": 1000,
+              "meta": {},
+              "mode": "list",
+              "orderBy": [],
+              "queryType": "table",
+              "table": "apic2"
+            },
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "hide": false,
+            "meta": {
+              "builderOptions": {
+                "aggregates": [],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "call_id",
+                    "type": "String"
+                  }
+                ],
+                "database": "default",
+                "filters": [],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "list",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "apic2"
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n    CONCAT(callID, '_', resultID) AS source,   -- 👈 Ensure this matches the node ID\n    CONCAT(resultID, '_', callID) AS target,   -- 👈 Ensure this matches the node ID\n    (${sum_dns} + ${sum_connect} + ${sum_tlsHandshake}) AS network_time, -- Network Time Calculation\n    cloud AS source_cloud, \n    targetCloud AS target_cloud, \n    ${ipAddr_city} AS source_city, \n    ${targetIPAddr_city} AS target_city,\n\n    -- 🚦 Edge Coloring Logic\n    CASE \n        WHEN (${sum_dns} + ${sum_connect} + ${sum_tlsHandshake}) < 50 THEN '1-green'   \n        WHEN (${sum_dns} + ${sum_connect} + ${sum_tlsHandshake}) BETWEEN 50 AND 200 THEN '2-yellow'  \n        ELSE '3-red'   \n    END AS edge_color_text,\n\n    -- 🔹 Edge Thickness based on Performance\n    CASE \n        WHEN (${sum_dns} + ${sum_connect} + ${sum_tlsHandshake}) < 50 THEN 2  \n        WHEN (${sum_dns} + ${sum_connect} + ${sum_tlsHandshake}) BETWEEN 50 AND 200 THEN 4  \n        ELSE 6  \n    END AS edge_thickness\n\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n-- 🔴 Remove Private IPs & Blank Target IPs\nAND isNotNull(targetIPAddr)\nAND notEmpty(targetIPAddr)\nAND isNotNull(ipAddr)\nAND notEmpty(target_city)\n\nAND callID != '~~~SAMPLED_OUT~~~'\nAND resultID != '~~~SAMPLED_OUT~~~'\nAND NOT (\n    -- Exclude Private IPs (Source)\n    ipAddr LIKE '10.%'\n    OR ipAddr LIKE '172.16.%' OR ipAddr LIKE '172.17.%' OR ipAddr LIKE '172.18.%' OR ipAddr LIKE '172.19.%'\n    OR ipAddr LIKE '172.20.%' OR ipAddr LIKE '172.21.%' OR ipAddr LIKE '172.22.%' OR ipAddr LIKE '172.23.%'\n    OR ipAddr LIKE '172.24.%' OR ipAddr LIKE '172.25.%' OR ipAddr LIKE '172.26.%' OR ipAddr LIKE '172.27.%'\n    OR ipAddr LIKE '172.28.%' OR ipAddr LIKE '172.29.%' OR ipAddr LIKE '172.30.%' OR ipAddr LIKE '172.31.%'\n    OR ipAddr LIKE '192.168.%'\n    OR ipAddr LIKE '169.254.%'\n    OR ipAddr LIKE '127.%'\n\n    -- Exclude Private IPs (Target)\n    OR targetIPAddr LIKE '10.%'\n    OR targetIPAddr LIKE '172.16.%' OR targetIPAddr LIKE '172.17.%' OR targetIPAddr LIKE '172.18.%' OR targetIPAddr LIKE '172.19.%'\n    OR targetIPAddr LIKE '172.20.%' OR targetIPAddr LIKE '172.21.%' OR targetIPAddr LIKE '172.22.%' OR targetIPAddr LIKE '172.23.%'\n    OR targetIPAddr LIKE '172.24.%' OR targetIPAddr LIKE '172.25.%' OR targetIPAddr LIKE '172.26.%' OR targetIPAddr LIKE '172.27.%'\n    OR targetIPAddr LIKE '172.28.%' OR targetIPAddr LIKE '172.29.%' OR targetIPAddr LIKE '172.30.%' OR targetIPAddr LIKE '172.31.%'\n    OR targetIPAddr LIKE '192.168.%'\n    OR targetIPAddr LIKE '169.254.%'\n    OR targetIPAddr LIKE '127.%'\n)\nGROUP BY source, target, source_cloud, target_cloud, source_city, target_city, startTime\nORDER BY ${timestamp} DESC  -- 🕒 Sort by most recent data\nLIMIT 300  -- 📉 Keep results manageable\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Networking issues for all API calls; query=edges; du=${__user.login}'",
+            "refId": "edges"
+          }
+        ],
+        "title": "Networking issues for all API calls",
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the average Connect time for each metadataDomain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 21
+        },
+        "id": 13,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tcp_connect_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average TCP connect time; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Average TCP connect time",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the average tlsHandshake time for each metadataDomain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 21
+        },
+        "id": 12,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average SSL handshake time; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Average SSL handshake time",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the average DNS time for each Metadata Domain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 32
+        },
+        "id": 11,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_dns_lookup_time} AS AVG, \n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nORDER BY AVG DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average DNS lookup time; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Average DNS lookup time",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the average Response Time for each Metadata Domain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_responseTime} AS AVG,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Average response time; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Average response time",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the sum of the averages of TlsHandshake, Connect, and DNS for each Metadata Domain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 43
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time,\n  metadataDomain\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (DNS + TCP + SSL); du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Total networking time (DNS + TCP + SSL)",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the Cloud, Connect, and DNS average time for each Cloud.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 43
+        },
+        "id": 16,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "max"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Max",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  ${avg_tls_handshake_time} + ${avg_tcp_connect_time} + ${avg_dns_lookup_time} AS Time, \n  cloud\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, cloud\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Total networking time (By Cloud); du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Total networking time (By Cloud)",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the Average Response Time groping by Location ID and cloud.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [
+              {
+                "options": {
+                  "AWS": {
+                    "color": "orange",
+                    "index": 1
+                  },
+                  "Akamai": {
+                    "color": "yellow",
+                    "index": 2
+                  },
+                  "Azure": {
+                    "color": "blue",
+                    "index": 0
+                  },
+                  "Google": {
+                    "color": "green",
+                    "index": 4
+                  },
+                  "IBM": {
+                    "color": "red",
+                    "index": 3
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "latitude"
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": true,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "longitude"
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": true,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 54
+        },
+        "id": 6,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": false,
+                "style": {
+                  "color": {
+                    "field": "cloud",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "AvgResponseTime",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "Latency",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "zero",
+            "lat": 0,
+            "lon": 0,
+            "zoom": 1
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "builderOptions": {
+              "aggregates": [
+                {
+                  "aggregateType": "avg",
+                  "alias": "AvgResponseTime",
+                  "column": "dns"
+                }
+              ],
+              "columns": [
+                {
+                  "custom": false,
+                  "name": "latitude",
+                  "type": "Nullable(String)"
+                },
+                {
+                  "custom": false,
+                  "name": "longitude",
+                  "type": "Nullable(String)"
+                },
+                {
+                  "custom": false,
+                  "name": "cloud",
+                  "type": "Nullable(String)"
+                },
+                {
+                  "custom": false,
+                  "name": "locationID",
+                  "type": "Nullable(String)"
+                }
+              ],
+              "database": "apicontext",
+              "filters": [
+                {
+                  "condition": "AND",
+                  "filterType": "custom",
+                  "key": "startTime",
+                  "operator": "WITH IN DASHBOARD TIME RANGE",
+                  "type": "DateTime",
+                  "value": "TODAY"
+                },
+                {
+                  "condition": "AND",
+                  "filterType": "custom",
+                  "key": "metadataDomain",
+                  "operator": "LIKE",
+                  "type": "Nullable(String)",
+                  "value": "'%${domain_name}%'"
+                }
+              ],
+              "groupBy": [
+                "locationID",
+                "longitude",
+                "latitude",
+                "cloud"
+              ],
+              "limit": 1000,
+              "meta": {},
+              "mode": "aggregate",
+              "orderBy": [],
+              "queryType": "table",
+              "table": "logs"
+            },
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "avg",
+                    "alias": "AvgResponseTime",
+                    "column": "dns"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "latitude",
+                    "type": "Nullable(String)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "longitude",
+                    "type": "Nullable(String)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "cloud",
+                    "type": "Nullable(String)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "locationID",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "apicontext",
+                "filters": [
+                  {
+                    "condition": "AND",
+                    "filterType": "custom",
+                    "key": "startTime",
+                    "operator": "WITH IN DASHBOARD TIME RANGE",
+                    "type": "DateTime",
+                    "value": "TODAY"
+                  },
+                  {
+                    "condition": "AND",
+                    "filterType": "custom",
+                    "key": "metadataDomain",
+                    "operator": "LIKE",
+                    "type": "Nullable(String)",
+                    "value": "'%${domain_name}%'"
+                  }
+                ],
+                "groupBy": [
+                  "locationID",
+                  "longitude",
+                  "latitude",
+                  "cloud"
+                ],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [],
+                "queryType": "table",
+                "table": "logs"
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  ${ipAddr_latitude} AS Latitude, \n  ${ipAddr_longitude} AS Longitude, \n  cloud, \n  locationID, \n  ${avg_dns_lookup_time} as AvgResponseTime \nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})  \n  AND $__adHocFilter()\n  AND Latitude != '0'\n  AND Longitude != '0'\nGROUP BY locationID, Longitude, Latitude, cloud\nLIMIT 500\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=DNS around the world; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "DNS around the world",
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the Average time for Connect, Proccesing and TlsHandShake.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "left",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "log": 2,
+                "type": "log"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "dashed"
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 0
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 100
+                },
+                {
+                  "color": "#EF843C",
+                  "value": 200
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 54
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [
+              "min",
+              "mean",
+              "max",
+              "stdDev"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Name",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "hide": false,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n    toStartOfInterval(${timestamp}, INTERVAL 300 SECOND) AS time, \n    ${avg_tcp_connect_time} AS avg_connect, \n    ${avg_processing_time} AS avg_processing, \n    ${avg_tls_handshake_time} AS avg_tls_handshake\nFROM ${table}\nWHERE \n    ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n    AND $__adHocFilter()\nGROUP BY time\nORDER BY time ASC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Latency Breakdown by Metric; du=${__user.login}'",
+            "refId": "B"
+          }
+        ],
+        "title": "Latency Breakdown by Metric",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the total requests for each Metadata Domain.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 0,
+          "y": 65
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "percent",
+              "value"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  metadataDomain,\n  COUNT() as Total\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY metadataDomain\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top Domains; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Top Domains",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the total requests and tlsHandshake average time for each Region.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 12,
+          "x": 12,
+          "y": 65
+        },
+        "id": 4,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "field": "error_rate",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "error_rate",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "Error Rate",
+              "tooltip": true,
+              "type": "markers"
+            },
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "field": "avg_tls_handshake",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "avg_tls_handshake",
+                    "fixed": 5,
+                    "max": 15,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "Avg TLS Handshake",
+              "tooltip": true,
+              "type": "markers"
+            },
+            {
+              "config": {
+                "blur": 15,
+                "radius": 5,
+                "weight": {
+                  "field": "failed_requests",
+                  "fixed": 1,
+                  "max": 1,
+                  "min": 0
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "A"
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "Failed Requests",
+              "opacity": 0.4,
+              "tooltip": true,
+              "type": "heatmap"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "zero",
+            "lat": 0,
+            "lon": 0,
+            "zoom": 1
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n    ${ipAddr_city} as region,\n    ${ipAddr_latitude} AS latitude, \n    ${ipAddr_longitude} AS longitude, \n    ${avg_tls_handshake_time} AS avg_tls_handshake,\n    ${failed_requests} AS failed_requests,\n    ${cnt_all} AS total_requests,\n    ${error_rate} AS error_rate\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND notEmpty(region)\nGROUP BY region, latitude, longitude\nORDER BY region\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Combined Regional SLA Heatmap; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Combined Regional SLA Heatmap",
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the total requests for each Context Category.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 12,
+          "x": 0,
+          "y": 76
+        },
+        "id": 15,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 1,
+          "fullHighlight": true,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [
+              "sum"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Total",
+            "sortDesc": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "percent",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xField": "time",
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 0,
+            "hide": false,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  contextCategory,\n  ${cnt_all} AS Total\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, contextCategory\nORDER BY time\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Categories; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Categories",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the TlsHandshake average time for each Region and Cloud",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "dark-green",
+                  "value": 65
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 100
+                },
+                {
+                  "color": "dark-blue",
+                  "value": 150
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 200
+                },
+                {
+                  "color": "red",
+                  "value": 250
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 12,
+          "x": 12,
+          "y": 76
+        },
+        "id": 3,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "field": "avg_tls_handshake",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.3,
+                  "rotation": {
+                    "field": "avg_tls_handshake",
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "clamped"
+                  },
+                  "size": {
+                    "field": "avg_tls_handshake",
+                    "fixed": 5,
+                    "max": 40,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/circle.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 0,
+                    "offsetY": 0,
+                    "textAlign": "center",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "A"
+              },
+              "location": {
+                "mode": "auto"
+              },
+              "name": "ms",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": false,
+            "id": "fit",
+            "lastOnly": false,
+            "lat": 0,
+            "layer": "ms",
+            "lon": 0,
+            "zoom": 15
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 0,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "timeseries",
+            "rawSql": "SELECT \n    ${ipAddr_city} as region, \n    ${ipAddr_latitude} AS latitude,\n    ${ipAddr_longitude} AS longitude,\n    cloud,\n    ${avg_tls_handshake_time} AS avg_tls_handshake\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND notEmpty(region)\nGROUP BY region, latitude, longitude, cloud\nORDER BY avg_tls_handshake DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Regional TLS Handshake Performance; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "Regional TLS Handshake Performance",
+        "transparent": true,
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the total requests for each Status Code.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 0,
+          "y": 90
+        },
+        "id": 9,
+        "options": {
+          "legend": {
+            "calcs": [
+              "sum"
+            ],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": true,
+            "sortBy": "Total",
+            "sortDesc": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  toStartOfInterval(${timestamp}, INTERVAL ${__interval_s:raw} SECOND) AS time,\n  toString(httpCode) as statusCode,\n  ${cnt_all} as Code\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time, statusCode\nORDER BY Code DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=\"Total Code\" codes; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "HTTP Status Codes",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Shows the total requests for each Cloud and Continent.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cloud"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 203
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 12,
+          "y": 90
+        },
+        "id": 14,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "12.0.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "editorType": "sql",
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "columns": [],
+                "database": "",
+                "limit": 1000,
+                "mode": "list",
+                "queryType": "table",
+                "table": ""
+              }
+            },
+            "pluginVersion": "4.0.6",
+            "queryType": "table",
+            "rawSql": "SELECT \n  cloud as Cloud, \n  ${ipAddr_continent} as Continent,\n  ${cnt_all} as Total\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) AND ${timestamp} <= toDateTime(${__to:date:seconds})\n  AND $__adHocFilter()\n  AND notEmpty(Continent)\nGROUP BY Cloud, Continent\nORDER BY Total DESC\nLIMIT 10000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top location IDs; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Top location IDs",
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [
+      "v1.0",
+      "Required tables: apicontext_sampled_day"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {},
+          "definition": "SELECT  CASE\nWHEN ${duration} <= 6 THEN '${logs}'\nWHEN ${duration} > 6 THEN '${apicontext_sampled_day}'\nEND",
+          "hide": 2,
+          "name": "table",
+          "options": [],
+          "query": "SELECT  CASE\nWHEN ${duration} <= 6 THEN '${logs}'\nWHEN ${duration} > 6 THEN '${apicontext_sampled_day}'\nEND",
+          "refresh": 1,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "hide": 2,
+          "name": "timestamp",
+          "query": "startTime",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "startTime",
+            "value": "startTime"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "startTime",
+              "value": "startTime"
+            }
+          ]
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "current": {},
+          "definition": "SELECT dateDiff('hour', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds}))",
+          "hide": 2,
+          "name": "duration",
+          "options": [],
+          "query": "SELECT dateDiff('hour', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds}))",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "hide": 2,
+          "name": "apicontext_sampled_day",
+          "query": "__APICONTEXT_SAMPLED_DAY__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "__APICONTEXT_SAMPLED_DAY__",
+            "text": "__APICONTEXT_SAMPLED_DAY__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__APICONTEXT_SAMPLED_DAY__",
+              "text": "__APICONTEXT_SAMPLED_DAY__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "logs",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'COUNT()',\n'cnt_all'\n)",
+          "hide": 2,
+          "name": "cnt_all",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'COUNT()',\n'cnt_all'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(responseTime)',\n'avg_responseTime'\n)",
+          "hide": 2,
+          "name": "avg_responseTime",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(responseTime)',\n'avg_responseTime'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(dns)',\n'avg_dns_lookup_time'\n)",
+          "hide": 2,
+          "name": "avg_dns_lookup_time",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(dns)',\n'avg_dns_lookup_time'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(connect)',\n'avg_tcp_connect_time'\n)",
+          "hide": 2,
+          "name": "avg_tcp_connect_time",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(connect)',\n'avg_tcp_connect_time'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(tlsHandshake)',\n'avg_tls_handshake_time'\n)",
+          "hide": 2,
+          "name": "avg_tls_handshake_time",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(tlsHandshake)',\n'avg_tls_handshake_time'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(processing)',\n'avg_processing_time'\n)",
+          "hide": 2,
+          "name": "avg_processing_time",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'AVG(processing)',\n'avg_processing_time'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'sumIf(1, contextCategory = \\'FAIL\\')',\n'failed_requests'\n)",
+          "hide": 2,
+          "name": "failed_requests",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'sumIf(1, contextCategory = \\'FAIL\\')',\n'failed_requests'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'(sumIf (1, contextCategory = \\'FAIL\\')/ count()) * 100',\n'error_rate'\n)",
+          "hide": 2,
+          "name": "error_rate",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'(sumIf (1, contextCategory = \\'FAIL\\')/ count()) * 100',\n'error_rate'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'latitude\\', ipAddr)'\n)",
+          "hide": 2,
+          "name": "ipAddr_latitude",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'latitude\\', ipAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'longitude',\n'akamai_geo(\\'longitude\\', ipAddr)'\n)",
+          "hide": 2,
+          "name": "ipAddr_longitude",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'longitude',\n'akamai_geo(\\'longitude\\', ipAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT 'continent'",
+          "hide": 2,
+          "name": "ipAddr_continent",
+          "options": [],
+          "query": "SELECT 'continent'",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'region',\n'akamai_city_name(ipAddr)'\n)",
+          "hide": 2,
+          "name": "ipAddr_city",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'region',\n'akamai_city_name(ipAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'region',\n'akamai_city_name(targetIPAddr)'\n)",
+          "hide": 2,
+          "name": "targetIPAddr_city",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'region',\n'akamai_city_name(targetIPAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'latitude\\', targetIPAddr)'\n)",
+          "hide": 2,
+          "name": "targetIPAddr_latitude",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'latitude\\', targetIPAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'longitude\\', targetIPAddr)'\n)",
+          "hide": 2,
+          "name": "targetIPAddr_longitude",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'latitude',\n'akamai_geo(\\'longitude\\', targetIPAddr)'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(dns)',\n'sum_dns'\n)",
+          "hide": 2,
+          "name": "sum_dns",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(dns)',\n'sum_dns'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(connect)',\n'sum_connect'\n)",
+          "hide": 2,
+          "name": "sum_connect",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(connect)',\n'sum_connect'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {},
+          "definition": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(tlsHandshake)',\n'sum_tlsHandshake'\n)",
+          "hide": 2,
+          "name": "sum_tlsHandshake",
+          "options": [],
+          "query": "SELECT IF(\n'${table}' = '${logs}',\n'SUM(tlsHandshake)',\n'sum_tlsHandshake'\n)",
+          "refresh": 2,
+          "regex": "",
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30d",
+      "to": "now"
+    },
+    "timepicker": {
+      "nowDelay": "1m",
+      "refresh_intervals": [
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "utc",
+    "title": "Network Monitoring Dashboard (Synthetics)",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 14,
+    "weekStart": ""
+  }
+}
