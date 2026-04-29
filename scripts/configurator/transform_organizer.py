@@ -16,11 +16,19 @@ from .constants import TRANSFORM_METADATA_FIELDS
 _STALENESS_THRESHOLD_SECS = 183 * 86400
 
 # Go reference time tokens -> strptime directives. Longer tokens first so that a
-# positional scan picks "2006" before "06", "15" before "5", etc. Only padded
-# tokens are supported; a layout using unpadded Go tokens (e.g. "1" for month,
-# "5" for seconds) will produce a wrong strptime pattern and degrade to the
+# positional scan picks "2006" before "06", "15" before "5", etc. Fractional-
+# second tokens come first (longest variants ahead of shorter ones) so e.g.
+# ".999999" doesn't mis-resolve as ".999" + "999". Only padded tokens are
+# supported; a layout using unpadded Go tokens (e.g. "1" for month, "5" for
+# seconds) will produce a wrong strptime pattern and degrade to the
 # warn-and-skip path in _shift_stale_datetime_primary.
 _GO_LAYOUT_TOKENS = (
+    (".000000000", ".%f"),
+    (".999999999", ".%f"),
+    (".000000", ".%f"),
+    (".999999", ".%f"),
+    (".000", ".%f"),
+    (".999", ".%f"),
     ("2006", "%Y"),
     ("01", "%m"),
     ("02", "%d"),

@@ -942,6 +942,47 @@ class TestDatetimePrimary:
         assert sample["event"]["occurred_at"] == expected
         assert sample["event"]["id"] == "abc"  # sibling untouched
 
+    def test_datetime_renamed_column_microseconds_shifted(self, tmp_path):
+        """apicontext shape (LOTC-1523): datetime primary `startTime` sourced
+        from single-segment `/start_time`; sample_data is keyed snake_case.
+        Format includes Go fractional-second token `.999999` (microseconds).
+        """
+        stale_value = "2024-10-07T06:27:17.160556Z"  # well past 183 days
+        data = {
+            "settings": {
+                "output_columns": [
+                    {
+                        "name": "startTime",
+                        "datatype": {
+                            "type": "datetime",
+                            "primary": True,
+                            "format": "2006-01-02T15:04:05.999999Z",
+                            "source": {"from_json_pointers": ["/start_time"]},
+                        },
+                    }
+                ],
+                "sample_data": {
+                    "start_time": stale_value,
+                    "result": "HTTP_CLIENT_ERROR",
+                },
+            }
+        }
+        sample = data["settings"]["sample_data"]
+        config = _make_config(tmp_path)
+        tinfo = _make_tinfo(tmp_path)
+
+        _shift_stale_timestamps(sample, data, tinfo, config)
+
+        now_utc = datetime.now(timezone.utc)
+        expected = now_utc.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        assert sample["start_time"] == expected
+        # Sibling untouched
+        assert sample["result"] == "HTTP_CLIENT_ERROR"
+        # Output column key never created
+        assert "startTime" not in sample
+
     def test_datetime_format_sample_mismatch_warn_and_skip(self, tmp_path, capsys):
         """Sample value does not match declared format (Cloudflare trailing Z) — warn + skip."""
         # Format lacks trailing literal Z; sample has one -> strptime ValueError

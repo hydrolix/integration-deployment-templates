@@ -9,10 +9,18 @@ const STALENESS_THRESHOLD_SECS: u64 = 183 * 86400;
 
 /// Go reference-time tokens translated to chrono/strptime directives.
 /// Listed in priority order so a positional scan picks the longest match first.
+/// Fractional-second tokens come first (longest variants ahead of shorter ones)
+/// so e.g. `.999999` doesn't mis-resolve as `.999` + `999`.
 /// Only padded tokens are supported; a layout using unpadded Go tokens (e.g.
 /// "1" for month, "5" for seconds) will produce a wrong strptime pattern and
 /// degrade to the skip-on-parse-failure branch below.
 const GO_LAYOUT_TOKENS: &[(&str, &str)] = &[
+    (".000000000", "%.f"),
+    (".999999999", "%.f"),
+    (".000000", "%.f"),
+    (".999999", "%.f"),
+    (".000", "%.f"),
+    (".999", "%.f"),
     ("2006", "%Y"),
     ("01", "%m"),
     ("02", "%d"),
@@ -551,6 +559,97 @@ mod tests {
             warnings[0].contains("Stale sample_data"),
             "Warning should mention staleness: {}",
             warnings[0]
+        );
+    }
+
+    /// apicontext-shaped transform: datetime primary sourced from a
+    /// single-segment pointer where the column name (camelCase) differs from
+    /// the raw sample_data key (snake_case). Pre-fix the validator silently
+    /// skipped because `sample_data.get("startTime")` was None.
+    fn make_renamed_datetime_transform_json(primary_ts: &str) -> String {
+        format!(
+            r#"{{
+                "name": "apicontext_transform",
+                "settings": {{
+                    "output_columns": [
+                        {{
+                            "name": "startTime",
+                            "datatype": {{
+                                "type": "datetime",
+                                "primary": true,
+                                "format": "2006-01-02T15:04:05.999999Z",
+                                "source": {{ "from_json_pointers": ["/start_time"] }}
+                            }}
+                        }}
+                    ],
+                    "sample_data": {{
+                        "start_time": "{primary_ts}",
+                        "result": "HTTP_CLIENT_ERROR"
+                    }}
+                }}
+            }}"#
+        )
+    }
+
+    #[tokio::test]
+    async fn test_stale_renamed_datetime_warns() {
+        // LOTC-1523 Case 2: column `startTime` renamed from raw `/start_time`.
+        // Validator must walk the JSON pointer (not look up by column name) or
+        // it silently passes a year-stale fixture.
+        let dir = tempfile::tempdir().unwrap();
+        let transform_path = "transformations/transform.json";
+        let full_path = dir.path().join(transform_path);
+        fs::create_dir_all(full_path.parent().unwrap())
+            .await
+            .unwrap();
+
+        fs::write(
+            &full_path,
+            make_renamed_datetime_transform_json("2024-10-07T06:27:17.160556Z"),
+        )
+        .await
+        .unwrap();
+
+        let bundle = make_bundle(transform_path);
+        let warnings = run(dir.path().to_str().unwrap(), &bundle).await;
+        assert!(
+            !warnings.is_empty(),
+            "Stale renamed-column datetime should produce warnings"
+        );
+        assert!(
+            warnings[0].contains("Stale sample_data"),
+            "Warning should mention staleness: {}",
+            warnings[0]
+        );
+        assert!(
+            warnings[0].contains("startTime"),
+            "Warning should name the primary column: {}",
+            warnings[0]
+        );
+    }
+
+    #[tokio::test]
+    async fn test_fresh_renamed_datetime_passes() {
+        // Companion: a fresh value at the renamed location must not warn.
+        let dir = tempfile::tempdir().unwrap();
+        let transform_path = "transformations/transform.json";
+        let full_path = dir.path().join(transform_path);
+        fs::create_dir_all(full_path.parent().unwrap())
+            .await
+            .unwrap();
+
+        let fresh = chrono::Utc::now() - chrono::Duration::days(30);
+        let fresh_str = fresh.format("%Y-%m-%dT%H:%M:%S.%6fZ").to_string();
+        fs::write(&full_path, make_renamed_datetime_transform_json(&fresh_str))
+            .await
+            .unwrap();
+
+        let bundle = make_bundle(transform_path);
+        let warnings = run(dir.path().to_str().unwrap(), &bundle).await;
+        assert!(
+            warnings.is_empty(),
+            "Fresh renamed-column datetime should produce no warnings: {:?}",
+            warnings
         );
     }
 
