@@ -1,0 +1,15 @@
+tables:
+  edns:
+    __extend__: tables/table_edns.yaml
+transforms:
+  edns:
+    edns:
+      __extend__: transforms/edns.json
+      settings:
+        sql_transform:
+          __extend__: transforms/edns_select.sql
+        sample_data:
+          __extend__: transforms/edns_sample_data.json
+summary_tables:
+  edns_summary_hour:
+    __extend__: tables/edns_summary_hour.yaml

@@ -1,0 +1,3 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
+description: TRAFFICPEAK Edns integration bundle
+type: turbine

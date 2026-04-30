@@ -1,0 +1,64 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/edns",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/eDNS _ GTM.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": [
+        "geo"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Edns Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.1.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_edns",
+  "other_dashboards": [],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "edns_summary_hour",
+      "parent_table_name": "edns",
+      "sql": {
+        "path": "summaries/edns_summary_hour.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "edns",
+      "transforms": [
+        {
+          "method": "http_streaming",
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "dns",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/edns-integration",
+    "source": {
+      "full_title": "Trafficpeak Edns",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}

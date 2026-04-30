@@ -1,0 +1,5 @@
+{
+  "data_category": "dns",
+  "table_name": "edns",
+  "version": "1.1.0"
+}
