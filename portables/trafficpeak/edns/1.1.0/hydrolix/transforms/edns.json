@@ -1,0 +1,277 @@
+{
+  "description": "Datastream schema for Akamai eDNS and GTM services",
+  "name": "edns",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "is_default": true,
+    "null_values": [
+      "-"
+    ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "s",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "epoch"
+        },
+        "name": "timeStamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "02/01/2006",
+          "index": true,
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "datetime"
+        },
+        "name": "date"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "15:04:05",
+          "index": true,
+          "primary": false,
+          "resolution": "seconds",
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "datetime"
+        },
+        "name": "time"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "requestPort"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "dnsClass"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "edns0Flag"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "answers"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "answer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "ttl"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "tcpFlag"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "dnssecFlag"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "edns0Size"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "state"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency"
+      }
+    ],
+    "wurfl": null
+  },
+  "type": "json"
+}
