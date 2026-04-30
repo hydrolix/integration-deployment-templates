@@ -35,6 +35,10 @@ lazy_static! {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--local-dashboard-only".to_string())
     };
+    static ref IS_REMOTE: bool = {
+        let args: Vec<String> = std::env::args().collect();
+        args.contains(&"--remote".to_string())
+    };
     static ref FOR_MARKETPLACE: bool = {
         let args: Vec<String> = std::env::args().collect();
         args.contains(&"--marketplace".to_string())
@@ -90,7 +94,7 @@ async fn main() {
         }
     };
 
-    // Handle --cleanup: delete project and exit
+    // Handle --cleanup: delete project (and its Grafana subfolder if creds present), then exit.
     if let Some(project_name) = &parsed_flags.cleanup_project {
         println!("Cleaning up project: {}", project_name);
         let bearer_token = match hdx::auth::get_token().await {
@@ -103,13 +107,36 @@ async fn main() {
         match hdx::delete_project(&bearer_token, project_name).await {
             Ok(_) => {
                 println!("Successfully deleted project: {}", project_name);
-                std::process::exit(0);
             }
             Err(e) => {
                 eprintln!("ERROR: Failed to delete project '{}': {e}", project_name);
                 std::process::exit(1);
             }
         }
+
+        // Idempotent Grafana cleanup. Only attempted when REMOTE_GRAFANA_USER /
+        // REMOTE_GRAFANA_PASSWORD are present — older callers cleaning up GUID
+        // projects don't have these set and shouldn't be forced to.
+        match grafana::remote::RemoteConfig::from_env() {
+            Ok(cfg) => {
+                let parent = cfg.bundling_folder_uid.clone();
+                match grafana::remote::delete_subfolder_by_title(&cfg, &parent, project_name).await
+                {
+                    Ok(_) => {
+                        println!("Grafana subfolder cleanup OK for: {}", project_name);
+                    }
+                    Err(e) => {
+                        eprintln!("WARNING: Grafana subfolder cleanup failed: {e}");
+                    }
+                }
+            }
+            Err(_) => {
+                // Creds not configured — skip silently. This preserves prior
+                // behavior for users who cleanup GUID projects without --remote.
+            }
+        }
+
+        std::process::exit(0);
     }
 
     // Handle --guid: create a GUID'd project before validation
@@ -149,6 +176,37 @@ async fn main() {
     let mut final_bundle_list: Vec<Bundle> = vec![];
     let mut all_bundle_list: Vec<Bundle> = vec![];
 
+    // --remote requires the positional filter to match exactly one bundle.
+    // Pre-flight the match count so we can fail-fast with a useful message
+    // before spending time on validation.
+    if *IS_REMOTE {
+        let mut matched_names: Vec<String> = vec![];
+        for b in &bundle_list {
+            let path = b
+                .clone()
+                .into_os_string()
+                .into_string()
+                .unwrap_or_else(|os_str| os_str.to_string_lossy().into_owned());
+            if let Ok(bundle) = file_to_bundle(&path).await {
+                if MATCH_ONLY.is_empty() || bundle.name.contains(&*MATCH_ONLY) {
+                    matched_names.push(bundle.name);
+                }
+            }
+        }
+        if matched_names.is_empty() {
+            eprintln!("ERROR: --remote: no bundles match filter '{}'", *MATCH_ONLY);
+            std::process::exit(1);
+        }
+        if matched_names.len() > 1 {
+            eprintln!(
+                "ERROR: --remote: filter '{}' matches multiple bundles ({}); narrow the filter",
+                *MATCH_ONLY,
+                matched_names.join(", ")
+            );
+            std::process::exit(1);
+        }
+    }
+
     for b in &bundle_list {
         let path = PathBuf::from(b);
         let file_path = path
@@ -182,6 +240,16 @@ async fn main() {
             Err(e) => {
                 eprintln!("ERROR: Failed bundle validation: {e}");
                 std::process::exit(1);
+            }
+        }
+
+        if *IS_REMOTE {
+            match deploy::remote::run(&base_dir, &bundle).await {
+                Ok(_) => (),
+                Err(e) => {
+                    eprintln!("ERROR: --remote push failed: {e}");
+                    std::process::exit(1);
+                }
             }
         }
 

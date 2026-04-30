@@ -1,0 +1,26 @@
+{
+  "__elements": {
+    "lib_abc": {
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "hydrolix",
+          "uid": "old_uid_xyz"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix",
+              "uid": "old_uid_xyz"
+            },
+            "refId": "A"
+          }
+        ],
+        "type": "timeseries"
+      },
+      "name": "Shared Latency Panel",
+      "uid": "lib_abc"
+    }
+  },
+  "panels": []
+}

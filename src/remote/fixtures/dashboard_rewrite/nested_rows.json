@@ -1,0 +1,35 @@
+{
+  "panels": [
+    {
+      "id": 1,
+      "panels": [
+        {
+          "datasource": {
+            "type": "hydrolix",
+            "uid": "old_uid_xyz"
+          },
+          "id": 2,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix",
+            "uid": "old_uid_xyz"
+          },
+          "id": 3,
+          "type": "timeseries"
+        }
+      ],
+      "title": "Top Row",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix",
+        "uid": "old_uid_xyz"
+      },
+      "id": 4,
+      "type": "table"
+    }
+  ]
+}

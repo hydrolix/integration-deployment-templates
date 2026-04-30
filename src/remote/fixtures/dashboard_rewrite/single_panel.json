@@ -1,0 +1,12 @@
+{
+  "panels": [
+    {
+      "datasource": {
+        "type": "hydrolix",
+        "uid": "old_uid_xyz"
+      },
+      "id": 1,
+      "type": "timeseries"
+    }
+  ]
+}

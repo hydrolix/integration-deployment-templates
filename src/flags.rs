@@ -4,6 +4,7 @@ pub struct Flags {
     pub scan_wip: bool,
     pub is_local: bool,
     pub is_local_dashboard_only: bool,
+    pub is_remote: bool,
     pub for_marketplace: bool,
     pub dump_output: bool,
     pub strict_plugins: bool,
@@ -22,6 +23,7 @@ impl Flags {
             scan_wip: false,
             is_local: false,
             is_local_dashboard_only: false,
+            is_remote: false,
             for_marketplace: false,
             dump_output: false,
             strict_plugins: false,
@@ -38,6 +40,7 @@ impl Flags {
                 "--wip" => flags.scan_wip = true,
                 "--local" => flags.is_local = true,
                 "--local-dashboard-only" => flags.is_local_dashboard_only = true,
+                "--remote" => flags.is_remote = true,
                 "--marketplace" => flags.for_marketplace = true,
                 "--output" => flags.dump_output = true,
                 "--strict-plugins" => flags.strict_plugins = true,
@@ -77,9 +80,28 @@ impl Flags {
             return Err("--guid can only be used with --local".to_string());
         }
 
-        // Validate: --delay requires --local
-        if flags.delay_mode && !flags.is_local {
-            return Err("--delay can only be used with --local".to_string());
+        // Validate: --delay requires a deploy mode (--local or --remote)
+        if flags.delay_mode && !flags.is_local && !flags.is_remote {
+            return Err("--delay can only be used with --local or --remote".to_string());
+        }
+
+        // Validate: --remote is mutually exclusive with local/guid modes
+        if flags.is_remote {
+            if flags.is_local {
+                return Err("--remote cannot be combined with --local".to_string());
+            }
+            if flags.is_local_dashboard_only {
+                return Err("--remote cannot be combined with --local-dashboard-only".to_string());
+            }
+            if flags.use_guid {
+                return Err("--remote cannot be combined with --guid".to_string());
+            }
+            if flags.cleanup_project.is_some() {
+                return Err("--remote cannot be combined with --cleanup".to_string());
+            }
+            if flags.match_only.is_empty() {
+                return Err("--remote requires a bundle filter argument".to_string());
+            }
         }
 
         Ok(flags)
@@ -144,13 +166,16 @@ mod tests {
     }
 
     #[test]
-    fn test_delay_requires_local() {
+    fn test_delay_requires_local_or_remote() {
         let result = Flags::parse(&args(&["--delay"]));
-        assert!(result.is_err(), "--delay without --local should fail");
+        assert!(
+            result.is_err(),
+            "--delay without --local/--remote should fail"
+        );
         let err = result.unwrap_err();
         assert!(
-            err.contains("--local"),
-            "Error should mention --local, got: {}",
+            err.contains("--local") || err.contains("--remote"),
+            "Error should mention deploy modes, got: {}",
             err
         );
     }
@@ -163,13 +188,70 @@ mod tests {
     }
 
     #[test]
+    fn test_delay_with_remote_succeeds() {
+        let flags = Flags::parse(&args(&["--remote", "--delay", "mcdn"])).unwrap();
+        assert!(flags.delay_mode);
+        assert!(flags.is_remote);
+    }
+
+    #[test]
     fn test_default_flags() {
         let flags = Flags::parse(&args(&[])).unwrap();
         assert!(!flags.use_guid);
         assert!(!flags.delay_mode);
         assert!(!flags.is_local);
+        assert!(!flags.is_remote);
         assert!(flags.cleanup_project.is_none());
         assert!(flags.match_only.is_empty());
+    }
+
+    #[test]
+    fn test_remote_with_filter_succeeds() {
+        let flags = Flags::parse(&args(&["--remote", "mcdn_insights"])).unwrap();
+        assert!(flags.is_remote);
+        assert_eq!(flags.match_only, "mcdn_insights");
+    }
+
+    #[test]
+    fn test_remote_without_filter_fails() {
+        let result = Flags::parse(&args(&["--remote"]));
+        assert!(result.is_err(), "--remote without filter should fail");
+        let err = result.unwrap_err();
+        assert!(
+            err.contains("filter") || err.contains("bundle"),
+            "error should mention required filter, got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn test_remote_rejects_local() {
+        let result = Flags::parse(&args(&["--remote", "--local", "x"]));
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("--local"));
+    }
+
+    #[test]
+    fn test_remote_rejects_local_dashboard_only() {
+        let result = Flags::parse(&args(&["--remote", "--local-dashboard-only", "x"]));
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("--local-dashboard-only"));
+    }
+
+    #[test]
+    fn test_remote_rejects_guid() {
+        // --guid requires --local, but --remote rejects --local; the --remote check
+        // comes after the --guid-requires-local check, so we expect the --local error here.
+        // What we really want to assert is: you can't combine --remote with --guid in any form.
+        let result = Flags::parse(&args(&["--remote", "--local", "--guid", "x"]));
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_remote_rejects_cleanup() {
+        let result = Flags::parse(&args(&["--remote", "--cleanup", "some_proj"]));
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("--cleanup"));
     }
 
     #[test]
