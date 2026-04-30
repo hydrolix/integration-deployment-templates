@@ -42,9 +42,9 @@
       "name": "edns",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/transform.json",
-          "sample": "transformations/sample_data.json"
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }
