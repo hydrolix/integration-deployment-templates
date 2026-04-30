@@ -1,0 +1,242 @@
+{
+  "name": "default",
+  "description": "",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "sql_transform": "SELECT \n    if(eventType = '', 'unknown', eventType) as eventType,\n    if(service = '', 'unknown', service) as service,\n    if(isOngoing = 'true', 'ONGOING', 'ENDED') as status,\n  * EXCEPT (eventType, service, status)\nFROM {STREAM}",
+    "null_values": [],
+    "sample_data": {
+      "service": "fbm",
+      "severity": "60",
+      "accountId": "F-AC-1710443",
+      "eventType": "alert",
+      "isOngoing": "false",
+      "timestamp": 1776124628571,
+      "eventTitle": "Customer sqa_cust5, router with IP 198.18.31.133 has not checked in since Mon Jan 19 11:47:30 UTC 2026 (1289 minutes)",
+      "eventEndTime": "1768900590000",
+      "eventStartTime": "1768900590000",
+      "preMitigationBps": 271025839,
+      "preMitigationPps": 63482
+    },
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "virtual": false,
+          "primary": true,
+          "ignore": false,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "accountId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "eventType",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "service",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "isOngoing",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "severity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "eventTitle",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "eventStartTime",
+        "datatype": {
+          "type": "epoch",
+          "index": true,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "eventEndTime",
+        "datatype": {
+          "type": "epoch",
+          "index": true,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "preMitigationBps",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": 0,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "preMitigationPps",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": 0,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "postMitigationBps",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": 0,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "postMitigationPps",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": 0,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "status",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "catchall",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "type": "json"
+}
