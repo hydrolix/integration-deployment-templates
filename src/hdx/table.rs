@@ -342,12 +342,14 @@ pub async fn add_transform(
         }
 
         // For client errors (4xx) or after max retries, return error
+        let status = response.status();
+        let body = response.text().await.unwrap_or_default();
         return Err(format!(
             "ERROR: {}.{}
-            Hydrolix add transform failed, status: {} url={url} (attempt {})",
+            Hydrolix add transform failed, status: {} url={url} (attempt {}): {body}",
             file!(),
             line!(),
-            response.status(),
+            status,
             attempt
         ));
     }
@@ -731,9 +733,11 @@ pub async fn create_summary(
 }
 
 fn is_insert_retryable(status: u16, error_body: &str) -> bool {
-    // "unknown transform" is eventual-consistency lag after transform creation,
-    // not a real 4xx — retry with backoff until the ingest endpoint sees it.
-    if status == 400 && error_body.contains("unknown transform") {
+    // These 400s are eventual-consistency lag, not real client errors — retry
+    // until the ingest endpoint catches up with the config API.
+    if status == 400
+        && (error_body.contains("unknown transform") || error_body.contains("no project"))
+    {
         return true;
     }
     match status {
@@ -750,6 +754,12 @@ mod tests {
     #[test]
     fn unknown_transform_400_is_retryable() {
         let body = r#"{"code":400,"message":"unknown transform 'akamai'"}"#;
+        assert!(is_insert_retryable(400, body));
+    }
+
+    #[test]
+    fn no_project_400_is_retryable() {
+        let body = r#"{"code":400,"message":"no project 'bundle_verification_abc123' found"}"#;
         assert!(is_insert_retryable(400, body));
     }
 
