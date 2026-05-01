@@ -292,7 +292,7 @@ pub async fn check_and_create_shared_function(
 
         for func in existing {
             if let Some(name) = func.get("name").and_then(|n| n.as_str()) {
-                if name == function_name {
+                if name == function_name || name == expected_name {
                     println!(
                         "  ✓ Shared function {} exists (as {})",
                         function_name, expected_name
@@ -421,7 +421,7 @@ pub async fn check_and_create_shared_dictionary(
 
                 for dict in existing {
                     if let Some(name) = dict.get("name").and_then(|n| n.as_str()) {
-                        if name == dictionary_name {
+                        if name == dictionary_name || name == expected_name {
                             println!(
                                 "  ✓ Shared dictionary {} exists (as {})",
                                 dictionary_name, expected_name
