@@ -30,43 +30,77 @@ const TABLE_PROPAGATION_DELAY_SECS: u64 = 15;
 const TABLE_PROPAGATION_DELAY_SLOW_SECS: u64 = 45;
 const TRANSFORM_READY_DELAY_SECS: u64 = 15;
 
+/// The shared production project that owns the `logs` table on the demo cluster.
+/// Bundles whose primary table is "logs" route into this project rather than
+/// getting their own project created.
+const AKAMAI_PROJECT: &str = "akamai";
+
+/// Returns true when the bundle's primary table is "logs", meaning it should
+/// share the existing `akamai.logs` table rather than creating its own project.
+fn uses_akamai_logs(bundle: &Bundle) -> bool {
+    bundle.tables.iter().any(|t| t.name == "logs")
+}
+
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     let project_name = sanitize_project_name(&bundle.name)
         .map_err(|e| format!("invalid bundle name '{}': {e}", bundle.name))?;
 
+    // Bundles with a "logs" table reuse the existing akamai project on the demo
+    // cluster — no new project is created, and the logs table is not re-created.
+    // All summaries and other tables are also placed in the akamai project.
+    // The Grafana subfolder stays named after the bundle for review discoverability.
+    let hydro_project: &str = if uses_akamai_logs(bundle) {
+        AKAMAI_PROJECT
+    } else {
+        &project_name
+    };
+
     let cfg = RemoteConfig::from_env()?;
 
-    println!(
-        "--- --remote: pushing bundle '{}' as project '{}'",
-        bundle.name, project_name
-    );
+    if hydro_project != project_name.as_str() {
+        println!(
+            "--- --remote: pushing bundle '{}' into shared project '{}' (Grafana folder: '{}')",
+            bundle.name, hydro_project, project_name
+        );
+    } else {
+        println!(
+            "--- --remote: pushing bundle '{}' as project '{}'",
+            bundle.name, project_name
+        );
+    }
 
     let bearer_token = hdx::auth::get_token()
         .await
         .map_err(|e| format!("auth failed: {e}"))?;
 
-    ensure_project(&bearer_token, &project_name).await?;
-    push_hydrolix(base, bundle, &bearer_token, &project_name).await?;
-    let folder_uid = push_grafana(base, bundle, &project_name, &cfg).await?;
+    ensure_project(&bearer_token, hydro_project).await?;
+    push_hydrolix(base, bundle, &bearer_token, hydro_project).await?;
+    let folder_uid = push_grafana(base, bundle, hydro_project, &project_name, &cfg).await?;
 
     let review_url = format!("{}/dashboards/f/{}/{}", cfg.url, folder_uid, project_name);
     println!("--- --remote: review URL → {review_url}");
     Ok(())
 }
 
-/// Look up the project; create it if missing. Either way, register the
-/// name + uuid in `hdx::` globals so subsequent calls in the existing
-/// helpers route to the bundle-named project instead of the static
-/// `bundle_verification`.
+/// Look up the project; create it if missing (unless it is the shared akamai
+/// project, which must already exist). Either way, register the name + uuid in
+/// `hdx::` globals so subsequent API calls route to the correct project.
 async fn ensure_project(bearer_token: &str, project_name: &str) -> Result<(), String> {
     let uuid = match hdx::find_project_uuid(bearer_token, project_name).await {
         Ok(u) => {
-            println!("--- --remote: reusing existing project (uuid={})", u);
+            println!("--- --remote: reusing existing project '{}' (uuid={})", project_name, u);
             u
         }
         Err(_) => {
+            if project_name == AKAMAI_PROJECT {
+                return Err(format!(
+                    "Shared project '{}' not found on cluster — it must exist before \
+                     logs-based bundles can be pushed with --remote",
+                    AKAMAI_PROJECT
+                ));
+            }
             let u = hdx::create_project(bearer_token, project_name).await?;
-            println!("--- --remote: created project (uuid={})", u);
+            println!("--- --remote: created project '{}' (uuid={})", project_name, u);
             u
         }
     };
@@ -78,14 +112,14 @@ async fn push_hydrolix(
     base: &str,
     bundle: &Bundle,
     bearer_token: &str,
-    project_name: &str,
+    hydro_project: &str,
 ) -> Result<(), String> {
-    hdx::shared_proj::check_dicts_and_funcs(bundle, project_name, base, bearer_token)
+    hdx::shared_proj::check_dicts_and_funcs(bundle, hydro_project, base, bearer_token)
         .await
         .map_err(|e| format!("shared project validation failed: {e}"))?;
 
     for table in &bundle.tables {
-        push_table(base, bearer_token, project_name, table).await?;
+        push_table(base, bearer_token, hydro_project, table).await?;
     }
 
     if bundle.summary_tables.is_some() && !bundle.tables.is_empty() {
@@ -101,7 +135,7 @@ async fn push_hydrolix(
 
     if let Some(summaries) = &bundle.summary_tables {
         for summary in summaries {
-            push_summary(base, bearer_token, project_name, summary).await?;
+            push_summary(base, bearer_token, hydro_project, summary).await?;
         }
     }
 
@@ -111,7 +145,7 @@ async fn push_hydrolix(
 async fn push_table(
     base: &str,
     bearer_token: &str,
-    project_name: &str,
+    hydro_project: &str,
     table: &crate::models::bundle::Table,
 ) -> Result<(), String> {
     let table_uuid = match find_table_uuid_by_name(bearer_token, &table.name).await? {
@@ -139,7 +173,7 @@ async fn push_table(
         let mut transform_json: Value = serde_json::from_str(&raw)
             .map_err(|e| format!("parse transform {}: {e}", transform_path.display()))?;
 
-        substitute_transform_template_vars(&mut transform_json, project_name);
+        substitute_transform_template_vars(&mut transform_json, hydro_project);
 
         match hdx::table::add_transform(bearer_token, &table_uuid, &transform_json).await {
             Ok(name) => println!("  ✓ Transform '{}' added", name),
@@ -197,7 +231,7 @@ async fn find_table_uuid_by_name(
 async fn push_summary(
     base: &str,
     bearer_token: &str,
-    project_name: &str,
+    hydro_project: &str,
     summary: &crate::models::bundle::SummaryTable,
 ) -> Result<(), String> {
     let sql_path = Path::new(base).join(&summary.sql.path);
@@ -205,12 +239,12 @@ async fn push_summary(
         .await
         .map_err(|e| format!("read summary SQL {}: {e}", sql_path.display()))?;
     sql = sql
-        .replace("__PROJECT_NAME__", project_name)
+        .replace("__PROJECT_NAME__", hydro_project)
         .replace("__TABLE_NAME__", &summary.parent_table_name);
 
     println!(
         "Creating summary table: {} (parent: {}.{})",
-        summary.name, project_name, summary.parent_table_name
+        summary.name, hydro_project, summary.parent_table_name
     );
 
     hdx::table::exists(bearer_token, &summary.parent_table_name)
@@ -254,28 +288,34 @@ async fn push_summary(
     Err(format!("create summary {}: {last_err}", summary.name))
 }
 
-fn substitute_transform_template_vars(transform_json: &mut Value, project_name: &str) {
+fn substitute_transform_template_vars(transform_json: &mut Value, hydro_project: &str) {
     let shared_project_name = hdx::shared_proj::get_name();
     if let Some(settings) = transform_json.get_mut("settings") {
         if let Some(sql_val) = settings.get("sql_transform").and_then(|v| v.as_str()) {
             let updated = sql_val
-                .replace("__PROJECT_NAME__", project_name)
+                .replace("__PROJECT_NAME__", hydro_project)
                 .replace("__SHARED_PROJECT__", &shared_project_name);
             settings["sql_transform"] = Value::String(updated);
         }
     }
 }
 
+/// Push all dashboards into a Grafana subfolder named after the bundle.
+///
+/// `hydro_project` is used to qualify table/summary refs in queries (may be
+/// "akamai" for logs-based bundles). `grafana_project` names the review
+/// subfolder and is used for titles and the stable dashboard UID.
 async fn push_grafana(
     base: &str,
     bundle: &Bundle,
-    project_name: &str,
+    hydro_project: &str,
+    grafana_project: &str,
     cfg: &RemoteConfig,
 ) -> Result<String, String> {
-    let folder_uid = ensure_subfolder(cfg, &cfg.bundling_folder_uid, project_name).await?;
+    let folder_uid = ensure_subfolder(cfg, &cfg.bundling_folder_uid, grafana_project).await?;
     println!(
         "--- --remote: subfolder '{}' uid={}",
-        project_name, folder_uid
+        grafana_project, folder_uid
     );
 
     let mut dashboard_paths: Vec<String> = vec![bundle.dashboard.path.clone()];
@@ -292,7 +332,7 @@ async fn push_grafana(
             .map_err(|e| format!("read dashboard {}: {e}", full_path.display()))?;
 
         let substituted =
-            substitute_dashboard_placeholders(&raw, bundle, project_name, &rel_path, cfg);
+            substitute_dashboard_placeholders(&raw, bundle, hydro_project, grafana_project, &rel_path, cfg);
 
         let mut dashboard: Value = serde_json::from_str(&substituted).map_err(|e| {
             format!(
@@ -318,7 +358,7 @@ async fn push_grafana(
             map.remove("id");
         }
 
-        let message = format!("review push: {} ({})", bundle.name, project_name);
+        let message = format!("review push: {} ({})", bundle.name, grafana_project);
         let url = upsert_dashboard(cfg, &folder_uid, &dashboard, &message).await?;
         println!("--- --remote: pushed {} → {}", rel_path, url);
     }
@@ -326,10 +366,13 @@ async fn push_grafana(
     Ok(folder_uid)
 }
 
-/// Apply the standard bundle-dashboard placeholder substitutions, qualifying
-/// table and summary refs with the project prefix (required by the shared-
-/// datasource review Grafana). Operates on the raw JSON text — same shape
-/// as the existing `--local` path uses.
+/// Apply the standard bundle-dashboard placeholder substitutions.
+///
+/// `hydro_project` qualifies table/summary refs in queries so they resolve
+/// through the shared-datasource review Grafana (e.g. `akamai.logs` for
+/// logs-based bundles). `grafana_project` is used for titles, labels, and the
+/// stable dashboard UID — it is always the bundle name regardless of whether
+/// the bundle shares the akamai project.
 ///
 /// Order matters: table/summary vars are replaced before `__PROJECT_NAME__`
 /// because many dashboard templates use the compound form
@@ -337,11 +380,12 @@ async fn push_grafana(
 /// then replacing `__TABLE_NAME__` with `project.table` would produce the
 /// double-qualified `project.project.table`. Instead, we replace the compound
 /// form in one pass, then clean up any remaining bare `__PROJECT_NAME__`
-/// occurrences (titles, labels, etc.).
+/// occurrences (titles, labels, etc.) with `grafana_project`.
 fn substitute_dashboard_placeholders(
     raw: &str,
     bundle: &Bundle,
-    project_name: &str,
+    hydro_project: &str,
+    grafana_project: &str,
     rel_path: &str,
     cfg: &RemoteConfig,
 ) -> String {
@@ -350,31 +394,32 @@ fn substitute_dashboard_placeholders(
     out = out.replace("__DATASOURCE__", &cfg.datasource_uid);
     out = out.replace(
         "__DASHBOARD_UUID__",
-        &stable_dashboard_uid(project_name, rel_path),
+        &stable_dashboard_uid(grafana_project, rel_path),
     );
     out = out.replace("__SHARED_PROJECT__", &hdx::shared_proj::get_name());
 
-    // Qualified table refs so queries resolve correctly through the shared
-    // datasource (which is not pinned to any specific Hydrolix project).
+    // Qualify table/summary refs with the Hydrolix project so queries resolve
+    // correctly (e.g. `akamai.logs`, `akamai.tp_multi_summary_hour`).
     // Replace the prefixed form `__PROJECT_NAME__.__VAR__` first so we
     // never see `project.project.table`; then replace any bare `__VAR__`.
     for table in &bundle.tables {
-        let qualified = format!("{}.{}", project_name, table.name);
+        let qualified = format!("{}.{}", hydro_project, table.name);
         let prefixed = format!("__PROJECT_NAME__.{}", table.dashboard_var);
         out = out.replace(&prefixed, &qualified);
         out = out.replace(&table.dashboard_var, &qualified);
     }
     if let Some(summaries) = &bundle.summary_tables {
         for summary in summaries {
-            let qualified = format!("{}.{}", project_name, summary.name);
+            let qualified = format!("{}.{}", hydro_project, summary.name);
             let prefixed = format!("__PROJECT_NAME__.{}", summary.dashboard_var);
             out = out.replace(&prefixed, &qualified);
             out = out.replace(&summary.dashboard_var, &qualified);
         }
     }
 
-    // Replace any remaining __PROJECT_NAME__ (titles, labels, folder names).
-    out = out.replace("__PROJECT_NAME__", project_name);
+    // Remaining __PROJECT_NAME__ occurrences (titles, labels) use the bundle
+    // name so reviewers see the correct bundle identity in dashboard headings.
+    out = out.replace("__PROJECT_NAME__", grafana_project);
 
     out
 }
