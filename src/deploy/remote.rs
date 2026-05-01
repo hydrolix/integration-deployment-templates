@@ -228,11 +228,30 @@ async fn push_summary(
         return Ok(());
     }
 
-    hdx::table::create_summary(bearer_token, &summary.name, &sql)
-        .await
-        .map_err(|e| format!("create summary {}: {e}", summary.name))?;
-    println!("  ✓ Summary '{}' created", summary.name);
-    Ok(())
+    // ClickHouse may not have propagated the parent table yet even after the
+    // API confirms it exists — retry up to ~3 minutes with 30s back-off.
+    const SUMMARY_RETRIES: u32 = 6;
+    const SUMMARY_RETRY_DELAY_SECS: u64 = 30;
+    let mut last_err = String::new();
+    for attempt in 1..=SUMMARY_RETRIES {
+        match hdx::table::create_summary(bearer_token, &summary.name, &sql).await {
+            Ok(_) => {
+                println!("  ✓ Summary '{}' created", summary.name);
+                return Ok(());
+            }
+            Err(e) => {
+                last_err = e;
+                if attempt < SUMMARY_RETRIES {
+                    println!(
+                        "  ↻ Summary '{}' not ready yet (attempt {}/{}), retrying in {}s...",
+                        summary.name, attempt, SUMMARY_RETRIES, SUMMARY_RETRY_DELAY_SECS
+                    );
+                    sleep(Duration::from_secs(SUMMARY_RETRY_DELAY_SECS)).await;
+                }
+            }
+        }
+    }
+    Err(format!("create summary {}: {last_err}", summary.name))
 }
 
 fn substitute_transform_template_vars(transform_json: &mut Value, project_name: &str) {
@@ -311,6 +330,14 @@ async fn push_grafana(
 /// table and summary refs with the project prefix (required by the shared-
 /// datasource review Grafana). Operates on the raw JSON text — same shape
 /// as the existing `--local` path uses.
+///
+/// Order matters: table/summary vars are replaced before `__PROJECT_NAME__`
+/// because many dashboard templates use the compound form
+/// `__PROJECT_NAME__.__TABLE_NAME__`. Replacing `__PROJECT_NAME__` first and
+/// then replacing `__TABLE_NAME__` with `project.table` would produce the
+/// double-qualified `project.project.table`. Instead, we replace the compound
+/// form in one pass, then clean up any remaining bare `__PROJECT_NAME__`
+/// occurrences (titles, labels, etc.).
 fn substitute_dashboard_placeholders(
     raw: &str,
     bundle: &Bundle,
@@ -320,7 +347,6 @@ fn substitute_dashboard_placeholders(
 ) -> String {
     let mut out = raw.to_string();
 
-    out = out.replace("__PROJECT_NAME__", project_name);
     out = out.replace("__DATASOURCE__", &cfg.datasource_uid);
     out = out.replace(
         "__DASHBOARD_UUID__",
@@ -330,16 +356,25 @@ fn substitute_dashboard_placeholders(
 
     // Qualified table refs so queries resolve correctly through the shared
     // datasource (which is not pinned to any specific Hydrolix project).
+    // Replace the prefixed form `__PROJECT_NAME__.__VAR__` first so we
+    // never see `project.project.table`; then replace any bare `__VAR__`.
     for table in &bundle.tables {
         let qualified = format!("{}.{}", project_name, table.name);
+        let prefixed = format!("__PROJECT_NAME__.{}", table.dashboard_var);
+        out = out.replace(&prefixed, &qualified);
         out = out.replace(&table.dashboard_var, &qualified);
     }
     if let Some(summaries) = &bundle.summary_tables {
         for summary in summaries {
             let qualified = format!("{}.{}", project_name, summary.name);
+            let prefixed = format!("__PROJECT_NAME__.{}", summary.dashboard_var);
+            out = out.replace(&prefixed, &qualified);
             out = out.replace(&summary.dashboard_var, &qualified);
         }
     }
+
+    // Replace any remaining __PROJECT_NAME__ (titles, labels, folder names).
+    out = out.replace("__PROJECT_NAME__", project_name);
 
     out
 }
