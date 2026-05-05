@@ -11,7 +11,7 @@ dashboards:
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_TABLE: PROJECT.cdn
+      VAR_TABLE: __PROJECT_NAME__.__TABLE_NAME__
       VAR_TIMESTAMP: timestamp
   hdx-cdn-dashboard-default:
     dashboard:
@@ -19,8 +19,8 @@ dashboards:
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_SUMMARY_MIN: PROJECT.multi_summary_min
-      VAR_SUMMARY_HOUR: PROJECT.multi_summary_hour
+      VAR_SUMMARY_MIN: __SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_HOUR: __SUMMARY_TABLE_NAME_1__
       VAR_QUANTILES_RESPONSE_TTFB_50: quantiles_response_ttfb_ms[2]
       VAR_QUANTILES_RESPONSE_TTFB_95: quantiles_response_ttfb_ms[5]
       VAR_QUANTILES_RESPONSE_TTLB_50: quantiles_response_ttlb_ms[2]
@@ -37,8 +37,8 @@ dashboards:
     folderUid: hdx-security-folder
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
-      VAR_SUMMARY_MIN: PROJECT.multi_summary_min
-      VAR_SUMMARY_HOUR: PROJECT.multi_summary_hour
+      VAR_SUMMARY_MIN: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
       VAR_CDN1: Akamai
       VAR_RAW_LOGS: UUID_HERE/raw-logs
       VAR_CDN_PANEL: UUID_HERE/cdn-dashboard-default-v1-0-5

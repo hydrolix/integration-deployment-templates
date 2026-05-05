@@ -64,19 +64,19 @@
       "name": "logs",
       "transforms": [
         {
-          "method": "http_streaming",
           "path": "transformations/tp_mcdn_cloudflare/transform.json",
-          "sample": "transformations/tp_mcdn_cloudflare/sample_data.json"
+          "sample": "transformations/tp_mcdn_cloudflare/sample_data.json",
+          "method": "http_streaming"
         },
         {
-          "method": "firehose",
           "path": "transformations/tp_mcdn_cloudfront_firehose/transform.json",
-          "sample": "transformations/tp_mcdn_cloudfront_firehose/sample_data.json"
+          "sample": "transformations/tp_mcdn_cloudfront_firehose/sample_data.json",
+          "method": "firehose"
         },
         {
-          "method": "http_streaming",
           "path": "transformations/tp_mcdn_fastly/transform.json",
-          "sample": "transformations/tp_mcdn_fastly/sample_data.json"
+          "sample": "transformations/tp_mcdn_fastly/sample_data.json",
+          "method": "http_streaming"
         }
       ]
     }

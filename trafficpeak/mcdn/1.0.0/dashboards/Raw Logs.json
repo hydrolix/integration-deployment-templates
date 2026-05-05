@@ -3,7 +3,7 @@
   "__inputs": [
     {
       "description": "",
-      "label": "Hydrolix",
+      "label": "hydrolix-hydrolix-datasource",
       "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix",
@@ -14,7 +14,7 @@
       "label": "table",
       "name": "VAR_TABLE",
       "type": "constant",
-      "value": "__PROJECT_NAME__.__TABLE_NAME__"
+      "value": "PROJECT.cdn"
     },
     {
       "description": "",
@@ -181,7 +181,7 @@
         "baseFilters": [],
         "datasource": {
           "type": "hydrolix-hydrolix-datasource",
-          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+          "uid": "beydc3kqc3ksge"
         },
         "filters": [],
         "name": "filter",
@@ -207,6 +207,7 @@
   },
   "timezone": "utc﻿﻿﻿﻿﻿﻿﻿",
   "title": "Raw Logs",
+  "uid": "",
   "version": 12,
   "weekStart": ""
 }

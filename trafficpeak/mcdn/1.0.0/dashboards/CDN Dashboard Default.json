@@ -3,7 +3,7 @@
   "__inputs": [
     {
       "description": "",
-      "label": "Hydrolix",
+      "label": "hydrolix-hydrolix-datasource",
       "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
       "pluginId": "hydrolix-hydrolix-datasource",
       "pluginName": "Hydrolix",
@@ -14,14 +14,14 @@
       "label": "summary_min",
       "name": "VAR_SUMMARY_MIN",
       "type": "constant",
-      "value": "__SUMMARY_TABLE_NAME_2__"
+      "value": "PROJECT.multi_summary_min"
     },
     {
       "description": "",
       "label": "summary_hour",
       "name": "VAR_SUMMARY_HOUR",
       "type": "constant",
-      "value": "__SUMMARY_TABLE_NAME_1__"
+      "value": "PROJECT.multi_summary_hour"
     },
     {
       "description": "",
@@ -4125,6 +4125,7 @@
   },
   "timezone": "utc",
   "title": "CDN Dashboard Default",
+  "uid": "",
   "version": 58,
   "weekStart": ""
 }
