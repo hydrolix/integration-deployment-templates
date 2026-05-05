@@ -203,17 +203,25 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
             resolved = _classify_input_value(
                 input_value, config, state, dinfo.is_primary
             )
-            if resolved is not None:
-                var["query"] = resolved
+            # Fall back to the raw __inputs value when _classify_input_value
+            # can't map it to a known placeholder (e.g. quantile SQL expressions
+            # like `quantiles_response_ttfb_ms[2]`). Without this the
+            # ${VAR_*} placeholder is left in the JSON and an older pipeline
+            # step converted it to a self-referential Grafana variable reference
+            # (${var_name}), causing infinite recursion in Grafana's variable
+            # engine when the dashboard is opened for editing.
+            effective = resolved if resolved is not None else input_value
+            if effective is not None:
+                var["query"] = effective
                 var["current"] = {
                     "selected": False,
-                    "text": resolved,
-                    "value": resolved,
+                    "text": effective,
+                    "value": effective,
                 }
                 var["options"] = [{
                     "selected": False,
-                    "text": resolved,
-                    "value": resolved,
+                    "text": effective,
+                    "value": effective,
                 }]
             new_var_list.append(var)
             continue

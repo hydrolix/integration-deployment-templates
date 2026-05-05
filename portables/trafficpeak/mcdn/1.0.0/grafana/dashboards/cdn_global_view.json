@@ -14,14 +14,14 @@
       "label": "summary_min",
       "name": "VAR_SUMMARY_MIN",
       "type": "constant",
-      "value": "PROJECT.multi_summary_min"
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
     },
     {
       "description": "",
       "label": "summary_hour",
       "name": "VAR_SUMMARY_HOUR",
       "type": "constant",
-      "value": "PROJECT.multi_summary_hour"
+      "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
     },
     {
       "description": "",
@@ -1951,6 +1951,10 @@
       },
       {
         "current": {},
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
         "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
         "hide": 2,
         "name": "next_dim",
