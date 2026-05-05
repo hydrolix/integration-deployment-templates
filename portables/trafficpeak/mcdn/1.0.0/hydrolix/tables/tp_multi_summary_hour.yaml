@@ -1,6 +1,0 @@
-__extend__: ../../../../../../hydrolix/_defaults/table_summary_base_defaults.yaml
-description: tp_multi_summary_hour
-settings:
-  summary:
-    sql:
-      __extend__: tp_multi_summary_hour.sql

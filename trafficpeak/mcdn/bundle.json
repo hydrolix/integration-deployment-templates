@@ -10,6 +10,9 @@
       "required_dictionaries": [],
       "required_functions": [],
       "shared_dictionaries": [
+        "akamai_geoip_asn_blocks_ipv4",
+        "akamai_geoip_asn_blocks_ipv6",
+        "akamai_ua_cat_dict",
         "geoip_asn_blocks_ipv4",
         "geoip_asn_blocks_ipv6",
         "ua_cat_dict"
@@ -64,19 +67,19 @@
       "name": "logs",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/tp_mcdn_cloudflare/transform.json",
-          "sample": "transformations/tp_mcdn_cloudflare/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/tp_mcdn_cloudflare/sample_data.json"
         },
         {
+          "method": "firehose",
           "path": "transformations/tp_mcdn_cloudfront_firehose/transform.json",
-          "sample": "transformations/tp_mcdn_cloudfront_firehose/sample_data.json",
-          "method": "firehose"
+          "sample": "transformations/tp_mcdn_cloudfront_firehose/sample_data.json"
         },
         {
+          "method": "http_streaming",
           "path": "transformations/tp_mcdn_fastly/transform.json",
-          "sample": "transformations/tp_mcdn_fastly/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/tp_mcdn_fastly/sample_data.json"
         }
       ]
     }
@@ -87,7 +90,7 @@
       "full_title": "Http Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/mcdn-integration",
+    "primary_url": "https://techdocs.akamai.com/trafficpeak/docs/dashboards-overview",
     "source": {
       "full_title": "Trafficpeak Mcdn",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"

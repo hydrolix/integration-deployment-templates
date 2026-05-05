@@ -1836,57 +1836,57 @@
         {
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_min",
-            "value": "PROJECT.multi_summary_min"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "name": "summary_min",
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_min",
-              "value": "PROJECT.multi_summary_min"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "PROJECT.multi_summary_min",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_hour",
-            "value": "PROJECT.multi_summary_hour"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "name": "summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_hour",
-              "value": "PROJECT.multi_summary_hour"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "PROJECT.multi_summary_hour",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "Akamai",
-            "value": "Akamai"
+            "text": "${VAR_CDN1}",
+            "value": "${VAR_CDN1}"
           },
           "hide": 2,
           "name": "cdn1",
           "options": [
             {
               "selected": false,
-              "text": "Akamai",
-              "value": "Akamai"
+              "text": "${VAR_CDN1}",
+              "value": "${VAR_CDN1}"
             }
           ],
-          "query": "Akamai",
+          "query": "${VAR_CDN1}",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -1914,6 +1914,10 @@
         },
         {
           "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
           "definition": "WITH\n    '${filter:raw}' AS flt,\n    ${drill_chain} as drill_chain,\n    arrayFilter(dim -> '${treeMapGroupBy}' != dim, drill_chain) as filtered,\n    arrayConcat(['${treeMapGroupBy}'], filtered) as reordered,\n    arrayFilter(dim -> position(flt, dim) = 0, reordered) AS remaining\nSELECT \nif(\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1])) = 'statusCode', 'toString(statusCode)',\n    (if(empty(remaining), '${treeMapGroupBy}', remaining[1]))\n  ) AS result",
           "hide": 2,
           "name": "next_dim",
@@ -1984,6 +1988,10 @@
         {
           "allowCustomValue": false,
           "current": {},
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
           "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'asn', 'ASN',\n    'reqHost', 'Hostname',\n    'Edge_GeoInfo', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">→</span> '\n)",
           "hide": 2,
           "name": "drill_chain_for_display",
@@ -2075,38 +2083,38 @@
         {
           "current": {
             "selected": false,
-            "text": "UUID_HERE/raw-logs",
-            "value": "UUID_HERE/raw-logs"
+            "text": "${VAR_RAW_LOGS}",
+            "value": "${VAR_RAW_LOGS}"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/raw-logs",
-              "value": "UUID_HERE/raw-logs"
+              "text": "${VAR_RAW_LOGS}",
+              "value": "${VAR_RAW_LOGS}"
             }
           ],
-          "query": "UUID_HERE/raw-logs",
+          "query": "${VAR_RAW_LOGS}",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-            "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+            "text": "${VAR_CDN_PANEL}",
+            "value": "${VAR_CDN_PANEL}"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-              "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+              "text": "${VAR_CDN_PANEL}",
+              "value": "${VAR_CDN_PANEL}"
             }
           ],
-          "query": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+          "query": "${VAR_CDN_PANEL}",
           "skipUrlSync": true,
           "type": "constant"
         },
