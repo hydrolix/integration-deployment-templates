@@ -137,7 +137,7 @@
             "from_input_field": "sql_transform"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "timeToFirstByte"
       },
@@ -171,7 +171,7 @@
             "from_input_field": "sql_transform"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "transferTimeMSec"
       },
@@ -386,7 +386,7 @@
             ]
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "Origin_TurnAroundTime"
       },
@@ -403,7 +403,7 @@
             ]
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "Origin_RequestEndTime"
       },

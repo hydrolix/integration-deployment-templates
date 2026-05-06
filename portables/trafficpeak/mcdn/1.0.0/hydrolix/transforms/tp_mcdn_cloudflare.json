@@ -107,7 +107,7 @@
             "from_input_field": "EdgeTimeToFirstByteMs"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "timeToFirstByte"
       },
@@ -122,7 +122,7 @@
             "from_input_field": "OriginResponseDurationMs"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "transferTimeMSec"
       },
@@ -332,7 +332,7 @@
             "from_input_field": "OriginResponseHeaderReceiveDurationMs"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "Origin_TurnAroundTime"
       },
@@ -347,7 +347,7 @@
             "from_input_field": "OriginResponseTime"
           },
           "suppress": false,
-          "type": "uint64"
+          "type": "uint32"
         },
         "name": "Origin_RequestEndTime"
       },
