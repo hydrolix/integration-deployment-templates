@@ -4,7 +4,7 @@
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT \n    CASE\n        WHEN match(CAST(EdgeStartTimestamp AS String), '^[0-9]+$') THEN \n            toDateTime64(\n                CAST(EdgeStartTimestamp AS Int64) / 1000000000.0, 9\n            )\n            ELSE parseDateTimeBestEffort(EdgeStartTimestamp)\n    END AS timestamp,\n    datediff(s, timestamp, now64(3)) AS hdx_source_latency_sec,\n    datediff('millisecond', timestamp, edge_end_timestamp) AS response_time_to_last_byte_ms,\n    concat(edge_colo_code, '-', edge_colo_id) as edge_pop,\n    TRUE as cache_was_cached,\n    decodeURLComponent(queryString(request_full_path)) as request_query_string,\n    multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other') AS resource_category,\n    'NONE' AS user_agent_category,\n    FALSE AS is_bot_traffic,\n    *\nFROM { STREAM }",
+    "sql_transform": "SELECT \n    datediff(s, timestamp, now64(3)) AS hdx_source_latency_sec,\n    datediff('millisecond', timestamp, edge_end_timestamp) AS response_time_to_last_byte_ms,\n    concat(edge_colo_code, '-', edge_colo_id) as edge_pop,\n    TRUE as cache_was_cached,\n    decodeURLComponent(queryString(request_full_path)) as request_query_string,\n    multiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other') AS resource_category,\n    'NONE' AS user_agent_category,\n    FALSE AS is_bot_traffic,\n    *\nFROM { STREAM }",
     "null_values": [],
     "sample_data": [
       {
