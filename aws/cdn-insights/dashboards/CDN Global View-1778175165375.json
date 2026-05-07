@@ -10,51 +10,51 @@
     },
     "__requires": [
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
-        "version": "12.0.0"
+        "version": "12.0.2"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
-        "version": "0.6.0"
+        "version": "0.10.2"
       },
       {
+        "type": "panel",
         "id": "marcusolsson-treemap-panel",
         "name": "Treemap",
-        "type": "panel",
         "version": "2.0.1"
       },
       {
+        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "stat",
         "name": "Stat",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "table",
         "name": "Table",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -111,7 +111,7 @@
           "content": "\n${drill_chain_for_display:text}\n\n💡 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*",
           "mode": "markdown"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "title": "Drilldown Path:",
         "type": "text"
       },
@@ -138,7 +138,7 @@
               {
                 "targetBlank": true,
                 "title": "Filter to RAW logs",
-                "url": "d/${raw_logs}?${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=﻿${next_dim}﻿|=|﻿${__data.fields.filter_item}"
+                "url": "/d/${raw_logs}?${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=﻿${next_dim}﻿|=|﻿${__data.fields.filter_item}"
               }
             ],
             "mappings": [],
@@ -320,7 +320,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -395,7 +395,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -558,7 +558,7 @@
             "sort": "none"
           }
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -668,7 +668,7 @@
             "sort": "none"
           }
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -793,7 +793,7 @@
             "sort": "none"
           }
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1644,7 +1644,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                      "url": "/d/${raw_logs}?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
                     }
                   ]
                 }
@@ -1815,15 +1815,23 @@
     "templating": {
       "list": [
         {
+          "hide": 2,
+          "name": "raw_table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
-          "hide": 2,
-          "name": "raw_table",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "type": "constant"
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ]
         },
         {
           "current": {},
@@ -1856,61 +1864,61 @@
           "type": "query"
         },
         {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.mcdn_summary_min",
-            "value": "__PROJECT_NAME__.mcdn_summary_min"
-          },
           "hide": 2,
           "name": "summary_min",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.mcdn_summary_min",
-              "value": "__PROJECT_NAME__.mcdn_summary_min"
-            }
-          ],
-          "query": "__PROJECT_NAME__.mcdn_summary_min",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
+          "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.mcdn_summary_hour",
-            "value": "__PROJECT_NAME__.mcdn_summary_hour"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
-          "hide": 2,
-          "name": "summary_hour",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.mcdn_summary_hour",
-              "value": "__PROJECT_NAME__.mcdn_summary_hour"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
-          ],
-          "query": "__PROJECT_NAME__.mcdn_summary_hour",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "summary_hour",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "cdn1",
+          "query": "${VAR_CDN1}",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "${VAR_CDN1}",
             "value": "${VAR_CDN1}"
           },
-          "hide": 2,
-          "name": "cdn1",
           "options": [
             {
               "selected": false,
               "text": "${VAR_CDN1}",
               "value": "${VAR_CDN1}"
             }
-          ],
-          "query": "${VAR_CDN1}",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
           "current": {},
@@ -2119,42 +2127,42 @@
           "type": "query"
         },
         {
-          "current": {
-            "selected": false,
-            "text": "${VAR_RAW_LOGS}",
-            "value": "${VAR_RAW_LOGS}"
-          },
           "hide": 2,
           "name": "raw_logs",
-          "options": [
-            {
-              "selected": false,
-              "text": "${VAR_RAW_LOGS}",
-              "value": "${VAR_RAW_LOGS}"
-            }
-          ],
-          "query": "${VAR_RAW_LOGS}",
+          "query": "__OTHER_DASHBOARD_UUID_2__",
           "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
+          "type": "constant",
           "current": {
             "selected": false,
-            "text": "${VAR_CDN_PANEL}",
-            "value": "${VAR_CDN_PANEL}"
+            "text": "__OTHER_DASHBOARD_UUID_2__",
+            "value": "__OTHER_DASHBOARD_UUID_2__"
           },
-          "hide": 2,
-          "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_CDN_PANEL}",
-              "value": "${VAR_CDN_PANEL}"
+              "text": "__OTHER_DASHBOARD_UUID_2__",
+              "value": "__OTHER_DASHBOARD_UUID_2__"
             }
-          ],
-          "query": "${VAR_CDN_PANEL}",
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "cdn_panel",
+          "query": "__PRIMARY_DASHBOARD_UUID__",
           "skipUrlSync": true,
-          "type": "constant"
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__PRIMARY_DASHBOARD_UUID__",
+            "value": "__PRIMARY_DASHBOARD_UUID__"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "__PRIMARY_DASHBOARD_UUID__",
+              "value": "__PRIMARY_DASHBOARD_UUID__"
+            }
+          ]
         }
       ]
     },
@@ -2176,7 +2184,7 @@
     "timezone": "utc",
     "title": "CDN Global View",
     "uid": "__DASHBOARD_UUID__",
-    "version": 34,
+    "version": 3,
     "weekStart": ""
   }
 }
