@@ -4,7 +4,7 @@
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresponse_time_to_first_byte * 1000.0 as response_time_to_first_byte_ms,\nresponse_time_to_last_byte * 1000.0 as response_time_to_last_byte_ms,\npositionCaseInsensitive (result_type, 'hit') > 0 AS cache_was_cached,\nsplitByChar('?', assumeNotNull(original_url))[2] AS request_query_string,\nsplitByChar('?', assumeNotNull(original_url))[1] AS request_path,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
     "null_values": [
       "-1",
       "(null)"
@@ -74,10 +74,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "String(row['result_type']).toLowerCase().includes('hit')",
+          "source": null,
           "suppress": false
         }
       },
@@ -142,10 +140,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['response_time_to_first_byte'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
@@ -176,10 +172,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['response_time_to_last_byte'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
@@ -242,10 +236,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "String(row['original_url']).split('?')[1] || ''",
+          "source": null,
           "suppress": false
         }
       },
@@ -291,10 +283,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "String(row['original_url']).split('?')[0]",
+          "source": null,
           "suppress": false
         }
       },

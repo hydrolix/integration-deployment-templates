@@ -4,7 +4,7 @@
   "settings": {
     "is_default": false,
     "rate_limit": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nround(response_time_to_first_byte_sec * 1000) AS response_time_to_first_byte_ms,\nround(response_time_to_last_byte_sec * 1000) AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n commons_city_name(client_ip) as client_city,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\n commons_city_name(client_ip) as client_city,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
     "null_values": [
       "-",
       "^",
@@ -111,10 +111,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "String(row['result_type']).toLowerCase().includes('hit')",
+          "source": null,
           "suppress": false
         }
       },
@@ -171,10 +169,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['response_time_to_first_byte_sec'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
@@ -201,10 +197,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['response_time_to_last_byte_sec'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
@@ -394,10 +388,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['origin_time_to_first_byte_sec'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
@@ -424,10 +416,8 @@
           "format": null,
           "resolution": null,
           "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
+          "script": "Math.round(row['origin_time_to_last_byte_sec'] * 1000)",
+          "source": null,
           "suppress": false
         }
       },
