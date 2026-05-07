@@ -1,0 +1,6 @@
+{
+  "data_category": "security",
+  "table_name": "logs",
+  "version": "1.0.5",
+  "description": "Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers into a single unified view via interactive dashboards"
+}
