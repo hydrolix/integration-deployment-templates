@@ -1,0 +1,586 @@
+{
+  "name": "cloudfront_firehose",
+  "description": "Version v1.0",
+  "uuid": "e25844bb-ecdc-4c9f-a104-79570d5b492a",
+  "created": "2026-05-05T09:23:02.160782Z",
+  "modified": "2026-05-05T09:23:02.160796Z",
+  "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cache_was_cached,\nround(response_time_to_first_byte_sec * 1000) AS response_time_to_first_byte_ms,\nround(response_time_to_last_byte_sec * 1000) AS response_time_to_last_byte_ms,\nIF(isIPv6String(assumeNotNull(client_ip)), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv6', 'autonomous_system_number', IPv6StringToNum(client_ip))),'0'), NULLIF(toString(dictGet('commons_geoip_asn_blocks_ipv4', 'autonomous_system_number', toIPv4(client_ip))),'0')) as client_asn,\norigin_time_to_first_byte_sec * 1000 AS origin_time_to_first_byte_ms,\norigin_time_to_last_byte_sec * 1000 AS origin_time_to_last_byte_ms,\n commons_city_name(client_ip) as client_city,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+    "null_values": [
+      "-",
+      "^",
+      "(null)"
+    ],
+    "sample_data": [
+      {
+        "records": [
+          {
+            "data": "ewogICJ4LWVkZ2UtbG9jYXRpb24iOiAiU0ZPNTMtUDkiLAogICJzYy1ieXRlcyI6ICI5OTI2MCIsCiAgImMtaXAiOiAiMjYwMToyMDY6ODEwMDoyYzpjODM3OjUxYzc6Y2RjZDplOTYxIiwKICAiY3MtbWV0aG9kIjogIkdFVCIsCiAgImNzKEhvc3QpIjogImQzbWU3dzU1ZDRmZmJjLmNsb3VkZnJvbnQubmV0IiwKICAiY3MtdXJpLXN0ZW0iOiAiL21lZGlhL3NlZ21lbnRfMTkyMHAxMDgwXzEyOS50cyIsCiAgInNjLXN0YXR1cyI6ICIyMDYiLAogICJjcyhSZWZlcmVyKSI6ICJodHRwczovL2JiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzLyIsCiAgImNzKFVzZXItQWdlbnQpIjogIk1vemlsbGEvNS4wJTIwKE1hY2ludG9zaDslMjBJbnRlbCUyME1hYyUyME9TJTIwWCUyMDEwXzE1XzcpJTIwQXBwbGVXZWJLaXQvNTM3LjM2JTIwKEtIVE1MLCUyMGxpa2UlMjBHZWNrbyklMjBDaHJvbWUvMTQyLjAuMC4wJTIwU2FmYXJpLzUzNy4zNiIsCiAgImNzLXVyaS1xdWVyeSI6ICItIiwKICAiY3MoQ29va2llKSI6ICItIiwKICAieC1lZGdlLXJlc3VsdC10eXBlIjogIkVycm9yIiwKICAieC1lZGdlLXJlcXVlc3QtaWQiOiAiSUhMSEdiZ2JGbHpOd1A4OVhCWE9rVjBQZ1FHVmZNdTRUM2Q5cmVGR0RCWjFoaHd2ajRnc1R3PT0iLAogICJ4LWhvc3QtaGVhZGVyIjogImJiYi1jbG91ZGZyb250LmhkeC1kZW1vLnVzIiwKICAiY3MtcHJvdG9jb2wiOiAiaHR0cHMiLAogICJjcy1ieXRlcyI6ICI0OSIsCiAgInRpbWUtdGFrZW4iOiAiMC40MTAiLAogICJ4LWZvcndhcmRlZC1mb3IiOiAiLSIsCiAgInNzbC1wcm90b2NvbCI6ICJUTFN2MS4zIiwKICAic3NsLWNpcGhlciI6ICJUTFNfQUVTXzEyOF9HQ01fU0hBMjU2IiwKICAieC1lZGdlLXJlc3BvbnNlLXJlc3VsdC10eXBlIjogIk1pc3MiLAogICJjcy1wcm90b2NvbC12ZXJzaW9uIjogIkhUVFAvMi4wIiwKICAiZmxlLXN0YXR1cyI6ICItIiwKICAiZmxlLWVuY3J5cHRlZC1maWVsZHMiOiAiLSIsCiAgImMtcG9ydCI6ICI1ODA2MCIsCiAgInRpbWUtdG8tZmlyc3QtYnl0ZSI6ICIwLjIzOSIsCiAgIngtZWRnZS1kZXRhaWxlZC1yZXN1bHQtdHlwZSI6ICJDbGllbnRDb21tRXJyb3IiLAogICJzYy1jb250ZW50LXR5cGUiOiAidmlkZW8vbXAydCIsCiAgInNjLWNvbnRlbnQtbGVuIjogIjI4MjcxNDQiLAogICJzYy1yYW5nZS1zdGFydCI6ICIwIiwKICAic2MtcmFuZ2UtZW5kIjogIjI4MjcxNDMiLAogICJ0aW1lc3RhbXAiOiAiMTc3NzI5MTIwMCIsCiAgImMtY291bnRyeSI6ICJVUyIKfQo="
+          }
+        ],
+        "requestId": "f578af01-027d-4174-8c1b-e85b45809992",
+        "timestamp": 1777291200000
+      }
+    ],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "request_id",
+        "datatype": {
+          "type": "string",
+          "index": false,
+          "primary": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "requestId"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "firehose_timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "primary": false,
+          "format": "ms",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "timestamp"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "s",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "data.timestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-result-type"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "detailed_result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-detailed-result-type"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cache_was_cached",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_total_bytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-bytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_status_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-status"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_sec",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-to-first-byte"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "response_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_sec",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-taken"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "response_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-content-type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_method",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-method"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_host",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-host-header"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_query_string",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-query"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(Referer)"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "request_path",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-stem"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(User-Agent)"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "s-ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_ip",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_sec",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-fbl"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "origin_time_to_first_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_sec",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-lbl"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_country_iso_code",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-country"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "client_asn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-location"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "CloudFront",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "CloudFront FH multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "subtype": "firehose",
+      "flattening": {
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "depth": null
+      }
+    }
+  },
+  "url": "https://eu-west-1.aws.hydrolix.live/config/v1/orgs/63407eef-443f-4f1a-95a5-ba1d9ee9be57/projects/5b18bfd1-a299-4dfa-9700-1d582c17e754/tables/a459688d-8cfa-4b25-93ca-52885ccfb34d/transforms/e25844bb-ecdc-4c9f-a104-79570d5b492a",
+  "type": "json",
+  "table": "a459688d-8cfa-4b25-93ca-52885ccfb34d"
+}

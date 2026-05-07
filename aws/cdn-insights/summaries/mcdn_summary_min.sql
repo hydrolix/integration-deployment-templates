@@ -18,7 +18,7 @@ SELECT
   quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (origin_time_to_first_byte_ms) AS quantiles_origin_ttfb_ms,
   quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (origin_time_to_last_byte_ms) AS quantiles_origin_ttlb_ms
 FROM
-  hdxevolution372418430567260505.logs
+  __PROJECT_NAME__.__TABLE_NAME__
 GROUP BY
   timestamp,
   cache_was_cached,

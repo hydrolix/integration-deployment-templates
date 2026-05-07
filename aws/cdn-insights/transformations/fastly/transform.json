@@ -1,9 +1,6 @@
 {
   "name": "fastly",
   "description": "Version v1.0",
-  "uuid": "a334c795-3cd7-4a3b-8fe7-0e951e63bd85",
-  "created": "2026-05-05T09:23:07.649257Z",
-  "modified": "2026-05-05T09:23:13.234694Z",
   "settings": {
     "is_default": false,
     "rate_limit": null,
@@ -569,7 +566,5 @@
       }
     }
   },
-  "url": "https://eu-west-1.aws.hydrolix.live/config/v1/orgs/63407eef-443f-4f1a-95a5-ba1d9ee9be57/projects/5b18bfd1-a299-4dfa-9700-1d582c17e754/tables/a459688d-8cfa-4b25-93ca-52885ccfb34d/transforms/a334c795-3cd7-4a3b-8fe7-0e951e63bd85",
-  "type": "json",
-  "table": "a459688d-8cfa-4b25-93ca-52885ccfb34d"
+  "type": "json"
 }

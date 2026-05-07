@@ -1,0 +1,21 @@
+{
+  "UA": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/124.0.0.0 Mobile/15E148 Safari/604.1",
+  "city": "New Haven",
+  "Asnum": "7922",
+  "cliIP": "73.142.98.77",
+  "country": "US",
+  "referer": "https://hydrolix.io",
+  "reqHost": "hydrolix.io",
+  "reqPath": "/hls/Crimson Arcade S03E08 — Garden Doors/multivariant.m3u8",
+  "queryStr": "",
+  "origin_ip": "52.75.0.13",
+  "reqMethod": "GET",
+  "reqTimeSec": 1777291200,
+  "statusCode": 200,
+  "totalBytes": 1268,
+  "breadcrumbs": "",
+  "cacheStatus": 1,
+  "rspContentType": "application/vnd.apple.mpegurl",
+  "timeToFirstByte": 83,
+  "transferTimeMSec": 199
+}

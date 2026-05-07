@@ -1,9 +1,6 @@
 {
   "name": "tencent",
   "description": "Version v1.0",
-  "uuid": "5e8a81c2-ee56-4555-acc9-4532af1e966e",
-  "created": "2026-05-05T09:23:13.247214Z",
-  "modified": "2026-05-05T09:23:13.247223Z",
   "settings": {
     "is_default": true,
     "rate_limit": null,
@@ -508,7 +505,5 @@
       }
     }
   },
-  "url": "https://eu-west-1.aws.hydrolix.live/config/v1/orgs/63407eef-443f-4f1a-95a5-ba1d9ee9be57/projects/5b18bfd1-a299-4dfa-9700-1d582c17e754/tables/a459688d-8cfa-4b25-93ca-52885ccfb34d/transforms/5e8a81c2-ee56-4555-acc9-4532af1e966e",
-  "type": "json",
-  "table": "a459688d-8cfa-4b25-93ca-52885ccfb34d"
+  "type": "json"
 }
