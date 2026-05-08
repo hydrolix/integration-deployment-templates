@@ -145,19 +145,19 @@
         {
           "hide": 2,
           "name": "timestamp",
-          "query": "timestamp",
+          "query": "reqTimeSec",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "timestamp",
-            "value": "timestamp"
+            "text": "reqTimeSec",
+            "value": "reqTimeSec"
           },
           "options": [
             {
               "selected": false,
-              "text": "timestamp",
-              "value": "timestamp"
+              "text": "reqTimeSec",
+              "value": "reqTimeSec"
             }
           ]
         },
