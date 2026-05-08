@@ -123,7 +123,7 @@
             "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
           "format": 1,
-          "rawSql": "SELECT *\nFROM ${table}\nWHERE timestamp >= toDateTime(${__from:date:seconds})\n  AND timestamp < least(toDateTime(${__to:date:seconds}), toDateTime(${__from:date:seconds}) + INTERVAL 31 DAY)\n  AND $__adHocFilter()\nORDER BY timestamp DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
+          "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds})\n  AND ${timestamp} < least(toDateTime(${__to:date:seconds}), toDateTime(${__from:date:seconds}) + INTERVAL 31 DAY)\n  AND $__adHocFilter()\nORDER BY ${timestamp} DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
           "refId": "A"
         }
       ],
