@@ -1,230 +1,226 @@
 {
-  "dashboard": {
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
-      }
+  "__inputs": [
+    {
+      "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "hydrolix-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix"
     },
-    "__requires": [
-      {
-        "type": "grafana",
-        "id": "grafana",
-        "name": "Grafana",
-        "version": "12.0.0"
-      },
-      {
-        "type": "datasource",
-        "id": "hydrolix-hydrolix-datasource",
-        "name": "Hydrolix",
-        "version": "0.6.0"
-      },
-      {
-        "type": "panel",
-        "id": "logs",
-        "name": "Logs",
-        "version": ""
-      },
-      {
-        "type": "panel",
-        "id": "text",
-        "name": "Text",
-        "version": ""
-      }
-    ],
-    "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": {
-            "type": "grafana",
-            "uid": "-- Grafana --"
-          },
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "type": "dashboard"
-        }
-      ]
+    {
+      "name": "VAR_TABLE",
+      "type": "constant",
+      "label": "table",
+      "value": "PROJECT.cdn",
+      "description": ""
     },
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": null,
-    "links": [],
-    "panels": [
+    {
+      "name": "VAR_TIMESTAMP",
+      "type": "constant",
+      "label": "timestamp",
+      "value": "reqTimeSec",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "hydrolix-hydrolix-datasource",
+      "name": "Hydrolix",
+      "version": "0.6.0"
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
       {
-        "gridPos": {
-          "h": 4,
-          "w": 24,
-          "x": 0,
-          "y": 0
-        },
-        "id": 2,
-        "options": {
-          "code": {
-            "language": "plaintext",
-            "showLineNumbers": false,
-            "showMiniMap": false
-          },
-          "content": "#### Raw Logs\n\nInspect the last 1,000 raw log entries within your selected time window. Use the time picker to choose any range up to 31 days. When arriving from a drilldown link, the originating dashboard's time range is applied automatically. Use the **Filters** variable above to narrow results by any column.",
-          "mode": "markdown"
-        },
-        "pluginVersion": "12.0.0",
-        "type": "text"
-      },
-      {
+        "builtIn": 1,
         "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
+          "type": "grafana",
+          "uid": "-- Grafana --"
         },
-        "gridPos": {
-          "h": 17,
-          "w": 24,
-          "x": 0,
-          "y": 4
-        },
-        "id": 1,
-        "options": {
-          "dedupStrategy": "none",
-          "enableInfiniteScrolling": false,
-          "enableLogDetails": true,
-          "prettifyLogMessage": true,
-          "showCommonLabels": false,
-          "showLabels": false,
-          "showTime": true,
-          "sortOrder": "Descending",
-          "wrapLogMessage": false
-        },
-        "pluginVersion": "12.0.0",
-        "targets": [
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds})\n  AND ${timestamp} < least(toDateTime(${__to:date:seconds}), toDateTime(${__from:date:seconds}) + INTERVAL 31 DAY)\n  AND $__adHocFilter()\nORDER BY ${timestamp} DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
-            "refId": "A"
-          }
-        ],
-        "title": "Raw Logs",
-        "type": "logs"
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
-    ],
-    "refresh": "",
-    "schemaVersion": 41,
-    "tags": [
-      "v1.0",
-      "mcdn"
-    ],
-    "templating": {
-      "list": [
-        {
-          "hide": 2,
-          "name": "table",
-          "query": "PROJECT.cdn",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "PROJECT.cdn",
-            "value": "PROJECT.cdn"
-          },
-          "options": [
-            {
-              "selected": false,
-              "text": "PROJECT.cdn",
-              "value": "PROJECT.cdn"
-            }
-          ]
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
+        "content": "#### Raw Logs\n\nInspect the last 1,000 raw log entries within your selected time window. Use the time picker to choose any range up to 31 days. When arriving from a drilldown link, the originating dashboard's time range is applied automatically. Use the **Filters** variable above to narrow results by any column.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.0.0",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
         {
-          "hide": 2,
-          "name": "timestamp",
-          "query": "reqTimeSec",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "reqTimeSec",
-            "value": "reqTimeSec"
-          },
-          "options": [
-            {
-              "selected": false,
-              "text": "reqTimeSec",
-              "value": "reqTimeSec"
-            }
-          ]
-        },
-        {
-          "baseFilters": [],
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
+            "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
           },
-          "filters": [],
-          "name": "Filters",
-          "type": "adhoc"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
+          "format": 1,
+          "rawSql": "SELECT *\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds})\n  AND ${timestamp} < least(toDateTime(${__to:date:seconds}), toDateTime(${__from:date:seconds}) + INTERVAL 31 DAY)\n  AND $__adHocFilter()\nORDER BY ${timestamp} DESC\nLIMIT 1000\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Raw Logs; du=${__user.login}'\n",
+          "refId": "A"
         }
-      ]
-    },
-    "time": {
-      "from": "now-15m",
-      "to": "now"
-    },
-    "timepicker": {
-      "refresh_intervals": [
-        "30s",
-        "1m",
-        "5m",
-        "15m",
-        "30m",
-        "1h",
-        "2h",
-        "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "30m",
-        "1h",
-        "3h",
-        "6h",
-        "12h",
-        "1d",
-        "7d",
-        "14d",
-        "31d"
-      ]
-    },
-    "timezone": "utc",
-    "title": "Raw Logs",
-    "uid": "__DASHBOARD_UUID__",
-    "version": 13,
-    "weekStart": ""
-  }
+      "title": "Raw Logs",
+      "type": "logs"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 41,
+  "tags": [
+    "v1.0",
+    "mcdn"
+  ],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "name": "table",
+        "query": "${VAR_TABLE}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_TABLE}",
+          "text": "${VAR_TABLE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_TABLE}",
+            "text": "${VAR_TABLE}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "timestamp",
+        "query": "${VAR_TIMESTAMP}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_TIMESTAMP}",
+          "text": "${VAR_TIMESTAMP}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_TIMESTAMP}",
+            "text": "${VAR_TIMESTAMP}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
+        },
+        "filters": [],
+        "name": "Filters",
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "3h",
+      "6h",
+      "12h",
+      "1d",
+      "7d",
+      "14d",
+      "31d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Raw Logs",
+  "uid": "",
+  "version": 13,
+  "weekStart": ""
 }
