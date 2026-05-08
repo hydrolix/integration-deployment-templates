@@ -1,0 +1,22 @@
+{
+  "client_asn": "7922",
+  "client_city": "yuba city",
+  "client_country_iso_code": "USA",
+  "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
+  "edge_ip": "2a04:4e42:200::498",
+  "edge_pop": "SJC",
+  "is_edge": true,
+  "origin_ip": "(null)",
+  "original_url": "/media/segment_1920p1080_015.ts",
+  "request_host": "bbb-fastly.hdx-demo.us",
+  "request_method": "GET",
+  "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
+  "response_content_type": "video/mp2t",
+  "response_status_code": "200",
+  "response_time_to_first_byte": 0,
+  "response_time_to_last_byte": 0.003,
+  "response_total_bytes": 1831674,
+  "result_type": "HIT-CLUSTER",
+  "timestamp": "2026-04-27T12:00:00",
+  "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15"
+}

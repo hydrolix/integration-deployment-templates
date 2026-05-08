@@ -1,0 +1,11 @@
+name: aws_cdn_insights
+version: 1.0.0
+description: Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers
+  into a single unified view via interactive dashboards
+maintainer: Hydrolix Team <team@hydrolix.io>
+hydrolix:
+  resources: hydrolix/resources.hdp.yaml
+grafana:
+  resources: grafana/resources.gfo.yaml
+
+# additional properties, metadata of a bundle
