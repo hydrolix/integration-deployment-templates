@@ -12,7 +12,7 @@ dashboards:
     inputs:
       DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
       VAR_TABLE: PROJECT.cdn
-      VAR_TIMESTAMP: timestamp
+      VAR_TIMESTAMP: reqTimeSec
   hdx-cdn-dashboard-default:
     dashboard:
       __extend__: dashboards/cdn_dashboard_default.json
