@@ -14,7 +14,7 @@
       "label": "table",
       "name": "VAR_TABLE",
       "type": "constant",
-      "value": "PROJECT.cdn"
+      "value": "__PROJECT_NAME__.__TABLE_NAME__"
     },
     {
       "description": "",

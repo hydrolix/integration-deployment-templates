@@ -10,27 +10,27 @@
     },
     "__requires": [
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
-        "version": "12.0.0"
+        "version": "12.0.2"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
-        "version": "0.6.0"
+        "version": "0.10.2"
       },
       {
+        "type": "panel",
         "id": "logs",
         "name": "Logs",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -73,7 +73,7 @@
           "content": "#### Raw Logs\n\nThis dashboard enables the user to review the last 1000 rows of raw logs. The time range is fixed to use the last 15 minutes of available data; changing the time range via the Grafana UI will not have any effect.\n\n\n\n\n\n",
           "mode": "markdown"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "type": "text"
       },
       {
@@ -99,7 +99,7 @@
           "sortOrder": "Descending",
           "wrapLogMessage": false
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -124,13 +124,61 @@
     "templating": {
       "list": [
         {
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "timestamp",
+          "query": "timestamp",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "timestamp",
+            "value": "timestamp"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "timestamp",
+              "value": "timestamp"
+            }
+          ]
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "hide": 2,
-          "name": "table",
+          "name": "raw_table",
           "options": [
             {
               "selected": false,
@@ -141,35 +189,6 @@
           "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "timestamp",
-            "value": "timestamp"
-          },
-          "hide": 2,
-          "name": "timestamp",
-          "options": [
-            {
-              "selected": false,
-              "text": "timestamp",
-              "value": "timestamp"
-            }
-          ],
-          "query": "timestamp",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "baseFilters": [],
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "filters": [],
-          "name": "Filters",
-          "type": "adhoc"
         }
       ]
     },
@@ -192,7 +211,7 @@
     "timezone": "utc",
     "title": "Raw Logs",
     "uid": "__DASHBOARD_UUID__",
-    "version": 11,
+    "version": 2,
     "weekStart": ""
   }
 }

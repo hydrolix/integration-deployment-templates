@@ -3833,190 +3833,190 @@
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_response_ttfb_50}",
-            "value": "${quantiles_response_ttfb_50}"
+            "text": "quantiles_response_ttfb_ms[2]",
+            "value": "quantiles_response_ttfb_ms[2]"
           },
           "hide": 2,
           "name": "quantiles_response_ttfb_50",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_response_ttfb_50}",
-              "value": "${quantiles_response_ttfb_50}"
+              "text": "quantiles_response_ttfb_ms[2]",
+              "value": "quantiles_response_ttfb_ms[2]"
             }
           ],
-          "query": "${quantiles_response_ttfb_50}",
+          "query": "quantiles_response_ttfb_ms[2]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_response_ttfb_95}",
-            "value": "${quantiles_response_ttfb_95}"
+            "text": "quantiles_response_ttfb_ms[5]",
+            "value": "quantiles_response_ttfb_ms[5]"
           },
           "hide": 2,
           "name": "quantiles_response_ttfb_95",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_response_ttfb_95}",
-              "value": "${quantiles_response_ttfb_95}"
+              "text": "quantiles_response_ttfb_ms[5]",
+              "value": "quantiles_response_ttfb_ms[5]"
             }
           ],
-          "query": "${quantiles_response_ttfb_95}",
+          "query": "quantiles_response_ttfb_ms[5]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_response_ttlb_50}",
-            "value": "${quantiles_response_ttlb_50}"
+            "text": "quantiles_response_ttlb_ms[2]",
+            "value": "quantiles_response_ttlb_ms[2]"
           },
           "hide": 2,
           "name": "quantiles_response_ttlb_50",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_response_ttlb_50}",
-              "value": "${quantiles_response_ttlb_50}"
+              "text": "quantiles_response_ttlb_ms[2]",
+              "value": "quantiles_response_ttlb_ms[2]"
             }
           ],
-          "query": "${quantiles_response_ttlb_50}",
+          "query": "quantiles_response_ttlb_ms[2]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_response_ttlb_95}",
-            "value": "${quantiles_response_ttlb_95}"
+            "text": "quantiles_response_ttlb_ms[5]",
+            "value": "quantiles_response_ttlb_ms[5]"
           },
           "hide": 2,
           "name": "quantiles_response_ttlb_95",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_response_ttlb_95}",
-              "value": "${quantiles_response_ttlb_95}"
+              "text": "quantiles_response_ttlb_ms[5]",
+              "value": "quantiles_response_ttlb_ms[5]"
             }
           ],
-          "query": "${quantiles_response_ttlb_95}",
+          "query": "quantiles_response_ttlb_ms[5]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_origin_ttfb_50}",
-            "value": "${quantiles_origin_ttfb_50}"
+            "text": "quantiles_origin_ttfb_ms[2]",
+            "value": "quantiles_origin_ttfb_ms[2]"
           },
           "hide": 2,
           "name": "quantiles_origin_ttfb_50",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_origin_ttfb_50}",
-              "value": "${quantiles_origin_ttfb_50}"
+              "text": "quantiles_origin_ttfb_ms[2]",
+              "value": "quantiles_origin_ttfb_ms[2]"
             }
           ],
-          "query": "${quantiles_origin_ttfb_50}",
+          "query": "quantiles_origin_ttfb_ms[2]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_origin_ttfb_95}",
-            "value": "${quantiles_origin_ttfb_95}"
+            "text": "quantiles_origin_ttfb_ms[5]",
+            "value": "quantiles_origin_ttfb_ms[5]"
           },
           "hide": 2,
           "name": "quantiles_origin_ttfb_95",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_origin_ttfb_95}",
-              "value": "${quantiles_origin_ttfb_95}"
+              "text": "quantiles_origin_ttfb_ms[5]",
+              "value": "quantiles_origin_ttfb_ms[5]"
             }
           ],
-          "query": "${quantiles_origin_ttfb_95}",
+          "query": "quantiles_origin_ttfb_ms[5]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_origin_ttlb_50}",
-            "value": "${quantiles_origin_ttlb_50}"
+            "text": "quantiles_origin_ttlb_ms[2]",
+            "value": "quantiles_origin_ttlb_ms[2]"
           },
           "hide": 2,
           "name": "quantiles_origin_ttlb_50",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_origin_ttlb_50}",
-              "value": "${quantiles_origin_ttlb_50}"
+              "text": "quantiles_origin_ttlb_ms[2]",
+              "value": "quantiles_origin_ttlb_ms[2]"
             }
           ],
-          "query": "${quantiles_origin_ttlb_50}",
+          "query": "quantiles_origin_ttlb_ms[2]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${quantiles_origin_ttlb_95}",
-            "value": "${quantiles_origin_ttlb_95}"
+            "text": "quantiles_origin_ttlb_ms[5]",
+            "value": "quantiles_origin_ttlb_ms[5]"
           },
           "hide": 2,
           "name": "quantiles_origin_ttlb_95",
           "options": [
             {
               "selected": false,
-              "text": "${quantiles_origin_ttlb_95}",
-              "value": "${quantiles_origin_ttlb_95}"
+              "text": "quantiles_origin_ttlb_ms[5]",
+              "value": "quantiles_origin_ttlb_ms[5]"
             }
           ],
-          "query": "${quantiles_origin_ttlb_95}",
+          "query": "quantiles_origin_ttlb_ms[5]",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_RAW_LOGS}",
-            "value": "${VAR_RAW_LOGS}"
+            "text": "UUID_HERE/NAME",
+            "value": "UUID_HERE/NAME"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_RAW_LOGS}",
-              "value": "${VAR_RAW_LOGS}"
+              "text": "UUID_HERE/NAME",
+              "value": "UUID_HERE/NAME"
             }
           ],
-          "query": "${VAR_RAW_LOGS}",
+          "query": "UUID_HERE/NAME",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "${VAR_CDN_PANEL}",
-            "value": "${VAR_CDN_PANEL}"
+            "text": "UUID_HERE/NAME",
+            "value": "UUID_HERE/NAME"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "${VAR_CDN_PANEL}",
-              "value": "${VAR_CDN_PANEL}"
+              "text": "UUID_HERE/NAME",
+              "value": "UUID_HERE/NAME"
             }
           ],
-          "query": "${VAR_CDN_PANEL}",
+          "query": "UUID_HERE/NAME",
           "skipUrlSync": true,
           "type": "constant"
         },

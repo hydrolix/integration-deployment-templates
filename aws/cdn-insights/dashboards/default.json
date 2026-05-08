@@ -10,57 +10,57 @@
     },
     "__requires": [
       {
+        "type": "panel",
         "id": "bargauge",
         "name": "Bar gauge",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "geomap",
         "name": "Geomap",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
-        "type": "grafana",
-        "version": "12.0.0"
+        "version": "12.0.2"
       },
       {
+        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
-        "type": "datasource",
-        "version": "0.6.0"
+        "version": "0.10.2"
       },
       {
+        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "stat",
         "name": "Stat",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "table",
         "name": "Table",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "text",
         "name": "Text",
-        "type": "panel",
         "version": ""
       },
       {
+        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
-        "type": "panel",
         "version": ""
       }
     ],
@@ -103,7 +103,7 @@
           "content": "<div style=\"\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: 100%;\n  height: 100%;\n  padding: 10px;\n\">\n  <div style=\"\n    background: linear-gradient(45deg, #1f77b4, #2ca02c);\n    padding: 15px 25px;\n    border-radius: 10px;\n    text-align: center;\n    border: 3px solid #fff;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  \">\n    <h1 style=\"\n      color: white;\n      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);\n      margin: 0;\n      font-size: 3.5vw;\n      white-space: nowrap;\n      line-height: 1;\n    \">\n      <b>${cdn_filter}</b>\n    </h1>\n  </div>\n</div>",
           "mode": "markdown"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "type": "text"
       },
       {
@@ -157,7 +157,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -241,7 +241,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -325,7 +325,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -401,7 +401,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -477,7 +477,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -553,7 +553,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -629,7 +629,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -705,7 +705,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -781,7 +781,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -857,7 +857,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -968,7 +968,7 @@
             "sort": "none"
           }
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1083,7 +1083,7 @@
           "sizing": "auto",
           "valueMode": "color"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1193,7 +1193,7 @@
           "sizing": "auto",
           "valueMode": "color"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1294,7 +1294,7 @@
           "sizing": "auto",
           "valueMode": "color"
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1411,7 +1411,7 @@
             "sort": "none"
           }
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1557,7 +1557,7 @@
             }
           ]
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -1686,7 +1686,7 @@
           },
           "showHeader": true
         },
-        "pluginVersion": "12.0.0",
+        "pluginVersion": "12.0.2",
         "targets": [
           {
             "datasource": {
@@ -3575,23 +3575,23 @@
     "templating": {
       "list": [
         {
+          "hide": 2,
+          "name": "raw_table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
-          "hide": 2,
-          "name": "raw_table",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME__.__TABLE_NAME__",
               "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
           "current": {},
@@ -3639,44 +3639,44 @@
           "type": "query"
         },
         {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.mcdn_summary_min",
-            "value": "__PROJECT_NAME__.mcdn_summary_min"
-          },
           "description": "",
           "hide": 2,
           "name": "summary_min",
+          "query": "__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
+          },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.mcdn_summary_min",
-              "value": "__PROJECT_NAME__.mcdn_summary_min"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
-          ],
-          "query": "__PROJECT_NAME__.mcdn_summary_min",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.mcdn_summary_hour",
-            "value": "__PROJECT_NAME__.mcdn_summary_hour"
-          },
           "description": "",
           "hide": 2,
           "name": "summary_hour",
+          "query": "__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
+          },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.mcdn_summary_hour",
-              "value": "__PROJECT_NAME__.mcdn_summary_hour"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
-          ],
-          "query": "__PROJECT_NAME__.mcdn_summary_hour",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
           "baseFilters": [],
@@ -3772,156 +3772,156 @@
           "type": "custom"
         },
         {
+          "hide": 2,
+          "name": "quantiles_response_ttfb_50",
+          "query": "quantiles_response_ttfb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttfb_ms[2]",
             "value": "quantiles_response_ttfb_ms[2]"
           },
-          "hide": 2,
-          "name": "quantiles_response_ttfb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttfb_ms[2]",
               "value": "quantiles_response_ttfb_ms[2]"
             }
-          ],
-          "query": "quantiles_response_ttfb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_response_ttfb_95",
+          "query": "quantiles_response_ttfb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttfb_ms[5]",
             "value": "quantiles_response_ttfb_ms[5]"
           },
-          "hide": 2,
-          "name": "quantiles_response_ttfb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttfb_ms[5]",
               "value": "quantiles_response_ttfb_ms[5]"
             }
-          ],
-          "query": "quantiles_response_ttfb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_response_ttlb_50",
+          "query": "quantiles_response_ttlb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttlb_ms[2]",
             "value": "quantiles_response_ttlb_ms[2]"
           },
-          "hide": 2,
-          "name": "quantiles_response_ttlb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttlb_ms[2]",
               "value": "quantiles_response_ttlb_ms[2]"
             }
-          ],
-          "query": "quantiles_response_ttlb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_response_ttlb_95",
+          "query": "quantiles_response_ttlb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttlb_ms[5]",
             "value": "quantiles_response_ttlb_ms[5]"
           },
-          "hide": 2,
-          "name": "quantiles_response_ttlb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttlb_ms[5]",
               "value": "quantiles_response_ttlb_ms[5]"
             }
-          ],
-          "query": "quantiles_response_ttlb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_origin_ttfb_50",
+          "query": "quantiles_origin_ttfb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttfb_ms[2]",
             "value": "quantiles_origin_ttfb_ms[2]"
           },
-          "hide": 2,
-          "name": "quantiles_origin_ttfb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttfb_ms[2]",
               "value": "quantiles_origin_ttfb_ms[2]"
             }
-          ],
-          "query": "quantiles_origin_ttfb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_origin_ttfb_95",
+          "query": "quantiles_origin_ttfb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttfb_ms[5]",
             "value": "quantiles_origin_ttfb_ms[5]"
           },
-          "hide": 2,
-          "name": "quantiles_origin_ttfb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttfb_ms[5]",
               "value": "quantiles_origin_ttfb_ms[5]"
             }
-          ],
-          "query": "quantiles_origin_ttfb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_origin_ttlb_50",
+          "query": "quantiles_origin_ttlb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttlb_ms[2]",
             "value": "quantiles_origin_ttlb_ms[2]"
           },
-          "hide": 2,
-          "name": "quantiles_origin_ttlb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttlb_ms[2]",
               "value": "quantiles_origin_ttlb_ms[2]"
             }
-          ],
-          "query": "quantiles_origin_ttlb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         },
         {
+          "hide": 2,
+          "name": "quantiles_origin_ttlb_95",
+          "query": "quantiles_origin_ttlb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttlb_ms[5]",
             "value": "quantiles_origin_ttlb_ms[5]"
           },
-          "hide": 2,
-          "name": "quantiles_origin_ttlb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttlb_ms[5]",
               "value": "quantiles_origin_ttlb_ms[5]"
             }
-          ],
-          "query": "quantiles_origin_ttlb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant"
+          ]
         }
       ]
     },
@@ -3943,7 +3943,7 @@
     "timezone": "utc",
     "title": "CDN Dashboard Default",
     "uid": "__DASHBOARD_UUID__",
-    "version": 45,
+    "version": 1,
     "weekStart": ""
   }
 }
