@@ -19,7 +19,7 @@
       "name": "VAR_TIMESTAMP",
       "type": "constant",
       "label": "timestamp",
-      "value": "reqTimeSec",
+      "value": "timestamp",
       "description": ""
     }
   ],
