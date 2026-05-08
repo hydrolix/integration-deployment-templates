@@ -212,7 +212,12 @@ pub fn primary_timestamp_from_transform(transform: &Value) -> Option<(String, Va
             .and_then(|f| f.as_str())
             .unwrap_or("s")
             .to_string();
-        let value = sample_data.get(&name)?.clone();
+        let lookup_key = dt
+            .get("source")
+            .and_then(|s| s.get("from_input_field"))
+            .and_then(|f| f.as_str())
+            .unwrap_or(&name);
+        let value = sample_data.get(lookup_key)?.clone();
         Some((name, value, format))
     })
 }
