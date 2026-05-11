@@ -120,7 +120,7 @@
       {
         "name": "response_status_code",
         "datatype": {
-          "type": "uint32",
+          "type": "string",
           "index": true,
           "format": null,
           "resolution": null,
