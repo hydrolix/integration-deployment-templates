@@ -1,0 +1,3 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
+description: DS2-only TrafficPeak Bot Insights bundle for Akamai logs.
+type: turbine

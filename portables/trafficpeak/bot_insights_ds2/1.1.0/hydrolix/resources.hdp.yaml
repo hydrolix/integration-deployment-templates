@@ -1,0 +1,26 @@
+tables:
+  logs:
+    __extend__: tables/table_logs.yaml
+transforms:
+  logs:
+    akamai_default_datastream:
+      __extend__: transforms/akamai_default_datastream.json
+      settings:
+        sql_transform:
+          __extend__: transforms/akamai_default_datastream_select.sql
+        sample_data:
+          __extend__: transforms/akamai_default_datastream_sample_data.json
+summary_tables:
+  bi_summary_day:
+    __extend__: tables/bi_summary_day.yaml
+  bi_summary_hour:
+    __extend__: tables/bi_summary_hour.yaml
+  bi_summary_minute:
+    __extend__: tables/bi_summary_minute.yaml
+dictionaries:
+  akamai_asn_type_dict:
+    __extend__: dictionaries/akamai_asn_type_dict/schema_definition.json
+  akamai_bot_ip_dict:
+    __extend__: dictionaries/akamai_bot_ip_dict/schema_definition.json
+  akamai_ua_cat_dict:
+    __extend__: dictionaries/akamai_ua_cat_dict/schema_definition.json

@@ -1,0 +1,1802 @@
+{
+  "__inputs": [
+    {
+      "description": "Hydrolix datasource",
+      "label": "Hydrolix",
+      "name": "DS_HYDROLIX",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "type": "datasource"
+    },
+    {
+      "label": "Raw logs table",
+      "name": "VAR_RAW_TABLE",
+      "type": "constant",
+      "value": "logs"
+    },
+    {
+      "label": "bi_summary_minute",
+      "name": "VAR_BI_SUMMARY_MINUTE",
+      "type": "constant",
+      "value": "bi_summary_minute"
+    },
+    {
+      "label": "bi_summary_hour",
+      "name": "VAR_BI_SUMMARY_HOUR",
+      "type": "constant",
+      "value": "bi_summary_hour"
+    },
+    {
+      "label": "bi_summary_day",
+      "name": "VAR_BI_SUMMARY_DAY",
+      "type": "constant",
+      "value": "bi_summary_day"
+    },
+    {
+      "label": "timestamp",
+      "name": "VAR_TIMESTAMP",
+      "type": "constant",
+      "value": "reqTimeSec"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "hydrolix"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "apps",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "bot-insights-cdn-1.1.9"
+      ],
+      "targetBlank": false,
+      "title": "Bot Insights Suite",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "description": "Branded header banner per C7 pattern. All subsequent panels shift down by gridPos.y += 2.",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 200,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display:flex;align-items:center;gap:12px;margin-bottom:8px;\"><span style=\"font-size:18px;font-weight:600;\"><img \n      src=\"data:image/png;base64,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\"\n      style=\"width:28px;height:28px;vertical-align:middle;\"\n    /> Bot Insights -- Multi-Domain Triage</span></div><div style=\"color:#8e8e8e;margin-bottom:4px;\">Cross-domain triage: scan posture, route attribution, and hand off to SEO, Security, and Edge/Ops detail.</div><div><strong>Data Freshness:</strong> ${data_freshness}</div>",
+        "mode": "html"
+      },
+      "pluginVersion": "12.2.3",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 100,
+      "panels": [],
+      "title": "Scan",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Minutes since last ingested row. LIVE <60min, STALE 60-360min, DOWN >360min.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "text": "LIVE"
+                },
+                "to": 59
+              },
+              "type": "range"
+            }
+          ],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF",
+                "value": 0
+              },
+              {
+                "color": "#FCD34D",
+                "value": 60
+              },
+              {
+                "color": "#FB7185",
+                "value": 360
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "lag_minutes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Lag (minutes)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 0,
+        "y": 4
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  greatest(dateDiff('minute', ${timestamp}, toDateTime(${__to:date:seconds})), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data freshness trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Data Freshness",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Total request volume for the current window.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF",
+                "value": 0
+              },
+              {
+                "color": "#FCD34D",
+                "value": 5
+              },
+              {
+                "color": "#FB7185",
+                "value": 25
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 5,
+        "y": 4
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  cnt_all AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Total Requests; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Percentage of traffic classified as bot-like (isBotTraffic=true). Delta in percentage points vs baseline.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF",
+                "value": 0
+              },
+              {
+                "color": "#FCD34D",
+                "value": 20
+              },
+              {
+                "color": "#F59E0B",
+                "value": 35
+              },
+              {
+                "color": "#FB7185",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 10,
+        "y": 4
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, trafficCohort IN ('Bot', 'AI')) * 100.0 / greatest(cnt_all, 1), 2) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Bot share trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Bot-Like Share",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "2xx success rate for governance pages (robots.txt, sitemap.xml, ads.txt, llms.txt). Should be >99%.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FB7185",
+                "value": 0
+              },
+              {
+                "color": "#FCD34D",
+                "value": 90
+              },
+              {
+                "color": "#2DD4BF",
+                "value": 98
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 15,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, statusCode >= 200 AND statusCode < 300) * 100.0 / greatest(cnt_all, 1), 2) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND resourceCategory IN (${resourceCategories})\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Policy page status trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Crawler File Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Percentage of traffic from known AI crawlers (notEmpty(aiCategory)). Delta in percentage points vs baseline.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2DD4BF",
+                "value": 0
+              },
+              {
+                "color": "#FCD34D",
+                "value": 5
+              },
+              {
+                "color": "#F59E0B",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 19,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, trafficCohort = 'AI') * 100.0 / greatest(cnt_all, 1), 2) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI share trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "AI-Labeled Share",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Rate-limiting (429) and server error (5xx) rates over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rate_429"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "429 Rate"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F59E0B",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rate_5xx"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5xx Rate"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FB7185",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, statusCode = 429) * 100.0 / greatest(cnt_all, 1), 2) AS rate_429,\n  round(countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600) * 100.0 / greatest(cnt_all, 1), 2) AS rate_5xx\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Reliability Trend (429 + 5xx Rate); du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Reliability Trend (429 + 5xx Rate)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Weighted-average origin TaT timeseries.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#88C9F2",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/baseline/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#6EF6D9",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1.5
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 4
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    6,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "origin_latency_ms"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg Origin TaT"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(sum_originTurnAroundTime_ms / nullIf(cnt_originTurnAroundTime, 0), 2) AS origin_latency_ms\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin TaT Trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Origin TaT Trend",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hydrolix-hydrolix-datasource",
+        "uid": "hydrolix"
+      },
+      "description": "Cache hit rate over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#2DD4BF",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 100,
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "--",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/baseline/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#6EF6D9",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1.5
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 4
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    6,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cache_hit_pct"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cache Hit %"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, cacheStatus = true) * 100.0 / greatest(cnt_all, 1), 2) AS cache_hit_pct\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache Efficiency Trend; du=${__user.login}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Efficiency Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 102,
+      "panels": [
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "description": "AI crawler volume over time, stacked by aiCategory vendor. Baseline as dashed overlay.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "showValues": false,
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "noValue": "--",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "^requests (.*)$"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 17
+          },
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [
+                "sum",
+                "max",
+                "mean"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true,
+              "sortBy": "Sum",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "pluginVersion": "12.2.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "hydrolix"
+              },
+              "format": 1,
+              "queryType": "sql",
+              "rawSql": "SELECT\n  aiCategory,\n  cnt_all AS requests,\n  ${timestamp} AS time\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort = 'AI'\nGROUP BY time, aiCategory\nORDER BY time, aiCategory\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=AI-labeled traffic trend; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "AI Traffic Trend",
+          "transformations": [
+            {
+              "id": "prepareTimeSeries",
+              "options": {
+                "format": "multi"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "^requests (.*)$",
+                "renamePattern": "$1"
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "description": "ASNs driving AI-labeled traffic, ranked by volume. Gradient gauge on share column.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "noValue": "--",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "asn"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "ASN"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Show details",
+                        "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.asn}&${__all_variables}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Country"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": false,
+                        "title": "Filter by ${__data.fields.asn}",
+                        "url": "/d/${__dashboard.uid}?var-filter=country|=|${__data.fields.Country}&${__all_variables}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Requests"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 140
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 17
+          },
+          "id": 10,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Volume"
+              }
+            ]
+          },
+          "pluginVersion": "12.2.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "hydrolix"
+              },
+              "format": 1,
+              "queryType": "sql",
+              "rawSql": "SELECT\n  asn,\n  country AS Country,\n  cnt_all AS Requests\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort = 'AI'\nGROUP BY asn, country\nORDER BY Requests DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Top AI sources; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Top AI Sources by ASN (Top 50)",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "description": "Exact unique ASN count across all traffic in the selected window.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "noValue": "--",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#2DD4BF",
+                    "value": 0
+                  },
+                  {
+                    "color": "#FCD34D",
+                    "value": 100
+                  },
+                  {
+                    "color": "#FB7185",
+                    "value": 500
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 11,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.2.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "hydrolix"
+              },
+              "format": 1,
+              "queryType": "sql",
+              "rawSql": "SELECT\n  ${timestamp} AS time,\n  uniqExactIf(asn, notEmpty(asn)) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Unique ASN count trend; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "Unique ASN Count",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "hydrolix"
+          },
+          "description": "ASN analysis: ASNs with the largest absolute volume delta between the selected window and the immediately preceding equal-length baseline.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "noValue": "--",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Entity"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "ASN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Show details",
+                        "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.Entity}&${__all_variables}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Delta"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Current"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Baseline"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "abs_delta"
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom.viz",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "id": 12,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "hydrolix-hydrolix-datasource",
+                "uid": "hydrolix"
+              },
+              "format": 1,
+              "queryType": "sql",
+              "rawSql": " WITH\n   toDateTime(${__from:date:seconds})              AS t_start,\n   toDateTime(${__to:date:seconds})                AS t_end,\n   greatest(dateDiff('second', t_start, t_end), 1) AS window_seconds,\n   t_start - INTERVAL window_seconds SECOND        AS b_start\n SELECT\n   asn AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= t_start AND ${timestamp} <  t_end)    AS Current,\n   countMergeIf(`count()`, ${timestamp} >= b_start AND ${timestamp} <  t_start)  AS Baseline,\n   toInt64(Current) - toInt64(Baseline)                                          AS Delta,\n   abs(Delta)                                                                    AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= b_start\n   AND ${timestamp} <  t_end\n   AND $__adHocFilter()\n   AND notEmpty(asn)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=Top 10 Paths by Delta; du=${__user.login}'",
+              "refId": "A"
+            }
+          ],
+          "title": "What Changed (Top Movers)",
+          "type": "table"
+        }
+      ],
+      "title": "Route",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 103,
+      "panels": [
+        {
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 36
+          },
+          "id": 104,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "### Drill Into Detail\n\n| Dashboard | Focus | Link |\n|-----------|-------|------|\n| **SOC \u2014 What Changed** | Volume deltas and ASN/path attribution | [Open SOC \u2192](/d/a2c0be784d2b2220f7d2f121-with-siem/bot-insights-soc-what-changed?${__all_variables}&${__url_time_range}) |\n| **SEO Governance** | AI crawler impact, robots.txt compliance, crawl budget | [Open SEO \u2192](/d/hdx-bot-insights-seo-gov-with-siem/bot-insights-seo-governance?${__all_variables}&${__url_time_range}) |\n| **Edge/Ops** | Origin health, cache efficiency, latency breakdown | [Open Edge \u2192](/d/hdx-bot-insights-edge-ops-with-siem/bot-insights-edge-ops?${__all_variables}&${__url_time_range}) |",
+            "mode": "markdown"
+          },
+          "pluginVersion": "12.2.3",
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        }
+      ],
+      "title": "Handoff",
+      "type": "row"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "bot-insights-cdn-1.1.9",
+    "akamai"
+  ],
+  "templating": {
+    "list": [
+      {
+        "baseFilters": [],
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "hydrolix"
+        },
+        "filters": [],
+        "label": "Filter",
+        "name": "filter",
+        "type": "adhoc"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_MINUTE}",
+          "value": "${VAR_BI_SUMMARY_MINUTE}"
+        },
+        "hide": 2,
+        "label": "summary_minute",
+        "name": "summary_minute",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_MINUTE}",
+            "value": "${VAR_BI_SUMMARY_MINUTE}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_HOUR}",
+          "value": "${VAR_BI_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "label": "summary_hour",
+        "name": "summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_HOUR}",
+            "value": "${VAR_BI_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_DAY}",
+          "value": "${VAR_BI_SUMMARY_DAY}"
+        },
+        "hide": 2,
+        "label": "summary_day",
+        "name": "summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_DAY}",
+            "value": "${VAR_BI_SUMMARY_DAY}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_MINUTE}",
+          "value": "${VAR_BI_SUMMARY_MINUTE}"
+        },
+        "hide": 2,
+        "label": "siem_policy_summary_minute",
+        "name": "siem_policy_summary_minute",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_MINUTE}",
+            "value": "${VAR_BI_SUMMARY_MINUTE}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_MINUTE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_HOUR}",
+          "value": "${VAR_BI_SUMMARY_HOUR}"
+        },
+        "hide": 2,
+        "label": "siem_policy_summary_hour",
+        "name": "siem_policy_summary_hour",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_HOUR}",
+            "value": "${VAR_BI_SUMMARY_HOUR}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_HOUR}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_BI_SUMMARY_DAY}",
+          "value": "${VAR_BI_SUMMARY_DAY}"
+        },
+        "hide": 2,
+        "label": "siem_policy_summary_day",
+        "name": "siem_policy_summary_day",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_BI_SUMMARY_DAY}",
+            "value": "${VAR_BI_SUMMARY_DAY}"
+          }
+        ],
+        "query": "${VAR_BI_SUMMARY_DAY}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "${VAR_BI_SUMMARY_HOUR}",
+          "value": "${VAR_BI_SUMMARY_HOUR}"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "hydrolix"
+        },
+        "definition": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
+        "hide": 2,
+        "label": "siem_policy_table",
+        "name": "siem_policy_table",
+        "options": [],
+        "query": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "${VAR_BI_SUMMARY_HOUR}",
+          "value": "${VAR_BI_SUMMARY_HOUR}"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "hydrolix"
+        },
+        "definition": "SELECT if(${duration} <= 360, '${summary_minute}', if(${duration} <= 4320, '${summary_hour}', '${summary_day}'))",
+        "hide": 2,
+        "label": "table",
+        "name": "table",
+        "options": [],
+        "query": "SELECT if(${duration} <= 360, '${summary_minute}', if(${duration} <= 4320, '${summary_hour}', '${summary_day}'))",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "1440",
+          "value": "1440"
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "hydrolix"
+        },
+        "hide": 2,
+        "name": "duration",
+        "options": [],
+        "query": "SELECT greatest(dateDiff('minute', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS duration",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": [
+            "LIVE (2m)"
+          ],
+          "value": [
+            "LIVE (2m)"
+          ]
+        },
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "hydrolix"
+        },
+        "definition": "SELECT concat(multiIf(dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds})) < 30, 'LIVE', dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds})) < 120, 'STALE', 'DOWN'), ' (', toString(dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds}))), 'm)') FROM ${summary_minute} WHERE $__timeFilter(${timestamp})",
+        "hide": 2,
+        "includeAll": false,
+        "multi": true,
+        "name": "data_freshness",
+        "options": [],
+        "query": "SELECT concat(multiIf(dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds})) < 30, 'LIVE', dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds})) < 120, 'STALE', 'DOWN'), ' (', toString(dateDiff('minute', max(${timestamp}), toDateTime(${__to:date:seconds}))), 'm)') FROM ${summary_minute} WHERE $__timeFilter(${timestamp})",
+        "refresh": 2,
+        "skipUrlSync": true,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_TIMESTAMP}",
+          "value": "${VAR_TIMESTAMP}"
+        },
+        "description": "",
+        "hide": 2,
+        "name": "timestamp",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_TIMESTAMP}",
+            "value": "${VAR_TIMESTAMP}"
+          }
+        ],
+        "query": "${VAR_TIMESTAMP}",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'",
+          "value": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'"
+        },
+        "hide": 2,
+        "name": "resourceCategories",
+        "query": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "text": "'Bot', 'AI'",
+          "value": "'Bot', 'AI'"
+        },
+        "hide": 2,
+        "name": "trafficCohortValues",
+        "query": "'Bot', 'AI'",
+        "skipUrlSync": true,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "${VAR_RAW_TABLE}",
+          "value": "${VAR_RAW_TABLE}"
+        },
+        "hide": 2,
+        "name": "raw_table",
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_RAW_TABLE}",
+            "value": "${VAR_RAW_TABLE}"
+          }
+        ],
+        "query": "${VAR_RAW_TABLE}",
+        "skipUrlSync": true,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Bot Insights - Multi-Domain Triage",
+  "uid": "__DASHBOARD_UUID__",
+  "version": 36
+}

@@ -38,7 +38,7 @@ SELECT
     cityHash64 (coalesce(queryStr, '')),
     coalesce(queryStr, '') != ''
     ) AS cnt_distinctQueryStrings
-FROM __PROJECT_NAME__.__TABLE_NAME__
+FROM demo.logs
 GROUP BY
   reqTimeSec,
   reqHost,

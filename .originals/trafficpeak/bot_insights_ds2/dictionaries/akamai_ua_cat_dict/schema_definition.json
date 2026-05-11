@@ -1,0 +1,74 @@
+{
+  "description": "",
+  "name": "akamai_ua_cat_dict",
+  "settings": {
+    "dictionary_load_level": [
+      "ALL"
+    ],
+    "filename": "akamai_ua_cat_dict",
+    "format": "Regexp",
+    "layout": "regexp_tree",
+    "lifetime_seconds": 5,
+    "output_columns": [
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "regexp"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "ua_category"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "ua_category_key"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "bot_class"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "bot_intent"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "uint8"
+        },
+        "name": "is_bot"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "ai_category"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "producer"
+      }
+    ],
+    "primary_key": [
+      "regexp"
+    ]
+  }
+}
