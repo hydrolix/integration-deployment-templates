@@ -14,10 +14,11 @@ FUNCTION_PATTERN = re.compile(
     r"(?<![a-zA-Z_])(" + "|".join(KNOWN_PREFIXES) + r")_([a-z][a-z0-9_]*)\("
 )
 
-# Regex to find dictGet calls with known prefixes
-# Matches: dictGet('reference_ua_cat_dict', dictGet('commons_geoip_asn_blocks_ipv4'
+# Regex to find dictGet calls with known prefixes.
+# Matches: dictGet('reference_ua_cat_dict' and
+# dictGetOrDefault('commons_geoip_asn_blocks_ipv4'
 DICT_PATTERN = re.compile(
-    r"dictGet\('(" + "|".join(KNOWN_PREFIXES) + r")_([a-z][a-z0-9_]*)'"
+    r"dictGet(?:OrDefault)?\('((" + "|".join(KNOWN_PREFIXES) + r")_[a-z][a-z0-9_]*)'"
 )
 
 # Regex for replacing all known prefixes with the correct one
@@ -69,9 +70,9 @@ def run_sql_analysis(config, state):
 
         # Find all dictionary references
         dict_matches = DICT_PATTERN.findall(sql)
-        for _prefix, base_name in dict_matches:
-            all_dictionaries.add(base_name)
-            tinfo.shared_dictionaries.append(base_name)
+        for full_name, _prefix in dict_matches:
+            all_dictionaries.add(full_name)
+            tinfo.shared_dictionaries.append(full_name)
 
         # Replace prefixes in sql_transform
         new_sql = _replace_prefixes(sql, correct_prefix)

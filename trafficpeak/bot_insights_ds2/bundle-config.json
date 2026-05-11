@@ -1,0 +1,10 @@
+{
+  "table_name": "logs",
+  "data_category": "security",
+  "version": "1.1.0",
+  "bundle_name": "bot_insights_ds2",
+  "source_name": "trafficpeak",
+  "method": "http_streaming",
+  "channel_type": "3rdParty",
+  "description": "DS2-only TrafficPeak Bot Insights bundle for Akamai logs."
+}

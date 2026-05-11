@@ -129,9 +129,9 @@ def _build_bundle_data(config, state, method):
         },
         "dependencies": {
             "hydrolix": {
-                "required_dictionaries": [],
+                "required_dictionaries": state.all_shared_dictionaries,
                 "required_functions": [],
-                "shared_dictionaries": state.all_shared_dictionaries,
+                "shared_dictionaries": [],
                 "shared_functions": state.all_shared_functions,
             }
         },

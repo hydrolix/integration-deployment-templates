@@ -234,6 +234,12 @@ class AssetDiscoverer:
     def _discover_dictionaries(self, folder: Path) -> List[Dictionary]:
         """Find dictionary schema files for names declared in bundle.json."""
         names = self._load_dep_names('dictionaries')
+        if not names:
+            names = {
+                item.name
+                for item in folder.iterdir()
+                if item.is_dir() and (item / 'schema_definition.json').exists()
+            }
         results = []
         for name in sorted(names):
             schema = folder / name / 'schema_definition.json'
