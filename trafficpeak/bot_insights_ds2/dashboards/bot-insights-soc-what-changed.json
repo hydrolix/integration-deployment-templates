@@ -200,52 +200,12 @@
               "uid": "__DATASOURCE__"
             },
             "format": 1,
-            "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  cnt_all AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Volume vs Baseline - A: Volume delta current; du=${__user.login}'",
-            "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "queryType": "sql",
-            "rawSql": "WITH\n  greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS window_seconds\nSELECT\n  ${timestamp} + INTERVAL window_seconds SECOND AS time,\n  cnt_all AS baseline_value\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL window_seconds SECOND\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Volume vs Baseline - B: Volume delta baseline; du=${__user.login}'",
-            "refId": "B"
+            "hide": false,
+            "rawSql": "  WITH\n    $__fromTime AS current_start,\n    $__toTime AS current_end,\n    greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n    current_start - INTERVAL window_seconds SECOND AS baseline_start\n  SELECT\n    IF(${timestamp} >= current_start, ${timestamp}, ${timestamp} + INTERVAL window_seconds SECOND) AS time,\n    countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} < current_end) AS current_value,\n    countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} < current_start) AS baseline_value\n  FROM ${table}\n  WHERE ${timestamp} >= baseline_start AND ${timestamp} < current_end\n    AND $__adHocFilter()\n  GROUP BY time\n  ORDER BY time\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Volume vs Baseline; du=${__user.login}'",
+            "refId": "C"
           }
         ],
         "title": "Volume vs Baseline",
-        "transformations": [
-          {
-            "id": "joinByField",
-            "options": {
-              "byField": "time",
-              "mode": "outer"
-            }
-          },
-          {
-            "id": "calculateField",
-            "options": {
-              "alias": "delta",
-              "binary": {
-                "left": "current_value",
-                "operator": "-",
-                "right": "baseline_value"
-              },
-              "mode": "binary",
-              "replaceFields": false
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {}
-            }
-          }
-        ],
         "type": "timeseries"
       },
       {
@@ -383,53 +343,13 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "format": 1,
-            "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, statusCode = 429) * 100.0 / greatest(cnt_all, 1), 2) AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=429 Rate vs Baseline - A: 429 rate delta current; du=${__user.login}'",
+            "format": 0,
+            "hide": false,
+            "rawSql": "  WITH\n    $__fromTime AS current_start,\n    $__toTime   AS current_end,\n    greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n    current_start - INTERVAL window_seconds SECOND AS baseline_start\n  SELECT\n    IF(${timestamp} >= current_start, ${timestamp}, ${timestamp} + INTERVAL window_seconds SECOND) AS time,\n    round(countMergeIf(`count()`, statusCode = 429 AND ${timestamp} >= current_start AND ${timestamp} <  current_end) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end),1),2) AS current_value,\n    round(countMergeIf(`count()`, statusCode = 429 AND ${timestamp} >= baseline_start AND ${timestamp} <  current_start) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start), 1),2) AS baseline_value\n  FROM ${table}\n  WHERE ${timestamp} >= baseline_start AND ${timestamp} < current_end\n    AND $__adHocFilter()\n  GROUP BY time\n  ORDER BY time\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=429 Rate vs Baseline; du=${__user.login}'",
             "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 1,
-            "queryType": "sql",
-            "rawSql": "WITH\n  greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS window_seconds\nSELECT\n  ${timestamp} + INTERVAL window_seconds SECOND AS time,\n  round(countMergeIf(`count()`, statusCode = 429) * 100.0 / greatest(cnt_all, 1), 2) AS baseline_value\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL window_seconds SECOND\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=429 Rate vs Baseline - B: 429 rate delta baseline; du=${__user.login}'",
-            "refId": "B"
           }
         ],
         "title": "429 Rate vs Baseline",
-        "transformations": [
-          {
-            "id": "joinByField",
-            "options": {
-              "byField": "time",
-              "mode": "outer"
-            }
-          },
-          {
-            "id": "calculateField",
-            "options": {
-              "alias": "delta",
-              "binary": {
-                "left": "current_value",
-                "operator": "-",
-                "right": "baseline_value"
-              },
-              "mode": "binary",
-              "replaceFields": false
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {}
-            }
-          }
-        ],
         "type": "timeseries"
       },
       {
@@ -591,66 +511,13 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "format": 0,
-            "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600) * 100.0 / greatest(cnt_all, 1), 2) AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=5xx Rate vs Baseline - A: 5xx rate delta current; du=${__user.login}'",
+            "format": 1,
+            "hide": false,
+            "rawSql": "  WITH\n    $__fromTime AS current_start,\n    $__toTime   AS current_end,\n    greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n    current_start - INTERVAL window_seconds SECOND AS baseline_start\n  SELECT\n    IF(${timestamp} >= current_start, ${timestamp}, ${timestamp} + INTERVAL window_seconds SECOND) AS time,\n    round(countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600 AND ${timestamp} >= current_start AND ${timestamp} <  current_end) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end),1),2) AS current_value,\n    round(countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600 AND ${timestamp} >= baseline_start AND ${timestamp} <  current_start) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start), 1),2) AS baseline_value\n  FROM ${table}\n  WHERE ${timestamp} >= baseline_start AND ${timestamp} <  current_end\n    AND $__adHocFilter()\n  GROUP BY time\n  ORDER BY time\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=5xx Rate vs Baseline; du=${__user.login}'",
             "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 0,
-            "queryType": "sql",
-            "rawSql": "WITH\n  greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS window_seconds\nSELECT\n  ${timestamp} + INTERVAL window_seconds SECOND AS time,\n  round(countMergeIf(`count()`, statusCode >= 500 AND statusCode < 600) * 100.0 / greatest(cnt_all, 1), 2)  AS baseline_value\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL window_seconds SECOND\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=5xx Rate vs Baseline - B: 5xx rate delta baseline; du=${__user.login}'",
-            "refId": "B"
           }
         ],
         "title": "5xx Rate vs Baseline",
-        "transformations": [
-          {
-            "id": "joinByField",
-            "options": {
-              "byField": "time",
-              "mode": "outer"
-            }
-          },
-          {
-            "id": "calculateField",
-            "options": {
-              "alias": "delta",
-              "binary": {
-                "left": {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "current_value"
-                  }
-                },
-                "operator": "-",
-                "right": {
-                  "matcher": {
-                    "id": "byName",
-                    "options": "baseline_value"
-                  }
-                }
-              },
-              "mode": "binary",
-              "reduce": {
-                "reducer": "sum"
-              },
-              "replaceFields": false
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {}
-            }
-          }
-        ],
         "type": "timeseries"
       },
       {
@@ -813,52 +680,12 @@
               "uid": "__DATASOURCE__"
             },
             "format": 0,
-            "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, cacheStatus = false) * 100.0 / greatest(cnt_all, 1), 2) AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache Miss Rate vs Baseline - A: Cache miss delta current; du=${__user.login}'",
+            "hide": false,
+            "rawSql": "  WITH\n    $__fromTime AS current_start,\n    $__toTime   AS current_end,\n    greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n    current_start - INTERVAL window_seconds SECOND AS baseline_start\n  SELECT\n    IF(${timestamp} >= current_start, ${timestamp}, ${timestamp} + INTERVAL window_seconds SECOND) AS time,\n    round(countMergeIf(`count()`, cacheStatus = false AND ${timestamp} >= current_start AND ${timestamp} <  current_end) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end),1),2) AS current_value,\n    round(countMergeIf(`count()`, cacheStatus = false AND ${timestamp} >= baseline_start AND ${timestamp} <  current_start) * 100.0 / greatest(countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start), 1),2) AS baseline_value\n  FROM ${table}\n  WHERE ${timestamp} >= baseline_start AND ${timestamp} <  current_end\n    AND $__adHocFilter()\n  GROUP BY time\n  ORDER BY time\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache Miss Rate vs Baseline; du=${__user.login}'",
             "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 0,
-            "queryType": "sql",
-            "rawSql": "WITH\n  greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS window_seconds\nSELECT\n  ${timestamp} + INTERVAL window_seconds SECOND AS time,\n  round(countMergeIf(`count()`, cacheStatus = false) * 100.0 / greatest(cnt_all, 1), 2) AS baseline_value\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL window_seconds SECOND\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Cache Miss Rate vs Baseline - B: Cache miss delta baseline; du=${__user.login}'",
-            "refId": "B"
           }
         ],
         "title": "Cache Miss Rate vs Baseline",
-        "transformations": [
-          {
-            "id": "joinByField",
-            "options": {
-              "byField": "time",
-              "mode": "outer"
-            }
-          },
-          {
-            "id": "calculateField",
-            "options": {
-              "alias": "delta",
-              "binary": {
-                "left": "current_value",
-                "operator": "-",
-                "right": "baseline_value"
-              },
-              "mode": "binary",
-              "replaceFields": false
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {}
-            }
-          }
-        ],
         "type": "timeseries"
       },
       {
@@ -997,52 +824,12 @@
               "uid": "__DATASOURCE__"
             },
             "format": 0,
-            "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(sum_originTurnAroundTime_ms / nullIf(cnt_originTurnAroundTime, 0), 2) AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin TaT vs Baseline - A: Origin TaT delta current; du=${__user.login}'",
+            "hide": false,
+            "rawSql": "  WITH\n    $__fromTime AS current_start,\n    $__toTime   AS current_end,\n    greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds\n  SELECT\n    IF(${timestamp} >= current_start, ${timestamp}, ${timestamp} + INTERVAL window_seconds SECOND) AS time,\n    IF(${timestamp} >= current_start, 'current_value', 'baseline_value') AS series,\n    round(sum_originTurnAroundTime_ms / nullIf(cnt_originTurnAroundTime, 0), 2) AS value\n  FROM ${table}\n  WHERE ${timestamp} >= current_start - INTERVAL window_seconds SECOND\n    AND ${timestamp} <  current_end\n    AND $__adHocFilter()\n  GROUP BY time, series\n  ORDER BY time\n  SETTINGS hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin TaT vs Baseline; du=${__user.login}'",
             "refId": "A"
-          },
-          {
-            "datasource": {
-              "type": "hydrolix-hydrolix-datasource",
-              "uid": "__DATASOURCE__"
-            },
-            "format": 0,
-            "queryType": "sql",
-            "rawSql": "WITH\n  greatest(dateDiff('second', toDateTime(${__from:date:seconds}), toDateTime(${__to:date:seconds})), 1) AS window_seconds\nSELECT\n  ${timestamp} + INTERVAL window_seconds SECOND AS time,\n  round(sum_originTurnAroundTime_ms / nullIf(cnt_originTurnAroundTime, 0), 2) AS baseline_value\nFROM ${table}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL window_seconds SECOND\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Origin TaT vs Baseline - B: Origin TaT delta baseline; du=${__user.login}'",
-            "refId": "B"
           }
         ],
         "title": "Origin TaT vs Baseline",
-        "transformations": [
-          {
-            "id": "joinByField",
-            "options": {
-              "byField": "time",
-              "mode": "outer"
-            }
-          },
-          {
-            "id": "calculateField",
-            "options": {
-              "alias": "delta",
-              "binary": {
-                "left": "current_value",
-                "operator": "-",
-                "right": "baseline_value"
-              },
-              "mode": "binary",
-              "replaceFields": false
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": {},
-              "indexByName": {},
-              "renameByName": {}
-            }
-          }
-        ],
         "type": "timeseries"
       },
       {
@@ -1050,7 +837,7 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "Minutes since most recent ingested event. LIVE = data flowing normally. STALE = possible pipeline delay. DOWN = no data.",
+        "description": "Minutes since most recent ingested event. LIVE = data flowing normally.",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -1137,7 +924,7 @@
             },
             "format": 1,
             "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  greatest(dateDiff('minute', ${timestamp}, toDateTime(${__to:date:seconds})), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data lag; du=${__user.login}'",
+            "rawSql": "SELECT\n  max(${timestamp}) AS time,\n  greatest(dateDiff('minute', max(${timestamp}), $__toTime), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data Lag; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1284,11 +1071,11 @@
                 },
                 "format": 1,
                 "queryType": "sql",
-                "rawSql": " WITH\n   toDateTime(${__from:date:seconds})              AS t_start,\n   toDateTime(${__to:date:seconds})                AS t_end,\n   greatest(dateDiff('second', t_start, t_end), 1) AS window_seconds,\n   t_start - INTERVAL window_seconds SECOND        AS b_start\n SELECT\n   asn AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= t_start AND ${timestamp} <  t_end)    AS Current,\n   countMergeIf(`count()`, ${timestamp} >= b_start AND ${timestamp} <  t_start)  AS Baseline,\n   toInt64(Current) - toInt64(Baseline)                                          AS Delta,\n   abs(Delta)                                                                    AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= b_start\n   AND ${timestamp} <  t_end\n   AND $__adHocFilter()\n   AND notEmpty(asn)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=ASNs by Delta (Top 50); du=${__user.login}'",
+                "rawSql": " WITH\n   $__fromTime AS current_start,\n   $__toTime AS current_end,\n   greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n   current_start - INTERVAL window_seconds SECOND AS baseline_start\n SELECT\n   asn AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end) AS Current,\n   countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start) AS Baseline,\n   toInt64(Current) - toInt64(Baseline) AS Delta,\n   abs(Delta) AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= baseline_start\n   AND ${timestamp} <  current_end\n   AND $__adHocFilter()\n   AND notEmpty(asn)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=ASNs by Delta (Top 10); du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "ASNs by Delta (Top 50)",
+            "title": "ASNs by Delta (Top 10)",
             "type": "table"
           },
           {
@@ -1296,7 +1083,7 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "Top 10 Request Paths per total Request Count, sorted by abs(delta) descending.",
+            "description": "Request Paths ranked by absolute volume delta between current and baseline windows. Sorted by abs(delta) descending -- shows what changed, not what is large.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1340,7 +1127,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.Entity}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=${reqPath}|=|${__data.fields.Entity}&${__all_variables}"
                         }
                       ]
                     }
@@ -1427,11 +1214,11 @@
                 },
                 "format": 1,
                 "queryType": "sql",
-                "rawSql": " WITH\n   toDateTime(${__from:date:seconds})              AS t_start,\n   toDateTime(${__to:date:seconds})                AS t_end,\n   greatest(dateDiff('second', t_start, t_end), 1) AS window_seconds,\n   t_start - INTERVAL window_seconds SECOND        AS b_start\n SELECT\n   requestPathPattern AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= t_start AND ${timestamp} <  t_end)    AS Current,\n   countMergeIf(`count()`, ${timestamp} >= b_start AND ${timestamp} <  t_start)  AS Baseline,\n   toInt64(Current) - toInt64(Baseline)                                          AS Delta,\n   abs(Delta)                                                                    AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= b_start\n   AND ${timestamp} <  t_end\n   AND $__adHocFilter()\n   AND notEmpty(requestPathPattern)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=Top 10 Paths by Delta (combined); du=${__user.login}'",
+                "rawSql": " WITH\n   $__fromTime AS current_start,\n   $__toTime AS current_end,\n   greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n   current_start - INTERVAL window_seconds SECOND AS baseline_start\n SELECT\n   ${reqPath} AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end) AS Current,\n   countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start) AS Baseline,\n   toInt64(Current) - toInt64(Baseline) AS Delta,\n   abs(Delta) AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= baseline_start\n   AND ${timestamp} <  current_end\n   AND $__adHocFilter()\n   AND notEmpty(${reqPath})\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=Paths by Delta (Top 10); du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top 10 Paths by Delta",
+            "title": "Paths by Delta (Top 10)",
             "type": "table"
           },
           {
@@ -1439,7 +1226,7 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "ASNs present in the current window that were not seen in the prior lookback window (1 day).\nThis panel only shows Bot and AI traffic.",
+            "description": "ASNs present in the current window that were not seen in the prior lookback window (${newly_seen_window} day(s)).\nThis panel only shows Bot and AI traffic.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1471,7 +1258,7 @@
                 {
                   "matcher": {
                     "id": "byName",
-                    "options": "entity"
+                    "options": "ASN"
                   },
                   "properties": [
                     {
@@ -1541,95 +1328,12 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "queryType": "sql",
-                "rawSql": "SELECT\n  concat('ASN:', toString(asn)) AS entity_key,\n  toString(asn) AS entity,\n  cnt_all AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort IN ('Bot', 'AI')\nGROUP BY entity_key, entity\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen ASNs with Bot/AI traffic (Top 50)- A: Newly Seen ASNs current; du=${__user.login}'",
+                "hide": false,
+                "rawSql": "  SELECT\n    asn AS ASN,\n    cnt_all AS Volume\n  FROM ${table}\n  WHERE $__timeFilter(${timestamp})\n    AND $__adHocFilter()\n    AND trafficCohort IN ('Bot', 'AI')\n    AND asn NOT IN (\n      SELECT asn\n      FROM ${table}\n      WHERE ${timestamp} >= $__fromTime - INTERVAL ${newly_seen_window} DAY\n        AND ${timestamp} < $__fromTime\n        AND trafficCohort IN ('Bot', 'AI')\n      GROUP BY asn\n    )\n  GROUP BY asn\n  ORDER BY Volume DESC\n  LIMIT 10\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen ASNs with Bot/AI traffic (Top 10); du=${__user.login}'",
                 "refId": "A"
-              },
-              {
-                "datasource": {
-                  "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
-                },
-                "format": 1,
-                "queryType": "sql",
-                "rawSql": "SELECT\n  concat('ASN:', toString(asn)) AS entity_key,\n  1 AS baseline_value\nFROM ${summary_minute}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL ${newly_seen_window} DAY\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\n  AND trafficCohort IN ('Bot', 'AI')\nGROUP BY entity_key\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen ASNs with Bot/AI traffic (Top 50)- B: Newly Seen ASNs baseline; du=${__user.login}'",
-                "refId": "B"
               }
             ],
-            "title": "Newly Seen ASNs with Bot/AI traffic (Top 50)",
-            "transformations": [
-              {
-                "id": "joinByField",
-                "options": {
-                  "byField": "entity_key",
-                  "mode": "outer"
-                }
-              },
-              {
-                "id": "filterByValue",
-                "options": {
-                  "filters": [
-                    {
-                      "config": {
-                        "id": "greater",
-                        "options": {
-                          "value": 0
-                        }
-                      },
-                      "fieldName": "baseline_value"
-                    }
-                  ],
-                  "match": "all",
-                  "type": "exclude"
-                }
-              },
-              {
-                "id": "sortBy",
-                "options": {
-                  "fields": {},
-                  "sort": [
-                    {
-                      "desc": true,
-                      "field": "current_value"
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "limit",
-                "options": {
-                  "limitField": 50
-                }
-              },
-              {
-                "id": "filterFieldsByName",
-                "options": {
-                  "include": {
-                    "names": [
-                      "entity A",
-                      "current_value A"
-                    ]
-                  }
-                }
-              },
-              {
-                "id": "organize",
-                "options": {
-                  "excludeByName": {
-                    "baseline_value": true,
-                    "entity_key": true
-                  },
-                  "indexByName": {
-                    "current_value A": 1,
-                    "entity A": 0
-                  },
-                  "renameByName": {
-                    "current_value A": "Volume",
-                    "entity A": "ASN"
-                  }
-                }
-              }
-            ],
+            "title": "Newly Seen ASNs with Bot/AI traffic (Top 10)",
             "type": "table"
           },
           {
@@ -1637,7 +1341,7 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "User agent categories present in the current window that were not seen in the prior lookback window (1 day).\nThis panel only shows Bot and AI traffic.",
+            "description": "User agent categories present in the current window that were not seen in the prior lookback window (${newly_seen_window} day(s)).\nThis panel only shows Bot and AI traffic.",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -1743,95 +1447,12 @@
                   "uid": "__DATASOURCE__"
                 },
                 "format": 1,
-                "queryType": "sql",
-                "rawSql": "SELECT\n  concat('UA:', userAgentCategory) AS entity_key,\n  userAgentCategory AS entity,\n  cnt_all AS current_value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort IN ('Bot', 'AI')\n  AND notEmpty(userAgentCategory)\nGROUP BY entity_key, entity\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen UA Categories with Bot/AI traffic (Top 50) - A: Newly Seen UA Categories current; du=${__user.login}'",
+                "hide": false,
+                "rawSql": "  SELECT\n    userAgentCategory AS entity,\n    cnt_all AS Volume\n  FROM ${table}\n  WHERE $__timeFilter(${timestamp})\n    AND $__adHocFilter()\n    AND trafficCohort IN ('Bot', 'AI')\n    AND userAgentCategory NOT IN (\n      SELECT userAgentCategory\n      FROM ${table}\n      WHERE ${timestamp} >= $__fromTime - INTERVAL ${newly_seen_window} DAY\n        AND ${timestamp} < $__fromTime\n        AND trafficCohort IN ('Bot', 'AI')\n      GROUP BY userAgentCategory\n    )\n  GROUP BY entity\n  ORDER BY Volume DESC\n  LIMIT 10\n  SETTINGS\n    hdx_query_max_execution_time = 60,\n    hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen ASNs with Bot/AI traffic (Top 10); du=${__user.login}'",
                 "refId": "A"
-              },
-              {
-                "datasource": {
-                  "type": "hydrolix-hydrolix-datasource",
-                  "uid": "__DATASOURCE__"
-                },
-                "format": 1,
-                "queryType": "sql",
-                "rawSql": "SELECT\n  concat('UA:', userAgentCategory) AS entity_key,\n  1 AS baseline_value\nFROM ${summary_minute}\nWHERE ${timestamp} >= toDateTime(${__from:date:seconds}) - INTERVAL ${newly_seen_window} DAY\n  AND ${timestamp} < toDateTime(${__from:date:seconds})\n  AND $__adHocFilter()\n  AND trafficCohort IN ('Bot', 'AI')\n  AND notEmpty(userAgentCategory)\nGROUP BY entity_key\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Newly Seen UA Categories with Bot/AI traffic (Top 50) - B: Newly Seen UA Categories baseline; du=${__user.login}'",
-                "refId": "B"
               }
             ],
-            "title": "Newly Seen UA Categories with Bot/AI traffic (Top 50)",
-            "transformations": [
-              {
-                "id": "joinByField",
-                "options": {
-                  "byField": "entity_key",
-                  "mode": "outer"
-                }
-              },
-              {
-                "id": "filterByValue",
-                "options": {
-                  "filters": [
-                    {
-                      "config": {
-                        "id": "greater",
-                        "options": {
-                          "value": 0
-                        }
-                      },
-                      "fieldName": "baseline_value"
-                    }
-                  ],
-                  "match": "all",
-                  "type": "exclude"
-                }
-              },
-              {
-                "id": "sortBy",
-                "options": {
-                  "fields": {},
-                  "sort": [
-                    {
-                      "desc": true,
-                      "field": "current_value"
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "limit",
-                "options": {
-                  "limitField": 50
-                }
-              },
-              {
-                "id": "filterFieldsByName",
-                "options": {
-                  "include": {
-                    "names": [
-                      "entity A",
-                      "current_value A"
-                    ]
-                  }
-                }
-              },
-              {
-                "id": "organize",
-                "options": {
-                  "excludeByName": {
-                    "baseline_value": true,
-                    "entity_key": true
-                  },
-                  "indexByName": {
-                    "current_value A": 1,
-                    "entity A": 0
-                  },
-                  "renameByName": {
-                    "current_value A": "Volume",
-                    "entity A": "User Agent Category"
-                  }
-                }
-              }
-            ],
+            "title": "Newly Seen UA Categories with Bot/AI traffic (Top 10)",
             "type": "table"
           }
         ],
@@ -2219,7 +1840,7 @@
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
             },
-            "description": "Top request paths by volume within the filtered cohort/ASN. Shows concentration fraction without promoting request_path to a dashboard-global filter.",
+            "description": "Top request paths by volume within the filtered cohort/ASN. ",
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -2268,7 +1889,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.endpoint}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=${reqPath}|=|${__data.fields.endpoint}&${__all_variables}"
                         }
                       ]
                     }
@@ -2336,11 +1957,11 @@
                 },
                 "format": 1,
                 "queryType": "sql",
-                "rawSql": "SELECT\n  requestPathPattern AS endpoint,\n  multiIf(isBotTraffic = false, 'Human', notEmpty(aiCategory), aiCategory, notEmpty(userAgentCategory), userAgentCategory, 'bot') AS cohort,\n  cnt_all AS requests\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND notEmpty(requestPathPattern)\nGROUP BY endpoint, cohort\nORDER BY requests DESC\nLIMIT 25\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Endpoint concentration per cohort; du=${__user.login}'",
+                "rawSql": "SELECT\n  ${reqPath} AS endpoint,\n  multiIf(isBotTraffic = false, 'Human', notEmpty(aiCategory), aiCategory, notEmpty(userAgentCategory), userAgentCategory, 'bot') AS cohort,\n  cnt_all AS requests\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND notEmpty(${reqPath})\nGROUP BY endpoint, cohort\nORDER BY requests DESC\nLIMIT 10\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Endpoint concentration per cohort; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Endpoint Concentration per Cohort (Top 25)",
+            "title": "Endpoint Concentration per Cohort (Top 10)",
             "type": "table"
           }
         ],
@@ -2371,8 +1992,8 @@
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            "text": "__SUMMARY_TABLE_NAME_3__",
+            "value": "__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "summary_minute",
@@ -2380,19 +2001,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+              "text": "__SUMMARY_TABLE_NAME_3__",
+              "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "query": "__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "summary_hour",
@@ -2400,19 +2021,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "summary_day",
@@ -2420,19 +2041,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            "text": "__SUMMARY_TABLE_NAME_3__",
+            "value": "__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "siem_policy_summary_minute",
@@ -2440,19 +2061,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+              "text": "__SUMMARY_TABLE_NAME_3__",
+              "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "query": "__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "siem_policy_summary_hour",
@@ -2460,19 +2081,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "siem_policy_summary_day",
@@ -2480,19 +2101,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "allowCustomValue": false,
           "current": {
-            "text": "${VAR_BI_SUMMARY_HOUR}",
-            "value": "${VAR_BI_SUMMARY_HOUR}"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -2512,8 +2133,8 @@
         {
           "allowCustomValue": false,
           "current": {
-            "text": "${VAR_BI_SUMMARY_HOUR}",
-            "value": "${VAR_BI_SUMMARY_HOUR}"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -2573,7 +2194,7 @@
             "value": "1"
           },
           "hide": 2,
-          "label": "Newly Seen Window",
+          "label": "Newly Seen Window in days",
           "name": "newly_seen_window",
           "options": [
             {
@@ -2607,20 +2228,20 @@
         },
         {
           "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            "text": "requestPathPattern",
+            "value": "requestPathPattern"
           },
+          "description": "",
           "hide": 2,
-          "name": "raw_table",
+          "name": "reqPath",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "requestPathPattern",
+              "value": "requestPathPattern"
             }
           ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "query": "requestPathPattern",
           "skipUrlSync": true,
           "type": "constant"
         }
@@ -2644,14 +2265,6 @@
     "timezone": "utc",
     "title": "Bot Insights - SOC What Changed",
     "uid": "__DASHBOARD_UUID__",
-    "version": 54,
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
-      }
-    }
+    "version": 54
   }
 }

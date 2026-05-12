@@ -79,7 +79,7 @@
           "type": "hydrolix-hydrolix-datasource",
           "uid": "__DATASOURCE__"
         },
-        "description": "Minutes since last ingested row. LIVE <60min, STALE 60-360min, DOWN >360min.",
+        "description": "Minutes since most recent ingested event. LIVE = data flowing normally.",
         "fieldConfig": {
           "defaults": {
             "color": {
@@ -166,7 +166,7 @@
             },
             "format": 1,
             "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  greatest(dateDiff('minute', ${timestamp}, toDateTime(${__to:date:seconds})), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data freshness trend; du=${__user.login}'",
+            "rawSql": "SELECT\n  max(${timestamp}) AS time,\n  greatest(dateDiff('minute', max(${timestamp}), $__toTime), 0) AS lag_minutes\nFROM ${summary_minute}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Data freshness trend; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -932,7 +932,7 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 16
+          "y": 17
         },
         "id": 102,
         "panels": [
@@ -1017,7 +1017,7 @@
               "h": 8,
               "w": 12,
               "x": 0,
-              "y": 17
+              "y": 22
             },
             "id": 9,
             "options": {
@@ -1170,7 +1170,7 @@
               "h": 8,
               "w": 12,
               "x": 12,
-              "y": 17
+              "y": 22
             },
             "id": 10,
             "options": {
@@ -1192,11 +1192,11 @@
                 },
                 "format": 1,
                 "queryType": "sql",
-                "rawSql": "SELECT\n  asn,\n  country AS Country,\n  cnt_all AS Requests\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort = 'AI'\nGROUP BY asn, country\nORDER BY Requests DESC\nLIMIT 50\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Top AI sources; du=${__user.login}'",
+                "rawSql": "SELECT\n  asn,\n  country AS Country,\n  cnt_all AS Requests\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  AND trafficCohort = 'AI'\nGROUP BY asn, country\nORDER BY Requests DESC\nLIMIT 10\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Top AI sources; du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "Top AI Sources by ASN (Top 50)",
+            "title": "Top AI Sources by ASN (Top 10)",
             "type": "table"
           },
           {
@@ -1237,7 +1237,7 @@
               "h": 10,
               "w": 12,
               "x": 0,
-              "y": 25
+              "y": 30
             },
             "id": 11,
             "options": {
@@ -1387,7 +1387,7 @@
               "h": 10,
               "w": 12,
               "x": 12,
-              "y": 25
+              "y": 30
             },
             "id": 12,
             "options": {
@@ -1403,11 +1403,11 @@
                 },
                 "format": 1,
                 "queryType": "sql",
-                "rawSql": " WITH\n   toDateTime(${__from:date:seconds})              AS t_start,\n   toDateTime(${__to:date:seconds})                AS t_end,\n   greatest(dateDiff('second', t_start, t_end), 1) AS window_seconds,\n   t_start - INTERVAL window_seconds SECOND        AS b_start\n SELECT\n   asn AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= t_start AND ${timestamp} <  t_end)    AS Current,\n   countMergeIf(`count()`, ${timestamp} >= b_start AND ${timestamp} <  t_start)  AS Baseline,\n   toInt64(Current) - toInt64(Baseline)                                          AS Delta,\n   abs(Delta)                                                                    AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= b_start\n   AND ${timestamp} <  t_end\n   AND $__adHocFilter()\n   AND notEmpty(asn)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=Top 10 Paths by Delta; du=${__user.login}'",
+                "rawSql": " WITH\n   $__fromTime AS current_start,\n   $__toTime AS current_end,\n   greatest(dateDiff('second', current_start, current_end), 1) AS window_seconds,\n   current_start - INTERVAL window_seconds SECOND AS baseline_start\n SELECT\n   asn AS Entity,\n   countMergeIf(`count()`, ${timestamp} >= current_start AND ${timestamp} <  current_end) AS Current,\n   countMergeIf(`count()`, ${timestamp} >= baseline_start AND ${timestamp} <  current_start) AS Baseline,\n   toInt64(Current) - toInt64(Baseline) AS Delta,\n   abs(Delta) AS abs_delta\n FROM ${table}\n WHERE ${timestamp} >= baseline_start\n   AND ${timestamp} <  current_end\n   AND $__adHocFilter()\n   AND notEmpty(asn)\n GROUP BY Entity\n ORDER BY abs_delta DESC\n LIMIT 10\n SETTINGS\n   hdx_query_max_execution_time = 60,\n   hdx_query_admin_comment = 'db=${__dashboard}; dp=ASNs by Delta (Top 10); du=${__user.login}'",
                 "refId": "A"
               }
             ],
-            "title": "What Changed (Top Movers)",
+            "title": "What Changed (Top 10)",
             "type": "table"
           }
         ],
@@ -1420,7 +1420,7 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 17
+          "y": 16
         },
         "id": 103,
         "panels": [
@@ -1433,7 +1433,7 @@
               "h": 4,
               "w": 24,
               "x": 0,
-              "y": 36
+              "y": 17
             },
             "id": 104,
             "options": {
@@ -1442,7 +1442,7 @@
                 "showLineNumbers": false,
                 "showMiniMap": false
               },
-              "content": "### Drill Into Detail\n\n| Dashboard | Focus | Link |\n|-----------|-------|------|\n| **SOC — What Changed** | Volume deltas and ASN/path attribution | [Open SOC →](/d/a2c0be784d2b2220f7d2f121-with-siem/bot-insights-soc-what-changed?${__all_variables}&${__url_time_range}) |\n| **SEO Governance** | AI crawler impact, robots.txt compliance, crawl budget | [Open SEO →](/d/hdx-bot-insights-seo-gov-with-siem/bot-insights-seo-governance?${__all_variables}&${__url_time_range}) |\n| **Edge/Ops** | Origin health, cache efficiency, latency breakdown | [Open Edge →](/d/hdx-bot-insights-edge-ops-with-siem/bot-insights-edge-ops?${__all_variables}&${__url_time_range}) |",
+              "content": "### Drill Into Detail\n\n| Dashboard | Focus | Link |\n|-----------|-------|------|\n| **SOC — What Changed** | Volume deltas and ASN/path attribution | SOC |\n| **SEO Governance** | AI crawler impact, robots.txt compliance, crawl budget | SEO |\n| **Edge/Ops** | Origin health, cache efficiency, latency breakdown | Edge/Ops |",
               "mode": "markdown"
             },
             "pluginVersion": "12.2.3",
@@ -1478,8 +1478,8 @@
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            "text": "__SUMMARY_TABLE_NAME_3__",
+            "value": "__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "summary_minute",
@@ -1487,19 +1487,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+              "text": "__SUMMARY_TABLE_NAME_3__",
+              "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "query": "__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "summary_hour",
@@ -1507,19 +1507,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "summary_day",
@@ -1527,19 +1527,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+            "text": "__SUMMARY_TABLE_NAME_3__",
+            "value": "__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "siem_policy_summary_minute",
@@ -1547,19 +1547,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
+              "text": "__SUMMARY_TABLE_NAME_3__",
+              "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+          "query": "__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "siem_policy_summary_hour",
@@ -1567,19 +1567,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "query": "__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "siem_policy_summary_day",
@@ -1587,19 +1587,19 @@
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "query": "__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "allowCustomValue": false,
           "current": {
-            "text": "${VAR_BI_SUMMARY_HOUR}",
-            "value": "${VAR_BI_SUMMARY_HOUR}"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -1619,8 +1619,8 @@
         {
           "allowCustomValue": false,
           "current": {
-            "text": "${VAR_BI_SUMMARY_HOUR}",
-            "value": "${VAR_BI_SUMMARY_HOUR}"
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
           },
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
@@ -1719,25 +1719,6 @@
           "query": "'Bot', 'AI'",
           "skipUrlSync": true,
           "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
-          "hide": 2,
-          "name": "raw_table",
-          "options": [
-            {
-              "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant"
         }
       ]
     },
@@ -1759,14 +1740,6 @@
     "timezone": "utc",
     "title": "Bot Insights - Multi-Domain Triage",
     "uid": "__DASHBOARD_UUID__",
-    "version": 36,
-    "__elements": {
-      "model": {
-        "datasource": {
-          "type": "hydrolix-hydrolix-datasource",
-          "uid": "__DATASOURCE__"
-        }
-      }
-    }
+    "version": 36
   }
 }
