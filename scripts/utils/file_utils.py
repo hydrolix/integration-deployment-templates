@@ -63,3 +63,20 @@ def sanitize_filename(name):
     sanitized = re.sub(r"[^a-zA-Z0-9_-]", "-", name)
     sanitized = re.sub(r"-{2,}", "-", sanitized)
     return sanitized.strip("-")
+
+
+def slugify_grafana_title(title: str) -> str:
+    """Convert a Grafana dashboard title to its URL slug.
+
+    Mirrors Grafana's own slugification: lowercase, any run of non-alphanumeric
+    ASCII characters collapses to a single hyphen, leading/trailing hyphens
+    stripped. Non-ASCII characters (accents, etc.) are treated as separators.
+
+    Examples:
+        "Raw Logs"             -> "raw-logs"
+        "CDN Dashboard Default"-> "cdn-dashboard-default"
+        "Cache Analysis Treemap" -> "cache-analysis-treemap"
+    """
+    slug = title.lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug)
+    return slug.strip("-")
