@@ -1,0 +1,10 @@
+name: trafficpeak_bot_insights_ds2_siem
+version: 1.1.0
+description: DS2 + SIEM TrafficPeak Bot Insights bundle for Akamai logs.
+maintainer: Hydrolix Team <team@hydrolix.io>
+hydrolix:
+  resources: hydrolix/resources.hdp.yaml
+grafana:
+  resources: grafana/resources.gfo.yaml
+
+# additional properties, metadata of a bundle
