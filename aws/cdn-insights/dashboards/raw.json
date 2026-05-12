@@ -210,7 +210,7 @@
     },
     "timezone": "utc",
     "title": "Raw Logs",
-    "uid": "__DASHBOARD_UID_RAW_LOGS__",
+    "uid": "__DASHBOARD_UUID__",
     "version": 2,
     "weekStart": ""
   }
