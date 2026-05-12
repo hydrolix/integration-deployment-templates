@@ -6,7 +6,7 @@
           "builtIn": 1,
           "datasource": {
             "type": "grafana",
-            "uid": "__DATASOURCE__"
+            "uid": "-- Grafana --"
           },
           "enable": true,
           "hide": true,
@@ -19,6 +19,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
+    "id": null,
     "links": [
       {
         "asDropdown": true,
@@ -26,7 +27,9 @@
         "includeVars": true,
         "keepTime": true,
         "tags": [
-          "bot-insights-cdn-1.1.9"
+          "akamai",
+          "bot-insights-cdn-1.1",
+          "latest"
         ],
         "targetBlank": false,
         "title": "Bot Insights Suite",
@@ -1124,7 +1127,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.asn}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.asn}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -1142,7 +1145,7 @@
                         {
                           "targetBlank": false,
                           "title": "Filter by ${__data.fields.asn}",
-                          "url": "/d/${__dashboard.uid}?var-filter=country|=|${__data.fields.Country}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=country|=|${__data.fields.Country}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -1323,7 +1326,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.Entity}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.Entity}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -1376,6 +1379,14 @@
                   },
                   "properties": [
                     {
+                      "id": "displayName",
+                      "value": "ABS Deltra"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    },
+                    {
                       "id": "custom.hideFrom.viz",
                       "value": true
                     }
@@ -1413,54 +1424,15 @@
         ],
         "title": "Route",
         "type": "row"
-      },
-      {
-        "collapsed": true,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 16
-        },
-        "id": 103,
-        "panels": [
-          {
-            "fieldConfig": {
-              "defaults": {},
-              "overrides": []
-            },
-            "gridPos": {
-              "h": 4,
-              "w": 24,
-              "x": 0,
-              "y": 17
-            },
-            "id": 104,
-            "options": {
-              "code": {
-                "language": "plaintext",
-                "showLineNumbers": false,
-                "showMiniMap": false
-              },
-              "content": "### Drill Into Detail\n\n| Dashboard | Focus | Link |\n|-----------|-------|------|\n| **SOC — What Changed** | Volume deltas and ASN/path attribution | SOC |\n| **SEO Governance** | AI crawler impact, robots.txt compliance, crawl budget | SEO |\n| **Edge/Ops** | Origin health, cache efficiency, latency breakdown | Edge/Ops |",
-              "mode": "markdown"
-            },
-            "pluginVersion": "12.2.3",
-            "title": "",
-            "transparent": true,
-            "type": "text"
-          }
-        ],
-        "title": "Handoff",
-        "type": "row"
       }
     ],
     "preload": false,
     "refresh": "",
     "schemaVersion": 42,
     "tags": [
-      "bot-insights-cdn-1.1.9",
-      "akamai"
+      "akamai",
+      "bot-insights-cdn-1.1",
+      "latest"
     ],
     "templating": {
       "list": [
@@ -1487,8 +1459,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_3__",
-              "value": "__SUMMARY_TABLE_NAME_3__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
@@ -1507,8 +1479,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_2__",
-              "value": "__SUMMARY_TABLE_NAME_2__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
@@ -1527,68 +1499,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_minute",
-          "name": "siem_policy_summary_minute",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_3__",
-              "value": "__SUMMARY_TABLE_NAME_3__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_hour",
-          "name": "siem_policy_summary_hour",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_2__",
-              "value": "__SUMMARY_TABLE_NAME_2__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_day",
-          "name": "siem_policy_summary_day",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
@@ -1597,31 +1509,7 @@
         },
         {
           "allowCustomValue": false,
-          "current": {
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
-          },
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "definition": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
-          "hide": 2,
-          "label": "siem_policy_table",
-          "name": "siem_policy_table",
-          "options": [],
-          "query": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
-          "refresh": 2,
-          "regex": "",
-          "skipUrlSync": true,
-          "type": "query"
-        },
-        {
-          "allowCustomValue": false,
-          "current": {
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -1638,10 +1526,7 @@
           "type": "query"
         },
         {
-          "current": {
-            "text": "1440",
-            "value": "1440"
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -1655,14 +1540,7 @@
           "type": "query"
         },
         {
-          "current": {
-            "text": [
-              "LIVE (2m)"
-            ],
-            "value": [
-              "LIVE (2m)"
-            ]
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -1680,7 +1558,6 @@
         },
         {
           "current": {
-            "selected": false,
             "text": "reqTimeSec",
             "value": "reqTimeSec"
           },
@@ -1705,6 +1582,13 @@
           },
           "hide": 2,
           "name": "resourceCategories",
+          "options": [
+            {
+              "selected": false,
+              "text": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'",
+              "value": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'"
+            }
+          ],
           "query": "'robots.txt', 'sitemap.xml', 'ads.txt', 'llms.txt'",
           "skipUrlSync": true,
           "type": "constant"
@@ -1716,12 +1600,20 @@
           },
           "hide": 2,
           "name": "trafficCohortValues",
+          "options": [
+            {
+              "selected": false,
+              "text": "'Bot', 'AI'",
+              "value": "'Bot', 'AI'"
+            }
+          ],
           "query": "'Bot', 'AI'",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
+            "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
@@ -1758,6 +1650,14 @@
     "timezone": "utc",
     "title": "Bot Insights - Multi-Domain Triage",
     "uid": "__DASHBOARD_UUID__",
-    "version": 36
+    "version": 1,
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    }
   }
 }

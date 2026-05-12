@@ -8,9 +8,9 @@
   "dependencies": {
     "hydrolix": {
       "required_dictionaries": [
-        "akamai_asn_type_dict",
-        "akamai_bot_ip_dict",
-        "akamai_ua_cat_dict"
+        "ua_cat_dict",
+        "asn_type_dict",
+        "bot_ip_dict"
       ],
       "required_functions": [],
       "shared_dictionaries": [],

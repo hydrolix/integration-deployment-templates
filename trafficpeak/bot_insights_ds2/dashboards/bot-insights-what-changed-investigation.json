@@ -6,7 +6,7 @@
           "builtIn": 1,
           "datasource": {
             "type": "grafana",
-            "uid": "__DATASOURCE__"
+            "uid": "-- Grafana --"
           },
           "enable": true,
           "hide": true,
@@ -19,6 +19,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
+    "id": null,
     "links": [
       {
         "asDropdown": true,
@@ -26,7 +27,9 @@
         "includeVars": true,
         "keepTime": true,
         "tags": [
-          "bot-insights-cdn-1.1.9"
+          "akamai",
+          "bot-insights-cdn-1.1",
+          "latest"
         ],
         "targetBlank": false,
         "title": "Bot Insights Suite",
@@ -1030,7 +1033,7 @@
             },
             "format": 1,
             "queryType": "sql",
-            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, trafficCohort IN ('Bot', 'AI')) * 100.0 / greatest(cnt_all, 1), 2) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\n  \nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Bot percent; du=${__user.login}'",
+            "rawSql": "SELECT\n  ${timestamp} AS time,\n  round(countMergeIf(`count()`, trafficCohort IN ('Bot', 'AI')) * 100.0 / greatest(cnt_all, 1), 2) AS value\nFROM ${table}\nWHERE $__timeFilter(${timestamp})\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\nSETTINGS\n  hdx_query_max_execution_time = 60,\n  hdx_query_admin_comment = 'db=${__dashboard}; dp=Bot percent; du=${__user.login}'",
             "refId": "A"
           }
         ],
@@ -1278,7 +1281,7 @@
                         {
                           "targetBlank": false,
                           "title": "Filter to ASN",
-                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.Entity}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.Entity}&${__all_variables}&orgId=2"
                         }
                       ]
                     },
@@ -1419,7 +1422,7 @@
                         {
                           "targetBlank": false,
                           "title": "Filter to ASN",
-                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.entity}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=asn|=|${__data.fields.entity}&${__all_variables}&orgId=2"
                         }
                       ]
                     },
@@ -1615,7 +1618,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.Endpoint}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.Endpoint}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -1696,7 +1699,7 @@
                         {
                           "targetBlank": false,
                           "title": "Filter to category",
-                          "url": "/d/${__dashboard.uid}/?${__url_time_range}&${__all_variables}&var-bot_class=${__data.fields.entity}"
+                          "url": "/d/${__dashboard.uid}/?${__url_time_range}&${__all_variables}&var-bot_class=${__data.fields.entity}&orgId=2"
                         }
                       ]
                     }
@@ -2217,7 +2220,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=trafficCohort|=|${__data.fields.cohort}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=trafficCohort|=|${__data.fields.cohort}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -2314,7 +2317,7 @@
                       "value": [
                         {
                           "title": "Show details",
-                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.Endpoint}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=requestPathPattern|=|${__data.fields.Endpoint}&${__all_variables}&orgId=2"
                         }
                       ]
                     }
@@ -2331,7 +2334,7 @@
                       "value": [
                         {
                           "title": "Show detail",
-                          "url": "/d/${__dashboard.uid}?var-filter=trafficCohort|=|${__data.fields.cohort}&${__all_variables}"
+                          "url": "/d/${__dashboard.uid}?var-filter=trafficCohort|=|${__data.fields.cohort}&${__all_variables}&orgId=2"
                         }
                       ]
                     },
@@ -2379,8 +2382,9 @@
     "refresh": "",
     "schemaVersion": 42,
     "tags": [
-      "bot-insights-cdn-1.1.9",
-      "akamai"
+      "akamai",
+      "bot-insights-cdn-1.1",
+      "latest"
     ],
     "templating": {
       "list": [
@@ -2407,8 +2411,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_3__",
-              "value": "__SUMMARY_TABLE_NAME_3__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
@@ -2427,8 +2431,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_2__",
-              "value": "__SUMMARY_TABLE_NAME_2__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
@@ -2447,68 +2451,8 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_minute",
-          "name": "siem_policy_summary_minute",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_3__",
-              "value": "__SUMMARY_TABLE_NAME_3__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_hour",
-          "name": "siem_policy_summary_hour",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_2__",
-              "value": "__SUMMARY_TABLE_NAME_2__"
-            }
-          ],
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
-          },
-          "hide": 2,
-          "label": "siem_policy_summary_day",
-          "name": "siem_policy_summary_day",
-          "options": [
-            {
-              "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
           ],
           "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
@@ -2517,31 +2461,7 @@
         },
         {
           "allowCustomValue": false,
-          "current": {
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
-          },
-          "datasource": {
-            "type": "hydrolix-hydrolix-datasource",
-            "uid": "__DATASOURCE__"
-          },
-          "definition": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
-          "hide": 2,
-          "label": "siem_policy_table",
-          "name": "siem_policy_table",
-          "options": [],
-          "query": "SELECT if(${duration} <= 120, '${siem_policy_summary_minute}', if(${duration} <= 2880, '${siem_policy_summary_hour}', '${siem_policy_summary_day}'))",
-          "refresh": 2,
-          "regex": "",
-          "skipUrlSync": true,
-          "type": "query"
-        },
-        {
-          "allowCustomValue": false,
-          "current": {
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -2559,10 +2479,7 @@
         },
         {
           "allowCustomValue": false,
-          "current": {
-            "text": "1440",
-            "value": "1440"
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -2577,10 +2494,7 @@
           "type": "query"
         },
         {
-          "current": {
-            "text": "All",
-            "value": "$__all"
-          },
+          "current": {},
           "datasource": {
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
@@ -2603,7 +2517,7 @@
           },
           "hide": 2,
           "includeAll": false,
-          "label": "Newly Seen Window in days",
+          "label": "Newly Seen Window",
           "name": "newly_seen_window",
           "options": [
             {
@@ -2617,7 +2531,6 @@
         },
         {
           "current": {
-            "selected": false,
             "text": "reqTimeSec",
             "value": "reqTimeSec"
           },
@@ -2637,6 +2550,7 @@
         },
         {
           "current": {
+            "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
@@ -2673,6 +2587,14 @@
     "timezone": "utc",
     "title": "Bot Insights - What Changed + Investigation",
     "uid": "__DASHBOARD_UUID__",
-    "version": 36
+    "version": 1,
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    }
   }
 }

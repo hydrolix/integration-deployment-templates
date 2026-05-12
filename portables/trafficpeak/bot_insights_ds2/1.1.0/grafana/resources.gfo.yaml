@@ -1,0 +1,61 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-bot-insights-what-changed-investigation:
+    dashboard:
+      __extend__: dashboards/bot_insights_what_changed_investigation.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
+  hdx-bot-insights-multi-domain-triage:
+    dashboard:
+      __extend__: dashboards/bot_insights_multi_domain_triage.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
+  hdx-bot-insights-soc-what-changed:
+    dashboard:
+      __extend__: dashboards/bot_insights_soc_what_changed.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
+  hdx-bot-insights-seo-governance:
+    dashboard:
+      __extend__: dashboards/bot_insights_seo_governance.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
+  hdx-bot-insights-edge-ops:
+    dashboard:
+      __extend__: dashboards/bot_insights_edge_ops.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
+  hdx-bot-insights-overview-alignment:
+    dashboard:
+      __extend__: dashboards/bot_insights_overview_alignment.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: akamai.bi_summary_minute
+      VAR_SUMMARY_HOUR: akamai.bi_summary_hour
+      VAR_SUMMARY_DAY: akamai.bi_summary_day
