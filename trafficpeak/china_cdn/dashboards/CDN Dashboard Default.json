@@ -3707,19 +3707,19 @@
           "description": "",
           "hide": 2,
           "name": "summary_min",
-          "query": "PROJECT.multi_summary_min",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_min",
-            "value": "PROJECT.multi_summary_min"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_min",
-              "value": "PROJECT.multi_summary_min"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
@@ -3727,19 +3727,19 @@
           "description": "",
           "hide": 2,
           "name": "summary_hour",
-          "query": "PROJECT.multi_summary_hour",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_hour",
-            "value": "PROJECT.multi_summary_hour"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_hour",
-              "value": "PROJECT.multi_summary_hour"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
@@ -3827,190 +3827,190 @@
         {
           "hide": 2,
           "name": "quantiles_response_ttfb_50",
-          "query": "quantiles_response_ttfb_ms[2]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_response_ttfb_ms[2]",
-            "value": "quantiles_response_ttfb_ms[2]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_response_ttfb_ms[2]",
-              "value": "quantiles_response_ttfb_ms[2]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_response_ttfb_95",
-          "query": "quantiles_response_ttfb_ms[5]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_response_ttfb_ms[5]",
-            "value": "quantiles_response_ttfb_ms[5]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_response_ttfb_ms[5]",
-              "value": "quantiles_response_ttfb_ms[5]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_response_ttlb_50",
-          "query": "quantiles_response_ttlb_ms[2]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_response_ttlb_ms[2]",
-            "value": "quantiles_response_ttlb_ms[2]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_response_ttlb_ms[2]",
-              "value": "quantiles_response_ttlb_ms[2]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_response_ttlb_95",
-          "query": "quantiles_response_ttlb_ms[5]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_response_ttlb_ms[5]",
-            "value": "quantiles_response_ttlb_ms[5]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_response_ttlb_ms[5]",
-              "value": "quantiles_response_ttlb_ms[5]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_origin_ttfb_50",
-          "query": "quantiles_origin_ttfb_ms[2]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_origin_ttfb_ms[2]",
-            "value": "quantiles_origin_ttfb_ms[2]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_origin_ttfb_ms[2]",
-              "value": "quantiles_origin_ttfb_ms[2]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_origin_ttfb_95",
-          "query": "quantiles_origin_ttfb_ms[5]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_origin_ttfb_ms[5]",
-            "value": "quantiles_origin_ttfb_ms[5]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_origin_ttfb_ms[5]",
-              "value": "quantiles_origin_ttfb_ms[5]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_origin_ttlb_50",
-          "query": "quantiles_origin_ttlb_ms[2]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_origin_ttlb_ms[2]",
-            "value": "quantiles_origin_ttlb_ms[2]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_origin_ttlb_ms[2]",
-              "value": "quantiles_origin_ttlb_ms[2]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "quantiles_origin_ttlb_95",
-          "query": "quantiles_origin_ttlb_ms[5]",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "quantiles_origin_ttlb_ms[5]",
-            "value": "quantiles_origin_ttlb_ms[5]"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "quantiles_origin_ttlb_ms[5]",
-              "value": "quantiles_origin_ttlb_ms[5]"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "UUID_HERE/NAME",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "UUID_HERE/NAME",
-            "value": "UUID_HERE/NAME"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/NAME",
-              "value": "UUID_HERE/NAME"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn_panel",
-          "query": "UUID_HERE/NAME",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "UUID_HERE/NAME",
-            "value": "UUID_HERE/NAME"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/NAME",
-              "value": "UUID_HERE/NAME"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },

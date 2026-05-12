@@ -126,19 +126,19 @@
         {
           "hide": 2,
           "name": "table",
-          "query": "PROJECT.cdn",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.cdn",
-            "value": "PROJECT.cdn"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.cdn",
-              "value": "PROJECT.cdn"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },

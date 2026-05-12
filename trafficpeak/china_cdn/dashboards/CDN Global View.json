@@ -1641,7 +1641,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs?${__all_variables}&var-filter=country|=|${__value.text}"
+                      "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=country|=|${__value.text}"
                     }
                   ]
                 }
@@ -1836,57 +1836,57 @@
         {
           "hide": 2,
           "name": "summary_min",
-          "query": "PROJECT.multi_summary_min",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_min",
-            "value": "PROJECT.multi_summary_min"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_min",
-              "value": "PROJECT.multi_summary_min"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "summary_hour",
-          "query": "PROJECT.multi_summary_hour",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.multi_summary_hour",
-            "value": "PROJECT.multi_summary_hour"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_hour",
-              "value": "PROJECT.multi_summary_hour"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn1",
-          "query": "Akamai",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "Akamai",
-            "value": "Akamai"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "Akamai",
-              "value": "Akamai"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
@@ -2079,38 +2079,38 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "UUID_HERE/raw-logs",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "UUID_HERE/raw-logs",
-            "value": "UUID_HERE/raw-logs"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/raw-logs",
-              "value": "UUID_HERE/raw-logs"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn_panel",
-          "query": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-            "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-              "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
           ]
         },

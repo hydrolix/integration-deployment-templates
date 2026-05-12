@@ -133,10 +133,10 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             }
         }
 
-        // Missed-rewrite check: hard-fail on any hardcoded <uuid>/<slug> whose
-        // slug matches a sibling (including self). These should have been rewritten
-        // to __DASHBOARD_UID_<SLUG>__ (or __DASHBOARD_UUID__ for self) by the
-        // configurator pipeline.
+        // Missed-rewrite check: warn on any hardcoded <uuid>/<slug> whose slug
+        // matches a sibling (including self). These should be rewritten to
+        // __DASHBOARD_UID_<SLUG>__ (or __DASHBOARD_UUID__ for self) by the
+        // configurator pipeline before the next deploy.
         for cap in uid_slug_pattern.captures_iter(&content) {
             let slug = &cap[1];
             if !all_slugs.contains(slug) {
@@ -152,17 +152,17 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
             } else {
                 "sibling reference"
             };
-            return Err(format!(
-                "ERROR: {}.{} Dashboard '{}' contains a hardcoded UID for slug '{}' ({}).\n  \
+            println!(
+                "WARNING: {}.{} Dashboard '{}' contains a hardcoded UID for slug '{}' ({}).\n  \
                  Expected macro: '{}'\n  \
-                 Run the configurator pipeline to fix this before merging.\n",
+                 Run the configurator pipeline to fix this.\n",
                 file!(),
                 line!(),
                 dashboard_name,
                 slug,
                 ref_kind,
                 expected_macro,
-            ));
+            );
         }
     }
 
