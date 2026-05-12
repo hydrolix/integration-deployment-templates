@@ -1454,8 +1454,8 @@
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_3__",
-            "value": "__SUMMARY_TABLE_NAME_3__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "summary_minute",
@@ -1467,15 +1467,15 @@
               "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_3__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "summary_hour",
@@ -1487,15 +1487,15 @@
               "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_2__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_1__",
-            "value": "__SUMMARY_TABLE_NAME_1__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "summary_day",
@@ -1507,15 +1507,15 @@
               "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_1__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_3__",
-            "value": "__SUMMARY_TABLE_NAME_3__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
           },
           "hide": 2,
           "label": "siem_policy_summary_minute",
@@ -1527,15 +1527,15 @@
               "value": "__SUMMARY_TABLE_NAME_3__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_3__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
           "hide": 2,
           "label": "siem_policy_summary_hour",
@@ -1547,15 +1547,15 @@
               "value": "__SUMMARY_TABLE_NAME_2__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_2__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_1__",
-            "value": "__SUMMARY_TABLE_NAME_1__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
           "hide": 2,
           "label": "siem_policy_summary_day",
@@ -1567,7 +1567,7 @@
               "value": "__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_1__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
@@ -1666,6 +1666,24 @@
             }
           ],
           "query": "reqTimeSec",
+          "skipUrlSync": true,
+          "type": "constant"
+        },
+        {
+          "current": {
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
           "skipUrlSync": true,
           "type": "constant"
         }
