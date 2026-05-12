@@ -1,0 +1,2638 @@
+{
+  "description": "Akamai datastream v2 default template",
+  "name": "akamai_default_datastream",
+  "settings": {
+    "compression": "none",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "is_default": true,
+    "null_values": [
+      "-",
+      "-1",
+      "^"
+    ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "timeToFirstByte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "streamId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "customField"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "s",
+          "ignore": false,
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "epoch",
+          "virtual": false
+        },
+        "name": "reqTimeSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "state"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "serverCountry"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "billingRegion"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cacheable"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cacheStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "breadcrumbs"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "brotliStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/cmcd"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "securityRules"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ewUsageInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ewExecutionInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "dnsLookupTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "originContentLen"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "lastByte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "edgeIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "transferTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "turnAroundTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "errorCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "reqEndTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "xForwardedFor"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "maxAgeSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "range"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cookie"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "accLang"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "reqPort"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqPath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqMethod"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqHost"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "proto"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "statusCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cliIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "cp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "bytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "rspContentLen"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "rspContentType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "tlsOverheadTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "tlsVersion"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "objSize"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "uncompressedSize"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "overheadBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "totalBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "queryStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_RequestID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Edge_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Edge_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Edge_DNSLookupTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Edge_ASN"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_RequestID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_DNSLookupTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_ASN"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Parent_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Parent_RequestID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Parent_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Parent_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Parent_DNSLookupTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Parent_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Parent_ASN"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "CloudWrapper_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "CloudWrapper_RequestID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "CloudWrapper_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "CloudWrapper_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "CloudWrapper_DNSLookupTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "CloudWrapper_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "CloudWrapper_ASN"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Peer_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Peer_RequestID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Peer_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Peer_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Peer_DNSLookupTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Peer_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Peer_ASN"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_buffer_length"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_playback_duration"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_encoded_bitrate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "cmcd_buffer_starvation"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_content_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_object_duration"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_deadline"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_measured_throughput"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_next_object_requests"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_next_range_request"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_object_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "cmcd_playback_rate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_requested_max_throughput"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_streaming_format"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_session_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cmcd_stream_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "cmcd_startup"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "cmcd_top_bitrate"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "cmcd_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "isMidgress"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "edgeAttempts"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "fileSizeBucket"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "unknown"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "downloadInitiated"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "downloadTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "downloadsCompleted"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "prefetchMidgressHits"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "startupError"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "double"
+        },
+        "name": "throughput"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "contentProtectionInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "deliveryFormat"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "deliveryType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "mediaEncryption"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "epd_Match"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "epd_Code"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "epd_ActionCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "epd_Category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "epd_ActionName"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "policy"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "denyRule"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "denied"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "denyGroup"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "rulesTriggered"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "earlyHints"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "userHints"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "userHintsBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "akamaiHints"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "akamaiHintsBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_stageInformation"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_ID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_processTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_errorCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_totalTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_totalStageTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_usedMemory"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_edgeServerFlow"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_httpStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_cpuFlits"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_tierID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_uID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_eventHandler"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_offReason"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_logicExecuted"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_status"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_revisionID"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ew_metrics"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "URL"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botClass"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botIntent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botProducer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "verifiedBotOwner"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "aiCategory"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "isBotTraffic"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asnType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "trafficCohort"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botVerificationTier"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botConfidence"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "resourceCategory"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "ignore": false,
+          "index": true,
+          "primary": false,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "req_path_array"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestPathNorm"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestPathRoot"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestPathPattern"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestPathPatternCoarse"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "aiSource"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userAgentCategory"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userAgentCategoryKey"
+      }
+    ],
+    "rate_limit": null,
+    "sample_data": {
+      "reqTimeSec": 1778457600
+    },
+    "shadow_table": null,
+    "sql_transform": "SELECT\n    datediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\n    decodeURLComponent(assumeNotNull(UA)) AS UA,\n    decodeURLComponent(assumeNotNull(referer)) AS referer,\n    decodeURLComponent(assumeNotNull(queryStr)) AS queryStr,\n    extract(decodeURLComponent(assumeNotNull(breadcrumbs)), '\\/\\/BC\\/(\\S*)') AS breadcrumbs,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'a=([^,\\]]+)') AS Edge_IP,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'b=([^,\\]]+)') AS Edge_RequestID,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'k=([^,\\]]+)') AS Edge_RequestEndTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'l=([^,\\]]+)') AS Edge_TurnAroundTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'm=([^,\\]]+)') AS Edge_DNSLookupTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'n=([^,\\]]+)') AS Edge_GeoInfo,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=g[^]]*\\])', 'o=([^,\\]]+)') AS Edge_ASN,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'a=([^,\\]]+)') AS Origin_IP,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'b=([^,\\]]+)') AS Origin_RequestID,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'k=([^,\\]]+)') AS Origin_RequestEndTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'l=([^,\\]]+)') AS Origin_TurnAroundTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'm=([^,\\]]+)') AS Origin_DNSLookupTime,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'n=([^,\\]]+)') AS Origin_GeoInfo,\n    akamai_breadcrumbs(breadcrumbs, '(\\[[^[]*c=o[^]]*\\])', 'o=([^,\\]]+)') AS Origin_ASN,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'a=([^,\\]]+)') AS Peer_IP,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'b=([^,\\]]+)') AS Peer_RequestID,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'k=([^,\\]]+)') AS Peer_RequestEndTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'l=([^,\\]]+)') AS Peer_TurnAroundTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'm=([^,\\]]+)') AS Peer_DNSLookupTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'n=([^,\\]]+)') AS Peer_GeoInfo,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=p[^]]*\\])', 'o=([^,\\]]+)') AS Peer_ASN,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'a=([^,\\]]+)') AS Parent_IP,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'b=([^,\\]]+)') AS Parent_RequestID,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'k=([^,\\]]+)') AS Parent_RequestEndTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'l=([^,\\]]+)') AS Parent_TurnAroundTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'm=([^,\\]]+)') AS Parent_DNSLookupTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'n=([^,\\]]+)') AS Parent_GeoInfo,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=c[^]]*\\])', 'o=([^,\\]]+)') AS Parent_ASN,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'a=([^,\\]]+)') AS CloudWrapper_IP,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'b=([^,\\]]+)') AS CloudWrapper_RequestID,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'k=([^,\\]]+)') AS CloudWrapper_RequestEndTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'l=([^,\\]]+)') AS CloudWrapper_TurnAroundTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'm=([^,\\]]+)') AS CloudWrapper_DNSLookupTime,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'n=([^,\\]]+)') AS CloudWrapper_GeoInfo,\n    akamai_breadcrumbs(breadcrumbs, '(,\\[[^[]*c=w[^]]*\\])', 'o=([^,\\]]+)') AS CloudWrapper_ASN,\n    assumeNotNull(decodeURLComponent(cmcd)) AS url_cmcd,\n    concat('/', assumeNotNull(reqPath)) AS reqPath,\n    if(startsWith(url_cmcd, '//x.x@U/'), substring(url_cmcd, 9), url_cmcd) AS url,\n    flatten(extractAllGroupsVertical(assumeNotNull(url), '([^=,\"]+)=\"?([^,=\"]+)\"? ?')) AS groups,\n    akamai_cmcd_query_param('bl', groups) AS cmcd_buffer_length,\n    akamai_cmcd_query_param('br', groups) AS cmcd_encoded_bitrate,\n    url LIKE '%,bs,%' ? 1 : 0 AS cmcd_buffer_starvation,\n    akamai_cmcd_query_param('cid', groups) AS cmcd_content_id,\n    akamai_cmcd_query_param('d', groups) AS cmcd_object_duration,\n    akamai_cmcd_query_param('dl', groups) AS cmcd_deadline,\n    akamai_cmcd_query_param('mtp', groups) AS cmcd_measured_throughput,\n    akamai_cmcd_query_param('nor', groups) AS cmcd_next_object_requests,\n    akamai_cmcd_query_param('nrr', groups) AS cmcd_next_range_request,\n    akamai_cmcd_object_type(akamai_cmcd_query_param('ot', groups)) AS cmcd_object_type,\n    akamai_cmcd_query_param('pr', groups) AS cmcd_playback_rate,\n    akamai_cmcd_query_param('rtp', groups) AS cmcd_requested_max_throughput,\n    akamai_cmcd_streaming_format(akamai_cmcd_query_param('sf', groups)) AS cmcd_streaming_format,\n    akamai_cmcd_query_param('sid', groups) AS cmcd_session_id,\n    akamai_cmcd_stream_type(akamai_cmcd_query_param('st', groups)) AS cmcd_stream_type,\n    url LIKE '%,su,%' ? 1 : 0 AS cmcd_startup,\n    akamai_cmcd_query_param('tb', groups) AS cmcd_top_bitrate,\n    akamai_cmcd_query_param('v', groups) AS cmcd_version,\n    akamai_cmcd_query_param('d', groups) AS cmcd_playback_duration,\n    splitByChar(':', lower(assumeNotNull(reqHost)))[1] AS reqHost,\n    position(assumeNotNull(contentProtectionInfo), 'epd') >= 1 AS epd_Match,\n    splitByString('/', assumeNotNull(contentProtectionInfo))[5] AS epd_Code,\n    splitByString('/', assumeNotNull(contentProtectionInfo))[6] AS epd_ActionCode,\n    multiIf(epd_Code='av', 'Anonymous VPN',\n    epd_Code='pp','Public Proxy',\n    epd_Code='hp','Hosting Provder',\n    epd_Code='tr','TOR Exit Node',\n    epd_Code='dp','Smart DNS Proxy',\n    epd_Code='rp','Residential Proxy',\n    epd_Code='vc','VPN Data Centre','') AS epd_Category,\n    multiIf(epd_ActionCode='0', 'Request Denied',\n    epd_ActionCode='1', 'Request Allowed(override)',\n    epd_ActionCode='2', 'Request Redirected', '') AS epd_ActionName,\n    splitByChar('|',assumeNotNull(securityRules))[1] AS policy,\n    splitByChar('|',assumeNotNull(securityRules))[3] AS denyRule,\n    if(empty(splitByChar('|',assumeNotNull(securityRules))[3]),0,1) AS denied,\n    multiIf(denyRule like '%REP%','Reputation', \n\tdenyRule like '3%' or denyRule like 'BOT-%', 'BOT',\n\tdenyRule like 'IP%', 'DOS',\n\tdenyRule like 'XSS%' or denyRule like 'WAT-%' or denyRule like 'RFI-ANOMALY%' or denyRule like 'PLATFORM-ANOMALY' or  denyRule like 'SQL%' or denyRule like 'LFI%' or denyRule like 'CMD-INJECTION%' or denyRule like 'PROTOCOL-ANOMALY%'  or denyRule like 'ADAPTIVE_UA_IP_BLOCK%' or denyRule like '6%', 'WAF Rule',\n\t''\n\t) AS denyGroup,\n    splitByChar('|',assumeNotNull(earlyHints))[1] AS userHints,\n    splitByChar('|',assumeNotNull(earlyHints))[2] AS userHintsBytes,\n    splitByChar('|',assumeNotNull(earlyHints))[3] AS akamaiHints,\n    splitByChar('|',assumeNotNull(earlyHints))[4] AS akamaiHintsBytes,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[1] AS ew_stageInformation,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[2] AS ew_ID,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[3] AS ew_processTime,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[4] AS ew_totalTime,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[5] AS ew_totalStageTime,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[6] AS ew_usedMemory,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[7] AS ew_edgeServerFlow,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[8] AS ew_errorCode,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[9] AS ew_httpStatus,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[10] AS ew_cpuFlits,\n    akamai_edge_worker_execution(assumeNotNull(ewExecutionInfo))[11] AS ew_tierID,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[1] AS ew_uID,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[2] AS ew_version,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[3] AS ew_eventHandler,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[4] AS ew_offReason,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[5] AS ew_logicExecuted,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[6] AS ew_status,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[7] AS ew_revisionID,\n    akamai_edge_worker(assumeNotNull(ewUsageInfo))[8] AS ew_metrics,\n    splitByChar(':',splitByChar('|',coalesce(assumeNotNull(securityRules),'||'))[2]) AS rulesTriggered,\n    concat(reqHost, reqPath) AS URL,\n    multiIf(\ncacheStatus=1,1,\nbreadcrumbs IS NULL OR empty(breadcrumbs),0,\nOrigin_IP IS NULL OR empty(Origin_IP) OR Origin_IP = '127.0.0.1',1,0\n) AS cacheStatus,\n    *,\n    'Akamai' AS hdx_cdn,\n    dictGet('akamai_ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS userAgentCategory,\n    dictGet('akamai_ua_cat_dict', 'ua_category_key', assumeNotNull(UA)) AS userAgentCategoryKey,\n    dictGet('akamai_ua_cat_dict', 'ai_category', assumeNotNull(UA)) AS aiCategory,\n    dictGet('akamai_ua_cat_dict', 'is_bot', assumeNotNull(UA)) AS isBotTraffic,\n    dictGet('akamai_ua_cat_dict', 'bot_class', assumeNotNull(UA)) AS botClass,\n    dictGet('akamai_ua_cat_dict', 'bot_intent', assumeNotNull(UA)) AS botIntent,\n    dictGet('akamai_ua_cat_dict', 'producer', assumeNotNull(UA)) AS botProducer,\n    multiIf(positionCaseInsensitive(assumeNotNull(reqPath), 'robots.txt') > 0, 'robots.txt', positionCaseInsensitive(assumeNotNull(reqPath), 'sitemap.xml') > 0, 'sitemap.xml', positionCaseInsensitive(assumeNotNull(reqPath), 'ads.txt') > 0, 'ads.txt', positionCaseInsensitive(assumeNotNull(reqPath), 'llms.txt') > 0, 'llms.txt', match(assumeNotNull(reqPath), '^/api/') OR match(assumeNotNull(reqPath), '/api/'), 'api', match(assumeNotNull(reqPath), '\\\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$'), 'static', match(assumeNotNull(reqPath), '\\\\.(html?|php|asp|jsp)$') OR assumeNotNull(reqPath) = '/' OR NOT match(assumeNotNull(reqPath), '\\\\.'), 'page', 'other') AS resourceCategory,\n    dictGetOrDefault('akamai_asn_type_dict', 'asn_type', toUInt32OrZero(toString(asn)), 'unknown') AS asnType,\n    dictGetOrDefault('akamai_bot_ip_dict', 'bot_owner', toIPv4OrDefault(assumeNotNull(cliIP)), '') AS verifiedBotOwner,\n    multiIf(isBotTraffic = 1 AND verifiedBotOwner != '', 'verified', isBotTraffic = 1 AND asnType = 'isp', 'declared_unverified', isBotTraffic = 1, 'unverified', 'not_bot') AS botVerificationTier,\n    multiIf(isBotTraffic = 1 AND verifiedBotOwner != '', 'verified', isBotTraffic = 1 AND asnType = 'isp', 'suspicious', isBotTraffic = 1 AND asnType IN ('hosting', 'business'), 'plausible', isBotTraffic = 1, 'unverified', 'not_bot') AS botConfidence,\n    --splitByString('/', coalesce(reqPath, '')) AS req_path_array,\n    lower(cutQueryString(coalesce(reqPath, ''))) AS requestPathNorm,\n    --if(empty(arrayFilter(segment -> notEmpty(segment), splitByChar('/', requestPathNorm))), '/', concat('/', arrayElement(arrayFilter(segment -> notEmpty(segment), splitByChar('/', requestPathNorm)), 1))) AS requestPathRoot,\nif(arrayStringConcat(arrayMap(seg -> multiIf(seg IN (':num', ':version', ':hex', ':asset', ':token'), seg, has(['api', 'graphql', 'checkout', 'login', 'auth', 'oauth', 'sso', 'account', 'accounts', 'user', 'users', 'profile', 'customer', 'customers', 'search', 'cart', 'product', 'products', 'pd', 'category', 'categories', 'content', 'static', 'assets', 'asset', 'images', 'image', 'img', 'media', 'dist', 'js', 'css', 'json', 'fonts', 'font', 'store', 'stores', 'shop', 'catalog', 'collections', 'collection', 'loyalty', 'rates', 'rooms', 'blogs', 'wp-admin', 'admin', '_sec', '_bm', 'akam', 'm', 'mobile', 'web', 'app', 'client-api', 'internal', 'live', 'vod', 'hls', 'cmaf', 'feeds', 'feed', 'logos', 'logo', 'scoreboard', 'channels', 'channel', 'event', 'events', 'card', 'cards', 'leagues', 'league', 'teams', 'team', 'public', 'latest', 'client', 'tabs', 'subscriber', 'manage', 'include', 'redirect_flags', 'traffic', 'exchange', 'chunks', 'chunk', 'whitelist', 'livedata', 'odds'], seg), seg, match(seg, '^[a-z]{2}(-[a-z]{2})?$'), ':locale', ':slug'), arrayMap(seg -> multiIf(seg = '', '', match(seg, '^[0-9]+$'), ':num', match(seg, '^v?[0-9]+(\\\\.[0-9]+)+$'), ':version', match(seg, '^[0-9a-f]{8,}$'), ':hex', match(seg, '\\\\.(css|js|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map|json|xml|webp|avif|mp4|m3u8|ts|pdf)$'), ':asset', length(seg) >= 6 AND match(seg, '[0-9]') AND match(seg, '[a-z]') AND match(seg, '^[a-z0-9_-]+$'), ':token', seg), splitByChar('/', trim(BOTH '/' FROM lower(ifNull(requestPathNorm, '')))))), '/') = '', '/', concat('/', arrayStringConcat(arrayMap(seg -> multiIf(seg IN (':num', ':version', ':hex', ':asset', ':token'), seg, has(['api', 'graphql', 'checkout', 'login', 'auth', 'oauth', 'sso', 'account', 'accounts', 'user', 'users', 'profile', 'customer', 'customers', 'search', 'cart', 'product', 'products', 'pd', 'category', 'categories', 'content', 'static', 'assets', 'asset', 'images', 'image', 'img', 'media', 'dist', 'js', 'css', 'json', 'fonts', 'font', 'store', 'stores', 'shop', 'catalog', 'collections', 'collection', 'loyalty', 'rates', 'rooms', 'blogs', 'wp-admin', 'admin', '_sec', '_bm', 'akam', 'm', 'mobile', 'web', 'app', 'client-api', 'internal', 'live', 'vod', 'hls', 'cmaf', 'feeds', 'feed', 'logos', 'logo', 'scoreboard', 'channels', 'channel', 'event', 'events', 'card', 'cards', 'leagues', 'league', 'teams', 'team', 'public', 'latest', 'client', 'tabs', 'subscriber', 'manage', 'include', 'redirect_flags', 'traffic', 'exchange', 'chunks', 'chunk', 'whitelist', 'livedata', 'odds'], seg), seg, match(seg, '^[a-z]{2}(-[a-z]{2})?$'), ':locale', ':slug'), arrayMap(seg -> multiIf(seg = '', '', match(seg, '^[0-9]+$'), ':num', match(seg, '^v?[0-9]+(\\\\.[0-9]+)+$'), ':version', match(seg, '^[0-9a-f]{8,}$'), ':hex', match(seg, '\\\\.(css|js|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|map|json|xml|webp|avif|mp4|m3u8|ts|pdf)$'), ':asset', length(seg) >= 6 AND match(seg, '[0-9]') AND match(seg, '[a-z]') AND match(seg, '^[a-z0-9_-]+$'), ':token', seg), splitByChar('/', trim(BOTH '/' FROM lower(ifNull(requestPathNorm, '')))))), '/'))) AS requestPathPattern,\n   -- multiIf(match(requestPathNorm, '^/shop/product/[^/]+'), '/shop/product/:item', match(requestPathNorm, '^/product/[^/]+'), '/product/:item', match(requestPathNorm, '^/products/[^/]+'), '/products/:item', match(requestPathNorm, '^/p/[^/]+'), '/p/:item', match(requestPathNorm, '^/shop/[^/]+/[^/]+'), replaceRegexpOne(requestPathNorm, '^(/shop/[^/]+)/.*', '\\\\1/:path'), match(requestPathNorm, '^/category/[^/]+/[^/]+'), replaceRegexpOne(requestPathNorm, '^(/category/[^/]+)/.*', '\\\\1/:path'), match(requestPathNorm, '^/c/[^/]+/[^/]+'), replaceRegexpOne(requestPathNorm, '^(/c/[^/]+)/.*', '\\\\1/:path'), match(requestPathNorm, '^/api/[^/]+/[^/]+/[^/]+/[^/]+'), replaceRegexpOne(requestPathNorm, '^(/api/[^/]+/[^/]+/[^/]+)/.*', '\\\\1/:path'), match(requestPathNorm, '^/xapi/[^/]+/[^/]+/[^/]+/[^/]+'), replaceRegexpOne(requestPathNorm, '^(/xapi/[^/]+/[^/]+/[^/]+)/.*', '\\\\1/:path'), requestPathPattern) AS requestPathPatternCoarse,\n    if(notEmpty(aiCategory), botProducer, '') AS aiSource,\n    multiIf(isBotTraffic = 0, 'Human', notEmpty(aiCategory), 'AI', 'Bot') AS trafficCohort\nFROM\n    {STREAM}",
+    "wurfl": null
+  },
+  "type": "json"
+}
