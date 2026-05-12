@@ -1,5 +1,5 @@
 {
-  "name": "mcdn_cloudfront_fireshose_v3",
+  "name": "mcdn_cloudfront_firehose_v3",
   "description": "Version v1.0",
   "settings": {
     "is_default": false,
