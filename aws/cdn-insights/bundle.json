@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/cdn-insights",
-  "beta": true,
+  "beta": false,
   "dashboard": {
     "path": "dashboards/default.json",
     "project_var": "__PROJECT_NAME__"
@@ -103,8 +103,8 @@
     },
     "primary_url": "https://docs.hydrolix.io/docs/cdn_insights-integration",
     "source": {
-      "full_title": "Aws Cdn Insights",
-      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/aws.png"
+      "full_title": "CDN Insights",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
     }
   }
 }

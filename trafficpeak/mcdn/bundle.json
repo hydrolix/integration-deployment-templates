@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/mcdn",
-  "beta": false,
+  "beta": true,
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
@@ -89,8 +89,8 @@
     },
     "primary_url": "https://docs.hydrolix.io/docs/mcdn-integration",
     "source": {
-      "full_title": "CDN Insights",
-      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/cdn_insights.png"
+      "full_title": "Trafficpeak Mcdn",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }
 }
