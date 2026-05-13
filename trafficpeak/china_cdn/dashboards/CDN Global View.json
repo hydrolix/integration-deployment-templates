@@ -1641,7 +1641,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=country|=|${__value.text}"
+                      "url": "/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs?${__all_variables}&var-filter=country|=|${__value.text}"
                     }
                   ]
                 }
