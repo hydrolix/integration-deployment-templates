@@ -131,7 +131,7 @@
       },
       {
         "datatype": {
-          "default": "",
+          "default": null,
           "format": null,
           "index": true,
           "resolution": null,
@@ -314,9 +314,7 @@
           "index": true,
           "resolution": null,
           "script": null,
-          "source": {
-            "from_input_field": "OriginResponseHeaderDuration"
-          },
+          "source": null,
           "suppress": false,
           "type": "uint64"
         },
