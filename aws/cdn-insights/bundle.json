@@ -12,11 +12,15 @@
       "shared_dictionaries": [
         "geoip_asn_blocks_ipv4",
         "geoip_asn_blocks_ipv6",
+        "geoip_city_blocks_ipv4",
+        "geoip_city_blocks_ipv6",
+        "geoip_city_locations_en",
         "ua_cat_dict"
       ],
       "shared_functions": [
         "breadcrumbs",
-        "city_name"
+        "city_name",
+        "geoname_id"
       ]
     }
   },
