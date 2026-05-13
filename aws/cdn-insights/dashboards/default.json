@@ -85,7 +85,6 @@
     "graphTooltip": 0,
     "id": null,
     "links": [],
-    "uid": "__DASHBOARD_UUID__",
     "panels": [
       {
         "gridPos": {

@@ -78,7 +78,6 @@
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
     "id": null,
-    "uid": "__DASHBOARD_UUID__",
     "links": [
       {
         "asDropdown": false,
