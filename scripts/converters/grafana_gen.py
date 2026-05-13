@@ -1,5 +1,6 @@
 """Grafana resource generator."""
 
+import re
 from pathlib import Path
 from typing import List, Dict
 
@@ -7,7 +8,13 @@ from utils.models import BundleAssets, Dashboard
 from utils.yaml_utils import dump_yaml
 import json
 
-from utils.file_utils import write_file, sanitize_filename, sanitize_cac_name
+from utils.file_utils import write_file, sanitize_filename, sanitize_cac_name, slugify_grafana_title
+
+# Matches <uuid>/<slug> dashboard reference values in __inputs constants
+_UUID_SLUG_RE = re.compile(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    r'/([a-z0-9][a-z0-9-]*)$'
+)
 
 
 class GrafanaGenerator:
@@ -33,14 +40,51 @@ class GrafanaGenerator:
                 print("  No dashboards found, skipping Grafana generation")
             return
 
+        # Build slug→stable-uid map so sibling UID references in __inputs can be
+        # resolved to the deterministic hdx-* keys the GFO tool assigns.
+        sibling_uid_map = self._build_sibling_uid_map(assets.dashboards)
+
         # Copy dashboards
-        dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards)
+        dashboard_paths = self._copy_dashboards(grafana_dir, assets.dashboards, sibling_uid_map)
 
         # Generate main resources file
-        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, folder_path or [])
+        self._generate_resources_file(grafana_dir, assets.dashboards, dashboard_paths, home_dashboard, folder_path or [], sibling_uid_map)
 
         if self.verbose:
             print(f"✓ Generated Grafana resources")
+
+    def _build_sibling_uid_map(self, dashboards: List[Dashboard]) -> Dict[str, str]:
+        """Return {title-slug: stable-hdx-uid} for every dashboard in the bundle.
+
+        Used to replace hardcoded <vendor-uuid>/<slug> references in __inputs
+        with the deterministic hdx-* UIDs that the GFO deployment tool assigns.
+        """
+        slug_to_uid = {}
+        for dashboard in dashboards:
+            stable_uid = self._generate_dashboard_uid(dashboard.filename)
+            try:
+                with open(dashboard.file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                db = data.get('dashboard', data)
+                title = db.get('title', '')
+                if title:
+                    slug = slugify_grafana_title(title)
+                    if slug:
+                        slug_to_uid[slug] = stable_uid
+            except Exception:
+                pass
+        return slug_to_uid
+
+    def _resolve_sibling_input(self, value: str, sibling_uid_map: Dict[str, str]) -> str:
+        """If value is '<vendor-uuid>/<slug>' and slug matches a sibling, return '<stable-uid>/<slug>'."""
+        if not value:
+            return value
+        m = _UUID_SLUG_RE.match(value)
+        if not m:
+            return value
+        slug = m.group(1)
+        stable_uid = sibling_uid_map.get(slug)
+        return f"{stable_uid}/{slug}" if stable_uid else value
 
     def _replace_datasource_uids(self, obj):
         """Recursively replace datasource UIDs with Grafana variable reference."""
@@ -58,7 +102,7 @@ class GrafanaGenerator:
             for item in obj:
                 self._replace_datasource_uids(item)
 
-    def _copy_dashboards(self, grafana_dir: Path, dashboards: List[Dashboard]) -> Dict[str, str]:
+    def _copy_dashboards(self, grafana_dir: Path, dashboards: List[Dashboard], sibling_uid_map: Dict[str, str]) -> Dict[str, str]:
         """Copy dashboard JSON files, replacing datasource UIDs."""
         dashboards_dir = grafana_dir / "dashboards"
         dashboards_dir.mkdir(parents=True, exist_ok=True)
@@ -71,11 +115,13 @@ class GrafanaGenerator:
                 data = json.load(f)
             self._replace_datasource_uids(data)
 
-            # Normalize __inputs datasource names to standard variable
+            # Normalize __inputs: fix datasource names and resolve sibling UID references
             for inp in data.get('__inputs', []):
                 if inp.get('type') == 'datasource':
                     inp['name'] = 'DS_HYDROLIX-HYDROLIX-DATASOURCE'
                     inp['label'] = 'Hydrolix'
+                elif inp.get('type') == 'constant' and inp.get('value'):
+                    inp['value'] = self._resolve_sibling_input(inp['value'], sibling_uid_map)
 
             # Strip top-level dashboard uid (CaC deployments assign their own)
             data.pop('uid', None)
@@ -150,6 +196,7 @@ class GrafanaGenerator:
         dashboard_paths: Dict[str, str],
         home_dashboard: str = None,
         folder_path: list = None,
+        sibling_uid_map: Dict[str, str] = None,
     ):
         """Generate main resources.gfo.yaml file with nested structure."""
         resources = {}
@@ -173,12 +220,13 @@ class GrafanaGenerator:
             if dashboard.inputs:
                 inputs_dict = {}
                 for inp in dashboard.inputs:
-                    # Use the input name as the key, and value/type as the value
-                    # For datasource inputs, use the predefined datasource UID
                     if inp.type == 'datasource':
                         inputs_dict['DS_HYDROLIX-HYDROLIX-DATASOURCE'] = 'hdx-hydrolix-datasource'
                     elif inp.value is not None:
-                        inputs_dict[inp.name] = inp.value
+                        value = inp.value
+                        if sibling_uid_map:
+                            value = self._resolve_sibling_input(value, sibling_uid_map)
+                        inputs_dict[inp.name] = value
                     else:
                         inputs_dict[inp.name] = ''
                 dashboard_entry['inputs'] = inputs_dict
