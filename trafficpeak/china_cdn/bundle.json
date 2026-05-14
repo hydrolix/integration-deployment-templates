@@ -9,7 +9,10 @@
     "hydrolix": {
       "required_dictionaries": [],
       "required_functions": [],
-      "shared_dictionaries": [],
+      "shared_dictionaries": [
+        "country_mapping",
+        "ua_cat_dict"
+      ],
       "shared_functions": [
         "city_name"
       ]
@@ -59,14 +62,14 @@
       "name": "china_cdn",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/byteplus/transform.json",
-          "sample": "transformations/byteplus/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/byteplus/sample_data.json"
         },
         {
+          "method": "http_streaming",
           "path": "transformations/tencent/transform.json",
-          "sample": "transformations/tencent/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/tencent/sample_data.json"
         }
       ]
     }

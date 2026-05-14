@@ -10,57 +10,57 @@
     },
     "__requires": [
       {
-        "type": "panel",
         "id": "bargauge",
         "name": "Bar gauge",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "geomap",
         "name": "Geomap",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.0.0"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.6.0"
       },
       {
-        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "stat",
         "name": "Stat",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "table",
         "name": "Table",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -2247,13 +2247,13 @@
         "pluginVersion": "12.0.0",
         "targets": [
           {
-            "format": 1,
-            "rawSql": "SELECT \n    reqTimeSec AS time,\n    response_ttfb_ms AS avg_ttfb_ms,\n    ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n    ${quantiles_response_ttfb_95} AS p95_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CDN Data Latency; du=${__user.login}'",
-            "refId": "A",
             "datasource": {
               "type": "hydrolix-hydrolix-datasource",
               "uid": "__DATASOURCE__"
-            }
+            },
+            "format": 1,
+            "rawSql": "SELECT \n    reqTimeSec AS time,\n    response_ttfb_ms AS avg_ttfb_ms,\n    ${quantiles_response_ttfb_50} AS p50_ttfb_ms,\n    ${quantiles_response_ttfb_95} AS p95_ttfb_ms\nFROM ${table}\nWHERE $__timeFilter(reqTimeSec)\n  AND $__adHocFilter()\nGROUP BY time\nORDER BY time\n\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=CDN Data Latency; du=${__user.login}'",
+            "refId": "A"
           }
         ],
         "title": "CDN Data Latency",
@@ -3704,44 +3704,44 @@
           "type": "query"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__SUMMARY_TABLE_NAME_2__",
+            "value": "__SUMMARY_TABLE_NAME_2__"
+          },
           "description": "",
           "hide": 2,
           "name": "summary_min",
-          "query": "PROJECT.multi_summary_min",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "PROJECT.multi_summary_min",
-            "value": "PROJECT.multi_summary_min"
-          },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_min",
-              "value": "PROJECT.multi_summary_min"
+              "text": "__SUMMARY_TABLE_NAME_2__",
+              "value": "__SUMMARY_TABLE_NAME_2__"
             }
-          ]
+          ],
+          "query": "__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__SUMMARY_TABLE_NAME_1__",
+            "value": "__SUMMARY_TABLE_NAME_1__"
+          },
           "description": "",
           "hide": 2,
           "name": "summary_hour",
-          "query": "PROJECT.multi_summary_hour",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "PROJECT.multi_summary_hour",
-            "value": "PROJECT.multi_summary_hour"
-          },
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.multi_summary_hour",
-              "value": "PROJECT.multi_summary_hour"
+              "text": "__SUMMARY_TABLE_NAME_1__",
+              "value": "__SUMMARY_TABLE_NAME_1__"
             }
-          ]
+          ],
+          "query": "__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "baseFilters": [],
@@ -3825,194 +3825,194 @@
           "type": "custom"
         },
         {
-          "hide": 2,
-          "name": "quantiles_response_ttfb_50",
-          "query": "quantiles_response_ttfb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttfb_ms[2]",
             "value": "quantiles_response_ttfb_ms[2]"
           },
+          "hide": 2,
+          "name": "quantiles_response_ttfb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttfb_ms[2]",
               "value": "quantiles_response_ttfb_ms[2]"
             }
-          ]
+          ],
+          "query": "quantiles_response_ttfb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_response_ttfb_95",
-          "query": "quantiles_response_ttfb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttfb_ms[5]",
             "value": "quantiles_response_ttfb_ms[5]"
           },
+          "hide": 2,
+          "name": "quantiles_response_ttfb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttfb_ms[5]",
               "value": "quantiles_response_ttfb_ms[5]"
             }
-          ]
+          ],
+          "query": "quantiles_response_ttfb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_response_ttlb_50",
-          "query": "quantiles_response_ttlb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttlb_ms[2]",
             "value": "quantiles_response_ttlb_ms[2]"
           },
+          "hide": 2,
+          "name": "quantiles_response_ttlb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttlb_ms[2]",
               "value": "quantiles_response_ttlb_ms[2]"
             }
-          ]
+          ],
+          "query": "quantiles_response_ttlb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_response_ttlb_95",
-          "query": "quantiles_response_ttlb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_response_ttlb_ms[5]",
             "value": "quantiles_response_ttlb_ms[5]"
           },
+          "hide": 2,
+          "name": "quantiles_response_ttlb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_response_ttlb_ms[5]",
               "value": "quantiles_response_ttlb_ms[5]"
             }
-          ]
+          ],
+          "query": "quantiles_response_ttlb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_origin_ttfb_50",
-          "query": "quantiles_origin_ttfb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttfb_ms[2]",
             "value": "quantiles_origin_ttfb_ms[2]"
           },
+          "hide": 2,
+          "name": "quantiles_origin_ttfb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttfb_ms[2]",
               "value": "quantiles_origin_ttfb_ms[2]"
             }
-          ]
+          ],
+          "query": "quantiles_origin_ttfb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_origin_ttfb_95",
-          "query": "quantiles_origin_ttfb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttfb_ms[5]",
             "value": "quantiles_origin_ttfb_ms[5]"
           },
+          "hide": 2,
+          "name": "quantiles_origin_ttfb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttfb_ms[5]",
               "value": "quantiles_origin_ttfb_ms[5]"
             }
-          ]
+          ],
+          "query": "quantiles_origin_ttfb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_origin_ttlb_50",
-          "query": "quantiles_origin_ttlb_ms[2]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttlb_ms[2]",
             "value": "quantiles_origin_ttlb_ms[2]"
           },
+          "hide": 2,
+          "name": "quantiles_origin_ttlb_50",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttlb_ms[2]",
               "value": "quantiles_origin_ttlb_ms[2]"
             }
-          ]
+          ],
+          "query": "quantiles_origin_ttlb_ms[2]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "quantiles_origin_ttlb_95",
-          "query": "quantiles_origin_ttlb_ms[5]",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "quantiles_origin_ttlb_ms[5]",
             "value": "quantiles_origin_ttlb_ms[5]"
           },
+          "hide": 2,
+          "name": "quantiles_origin_ttlb_95",
           "options": [
             {
               "selected": false,
               "text": "quantiles_origin_ttlb_ms[5]",
               "value": "quantiles_origin_ttlb_ms[5]"
             }
-          ]
+          ],
+          "query": "quantiles_origin_ttlb_ms[5]",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "UUID_HERE/NAME",
+            "value": "UUID_HERE/NAME"
+          },
           "hide": 2,
           "name": "raw_logs",
-          "query": "UUID_HERE/NAME",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "UUID_HERE/NAME",
-            "value": "UUID_HERE/NAME"
-          },
           "options": [
             {
               "selected": false,
               "text": "UUID_HERE/NAME",
               "value": "UUID_HERE/NAME"
             }
-          ]
+          ],
+          "query": "UUID_HERE/NAME",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "cdn_panel",
-          "query": "UUID_HERE/NAME",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "UUID_HERE/NAME",
             "value": "UUID_HERE/NAME"
           },
+          "hide": 2,
+          "name": "cdn_panel",
           "options": [
             {
               "selected": false,
               "text": "UUID_HERE/NAME",
               "value": "UUID_HERE/NAME"
             }
-          ]
+          ],
+          "query": "UUID_HERE/NAME",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {

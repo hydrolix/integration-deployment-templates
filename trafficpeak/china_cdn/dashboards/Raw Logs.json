@@ -10,27 +10,27 @@
     },
     "__requires": [
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.0.0"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.6.0"
       },
       {
-        "type": "panel",
         "id": "logs",
         "name": "Logs",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -124,42 +124,42 @@
     "templating": {
       "list": [
         {
-          "hide": 2,
-          "name": "table",
-          "query": "PROJECT.cdn",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
-            "text": "PROJECT.cdn",
-            "value": "PROJECT.cdn"
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
+          "hide": 2,
+          "name": "table",
           "options": [
             {
               "selected": false,
-              "text": "PROJECT.cdn",
-              "value": "PROJECT.cdn"
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "timestamp",
-          "query": "reqTimeSec",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "reqTimeSec",
             "value": "reqTimeSec"
           },
+          "hide": 2,
+          "name": "timestamp",
           "options": [
             {
               "selected": false,
               "text": "reqTimeSec",
               "value": "reqTimeSec"
             }
-          ]
+          ],
+          "query": "reqTimeSec",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "baseFilters": [],

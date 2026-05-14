@@ -1,15 +1,605 @@
 {
-  "name": "tp_mcdn_byteplus",
   "description": "Version v1.0",
+  "name": "tp_mcdn_byteplus",
   "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
     "is_default": true,
-    "rate_limit": null,
-    "sql_transform": "SELECT \ndatediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(reqPath), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(reqPath), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ai_category', assumeNotNull(UA)) AS ai_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'is_bot', assumeNotNull(UA)) AS is_bot_traffic,\n (ds_req_time*1000)::UInt64 as transferTimeMSec,\n (totalBytes/2) / (totalBytes/transferTimeMSec) as timeToFirstByte,\ndictGetString('__SHARED_PROJECT___country_mapping', 'country_iso_code', initcap(assumeNotNull(client_country_name))) AS country,\n splitByChar('=', assumeNotNull(rangeStr))[2] as range,\n * \nFROM {STREAM}",
     "null_values": [
       "-"
     ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "02/Jan/2006:15:04:05 -0700",
+          "index": false,
+          "primary": true,
+          "resolution": "ms",
+          "script": null,
+          "source": {
+            "from_input_field": "time"
+          },
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "reqTimeSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_bd_status_hit"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "result_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "cacheStatus"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_resp_size"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "totalBytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_status"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "statusCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "timeToFirstByte"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_req_time"
+          },
+          "suppress": true,
+          "type": "double"
+        },
+        "name": "ds_req_time"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "transferTimeMSec"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_resp_content_type"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "rspContentType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_method"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqMethod"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "domain"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqHost"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_uri_query"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "queryStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_referer"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_uri_path"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "reqPath"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "resource_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "user_agent_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ai_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "is_bot_traffic"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_ua"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_ip"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "cliIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Origin_IP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_TurnAroundTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "Origin_RequestEndTime"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_ip_country"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "client_country_name"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_ip_province"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "client_ip_isp"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "Edge_GeoInfo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_protocol"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "proto"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "client_port"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "reqPort"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_range"
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "rangeStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "range"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_resp_content_length"
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "rspContentLen"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "script": null,
+          "source": {
+            "from_input_field": "ds_http_uri"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "URL"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency"
+      },
+      {
+        "datatype": {
+          "default": "BytePlus",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_cdn"
+      },
+      {
+        "datatype": {
+          "default": "BytePlus multicdn",
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "hdx_transform"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "unknown"
+      }
+    ],
+    "rate_limit": null,
     "sample_data": {
-      "time": "07/May/2026:10:00:00 +0000",
       "client_ip": "192.0.2.1",
       "client_ip_country": "Indonesia",
       "client_ip_isp": "Tencent Cloud",
@@ -30,602 +620,12 @@
       "ds_http_uri": "/chickadee.png?version=1",
       "ds_http_uri_path": "/img/chickadee.png",
       "ds_http_uri_query": "version=1&colar=red",
-      "ds_req_time": 0.104
+      "ds_req_time": 0.104,
+      "time": "14/May/2026:10:00:00 +0000"
     },
     "shadow_table": null,
-    "output_columns": [
-      {
-        "name": "reqTimeSec",
-        "datatype": {
-          "type": "datetime",
-          "index": false,
-          "primary": true,
-          "format": "02/Jan/2006:15:04:05 -0700",
-          "resolution": "ms",
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "result_type",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_bd_status_hit"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "cacheStatus",
-        "datatype": {
-          "type": "boolean",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "totalBytes",
-        "datatype": {
-          "type": "uint64",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_resp_size"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "statusCode",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_status"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "timeToFirstByte",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "ds_req_time",
-        "datatype": {
-          "type": "double",
-          "index": false,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_req_time"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "transferTimeMSec",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "rspContentType",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_resp_content_type"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "reqMethod",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_method"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "reqHost",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "domain"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "queryStr",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_uri_query"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "referer",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_referer"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "reqPath",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_uri_path"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "resource_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "user_agent_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "ai_category",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "is_bot_traffic",
-        "datatype": {
-          "type": "boolean",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "UA",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_ua"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "cliIP",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "client_ip"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "Edge_IP",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "Origin_IP",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "Origin_TurnAroundTime",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "Origin_RequestEndTime",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "client_country_name",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "client_ip_country"
-          },
-          "suppress": true
-        }
-      },
-      {
-        "name": "country",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "city",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "client_ip_province"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "asn",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "client_ip_isp"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "Edge_GeoInfo",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "proto",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "source": {
-            "from_input_field": "ds_http_protocol"
-          },
-          "format": null,
-          "default": null,
-          "script": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "reqPort",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "source": {
-            "from_input_field": "client_port"
-          },
-          "format": null,
-          "default": null,
-          "script": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "rangeStr",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "source": {
-            "from_input_field": "ds_http_range"
-          },
-          "format": null,
-          "default": null,
-          "script": null,
-          "suppress": true
-        }
-      },
-      {
-        "name": "range",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "format": null,
-          "default": null,
-          "script": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "rspContentLen",
-        "datatype": {
-          "type": "uint64",
-          "index": true,
-          "source": {
-            "from_input_field": "ds_http_resp_content_length"
-          },
-          "format": null,
-          "default": null,
-          "script": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "URL",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "ds_http_uri"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "hdx_source_latency",
-        "datatype": {
-          "type": "uint32",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false
-        }
-      },
-      {
-        "name": "hdx_cdn",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": "BytePlus",
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "hdx_transform",
-        "datatype": {
-          "type": "string",
-          "index": true,
-          "format": null,
-          "resolution": null,
-          "default": "BytePlus multicdn",
-          "script": null,
-          "source": null,
-          "suppress": false
-        }
-      },
-      {
-        "name": "unknown",
-        "datatype": {
-          "type": "map",
-          "index": true,
-          "catch_all": true,
-          "format": null,
-          "resolution": null,
-          "default": null,
-          "script": null,
-          "elements": [
-            {
-              "type": "string",
-              "index": true
-            },
-            {
-              "type": "string",
-              "index": true
-            }
-          ],
-          "source": null,
-          "suppress": false
-        }
-      }
-    ],
-    "compression": "",
-    "wurfl": null,
-    "format_details": {
-      "flattening": {
-        "active": false,
-        "map_flattening_strategy": {
-          "left": "",
-          "right": ""
-        },
-        "slice_flattening_strategy": {
-          "left": "",
-          "right": ""
-        },
-        "depth": null
-      }
-    }
+    "sql_transform": "SELECT \ndatediff('s', reqTimeSec, now64(3)) AS hdx_source_latency,\npositionCaseInsensitive(result_type, 'hit') > 0 AS cacheStatus,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ua_category', assumeNotNull(UA)) AS user_agent_category,\nmultiIf(positionCaseInsensitive(assumeNotNull(reqPath), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(reqPath), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'ai_category', assumeNotNull(UA)) AS ai_category,\ndictGet('__SHARED_PROJECT___ua_cat_dict', 'is_bot', assumeNotNull(UA)) AS is_bot_traffic,\n (ds_req_time*1000)::UInt64 as transferTimeMSec,\n (totalBytes/2) / (totalBytes/transferTimeMSec) as timeToFirstByte,\ndictGetString('__SHARED_PROJECT___country_mapping', 'country_iso_code', initcap(assumeNotNull(client_country_name))) AS country,\n splitByChar('=', assumeNotNull(rangeStr))[2] as range,\n * \nFROM {STREAM}",
+    "wurfl": null
   },
   "type": "json"
 }

@@ -1,5 +1,4 @@
 {
-  "time": "07/May/2026:10:00:00 +0000",
   "client_ip": "192.0.2.1",
   "client_ip_country": "Indonesia",
   "client_ip_isp": "Tencent Cloud",
@@ -20,5 +19,6 @@
   "ds_http_uri": "/chickadee.png?version=1",
   "ds_http_uri_path": "/img/chickadee.png",
   "ds_http_uri_query": "version=1&colar=red",
-  "ds_req_time": 0.104
+  "ds_req_time": 0.104,
+  "time": "14/May/2026:10:00:00 +0000"
 }
