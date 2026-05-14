@@ -18,18 +18,32 @@ def _stub_read_json(path, *a, **kw):
         return json.load(f)
 
 
+import re as _re
+
+
+def _real_slugify(title):
+    slug = title.lower()
+    slug = _re.sub(r"[^a-z0-9]+", "-", slug)
+    return slug.strip("-")
+
+
 _utils_pkg.file_utils.read_json = _stub_read_json
 _utils_pkg.file_utils.write_json = lambda *a, **kw: None
+_utils_pkg.file_utils.slugify_grafana_title = _real_slugify
 sys.modules.setdefault("utils", _utils_pkg)
 sys.modules.setdefault("utils.file_utils", _utils_pkg.file_utils)
 
 from scripts.configurator.config import BundleConfig, BundleState, DashboardInfo, SummaryInfo, TransformInfo
 from scripts.configurator.dashboard_fixer import (
     _build_inputs_map,
+    _build_sibling_slug_map,
     _find_summary_var,
+    _fix_hardcoded_uids,
     _fix_template_variables,
     _get_primary_timestamp_column,
+    _slug_to_macro,
 )
+from scripts.utils.file_utils import slugify_grafana_title
 
 
 # ---------------------------------------------------------------------------
@@ -871,3 +885,217 @@ class TestValueBasedClassification:
         assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
         # Warning surfaces the ambiguity.
         assert any("collide" in w.lower() and "logs" in w for w in state.warnings)
+
+
+# ---------------------------------------------------------------------------
+# LOTC-1605 / LOTC-1615-1617: slugify_grafana_title + _fix_hardcoded_uids
+# ---------------------------------------------------------------------------
+
+class TestSlugifyGrafanaTitle:
+    """slugify_grafana_title mirrors Grafana's own title-to-slug conversion."""
+
+    def test_ascii_words(self):
+        assert slugify_grafana_title("Raw Logs") == "raw-logs"
+
+    def test_multiple_words(self):
+        assert slugify_grafana_title("Cache Analysis Treemap") == "cache-analysis-treemap"
+
+    def test_acronym_words(self):
+        assert slugify_grafana_title("CDN Dashboard Default") == "cdn-dashboard-default"
+
+    def test_single_word(self):
+        assert slugify_grafana_title("Home") == "home"
+
+    def test_punctuation_collapses(self):
+        # Multiple non-alphanumeric chars in a row collapse to a single hyphen
+        assert slugify_grafana_title("Foo  --  Bar") == "foo-bar"
+
+    def test_accented_chars_treated_as_separators(self):
+        # Non-ASCII chars are non-alphanumeric → replaced with hyphen
+        assert slugify_grafana_title("Café Bar") == "caf-bar"
+
+    def test_leading_trailing_stripped(self):
+        assert slugify_grafana_title("  Hello World  ") == "hello-world"
+
+    def test_slug_macro_roundtrip(self):
+        assert _slug_to_macro("raw-logs") == "__DASHBOARD_UID_RAW_LOGS__"
+        assert _slug_to_macro("cdn-dashboard-default") == "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__"
+        assert _slug_to_macro("cache-analysis-treemap") == "__DASHBOARD_UID_CACHE_ANALYSIS_TREEMAP__"
+
+
+def _uid_dashboard(title, extra_panels=None):
+    """Build a minimal dashboard dict with a title and optional panels list."""
+    d = {"title": title, "templating": {"list": []}, "panels": extra_panels or []}
+    return d
+
+
+def _constant_var(name, value):
+    return {
+        "name": name,
+        "type": "constant",
+        "query": value,
+        "hide": 2,
+        "skipUrlSync": True,
+        "current": {"selected": False, "text": value, "value": value},
+        "options": [{"selected": False, "text": value, "value": value}],
+    }
+
+
+def _make_uid_config(tmp_path):
+    bundle_dir = tmp_path / "aws" / "test_bundle"
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+    return BundleConfig(
+        bundle_dir=str(bundle_dir),
+        table_name="logs",
+        data_category="cdn",
+        source_name="aws",
+        bundle_name="test_bundle",
+    )
+
+
+class TestFixHardcodedUids:
+    """_fix_hardcoded_uids rewrites <uuid>/<slug> patterns in dashboard JSON."""
+
+    SELF_UUID = "fed820d2-e36b-4cfd-9570-8bd44ca92eea"
+    SIBLING_UUID = "c44c5f0c-badf-4794-94a7-2ca3c6f37ade"
+    EXTERNAL_UUID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+
+    # ------------------------------------------------------------------ Shape A
+
+    def test_shape_a_self_reference(self, tmp_path):
+        """Constant value <uuid>/<own-slug> → __DASHBOARD_UUID__/<own-slug>."""
+        dashboard = _uid_dashboard("Cache Analysis Treemap")
+        var = _constant_var("reset_link", f"{self.SELF_UUID}/cache-analysis-treemap")
+        dashboard["templating"]["list"].append(var)
+
+        dinfo = DashboardInfo(path="/fake/cache.json", filename="cache.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {}  # no siblings — self only
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        assert var["query"] == "__DASHBOARD_UUID__/cache-analysis-treemap"
+        assert var["current"]["value"] == "__DASHBOARD_UUID__/cache-analysis-treemap"
+        assert var["options"][0]["value"] == "__DASHBOARD_UUID__/cache-analysis-treemap"
+
+    def test_shape_a_sibling_reference(self, tmp_path):
+        """Constant value <uuid>/<sibling-slug> → __DASHBOARD_UID_*__/<sibling-slug>."""
+        dashboard = _uid_dashboard("CDN Global View")
+        var = _constant_var("raw_logs", f"{self.SIBLING_UUID}/raw-logs")
+        dashboard["templating"]["list"].append(var)
+
+        dinfo = DashboardInfo(path="/fake/global.json", filename="global.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {"raw-logs": "raw.json", "cdn-global-view": "global.json"}
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        assert var["query"] == "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+        assert var["current"]["value"] == "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+        assert var["options"][0]["text"] == "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+
+    # ------------------------------------------------------------------ Shape B
+
+    def test_shape_b_inline_macro_no_constant(self, tmp_path):
+        """Panel URL /d/<uuid>/<sibling-slug>?q → /d/__MACRO__/<slug>?q (no constant)."""
+        url = f"/d/{self.SIBLING_UUID}/raw-logs?var-x=1&var-y=2"
+        dashboard = _uid_dashboard("CDN Global View")
+        dashboard["panels"] = [{"links": [{"url": url}]}]
+
+        dinfo = DashboardInfo(path="/fake/global.json", filename="global.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {"raw-logs": "raw.json", "cdn-global-view": "global.json"}
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        result_url = dashboard["panels"][0]["links"][0]["url"]
+        assert result_url == "/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs?var-x=1&var-y=2"
+
+    def test_shape_b_constant_indirection(self, tmp_path):
+        """Panel URL /d/<uuid>/<sibling-slug>?q → /d/${constant}?q when constant exists."""
+        # Pass 1 will rewrite the constant; Pass 2 should then prefer ${raw_logs}
+        url = f"/d/{self.SIBLING_UUID}/raw-logs?var-x=1"
+        dashboard = _uid_dashboard("CDN Global View")
+        # Add the constant that Pass 1 will rewrite
+        var = _constant_var("raw_logs", f"{self.SIBLING_UUID}/raw-logs")
+        dashboard["templating"]["list"].append(var)
+        dashboard["panels"] = [{"links": [{"url": url}]}]
+
+        dinfo = DashboardInfo(path="/fake/global.json", filename="global.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {"raw-logs": "raw.json", "cdn-global-view": "global.json"}
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        # Constant was rewritten by Pass 1
+        assert var["query"] == "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+        # URL uses ${raw_logs} indirection (not inline macro)
+        result_url = dashboard["panels"][0]["links"][0]["url"]
+        assert result_url == "/d/${raw_logs}?var-x=1"
+
+    def test_shape_b_query_string_preserved(self, tmp_path):
+        """Query string survives the URL rewrite intact."""
+        qs = "?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+        url = f"/d/{self.SIBLING_UUID}/raw-logs{qs}"
+        dashboard = _uid_dashboard("CDN Global View")
+        dashboard["panels"] = [{"links": [{"url": url}]}]
+
+        dinfo = DashboardInfo(path="/fake/global.json", filename="global.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {"raw-logs": "raw.json", "cdn-global-view": "global.json"}
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        result_url = dashboard["panels"][0]["links"][0]["url"]
+        assert result_url == f"/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs{qs}"
+
+    # ------------------------------------------------------------------ Non-match / warn
+
+    def test_nonmatching_uid_unchanged_and_warns(self, tmp_path):
+        """UID whose slug doesn't match any sibling is left alone and a warning is emitted."""
+        url = f"/d/{self.EXTERNAL_UUID}/some-external-dashboard?var-x=1"
+        dashboard = _uid_dashboard("CDN Global View")
+        dashboard["panels"] = [{"links": [{"url": url}]}]
+
+        dinfo = DashboardInfo(path="/fake/global.json", filename="global.json")
+        config = _make_uid_config(tmp_path)
+        state = _make_state()
+        sibling_map = {"raw-logs": "raw.json"}
+
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_map, config, state)
+
+        # URL unchanged
+        assert dashboard["panels"][0]["links"][0]["url"] == url
+        # Warning emitted
+        assert any("some-external-dashboard" in w for w in state.warnings)
+
+    # ------------------------------------------------------------------ Slug collision
+
+    def test_slug_collision_raises(self, tmp_path):
+        """_build_sibling_slug_map raises ValueError when two dashboards share a slug."""
+        import tempfile, json, os
+
+        d1 = {"title": "My Dashboard"}
+        d2 = {"title": "My  Dashboard"}  # same slug: "my-dashboard"
+
+        with tempfile.TemporaryDirectory() as td:
+            p1 = os.path.join(td, "d1.json")
+            p2 = os.path.join(td, "d2.json")
+            with open(p1, "w") as f:
+                json.dump(d1, f)
+            with open(p2, "w") as f:
+                json.dump(d2, f)
+
+            state = _make_state()
+            state.dashboards = [
+                DashboardInfo(path=p1, filename="d1.json"),
+                DashboardInfo(path=p2, filename="d2.json"),
+            ]
+
+            with pytest.raises(ValueError, match="collision"):
+                _build_sibling_slug_map(state)

@@ -1,10 +1,18 @@
 // Validation: Check that template variables in dashboards match those declared in bundle.json
 
 use regex::Regex;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use tokio::fs;
 
+use crate::grafana::dashboard::slugify_grafana_title;
 use crate::models::bundle::Bundle;
+
+fn slug_to_macro(slug: &str) -> String {
+    format!(
+        "__DASHBOARD_UID_{}__",
+        slug.to_uppercase().replace('-', "_")
+    )
+}
 
 pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     // Extract expected variables from bundle.json
@@ -39,11 +47,42 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         }
     }
 
+    // Build the set of all sibling slugs (and a slug→path map for diagnostics),
+    // then add __DASHBOARD_UID_*__ macros to the expected-variables set.
+    let mut all_slugs: HashSet<String> = HashSet::new();
+    let mut slug_by_path: HashMap<String, String> = HashMap::new();
+
+    for path in &dashboard_path_list {
+        let content = match fs::read_to_string(path).await {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let json: serde_json::Value = match serde_json::from_str(&content) {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let dashboard = json.get("dashboard").unwrap_or(&json);
+        let title = dashboard["title"].as_str().unwrap_or("");
+        let slug = slugify_grafana_title(title);
+        if !slug.is_empty() {
+            all_slugs.insert(slug.clone());
+            slug_by_path.insert(path.clone(), slug.clone());
+            // Every sibling slug is a legitimate __DASHBOARD_UID_*__ macro target
+            expected_variables.insert(slug_to_macro(&slug));
+        }
+    }
+
     // Pattern to find template variables in JSON: __VARIABLE_NAME__
     let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
 
-    for full_path in dashboard_path_list {
-        let content = match fs::read_to_string(&full_path).await {
+    // Pattern to find hardcoded <uuid>/<slug> strings — used for the missed-rewrite check.
+    let uid_slug_pattern = Regex::new(
+        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/([a-z0-9][a-z0-9-]*)",
+    )
+    .unwrap();
+
+    for full_path in &dashboard_path_list {
+        let content = match fs::read_to_string(full_path).await {
             Ok(v) => v,
             Err(e) => {
                 return Err(format!(
@@ -56,6 +95,8 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
 
         // Extract dashboard name from path
         let dashboard_name = full_path.split('/').next_back().unwrap_or("unknown");
+
+        let own_slug = slug_by_path.get(full_path).cloned().unwrap_or_default();
 
         // Find all variables used in this dashboard
         let mut found_variables = HashSet::new();
@@ -90,6 +131,38 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
                     expected_variables.iter().collect::<Vec<_>>()
                 ));
             }
+        }
+
+        // Missed-rewrite check: warn on any hardcoded <uuid>/<slug> whose slug
+        // matches a sibling (including self). These should be rewritten to
+        // __DASHBOARD_UID_<SLUG>__ (or __DASHBOARD_UUID__ for self) by the
+        // configurator pipeline before the next deploy.
+        for cap in uid_slug_pattern.captures_iter(&content) {
+            let slug = &cap[1];
+            if !all_slugs.contains(slug) {
+                continue; // External/community dashboard — pass silently
+            }
+            let expected_macro = if slug == own_slug {
+                "__DASHBOARD_UUID__".to_string()
+            } else {
+                slug_to_macro(slug)
+            };
+            let ref_kind = if slug == own_slug {
+                "self-reference"
+            } else {
+                "sibling reference"
+            };
+            println!(
+                "WARNING: {}.{} Dashboard '{}' contains a hardcoded UID for slug '{}' ({}).\n  \
+                 Expected macro: '{}'\n  \
+                 Run the configurator pipeline to fix this.\n",
+                file!(),
+                line!(),
+                dashboard_name,
+                slug,
+                ref_kind,
+                expected_macro,
+            );
         }
     }
 
@@ -155,6 +228,68 @@ mod tests {
                 is_allowed,
                 "Standard Grafana variable {} should be allowed",
                 var
+            );
+        }
+    }
+
+    #[test]
+    fn test_sibling_macro_in_expected_set() {
+        // Demonstrate that __DASHBOARD_UID_RAW_LOGS__ is recognised as
+        // a legitimate template variable (it passes the expected-variable check).
+        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
+        let content = r#"{"query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"}"#;
+
+        let vars: Vec<_> = variable_pattern
+            .captures_iter(content)
+            .filter_map(|cap| cap.get(0))
+            .map(|m| m.as_str().to_string())
+            .collect();
+
+        assert!(vars.contains(&"__DASHBOARD_UID_RAW_LOGS__".to_string()));
+    }
+
+    #[test]
+    fn test_uid_slug_pattern_matches_hardcoded_uid() {
+        let uid_slug_pattern = Regex::new(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/([a-z0-9][a-z0-9-]*)",
+        )
+        .unwrap();
+
+        let content = r#""/d/c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs?var-x=1""#;
+        let caps: Vec<_> = uid_slug_pattern.captures_iter(content).collect();
+        assert_eq!(caps.len(), 1);
+        assert_eq!(&caps[0][1], "raw-logs");
+    }
+
+    #[test]
+    fn test_uid_slug_pattern_does_not_match_macro() {
+        let uid_slug_pattern = Regex::new(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/([a-z0-9][a-z0-9-]*)",
+        )
+        .unwrap();
+
+        // __DASHBOARD_UID_RAW_LOGS__ is not a valid UUID → pattern must not match
+        let content = r#""__DASHBOARD_UID_RAW_LOGS__/raw-logs""#;
+        assert_eq!(uid_slug_pattern.captures_iter(content).count(), 0);
+    }
+
+    #[test]
+    fn test_slugify_parity_with_python() {
+        // These cases are also tested in Python — both must agree exactly.
+        let cases = [
+            ("Cache Analysis Treemap", "cache-analysis-treemap"),
+            ("Raw Logs", "raw-logs"),
+            ("CDN Global View", "cdn-global-view"),
+            ("CDN Dashboard Default", "cdn-dashboard-default"),
+            ("Home", "home"),
+            ("Foo  --  Bar", "foo-bar"),
+        ];
+        for (title, expected) in &cases {
+            assert_eq!(
+                slugify_grafana_title(title),
+                *expected,
+                "slug mismatch for '{}'",
+                title
             );
         }
     }

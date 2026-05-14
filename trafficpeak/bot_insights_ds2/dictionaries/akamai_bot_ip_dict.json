@@ -1,0 +1,32 @@
+{
+  "name": "akamai_bot_ip_dict",
+  "description": null,
+  "settings": {
+    "dictionary_load_level": [
+      "ALL"
+    ],
+    "filename": "akamai_bot_ip_dict",
+    "format": "CSVWithNames",
+    "layout": "ip_trie",
+    "lifetime_seconds": 5,
+    "output_columns": [
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "cidr"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "bot_owner"
+      }
+    ],
+    "primary_key": [
+      "cidr"
+    ]
+  }
+}
