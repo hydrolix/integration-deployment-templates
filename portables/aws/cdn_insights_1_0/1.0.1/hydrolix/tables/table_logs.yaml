@@ -1,0 +1,4 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
+description: Provides monitoring that normalizes and aggregates log data from multiple content delivery network (CDN) providers
+  into a single unified view via interactive dashboards
+type: turbine

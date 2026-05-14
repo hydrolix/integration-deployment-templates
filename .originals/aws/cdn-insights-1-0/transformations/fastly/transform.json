@@ -1,0 +1,570 @@
+{
+    "name": "mcdn_fastly",
+    "description": "Version v1.0",
+    "settings": {
+        "is_default": true,
+        "rate_limit": null,
+        "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresponse_time_to_first_byte * 1000.0 as response_time_to_first_byte_ms,\nresponse_time_to_last_byte * 1000.0 as response_time_to_last_byte_ms,\npositionCaseInsensitive (result_type, 'hit') > 0 AS cache_was_cached,\nsplitByChar('?', assumeNotNull(original_url))[2] AS request_query_string,\nsplitByChar('?', assumeNotNull(original_url))[1] AS request_path,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\n * \nFROM {STREAM}",
+        "null_values": [
+            "-1",
+            "(null)"
+        ],
+        "sample_data": {
+            "edge_ip": "2a04:4e42:200::498",
+            "is_edge": true,
+            "edge_pop": "SJC",
+            "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
+            "origin_ip": "(null)",
+            "timestamp": "2025-10-02T21:06:14",
+            "client_asn": "7922",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15",
+            "client_city": "yuba city",
+            "result_type": "HIT-CLUSTER",
+            "original_url": "/media/segment_1920p1080_015.ts",
+            "request_host": "bbb-fastly.hdx-demo.us",
+            "request_method": "GET",
+            "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
+            "response_status_code": "200",
+            "response_total_bytes": 1831674,
+            "response_content_type": "video/mp2t",
+            "client_country_iso_code": "USA",
+            "response_time_to_last_byte": 0.003,
+            "response_time_to_first_byte": 0
+        },
+        "shadow_table": null,
+        "output_columns": [
+            {
+                "name": "timestamp",
+                "datatype": {
+                    "type": "datetime",
+                    "index": false,
+                    "primary": true,
+                    "format": "2006-01-02T15:04:05",
+                    "resolution": "ms",
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/timestamp"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "result_type",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "result_type"
+                    },
+                    "suppress": true
+                }
+            },
+            {
+                "name": "cache_was_cached",
+                "datatype": {
+                    "type": "boolean",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "response_total_bytes",
+                "datatype": {
+                    "type": "uint64",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_total_bytes"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "response_status_code",
+                "datatype": {
+                    "type": "uint32",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_status_code"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "response_time_to_first_byte",
+                "datatype": {
+                    "type": "double",
+                    "index": false,
+                    "primary": false,
+                    "ignore": false,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_time_to_first_byte"
+                        ]
+                    },
+                    "suppress": true
+                }
+            },
+            {
+                "name": "response_time_to_first_byte_ms",
+                "datatype": {
+                    "type": "uint64",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "response_time_to_last_byte",
+                "datatype": {
+                    "type": "double",
+                    "index": false,
+                    "primary": false,
+                    "ignore": false,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_time_to_last_byte"
+                        ]
+                    },
+                    "suppress": true
+                }
+            },
+            {
+                "name": "response_time_to_last_byte_ms",
+                "datatype": {
+                    "type": "uint64",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "response_content_type",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/response_content_type"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "request_method",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/request_method"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "request_host",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/request_host"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "request_query_string",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "request_referer",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/request_referer"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "original_url",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/original_url"
+                        ]
+                    },
+                    "suppress": true
+                }
+            },
+            {
+                "name": "request_path",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "user_agent_category",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "user_agent",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/user_agent"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "client_ip",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/client_ip"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "edge_ip",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/edge_ip"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "origin_ip",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/origin_ip"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "origin_time_to_first_byte_ms",
+                "datatype": {
+                    "type": "uint64",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/origin_time_to_first_byte_ms"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "origin_time_to_last_byte_ms",
+                "datatype": {
+                    "type": "uint64",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/origin_time_to_last_byte_ms"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "client_country_iso_code",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/client_country_iso_code"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "client_city",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/client_city"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "client_asn",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/client_asn"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "edge_pop",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_json_pointers": [
+                            "/edge_pop"
+                        ]
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "hdx_source_latency_sec",
+                "datatype": {
+                    "type": "uint32",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "source": {
+                        "from_input_field": "sql_transform"
+                    },
+                    "suppress": false
+                }
+            },
+            {
+                "name": "hdx_cdn",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": "Fastly",
+                    "script": null,
+                    "source": null,
+                    "suppress": false
+                }
+            },
+            {
+                "name": "hdx_transform",
+                "datatype": {
+                    "type": "string",
+                    "index": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": "Fastly multi cdn",
+                    "script": null,
+                    "source": null,
+                    "suppress": false
+                }
+            },
+            {
+                "name": "unknown",
+                "datatype": {
+                    "type": "map",
+                    "index": true,
+                    "catch_all": true,
+                    "format": null,
+                    "resolution": null,
+                    "default": null,
+                    "script": null,
+                    "elements": [
+                        {
+                            "type": "string",
+                            "index": true
+                        },
+                        {
+                            "type": "string",
+                            "index": true
+                        }
+                    ],
+                    "source": null,
+                    "suppress": false
+                }
+            }
+        ],
+        "compression": "",
+        "wurfl": null,
+        "format_details": {
+            "flattening": {
+                "active": false,
+                "map_flattening_strategy": {
+                    "left": "",
+                    "right": ""
+                },
+                "slice_flattening_strategy": {
+                    "left": "",
+                    "right": ""
+                },
+                "depth": null
+            }
+        }
+    },
+    "type": "json"
+}
