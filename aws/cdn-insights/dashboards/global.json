@@ -1644,7 +1644,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/${raw_logs}?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                      "url": "/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
                     }
                   ]
                 }
@@ -2049,11 +2049,11 @@
             "type": "hydrolix-hydrolix-datasource",
             "uid": "__DATASOURCE__"
           },
-          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
           "hide": 2,
           "name": "next_dim_for_display",
           "options": [],
-          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'edge_pop', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
+          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'client_asn', 'ASN',\n    'request_host', 'Hostname',\n    'request_host', 'Edge pop'\n) AS display_name_map\nSELECT display_name_map['${next_dim}']",
           "refresh": 2,
           "regex": "",
           "type": "query"
