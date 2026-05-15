@@ -363,10 +363,11 @@ def _find_summary_var(label, state):
 def _get_summary_value(dashboard_var, is_primary):
     """Get the correct summary variable value based on primary vs other."""
     if is_primary:
-        # Primary dashboard: NO __PROJECT_NAME__ prefix
+        # Primary dashboard: create_summary_table in Rust already prepends project_name
         return dashboard_var
     else:
-        # Other dashboards: WITH __PROJECT_NAME__ prefix
+        # Other dashboards: create_others replaces __SUMMARY_TABLE_NAME_N__ with bare name,
+        # so __PROJECT_NAME__. prefix is needed here
         return f"__PROJECT_NAME__.{dashboard_var}"
 
 
