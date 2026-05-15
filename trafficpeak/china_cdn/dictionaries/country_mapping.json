@@ -1,32 +1,32 @@
 {
-    "description": "",
-    "name": "country_mapping",
-    "settings": {
-        "dictionary_load_level": [
-            "ALL"
-        ],
-        "filename": "geoip_country_locations_en",
-        "format": "CSVWithNames",
-        "layout": "complex_key_hashed",
-        "lifetime_seconds": 5,
-        "output_columns": [
-            {
-                "datatype": {
-                    "denullify": true,
-                    "type": "string"
-                },
-                "name": "country_iso_code"
-            },
-            {
-                "datatype": {
-                    "denullify": true,
-                    "type": "string"
-                },
-                "name": "country_name"
-            }
-        ],
-        "primary_key": [
-            "country_name"
-        ]
-    }
+  "description": "",
+  "name": "country_mapping",
+  "settings": {
+    "dictionary_load_level": [
+      "ALL"
+    ],
+    "filename": "country_mapping",
+    "format": "CSVWithNames",
+    "layout": "complex_key_hashed",
+    "lifetime_seconds": 5,
+    "output_columns": [
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "country_iso_code"
+      },
+      {
+        "datatype": {
+          "denullify": true,
+          "type": "string"
+        },
+        "name": "country_name"
+      }
+    ],
+    "primary_key": [
+      "country_name"
+    ]
+  }
 }

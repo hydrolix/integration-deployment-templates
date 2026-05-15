@@ -175,10 +175,20 @@ pub fn missing_required_fields(transform: &Value) -> Vec<String> {
                 .and_then(|p| p.as_bool())
                 == Some(true)
         })
-        .filter_map(|col| col.get("name").and_then(|n| n.as_str()).map(String::from))
-        .filter(|name| match sample_data {
-            Some(obj) => !obj.contains_key(name),
-            None => true,
+        .filter_map(|col| {
+            let name = col.get("name").and_then(|n| n.as_str())?;
+            // When from_input_field is set, that's the key present in sample_data —
+            // the output column name won't appear directly as an input field.
+            let lookup_key = col
+                .get("datatype")
+                .and_then(|dt| dt.get("source"))
+                .and_then(|s| s.get("from_input_field"))
+                .and_then(|f| f.as_str())
+                .unwrap_or(name);
+            match sample_data {
+                Some(obj) if obj.contains_key(lookup_key) => None,
+                _ => Some(name.to_string()),
+            }
         })
         .collect()
 }
@@ -202,7 +212,12 @@ pub fn primary_timestamp_from_transform(transform: &Value) -> Option<(String, Va
             .and_then(|f| f.as_str())
             .unwrap_or("s")
             .to_string();
-        let value = sample_data.get(&name)?.clone();
+        let lookup_key = dt
+            .get("source")
+            .and_then(|s| s.get("from_input_field"))
+            .and_then(|f| f.as_str())
+            .unwrap_or(&name);
+        let value = sample_data.get(lookup_key)?.clone();
         Some((name, value, format))
     })
 }

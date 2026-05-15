@@ -10,51 +10,51 @@
     },
     "__requires": [
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.0.0"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.6.0"
       },
       {
-        "type": "panel",
         "id": "marcusolsson-treemap-panel",
         "name": "Treemap",
+        "type": "panel",
         "version": "2.0.1"
       },
       {
-        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "stat",
         "name": "Stat",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "table",
         "name": "Table",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -1834,61 +1834,61 @@
           "type": "query"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+          },
           "hide": 2,
           "name": "summary_min",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+          },
           "hide": 2,
           "name": "summary_hour",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "cdn1",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            "text": "Akamai",
+            "value": "Akamai"
           },
+          "hide": 2,
+          "name": "cdn1",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "Akamai",
+              "value": "Akamai"
             }
-          ]
+          ],
+          "query": "Akamai",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {},
@@ -2077,42 +2077,42 @@
           "type": "query"
         },
         {
+          "current": {
+            "selected": false,
+            "text": "UUID_HERE/raw-logs",
+            "value": "UUID_HERE/raw-logs"
+          },
           "hide": 2,
           "name": "raw_logs",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
-          "current": {
-            "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
-          },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "UUID_HERE/raw-logs",
+              "value": "UUID_HERE/raw-logs"
             }
-          ]
+          ],
+          "query": "UUID_HERE/raw-logs",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "cdn_panel",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__.__TABLE_NAME__",
-            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+            "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
           },
+          "hide": 2,
+          "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__.__TABLE_NAME__",
-              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+              "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+              "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
             }
-          ]
+          ],
+          "query": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {
