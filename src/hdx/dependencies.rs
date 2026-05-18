@@ -6,7 +6,7 @@ use tokio::fs;
 
 use crate::models::bundle::Bundle;
 
-use crate::hdx::{BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_NAME, PROJ_UUID};
+use crate::hdx::{PROJ_NAME, PROJ_UUID};
 
 pub async fn exist(bearer_token: &str, bundle: &Bundle, base_dir: &str) -> Result<(), String> {
     let mut missing_functions: Vec<String> = vec![];
@@ -19,7 +19,7 @@ pub async fn exist(bearer_token: &str, bundle: &Bundle, base_dir: &str) -> Resul
             if let Some(required_functions) = &hydrolix.required_functions {
                 let functions_url = format!(
                     "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-                    *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+                    super::cluster(), super::org_uuid(), PROJ_UUID
                 );
 
                 let client = reqwest::Client::new();
@@ -87,7 +87,7 @@ pub async fn exist(bearer_token: &str, bundle: &Bundle, base_dir: &str) -> Resul
             if let Some(required_dictionaries) = &hydrolix.required_dictionaries {
                 let dicts_url = format!(
                     "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-                    *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+                    super::cluster(), super::org_uuid(), PROJ_UUID
                 );
 
                 let client = reqwest::Client::new();

@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::hdx::{BUNDLE_TESTING_CLUSTER, HTTP_TIMEOUT, ORG_UUID, PROJ_NAME, PROJ_UUID};
+use crate::hdx::{HTTP_TIMEOUT, PROJ_NAME, PROJ_UUID};
 
 #[allow(dead_code)]
 /// Discover function files in the bundle directory
@@ -68,7 +68,7 @@ pub async fn create_and_check(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        super::cluster(), super::org_uuid(), PROJ_UUID
     );
     let expected_name = format!("{}_{}", PROJ_NAME, function_name);
 
@@ -144,7 +144,7 @@ pub async fn create_and_check(
 
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, PROJ_UUID
+        super::cluster(), super::org_uuid(), PROJ_UUID
     );
 
     println!(

@@ -1,0 +1,28 @@
+{
+  "panels": [
+    {
+      "datasource": {
+        "type": "hydrolix",
+        "uid": "hydrolix_old"
+      },
+      "id": 1,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana",
+        "uid": "grafana_old"
+      },
+      "id": 2,
+      "type": "annolist"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prom_old"
+      },
+      "id": 3,
+      "type": "alertlist"
+    }
+  ]
+}

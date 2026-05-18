@@ -1,0 +1,19 @@
+{
+  "templating": {
+    "list": [
+      {
+        "datasource": {
+          "type": "hydrolix",
+          "uid": "old_uid_xyz"
+        },
+        "name": "host",
+        "query": "SELECT DISTINCT host FROM logs",
+        "type": "query"
+      },
+      {
+        "name": "interval",
+        "type": "interval"
+      }
+    ]
+  }
+}

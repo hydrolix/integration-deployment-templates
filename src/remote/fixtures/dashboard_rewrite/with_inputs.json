@@ -1,0 +1,15 @@
+{
+  "__inputs": [
+    {
+      "datasource": {
+        "type": "hydrolix",
+        "uid": "old_uid_xyz"
+      },
+      "label": "Hydrolix",
+      "name": "DS_HYDROLIX",
+      "pluginId": "hydrolix",
+      "type": "datasource"
+    }
+  ],
+  "panels": []
+}

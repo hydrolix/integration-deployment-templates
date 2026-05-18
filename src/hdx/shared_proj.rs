@@ -8,7 +8,7 @@ use tokio::fs;
 
 use crate::models::bundle::Bundle;
 
-use crate::hdx::{dictionaries, functions, BUNDLE_TESTING_CLUSTER, ORG_UUID};
+use crate::hdx::{dictionaries, functions};
 
 // const ORG_UUID_SAND: &str = "b646d78a-5fb2-4d5f-afef-b705bf185174";  // partnersandbox
 const HTTP_TIMEOUT_SECS: u64 = 120;
@@ -79,7 +79,19 @@ pub async fn check_dicts_and_funcs(
             .await
             {
                 Ok(_) => (),
-                Err(e) => return Err(format!("Failed to create shared dictionary: {}", e)),
+                Err(e) => {
+                    if *super::IS_REMOTE {
+                        // In --remote mode shared dictionaries are permanent cluster
+                        // resources — missing local files just means we can't upload
+                        // them, but they should already exist on the cluster.
+                        eprintln!(
+                            "  ⚠️  --remote: shared dictionary '{}' not confirmed on cluster (skipping): {}",
+                            dictionary_name, e
+                        );
+                    } else {
+                        return Err(format!("Failed to create shared dictionary: {}", e));
+                    }
+                }
             }
         }
     }
@@ -126,7 +138,7 @@ async fn get_project_uuid(bearer_token: &str) -> Result<String, String> {
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+        super::cluster(), super::org_uuid()
     );
 
     let client = reqwest::Client::new();
@@ -201,7 +213,7 @@ async fn get_project_uuid(bearer_token: &str) -> Result<String, String> {
 async fn create_shared_project(bearer_token: &str) -> Result<String, String> {
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID
+        super::cluster(), super::org_uuid()
     );
 
     let payload = serde_json::json!({
@@ -258,7 +270,7 @@ pub async fn check_and_create_shared_function(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, function_name);
@@ -292,7 +304,7 @@ pub async fn check_and_create_shared_function(
 
         for func in existing {
             if let Some(name) = func.get("name").and_then(|n| n.as_str()) {
-                if name == function_name {
+                if name == function_name || name == expected_name {
                     println!(
                         "  ✓ Shared function {} exists (as {})",
                         function_name, expected_name
@@ -338,7 +350,7 @@ pub async fn check_and_create_shared_function(
 
     let create_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/functions/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     println!(
@@ -392,7 +404,7 @@ pub async fn check_and_create_shared_dictionary(
 
     let list_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, dictionary_name);
@@ -421,7 +433,7 @@ pub async fn check_and_create_shared_dictionary(
 
                 for dict in existing {
                     if let Some(name) = dict.get("name").and_then(|n| n.as_str()) {
-                        if name == dictionary_name {
+                        if name == dictionary_name || name == expected_name {
                             println!(
                                 "  ✓ Shared dictionary {} exists (as {})",
                                 dictionary_name, expected_name
@@ -511,7 +523,7 @@ async fn upload_shared_dictionary_file(
 ) -> Result<(), String> {
     let files_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/files/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     let base_file_name = file_name
@@ -608,7 +620,7 @@ async fn create_shared_dictionary_definition(
 ) -> Result<(), String> {
     let dict_url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/dictionaries/",
-        *BUNDLE_TESTING_CLUSTER, ORG_UUID, project_uuid
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     let expected_name = format!("{}_{}", *SHARED_PROJECT_NAME, dictionary_name);

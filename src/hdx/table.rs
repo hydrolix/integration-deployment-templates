@@ -1,4 +1,4 @@
-use crate::hdx::{BUNDLE_TESTING_CLUSTER, CLIENT, FOR_MARKETPLACE, HTTP_TIMEOUT, ORG_UUID};
+use crate::hdx::{CLIENT, FOR_MARKETPLACE, HTTP_TIMEOUT};
 use serde_json::{json, Value};
 use tokio::time::sleep;
 use tokio::time::Duration;
@@ -7,8 +7,8 @@ use uuid::Uuid;
 pub async fn exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 
@@ -90,8 +90,8 @@ pub async fn create_in_project(
     });
 
     let url = format!(
-        "https://{}/config/v1/orgs/{ORG_UUID}/projects/{project_uuid}/tables",
-        *BUNDLE_TESTING_CLUSTER
+        "https://{}/config/v1/orgs/{}/projects/{}/tables",
+        super::cluster(), super::org_uuid(), project_uuid
     );
 
     let response = match CLIENT
@@ -195,8 +195,8 @@ pub async fn create(bearer_token: &str, table_name: &str) -> Result<String, Stri
 
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 
@@ -286,8 +286,8 @@ pub async fn add_transform(
 
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables/{table_uuid}/transforms/",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 
@@ -369,7 +369,7 @@ pub async fn insert_into(
     sample_data: &Value,
 ) -> Result<(), String> {
     let sample_data = json!([sample_data]);
-    let url = format!("https://{}/ingest/event", *BUNDLE_TESTING_CLUSTER);
+    let url = format!("https://{}/ingest/event", super::cluster());
 
     let max_retries = 20;
     let base_delay_ms = 1000; // 1 second base delay
@@ -469,7 +469,7 @@ pub async fn insert_csv_into_table(
     transform_name: &str,
     sample_data: String,
 ) -> Result<(), String> {
-    let url = format!("https://{BUNDLE_TESTING_CLUSTER}/ingest/event");
+    let url = format!("https://{}/ingest/event", super::cluster());
 
     for _i in 0..20 {
         sleep(Duration::from_secs(1)).await;
@@ -533,8 +533,8 @@ pub fn create_table_name() -> String {
 pub async fn get_list(bearer_token: &str, debug_mode: bool) -> Result<String, String> {
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 
@@ -577,8 +577,8 @@ pub async fn get_list(bearer_token: &str, debug_mode: bool) -> Result<String, St
 pub async fn delete(bearer_token: &str, uuid: &str) -> Result<(), String> {
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables/{uuid}",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 
@@ -632,7 +632,7 @@ hdx_primary_key='minute'"
 /// Execute a SQL statement against the cluster's query endpoint.
 /// Returns the raw response body (TabSeparated format).
 pub async fn query_sql(bearer_token: &str, sql: &str) -> Result<String, String> {
-    let url = format!("https://{}/query", *BUNDLE_TESTING_CLUSTER);
+    let url = format!("https://{}/query", super::cluster());
     let body = format!("{} FORMAT TabSeparated", sql);
 
     let response = CLIENT
@@ -688,8 +688,8 @@ pub async fn create_summary(
 
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables",
-        *BUNDLE_TESTING_CLUSTER,
-        ORG_UUID,
+        super::cluster(),
+        super::org_uuid(),
         super::get_project_uuid()
     );
 

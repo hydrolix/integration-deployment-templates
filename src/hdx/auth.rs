@@ -1,16 +1,14 @@
-use crate::hdx::{
-    BUNDLE_TESTING_CLUSTER, BUNDLE_TESTING_PASSWORD, BUNDLE_TESTING_USERNAME, CLIENT,
-};
+use crate::hdx::CLIENT;
 
 pub async fn get_token() -> Result<String, String> {
-    let url = format!("https://{}/config/v1/login", *BUNDLE_TESTING_CLUSTER);
+    let url = format!("https://{}/config/v1/login", super::cluster());
 
     let response = match CLIENT
         .post(&url)
         .header("Content-Type", "application/json")
         .json(&serde_json::json!({
-            "username": BUNDLE_TESTING_USERNAME.to_string(),
-            "password": BUNDLE_TESTING_PASSWORD.to_string(),
+            "username": super::username(),
+            "password": super::password(),
         }))
         .send()
         .await
