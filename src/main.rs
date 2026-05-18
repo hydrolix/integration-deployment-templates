@@ -321,6 +321,11 @@ async fn validate_bundle(base: &str, bundle: &Bundle) -> Result<(), String> {
         eprintln!("WARNING: {w}");
     }
 
+    // Warn if bundle.json name was changed in git history (warning only)
+    for w in validate::bundle_name_history::run(base, bundle).await {
+        eprintln!("WARNING: {w}");
+    }
+
     match validate::summary_table::run(bundle) {
         Ok(_) => (),
         Err(e) => return Err(format!("Bad summary table: error={e}")),

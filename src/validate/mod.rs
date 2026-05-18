@@ -1,4 +1,5 @@
 pub mod alert_rules_are_valid;
+pub mod bundle_name_history;
 pub mod check_dependencies;
 pub mod dashboard_is_valid;
 pub mod datasource_uid_consistency;
