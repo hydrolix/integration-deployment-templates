@@ -379,7 +379,7 @@
         "datatype": {
           "default": null,
           "format": null,
-          "index": true,
+          "index": false,
           "resolution": null,
           "script": null,
           "source": {
@@ -409,7 +409,7 @@
         "datatype": {
           "default": null,
           "format": null,
-          "index": true,
+          "index": false,
           "resolution": null,
           "script": null,
           "source": {
