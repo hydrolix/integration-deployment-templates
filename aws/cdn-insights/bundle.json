@@ -30,7 +30,7 @@
   "method_overrides": {
     "region": "us-east-1"
   },
-  "name": "aws_cdn_insights",
+  "name": "cdn_insights",
   "other_dashboards": [
     {
       "path": "dashboards/global.json",
