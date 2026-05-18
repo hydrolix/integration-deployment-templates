@@ -29,8 +29,7 @@ dashboards:
       VAR_QUANTILES_ORIGIN_TTFB_95: quantiles_origin_ttfb_ms[5]
       VAR_QUANTILES_ORIGIN_TTLB_50: quantiles_origin_ttlb_ms[2]
       VAR_QUANTILES_ORIGIN_TTLB_95: quantiles_origin_ttlb_ms[5]
-      VAR_RAW_LOGS: UUID_HERE/NAME
-      VAR_CDN_PANEL: UUID_HERE/NAME
+      VAR_RAW_LOGS: __DASHBOARD_UID_RAW_LOGS__/raw-logs
   hdx-cdn-global-view:
     dashboard:
       __extend__: dashboards/cdn_global_view.json
@@ -40,5 +39,5 @@ dashboards:
       VAR_SUMMARY_MIN: PROJECT.multi_summary_min
       VAR_SUMMARY_HOUR: PROJECT.multi_summary_hour
       VAR_CDN1: Akamai
-      VAR_RAW_LOGS: UUID_HERE/raw-logs
-      VAR_CDN_PANEL: UUID_HERE/cdn-dashboard-default-v1-0-5
+      VAR_RAW_LOGS: __DASHBOARD_UID_RAW_LOGS__/raw-logs
+      VAR_CDN_PANEL: __DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default

@@ -82,14 +82,7 @@
       "name": "VAR_RAW_LOGS",
       "type": "constant",
       "label": "raw_logs",
-      "value": "UUID_HERE/NAME",
-      "description": ""
-    },
-    {
-      "name": "VAR_CDN_PANEL",
-      "type": "constant",
-      "label": "cdn_panel",
-      "value": "UUID_HERE/NAME",
+      "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
       "description": ""
     }
   ],
@@ -4077,25 +4070,6 @@
           {
             "value": "${VAR_RAW_LOGS}",
             "text": "${VAR_RAW_LOGS}",
-            "selected": false
-          }
-        ]
-      },
-      {
-        "hide": 2,
-        "name": "cdn_panel",
-        "query": "${VAR_CDN_PANEL}",
-        "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_CDN_PANEL}",
-          "text": "${VAR_CDN_PANEL}",
-          "selected": false
-        },
-        "options": [
-          {
-            "value": "${VAR_CDN_PANEL}",
-            "text": "${VAR_CDN_PANEL}",
             "selected": false
           }
         ]
