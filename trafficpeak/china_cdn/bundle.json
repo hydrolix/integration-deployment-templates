@@ -1,6 +1,6 @@
 {
   "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/china_cdn",
-  "beta": true,
+  "beta": false,
   "dashboard": {
     "path": "dashboards/CDN Dashboard Default.json",
     "project_var": "__PROJECT_NAME__"
@@ -82,7 +82,7 @@
     },
     "primary_url": "https://docs.hydrolix.io/docs/china_cdn-integration",
     "source": {
-      "full_title": "Trafficpeak China Cdn",
+      "full_title": "Trafficpeak China CDN",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
     }
   }

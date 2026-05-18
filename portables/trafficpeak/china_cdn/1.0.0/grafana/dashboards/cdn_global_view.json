@@ -33,14 +33,14 @@
       "name": "VAR_RAW_LOGS",
       "type": "constant",
       "label": "raw_logs",
-      "value": "UUID_HERE/raw-logs",
+      "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
       "description": ""
     },
     {
       "name": "VAR_CDN_PANEL",
       "type": "constant",
       "label": "cdn_panel",
-      "value": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+      "value": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
       "description": ""
     }
   ],

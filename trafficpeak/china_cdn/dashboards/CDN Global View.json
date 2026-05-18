@@ -108,8 +108,7 @@
             "showLineNumbers": false,
             "showMiniMap": false
           },
-          "content": "\n${drill_chain_for_display:text}\n\n💡 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*",
-          "mode": "markdown"
+        "content": "\n${drill_chain_for_display:text}\n\n💡 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*"
         },
         "pluginVersion": "12.0.0",
         "title": "Drilldown Path:",
@@ -2079,38 +2078,38 @@
         {
           "current": {
             "selected": false,
-            "text": "UUID_HERE/raw-logs",
-            "value": "UUID_HERE/raw-logs"
+            "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+            "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/raw-logs",
-              "value": "UUID_HERE/raw-logs"
+              "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+              "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
             }
           ],
-          "query": "UUID_HERE/raw-logs",
+          "query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-            "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+            "text": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
+            "value": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/cdn-dashboard-default-v1-0-5",
-              "value": "UUID_HERE/cdn-dashboard-default-v1-0-5"
+              "text": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
+              "value": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default"
             }
           ],
-          "query": "UUID_HERE/cdn-dashboard-default-v1-0-5",
+          "query": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
           "skipUrlSync": true,
           "type": "constant"
         },

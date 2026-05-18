@@ -3979,38 +3979,19 @@
         {
           "current": {
             "selected": false,
-            "text": "UUID_HERE/NAME",
-            "value": "UUID_HERE/NAME"
+            "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+            "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "UUID_HERE/NAME",
-              "value": "UUID_HERE/NAME"
+              "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+              "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
             }
           ],
-          "query": "UUID_HERE/NAME",
-          "skipUrlSync": true,
-          "type": "constant"
-        },
-        {
-          "current": {
-            "selected": false,
-            "text": "UUID_HERE/NAME",
-            "value": "UUID_HERE/NAME"
-          },
-          "hide": 2,
-          "name": "cdn_panel",
-          "options": [
-            {
-              "selected": false,
-              "text": "UUID_HERE/NAME",
-              "value": "UUID_HERE/NAME"
-            }
-          ],
-          "query": "UUID_HERE/NAME",
+          "query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
           "skipUrlSync": true,
           "type": "constant"
         },
