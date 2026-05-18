@@ -28,8 +28,7 @@
   },
   "method": "multi_stream",
   "method_overrides": {
-    "region": "us-east-1",
-    "stream_prefix": "aws-waf-logs-hdx"
+    "region": "us-east-1"
   },
   "name": "aws_cdn_insights",
   "other_dashboards": [
@@ -68,29 +67,29 @@
       "name": "logs",
       "transforms": [
         {
+          "method": "http_streaming",
           "path": "transformations/akamai_ds2/transform.json",
-          "sample": "transformations/akamai_ds2/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/akamai_ds2/sample_data.json"
         },
         {
+          "method": "http_streaming",
           "path": "transformations/cloudflare/transform.json",
-          "sample": "transformations/cloudflare/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/cloudflare/sample_data.json"
         },
         {
+          "method": "firehose",
           "path": "transformations/cloudfront_firehose/transform.json",
-          "sample": "transformations/cloudfront_firehose/sample_data.json",
-          "method": "firehose"
+          "sample": "transformations/cloudfront_firehose/sample_data.json"
         },
         {
+          "method": "http_streaming",
           "path": "transformations/fastly/transform.json",
-          "sample": "transformations/fastly/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/fastly/sample_data.json"
         },
         {
+          "method": "http_streaming",
           "path": "transformations/tencent/transform.json",
-          "sample": "transformations/tencent/sample_data.json",
-          "method": "http_streaming"
+          "sample": "transformations/tencent/sample_data.json"
         }
       ]
     }
