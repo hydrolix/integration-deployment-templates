@@ -386,7 +386,7 @@
             "from_input_field": "origin-fbl"
           },
           "suppress": true,
-          "type": "uint64"
+          "type": "double"
         },
         "name": "origin_time_to_first_byte_sec"
       },
@@ -416,7 +416,7 @@
             "from_input_field": "origin-lbl"
           },
           "suppress": true,
-          "type": "uint64"
+          "type": "double"
         },
         "name": "origin_time_to_last_byte_sec"
       },
