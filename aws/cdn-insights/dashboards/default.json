@@ -3922,6 +3922,25 @@
               "value": "quantiles_origin_ttlb_ms[5]"
             }
           ]
+        },
+        {
+          "hide": 2,
+          "name": "raw_logs",
+          "query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+            "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+              "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+            }
+          ]
         }
       ]
     },

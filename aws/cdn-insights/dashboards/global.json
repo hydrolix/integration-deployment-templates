@@ -1644,7 +1644,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/a3ce7364-d508-4b77-b8a1-d7cb0786cad9/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                      "url": "/d/__DASHBOARD_UID_RAW_LOGS__/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
                     }
                   ]
                 }
@@ -2129,38 +2129,38 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs",
+          "query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs",
-            "value": "c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs"
+            "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+            "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
           },
           "options": [
             {
               "selected": false,
-              "text": "c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs",
-              "value": "c44c5f0c-badf-4794-94a7-2ca3c6f37ade/raw-logs"
+              "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+              "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn_panel",
-          "query": "550e97ed-779f-411e-b72d-3562d6a962a8/cdn-dashboard-default",
+          "query": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "550e97ed-779f-411e-b72d-3562d6a962a8/cdn-dashboard-default",
-            "value": "550e97ed-779f-411e-b72d-3562d6a962a8/cdn-dashboard-default"
+            "text": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
+            "value": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default"
           },
           "options": [
             {
               "selected": false,
-              "text": "550e97ed-779f-411e-b72d-3562d6a962a8/cdn-dashboard-default",
-              "value": "550e97ed-779f-411e-b72d-3562d6a962a8/cdn-dashboard-default"
+              "text": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default",
+              "value": "__DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__/cdn-dashboard-default"
             }
           ]
         }

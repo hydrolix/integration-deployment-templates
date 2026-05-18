@@ -18,7 +18,7 @@ SELECT
   quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (Origin_TurnAroundTime) AS quantiles_origin_ttfb_ms,
   quantiles (0.25, 0.5, 0.75, 0.9, 0.95, 0.99) (Origin_RequestEndTime) AS quantiles_origin_ttlb_ms
 FROM
-  __PROJECT_NAME__.logs
+  __PROJECT_NAME__.china_cdn
 GROUP BY
   reqTimeSec,
   statusCode,

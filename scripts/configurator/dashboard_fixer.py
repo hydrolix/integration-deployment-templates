@@ -5,7 +5,7 @@ import os
 import re
 import sys
 
-from utils.file_utils import read_json, write_json
+from utils.file_utils import read_json, slugify_grafana_title, write_json
 from .constants import (
     DASHBOARD_UUID_TEMPLATE,
     DATASOURCE_ELEMENT_MODEL,
@@ -21,12 +21,20 @@ def run_dashboard_fix(config, state):
     5b: Set uid to __DASHBOARD_UUID__
     5c: Fix template variables (primary vs other difference)
     5d: Replace all datasource UIDs with __DATASOURCE__
+    5e: Rewrite hardcoded sibling/self dashboard UIDs to macros
     """
     if not state.dashboards:
         if config.verbose:
             print("[Dashboard Fix] No dashboards found, skipping Phase 5", file=sys.stderr)
         state.phases_completed.append("Phase 5: Fix Dashboards (skipped)")
         return True
+
+    # Pre-build sibling slug map for step 5e (before the loop modifies any files)
+    try:
+        sibling_slug_map = _build_sibling_slug_map(state)
+    except ValueError as exc:
+        state.errors.append(str(exc))
+        return False
 
     # Build summary var mapping from __inputs before removing them
     # We need to process all dashboards
@@ -61,6 +69,9 @@ def run_dashboard_fix(config, state):
 
         # 5d: Fix datasource UIDs
         _fix_datasource_uids(dashboard)
+
+        # 5e: Rewrite hardcoded sibling/self dashboard UIDs to macros
+        _fix_hardcoded_uids(dashboard, dinfo, sibling_slug_map, config, state)
 
         # Remove id field
         if "id" in dashboard:
@@ -352,10 +363,11 @@ def _find_summary_var(label, state):
 def _get_summary_value(dashboard_var, is_primary):
     """Get the correct summary variable value based on primary vs other."""
     if is_primary:
-        # Primary dashboard: NO __PROJECT_NAME__ prefix
+        # Primary dashboard: create_summary_table in Rust already prepends project_name
         return dashboard_var
     else:
-        # Other dashboards: WITH __PROJECT_NAME__ prefix
+        # Other dashboards: create_others replaces __SUMMARY_TABLE_NAME_N__ with bare name,
+        # so __PROJECT_NAME__. prefix is needed here
         return f"__PROJECT_NAME__.{dashboard_var}"
 
 
@@ -388,3 +400,164 @@ def _recursive_fix_uids(obj):
     elif isinstance(obj, list):
         for item in obj:
             _recursive_fix_uids(item)
+
+
+# ---------------------------------------------------------------------------
+# Step 5e: Hardcoded sibling/self dashboard UID rewrite
+# ---------------------------------------------------------------------------
+
+# Matches a 36-char lowercase hex UUID followed by / and a Grafana slug.
+# Covers both Shape A (bare constant values) and Shape B (embedded in URLs).
+_UID_SLUG_RE = re.compile(
+    r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"
+    r"/"
+    r"([a-z0-9][a-z0-9-]*)"
+)
+
+
+def _slug_to_macro(slug):
+    """Convert a Grafana slug to its __DASHBOARD_UID_*__ macro name.
+
+    Example: "raw-logs" -> "__DASHBOARD_UID_RAW_LOGS__"
+    """
+    return f"__DASHBOARD_UID_{slug.upper().replace('-', '_')}__"
+
+
+def _rewrite_strings_in_json(obj, rewrite_fn):
+    """Recursively walk a JSON structure and apply rewrite_fn to every string value in-place."""
+    if isinstance(obj, dict):
+        for key in obj:
+            if isinstance(obj[key], str):
+                obj[key] = rewrite_fn(obj[key])
+            else:
+                _rewrite_strings_in_json(obj[key], rewrite_fn)
+    elif isinstance(obj, list):
+        for i, item in enumerate(obj):
+            if isinstance(item, str):
+                obj[i] = rewrite_fn(item)
+            else:
+                _rewrite_strings_in_json(item, rewrite_fn)
+
+
+def _build_sibling_slug_map(state):
+    """Build a {slug: filename} map from all discovered dashboard titles.
+
+    Raises ValueError on slug collision (two dashboards whose titles produce
+    the same Grafana slug).
+    """
+    slug_map = {}
+    seen = {}  # slug -> first filename seen
+
+    for dinfo in state.dashboards:
+        if not os.path.isfile(dinfo.path):
+            continue
+        try:
+            data = read_json(dinfo.path)
+        except Exception:
+            continue
+        dashboard = data.get("dashboard", data)
+        title = dashboard.get("title", "")
+        if not title:
+            continue
+        slug = slugify_grafana_title(title)
+        if not slug:
+            continue
+        if slug in seen:
+            raise ValueError(
+                f"Slug collision in bundle: '{seen[slug]}' and '{dinfo.filename}' "
+                f"both produce slug '{slug}'. Rename one dashboard title to disambiguate."
+            )
+        seen[slug] = dinfo.filename
+        slug_map[slug] = dinfo.filename
+
+    return slug_map
+
+
+def _fix_hardcoded_uids(dashboard, dinfo, sibling_slug_map, config, state):
+    """Detect and rewrite hardcoded <uuid>/<slug> patterns in dashboard JSON.
+
+    Pass 1 (Shape A): walks templating.list[] for constant variables whose
+    query value is a bare <uuid>/<slug>.  Rewrites to the appropriate macro and
+    builds constants_by_target_slug for use in Pass 2.
+
+    Pass 2 (Shape B): recursively walks all strings in the dashboard and
+    rewrites any remaining <uuid>/<slug> occurrences, preferring
+    ${constant_name} indirection when Pass 1 found a matching constant.
+
+    Self-references (slug matches this dashboard's own title-slug) are rewritten
+    to the existing __DASHBOARD_UUID__ macro.  Slugs not matching any sibling
+    or self are left unchanged and a [WARN] is emitted.
+    """
+    title = dashboard.get("title", "")
+    own_slug = slugify_grafana_title(title)
+
+    # Pass 1 — Shape A: rewrite templating constants, build constant map
+    constants_by_target_slug = {}  # sibling_slug -> constant_name
+
+    templating = dashboard.get("templating", {})
+    for var in templating.get("list", []):
+        if var.get("type") != "constant":
+            continue
+        query = var.get("query", "")
+        m = _UID_SLUG_RE.fullmatch(query)
+        if not m:
+            continue
+        slug = m.group(2)
+
+        if own_slug and slug == own_slug:
+            new_uid_part = DASHBOARD_UUID_TEMPLATE
+        elif slug in sibling_slug_map:
+            new_uid_part = _slug_to_macro(slug)
+            constants_by_target_slug[slug] = var["name"]
+        else:
+            state.warnings.append(
+                f"{dinfo.filename}: hardcoded UID with unrecognized slug '{slug}' "
+                f"in constant '{var.get('name', '')}' — may be an external dashboard link"
+            )
+            if config.verbose:
+                print(
+                    f"[WARN] {dinfo.filename}: hardcoded UID for unrecognized slug "
+                    f"'{slug}' in constant '{var.get('name', '')}' — treating as external",
+                    file=sys.stderr,
+                )
+            continue
+
+        new_value = f"{new_uid_part}/{slug}"
+        var["query"] = new_value
+        if isinstance(var.get("current"), dict):
+            var["current"]["value"] = new_value
+            var["current"]["text"] = new_value
+        for opt in var.get("options", []):
+            if isinstance(opt, dict):
+                opt["value"] = new_value
+                opt["text"] = new_value
+
+    # Pass 2 — Shape B: rewrite UID patterns in all strings (constants already
+    # processed in Pass 1 no longer match the UUID regex so no double-rewrite).
+    warned_slugs = set()
+
+    def _rewrite(m):
+        slug = m.group(2)
+        if own_slug and slug == own_slug:
+            return f"{DASHBOARD_UUID_TEMPLATE}/{slug}"
+        if slug in sibling_slug_map:
+            if slug in constants_by_target_slug:
+                # Prefer Grafana variable indirection when a constant already exists
+                return f"${{{constants_by_target_slug[slug]}}}"
+            return f"{_slug_to_macro(slug)}/{slug}"
+        # External / unrecognized slug — warn once per slug per dashboard
+        if slug not in warned_slugs:
+            warned_slugs.add(slug)
+            state.warnings.append(
+                f"{dinfo.filename}: hardcoded UID with unrecognized slug '{slug}' "
+                f"in string — may be an external dashboard link"
+            )
+            if config.verbose:
+                print(
+                    f"[WARN] {dinfo.filename}: hardcoded UID for unrecognized slug "
+                    f"'{slug}' in string — treating as external",
+                    file=sys.stderr,
+                )
+        return m.group(0)
+
+    _rewrite_strings_in_json(dashboard, lambda s: _UID_SLUG_RE.sub(_rewrite, s))

@@ -84,6 +84,13 @@
       "label": "quantiles_origin_ttlb_95",
       "value": "quantiles_origin_ttlb_ms[5]",
       "description": ""
+    },
+    {
+      "name": "VAR_RAW_LOGS",
+      "type": "constant",
+      "label": "raw_logs",
+      "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+      "description": ""
     }
   ],
   "__elements": {},
@@ -3999,6 +4006,25 @@
             "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
             "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
             "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "raw_logs",
+        "query": "${VAR_RAW_LOGS}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "selected": false,
+          "text": "${VAR_RAW_LOGS}",
+          "value": "${VAR_RAW_LOGS}"
+        },
+        "options": [
+          {
+            "selected": false,
+            "text": "${VAR_RAW_LOGS}",
+            "value": "${VAR_RAW_LOGS}"
           }
         ]
       }

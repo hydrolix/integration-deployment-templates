@@ -1,0 +1,111 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/bot_insights_ds2",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/bot-insights-edge-ops.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [
+        "akamai_asn_type_dict",
+        "akamai_bot_ip_dict",
+        "akamai_ua_cat_dict"
+      ],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": [
+        "breadcrumbs",
+        "cmcd_object_type",
+        "cmcd_query_param",
+        "cmcd_stream_type",
+        "cmcd_streaming_format",
+        "edge_worker",
+        "edge_worker_execution"
+      ]
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "DS2-only TrafficPeak Bot Insights bundle for Akamai logs.",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.1.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_bot_insights_ds2",
+  "other_dashboards": [
+    {
+      "path": "dashboards/bot-insights-multi-domain-triage.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-overview-alignment.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-seo-governance.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-soc-what-changed.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/bot-insights-what-changed-investigation.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "bi_summary_day",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_day.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_2__",
+      "name": "bi_summary_hour",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_hour.sql"
+      }
+    },
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_3__",
+      "name": "bi_summary_minute",
+      "parent_table_name": "logs",
+      "sql": {
+        "path": "summaries/bi_summary_minute.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/bot_insights_ds2-integration",
+    "source": {
+      "full_title": "Trafficpeak Bot Insights Ds2",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}

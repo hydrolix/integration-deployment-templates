@@ -63,11 +63,31 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     output.grafana_domain = format!("{GRAFANA_LOCATION}/");
     output.datalink = datalink.to_string();
 
-    let mut dashboard_data =
-        match grafana::dashboard::load_template(base, bundle, &project_name, &datalink).await {
-            Ok(v) => v,
-            Err(e) => return Err(e),
-        };
+    // Build slug→UUID map upfront so sibling references are consistent across
+    // all dashboards before any per-dashboard substitution runs.
+    let sibling_uid_map = match grafana::dashboard::build_sibling_uid_map(base, bundle).await {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} failed to build sibling UID map. {e}",
+                file!(),
+                line!()
+            ));
+        }
+    };
+
+    let mut dashboard_data = match grafana::dashboard::load_template(
+        base,
+        bundle,
+        &project_name,
+        &datalink,
+        &sibling_uid_map,
+    )
+    .await
+    {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     // Create base tables and transformations
     for table in &bundle.tables {
@@ -129,11 +149,18 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     output.dashboard_id = dashboard_id.clone();
 
     // Collect all dashboard UIDs
-    let mut all_dashboard_uuids =
-        match grafana::dashboard::create_others(bundle, &project_name, base, &datalink).await {
-            Ok(v) => v,
-            Err(e) => return Err(format!("could not create other dashboards: {}", e)),
-        };
+    let mut all_dashboard_uuids = match grafana::dashboard::create_others(
+        bundle,
+        &project_name,
+        base,
+        &datalink,
+        &sibling_uid_map,
+    )
+    .await
+    {
+        Ok(v) => v,
+        Err(e) => return Err(format!("could not create other dashboards: {}", e)),
+    };
     all_dashboard_uuids.push(dashboard_id);
 
     Ok(all_dashboard_uuids)

@@ -41,6 +41,20 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
 
     dashboard_data = dashboard_data.replace("__PROJECT_NAME__", "JUST GRAFANA");
 
+    // Apply sibling UID substitutions so headless-rendered dashboards reflect
+    // the post-deploy state (same substitution as the full deploy path).
+    let sibling_uid_map = match grafana::dashboard::build_sibling_uid_map(base, bundle).await {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(format!(
+                "ERROR: {}.{} Failed to build sibling UID map: {e}",
+                file!(),
+                line!()
+            ));
+        }
+    };
+    grafana::dashboard::apply_sibling_uid_subs(&mut dashboard_data, &sibling_uid_map);
+
     dashboard_data = dashboard_data.replace("__DASHBOARD_UUID__", &format!("{}", Uuid::new_v4()));
 
     let grafana_dashboard_id = match grafana::dashboard::create(&dashboard_data).await {
