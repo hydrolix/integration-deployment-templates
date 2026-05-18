@@ -108,8 +108,7 @@
             "showLineNumbers": false,
             "showMiniMap": false
           },
-          "content": "\n${drill_chain_for_display:text}\n\n\ud83d\udca1 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*",
-          "mode": "markdown"
+        "content": "\n${drill_chain_for_display:text}\n\n💡 *Use the \"Customize \"Drilldown Path\" Order\" dropdown above to change the drilldown order of the dimensions.*"
         },
         "pluginVersion": "12.0.0",
         "title": "Drilldown Path:",
@@ -138,7 +137,7 @@
               {
                 "targetBlank": true,
                 "title": "Filter to RAW logs",
-                "url": "d/${raw_logs}?${__all_variables}\ufeff\ufeff\ufeff\ufeff\ufeff\ufeff\ufeff&\ufeff${__url_time_range}\ufeff\ufeff\ufeff\ufeff\ufeff\ufeff\ufeff&var-filter=\ufeff${next_dim}\ufeff|=|\ufeff${__data.fields.filter_item}"
+                "url": "d/${raw_logs}?${__all_variables}﻿﻿﻿﻿﻿﻿﻿&﻿${__url_time_range}﻿﻿﻿﻿﻿﻿﻿&var-filter=﻿${next_dim}﻿|=|﻿${__data.fields.filter_item}"
               }
             ],
             "mappings": [],
@@ -1988,11 +1987,11 @@
         {
           "allowCustomValue": false,
           "current": {},
-          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'asn', 'ASN',\n    'reqHost', 'Hostname',\n    'Edge_GeoInfo', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">\u2192</span> '\n)",
+          "definition": "WITH map(\n    'hdx_cdn', 'CDN',\n    'asn', 'ASN',\n    'reqHost', 'Hostname',\n    'Edge_GeoInfo', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">→</span> '\n)",
           "hide": 2,
           "name": "drill_chain_for_display",
           "options": [],
-          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'asn', 'ASN',\n    'reqHost', 'Hostname',\n    'Edge_GeoInfo', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">\u2192</span> '\n)",
+          "query": "WITH map(\n    'hdx_cdn', 'CDN',\n    'asn', 'ASN',\n    'reqHost', 'Hostname',\n    'Edge_GeoInfo', 'Edge pop'\n) AS display_name_map\nSELECT arrayStringConcat(\n    arrayMap(\n        x -> if(x = '${next_dim}',\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #3787F3; color: white; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>'),\n                concat('<span style=\"display: inline-block; vertical-align: middle; background-color: #202226; border: 1px solid #333740; color: #9FA9B8; padding: 3px 8px; border-radius: 4px;\">', display_name_map[x], '</span>')\n        ),\n        ${drill_chain}\n    ),\n    ' <span style=\"color:#565a64;\">→</span> '\n)",
           "refresh": 1,
           "regex": "",
           "type": "query"
