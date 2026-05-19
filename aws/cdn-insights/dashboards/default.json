@@ -3642,19 +3642,19 @@
           "description": "",
           "hide": 2,
           "name": "summary_min",
-          "query": "__SUMMARY_TABLE_NAME_2__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_2__",
-            "value": "__SUMMARY_TABLE_NAME_2__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_2__",
-              "value": "__SUMMARY_TABLE_NAME_2__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
           ]
         },
@@ -3662,19 +3662,19 @@
           "description": "",
           "hide": 2,
           "name": "summary_hour",
-          "query": "__SUMMARY_TABLE_NAME_1__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_1__",
-            "value": "__SUMMARY_TABLE_NAME_1__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
           ]
         },
