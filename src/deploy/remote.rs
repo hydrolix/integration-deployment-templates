@@ -11,6 +11,7 @@
 // separate ingestion pipelines, and re-ingesting test fixtures would
 // pollute reviewer-visible data.
 
+use std::collections::HashMap;
 use std::path::Path;
 use std::time::Duration;
 
@@ -46,9 +47,9 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         .map_err(|e| format!("invalid bundle name '{}': {e}", bundle.name))?;
 
     // Bundles with a "logs" table reuse the existing akamai project on the demo
-    // cluster — no new project is created, and the logs table is not re-created.
-    // All summaries and other tables are also placed in the akamai project.
-    // The Grafana subfolder stays named after the bundle for review discoverability.
+    // cluster — the logs table is not re-created. Summary tables are placed in
+    // the bundle's own project (project_name) so each bundle's derived tables
+    // are isolated. The Grafana subfolder is always named after the bundle.
     let hydro_project: &str = if uses_akamai_logs(bundle) {
         AKAMAI_PROJECT
     } else {
@@ -74,7 +75,7 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         .map_err(|e| format!("auth failed: {e}"))?;
 
     ensure_project(&bearer_token, hydro_project).await?;
-    push_hydrolix(base, bundle, &bearer_token, hydro_project).await?;
+    push_hydrolix(base, bundle, &bearer_token, hydro_project, &project_name).await?;
     let folder_uid = push_grafana(base, bundle, hydro_project, &project_name, &cfg).await?;
 
     let review_url = format!("{}/dashboards/f/{}/{}", cfg.url, folder_uid, project_name);
@@ -113,6 +114,7 @@ async fn push_hydrolix(
     bundle: &Bundle,
     bearer_token: &str,
     hydro_project: &str,
+    summary_project: &str,
 ) -> Result<(), String> {
     hdx::shared_proj::check_dicts_and_funcs(bundle, hydro_project, base, bearer_token)
         .await
@@ -134,6 +136,20 @@ async fn push_hydrolix(
     }
 
     if let Some(summaries) = &bundle.summary_tables {
+        // Verify parent tables while the global project context is still hydro_project.
+        // Summaries themselves are created under summary_project (the bundle's own project)
+        // so that each bundle's derived tables are isolated from the shared akamai project.
+        for summary in summaries {
+            hdx::table::exists(bearer_token, &summary.parent_table_name)
+                .await
+                .map_err(|e| format!(
+                    "parent table {}.{} not found: {e}",
+                    hydro_project, summary.parent_table_name
+                ))?;
+        }
+        if summary_project != hydro_project {
+            ensure_project(bearer_token, summary_project).await?;
+        }
         for summary in summaries {
             push_summary(base, bearer_token, hydro_project, summary).await?;
         }
@@ -231,25 +247,24 @@ async fn find_table_uuid_by_name(
 async fn push_summary(
     base: &str,
     bearer_token: &str,
-    hydro_project: &str,
+    parent_project: &str,
     summary: &crate::models::bundle::SummaryTable,
 ) -> Result<(), String> {
     let sql_path = Path::new(base).join(&summary.sql.path);
     let mut sql = tokio::fs::read_to_string(&sql_path)
         .await
         .map_err(|e| format!("read summary SQL {}: {e}", sql_path.display()))?;
+    // parent_project owns the raw source table referenced in the summary SQL.
+    // The summary itself is created in whatever project context is currently active
+    // (set by the caller via ensure_project before invoking push_summary).
     sql = sql
-        .replace("__PROJECT_NAME__", hydro_project)
+        .replace("__PROJECT_NAME__", parent_project)
         .replace("__TABLE_NAME__", &summary.parent_table_name);
 
     println!(
         "Creating summary table: {} (parent: {}.{})",
-        summary.name, hydro_project, summary.parent_table_name
+        summary.name, parent_project, summary.parent_table_name
     );
-
-    hdx::table::exists(bearer_token, &summary.parent_table_name)
-        .await
-        .map_err(|e| format!("parent table {} not found: {e}", summary.parent_table_name))?;
 
     if find_table_uuid_by_name(bearer_token, &summary.name)
         .await?
@@ -325,14 +340,16 @@ async fn push_grafana(
         }
     }
 
-    for rel_path in dashboard_paths {
-        let full_path = Path::new(base).join(&rel_path);
+    let sibling_uid_subs = build_sibling_uid_subs(base, grafana_project, &dashboard_paths).await;
+
+    for rel_path in &dashboard_paths {
+        let full_path = Path::new(base).join(rel_path.as_str());
         let raw = tokio::fs::read_to_string(&full_path)
             .await
             .map_err(|e| format!("read dashboard {}: {e}", full_path.display()))?;
 
         let substituted =
-            substitute_dashboard_placeholders(&raw, bundle, hydro_project, grafana_project, &rel_path, cfg);
+            substitute_dashboard_placeholders(&raw, bundle, hydro_project, grafana_project, rel_path, cfg, &sibling_uid_subs);
 
         let mut dashboard: Value = serde_json::from_str(&substituted).map_err(|e| {
             format!(
@@ -388,8 +405,15 @@ fn substitute_dashboard_placeholders(
     grafana_project: &str,
     rel_path: &str,
     cfg: &RemoteConfig,
+    sibling_uid_subs: &HashMap<String, String>,
 ) -> String {
     let mut out = raw.to_string();
+
+    // Resolve cross-dashboard navigation macros (__DASHBOARD_UID_*__) to
+    // deterministic stable UIDs matching what --remote assigns each dashboard.
+    for (macro_name, uid) in sibling_uid_subs {
+        out = out.replace(macro_name.as_str(), uid.as_str());
+    }
 
     out = out.replace("__DATASOURCE__", &cfg.datasource_uid);
     out = out.replace(
@@ -398,8 +422,9 @@ fn substitute_dashboard_placeholders(
     );
     out = out.replace("__SHARED_PROJECT__", &hdx::shared_proj::get_name());
 
-    // Qualify table/summary refs with the Hydrolix project so queries resolve
-    // correctly (e.g. `akamai.logs`, `akamai.tp_multi_summary_hour`).
+    // Qualify table refs with hydro_project (e.g. `akamai.logs`).
+    // Summary refs use grafana_project because summaries are created under the
+    // bundle's own project, not the shared akamai project.
     // Replace the prefixed form `__PROJECT_NAME__.__VAR__` first so we
     // never see `project.project.table`; then replace any bare `__VAR__`.
     for table in &bundle.tables {
@@ -410,7 +435,7 @@ fn substitute_dashboard_placeholders(
     }
     if let Some(summaries) = &bundle.summary_tables {
         for summary in summaries {
-            let qualified = format!("{}.{}", hydro_project, summary.name);
+            let qualified = format!("{}.{}", grafana_project, summary.name);
             let prefixed = format!("__PROJECT_NAME__.{}", summary.dashboard_var);
             out = out.replace(&prefixed, &qualified);
             out = out.replace(&summary.dashboard_var, &qualified);
@@ -422,6 +447,40 @@ fn substitute_dashboard_placeholders(
     out = out.replace("__PROJECT_NAME__", grafana_project);
 
     out
+}
+
+/// Build a map of `__DASHBOARD_UID_<SLUG>__` → stable UID for each dashboard
+/// in `rel_paths`. Used so cross-dashboard navigation links resolve correctly
+/// in the review Grafana (mirrors what `--local` does via `build_sibling_uid_map`).
+async fn build_sibling_uid_subs(
+    base: &str,
+    grafana_project: &str,
+    rel_paths: &[String],
+) -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    for rel_path in rel_paths {
+        let full_path = Path::new(base).join(rel_path.as_str());
+        if let Ok(raw) = tokio::fs::read_to_string(&full_path).await {
+            if let Ok(json) = serde_json::from_str::<Value>(&raw) {
+                let dashboard = json.get("dashboard").unwrap_or(&json);
+                if let Some(title) = dashboard["title"].as_str() {
+                    let slug =
+                        crate::grafana::dashboard::slugify_grafana_title(title);
+                    if !slug.is_empty() {
+                        let macro_name = format!(
+                            "__DASHBOARD_UID_{}__",
+                            slug.to_uppercase().replace('-', "_")
+                        );
+                        map.insert(
+                            macro_name,
+                            stable_dashboard_uid(grafana_project, rel_path),
+                        );
+                    }
+                }
+            }
+        }
+    }
+    map
 }
 
 /// Deterministic per-dashboard UID so `--remote` reruns update in place

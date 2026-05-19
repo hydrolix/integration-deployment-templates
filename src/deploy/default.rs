@@ -332,7 +332,14 @@ async fn create_summary_table(
         "Replacing {} with {}",
         summary.dashboard_var, full_table_name
     );
-    *dashboard_data = dashboard_data.replace(&summary.dashboard_var, &full_table_name);
+    // load_template already replaced __PROJECT_NAME__ with project_name, so the
+    // compound form __PROJECT_NAME__.__SUMMARY_TABLE_NAME_N__ becomes
+    // project_name.__SUMMARY_TABLE_NAME_N__. Replace that first to avoid a
+    // double-prefix, then fall through to replace any remaining bare occurrences.
+    let compound_var = format!("{}.{}", project_name, summary.dashboard_var);
+    *dashboard_data = dashboard_data
+        .replace(&compound_var, &full_table_name)
+        .replace(&summary.dashboard_var, &full_table_name);
 
     Ok(())
 }

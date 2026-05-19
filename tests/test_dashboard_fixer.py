@@ -508,7 +508,7 @@ class TestSummaryVarPrecedence:
         return SummaryInfo(path="/fake/sql", filename=f"{name}.sql", name=name, dashboard_var=dashboard_var)
 
     def test_summary_hour_primary_dashboard(self, tmp_path):
-        """Primary dashboard: summary var omits __PROJECT_NAME__ prefix."""
+        """Primary dashboard: summary var includes __PROJECT_NAME__ prefix."""
         dashboard = {
             "templating": {
                 "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
@@ -523,9 +523,9 @@ class TestSummaryVarPrecedence:
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
         var = dashboard["templating"]["list"][0]
-        assert var["query"] == "__SUMMARY_TABLE_NAME_1__"
-        assert var["current"]["value"] == "__SUMMARY_TABLE_NAME_1__"
-        assert var["options"][0]["value"] == "__SUMMARY_TABLE_NAME_1__"
+        assert var["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+        assert var["current"]["value"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+        assert var["options"][0]["value"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
 
     def test_summary_hour_non_primary_dashboard(self, tmp_path):
         """Non-primary dashboard: summary var includes __PROJECT_NAME__ prefix."""
@@ -574,13 +574,15 @@ class TestSummaryVarPrecedence:
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
         by_name = {v["name"]: v for v in dashboard["templating"]["list"] if v["name"].startswith("summary_")}
-        assert by_name["summary_hour"]["query"] == "__SUMMARY_TABLE_NAME_1__"
-        assert by_name["summary_day"]["query"] == "__SUMMARY_TABLE_NAME_2__"
-        assert by_name["summary_month"]["query"] == "__SUMMARY_TABLE_NAME_3__"
+        assert by_name["summary_hour"]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
+        assert by_name["summary_day"]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
+        assert by_name["summary_month"]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__"
 
     def test_summary_var_without_match_stays_unchanged(self, tmp_path):
         """If state has no summary matching the __inputs value, the variable
-        is left untouched (LOTC-1449: no silent rewrite — validator surfaces)."""
+        falls back to the raw __inputs value (prevents self-referential Grafana
+        variable infinite recursion while still surfacing unresolved values via
+        the validator)."""
         dashboard = {
             "templating": {
                 "list": [_make_var("summary_hour", "${VAR_SUMMARY_HOUR}")]
@@ -594,7 +596,7 @@ class TestSummaryVarPrecedence:
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
         var = dashboard["templating"]["list"][0]
-        assert var["query"] == "${VAR_SUMMARY_HOUR}"
+        assert var["query"] == "akamai.bot_summary_hour"
 
     def test_table_var_still_resolves_when_summaries_present(self, tmp_path):
         """Regression: ${VAR_TABLE} bound to the raw-logs table must resolve
@@ -713,7 +715,7 @@ class TestValueBasedClassification:
 
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
-        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
 
     def test_value_without_prefix_matches_summary(self, tmp_path):
         """Bare summary name (no `<prefix>.`) still matches."""
@@ -730,7 +732,7 @@ class TestValueBasedClassification:
 
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
-        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
 
     def test_non_primary_dashboard_prefixes_summary(self, tmp_path):
         """Non-primary dashboards get __PROJECT_NAME__.__SUMMARY_TABLE_NAME_N__."""
@@ -819,11 +821,13 @@ class TestValueBasedClassification:
 
         by_name = {v["name"]: v for v in dashboard["templating"]["list"]}
         assert by_name["edns"]["query"] == "__PROJECT_NAME__.__TABLE_NAME__"
-        assert by_name["edns_summary_hour"]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert by_name["edns_summary_hour"]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
 
     def test_unknown_value_leaves_var_unchanged(self, tmp_path):
-        """If __inputs[VAR_X].value matches neither a summary nor the raw
-        table, don't guess — leave it alone so the validator can flag it."""
+        """If __inputs[VAR_X].value matches neither a summary nor the raw table,
+        the code falls back to the raw __inputs value (prevents self-referential
+        Grafana variable infinite recursion). The raw value is still surfaced
+        rather than leaving the ${VAR_*} sentinel in JSON."""
         dashboard = {
             "templating": {
                 "list": [_make_var("mystery", "${VAR_MYSTERY}")]
@@ -837,7 +841,7 @@ class TestValueBasedClassification:
 
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
-        assert dashboard["templating"]["list"][0]["query"] == "${VAR_MYSTERY}"
+        assert dashboard["templating"]["list"][0]["query"] == "akamai.some_other_thing"
 
     def test_no_inputs_entry_leaves_var_unchanged(self, tmp_path):
         """If a ${VAR_X} constant has no matching __inputs entry, leave it.
@@ -882,7 +886,7 @@ class TestValueBasedClassification:
         _fix_template_variables(dashboard, dinfo, inputs_map, config, state)
 
         # Summary wins resolution order.
-        assert dashboard["templating"]["list"][0]["query"] == "__SUMMARY_TABLE_NAME_1__"
+        assert dashboard["templating"]["list"][0]["query"] == "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
         # Warning surfaces the ambiguity.
         assert any("collide" in w.lower() and "logs" in w for w in state.warnings)
 
