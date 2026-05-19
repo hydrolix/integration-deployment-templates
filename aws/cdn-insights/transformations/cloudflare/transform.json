@@ -1,6 +1,9 @@
 {
   "name": "cloudflare",
   "description": "Version v1.0",
+  "uuid": "79d257e0-0ad0-4c70-b8cc-00ca91d20cd2",
+  "created": "2026-05-19T10:24:20.829587Z",
+  "modified": "2026-05-19T10:24:20.829599Z",
   "settings": {
     "is_default": false,
     "rate_limit": null,
@@ -11,13 +14,14 @@
       "OriginIP": "52.75.0.2",
       "ClientASN": 7922,
       "ClientCity": "West Hartford",
+      "EdgeColoID": "962",
       "ClientState": "US",
       "EdgeColoCode": "SJC",
-      "EdgeColoID": "962",
       "EdgeServerIP": null,
       "ClientCountry": "US",
       "CacheCacheStatus": "hit",
       "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+      "EdgeEndTimestamp": "2025-10-08T16:19:02.100Z",
       "ClientRequestHost": [
         "https:",
         "",
@@ -28,7 +32,6 @@
       "ClientRequestQuery": "",
       "EdgeResponseStatus": 200,
       "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
-      "EdgeEndTimestamp": "2025-10-08T16:19:02.100Z",
       "OriginResponseTime": 0,
       "ClientRequestMethod": "GET",
       "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
@@ -545,5 +548,7 @@
       }
     }
   },
-  "type": "json"
+  "url": "https://shared-globaldots-eu.aws.hydrolix.live/config/v1/orgs/09c4b533-b749-403d-8ec5-79531c87a6bd/projects/45b8444f-64ed-4250-8ab5-9cb2f66bfbe5/tables/76a20f65-e95f-4ee9-a51e-078b8b71e180/transforms/79d257e0-0ad0-4c70-b8cc-00ca91d20cd2",
+  "type": "json",
+  "table": "76a20f65-e95f-4ee9-a51e-078b8b71e180"
 }
