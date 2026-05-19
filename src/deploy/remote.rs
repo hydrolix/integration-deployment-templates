@@ -11,6 +11,7 @@
 // separate ingestion pipelines, and re-ingesting test fixtures would
 // pollute reviewer-visible data.
 
+use std::collections::HashMap;
 use std::path::Path;
 use std::time::Duration;
 
@@ -20,6 +21,7 @@ use tokio::time::sleep;
 use bundle_validator::remote::dashboard_rewrite::rewrite_datasource_uid;
 use bundle_validator::remote::sanitize::sanitize_project_name;
 
+use crate::grafana::dashboard::{apply_sibling_uid_subs, slugify_grafana_title};
 use crate::grafana::remote::{ensure_subfolder, upsert_dashboard, RemoteConfig};
 use crate::hdx;
 use crate::models::bundle::Bundle;
@@ -300,6 +302,46 @@ fn substitute_transform_template_vars(transform_json: &mut Value, hydro_project:
     }
 }
 
+/// Build a map of { slug -> stable_uid } for every dashboard in the bundle.
+///
+/// Uses `stable_dashboard_uid` so inter-dashboard links remain consistent
+/// across re-runs, matching the deterministic UID strategy used for
+/// `__DASHBOARD_UUID__` in `substitute_dashboard_placeholders`.
+async fn build_stable_sibling_uid_map(
+    base: &str,
+    bundle: &Bundle,
+    grafana_project: &str,
+) -> Result<HashMap<String, String>, String> {
+    let mut map = HashMap::new();
+
+    let mut all_paths: Vec<String> = vec![bundle.dashboard.path.clone()];
+    if let Some(others) = &bundle.other_dashboards {
+        for d in others {
+            all_paths.push(d.path.clone());
+        }
+    }
+
+    for rel_path in &all_paths {
+        let full_path = Path::new(base).join(rel_path);
+        let raw = tokio::fs::read_to_string(&full_path)
+            .await
+            .map_err(|e| format!("read dashboard {}: {e}", full_path.display()))?;
+
+        let json: Value = serde_json::from_str(&raw)
+            .map_err(|e| format!("parse dashboard {}: {e}", full_path.display()))?;
+
+        let dashboard = json.get("dashboard").unwrap_or(&json);
+        let title = dashboard["title"].as_str().unwrap_or("");
+        let slug = slugify_grafana_title(title);
+
+        if !slug.is_empty() {
+            map.insert(slug, stable_dashboard_uid(grafana_project, rel_path));
+        }
+    }
+
+    Ok(map)
+}
+
 /// Push all dashboards into a Grafana subfolder named after the bundle.
 ///
 /// `hydro_project` is used to qualify table/summary refs in queries (may be
@@ -318,6 +360,8 @@ async fn push_grafana(
         grafana_project, folder_uid
     );
 
+    let sibling_uid_map = build_stable_sibling_uid_map(base, bundle, grafana_project).await?;
+
     let mut dashboard_paths: Vec<String> = vec![bundle.dashboard.path.clone()];
     if let Some(others) = &bundle.other_dashboards {
         for d in others {
@@ -332,7 +376,7 @@ async fn push_grafana(
             .map_err(|e| format!("read dashboard {}: {e}", full_path.display()))?;
 
         let substituted =
-            substitute_dashboard_placeholders(&raw, bundle, hydro_project, grafana_project, &rel_path, cfg);
+            substitute_dashboard_placeholders(&raw, bundle, hydro_project, grafana_project, &rel_path, cfg, &sibling_uid_map);
 
         let mut dashboard: Value = serde_json::from_str(&substituted).map_err(|e| {
             format!(
@@ -388,8 +432,13 @@ fn substitute_dashboard_placeholders(
     grafana_project: &str,
     rel_path: &str,
     cfg: &RemoteConfig,
+    sibling_uid_map: &HashMap<String, String>,
 ) -> String {
     let mut out = raw.to_string();
+
+    // Sibling UID subs run first — before __DASHBOARD_UUID__ — so we never
+    // accidentally replace part of an unreplaced macro.
+    apply_sibling_uid_subs(&mut out, sibling_uid_map);
 
     out = out.replace("__DATASOURCE__", &cfg.datasource_uid);
     out = out.replace(
