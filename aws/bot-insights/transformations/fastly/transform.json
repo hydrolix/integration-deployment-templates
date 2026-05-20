@@ -101,7 +101,7 @@
             ]
           },
           "suppress": false,
-          "type": "string"
+          "type": "int32"
         },
         "name": "response_status_code"
       },
@@ -287,36 +287,6 @@
           "type": "string"
         },
         "name": "request_path"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "boolean"
-        },
-        "name": "is_bot_traffic"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "resource_category"
       },
       {
         "datatype": {
@@ -567,37 +537,78 @@
           "type": "map"
         },
         "name": "unknown"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "is_bot_traffic"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "resource_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ai_category"
       }
     ],
     "rate_limit": null,
     "sample_data": {
       "client_asn": "7922",
       "client_city": "yuba city",
-      "client_country_iso_code": "US",
-      "client_ip": "2601:206:8100:2c:f10e:a837:8244:9f7d",
-      "edge_ip": "2a04:4e42::498",
+      "client_country_iso_code": "USA",
+      "client_ip": "2601:206:8100:1339:f55d:fbd7:4873:884",
+      "edge_ip": "2a04:4e42:200::498",
       "edge_pop": "SJC",
-      "fastly_is_edge": true,
-      "fastly_server": "cache-sjc10051-SJC",
-      "host": "bbb-fastly.hdx-demo.us",
-      "origin_ip": "52.217.73.27",
+      "is_edge": true,
+      "origin_ip": "(null)",
+      "original_url": "/media/segment_1920p1080_015.ts",
+      "request_host": "bbb-fastly.hdx-demo.us",
       "request_method": "GET",
-      "request_protocol": "HTTP/2",
-      "request_referer": "https://bbb-fastly.hdx-demo.us/",
-      "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-      "response_body_size": 2776196,
+      "request_referer": "https://bbb-fastly.hdx-demo.us/index.html",
       "response_content_type": "video/mp2t",
-      "response_reason": "Partial Content",
-      "response_state": "MISS-CLUSTER",
-      "response_status": 206,
-      "response_time_to_first_byte": 0.778,
-      "response_time_total": 0.781,
-      "response_total_bytes": 2776804,
+      "response_status_code": "200",
+      "response_time_to_first_byte": 0,
+      "response_time_to_last_byte": 0.003,
+      "response_total_bytes": 1831674,
+      "result_type": "HIT-CLUSTER",
       "timestamp": "2026-04-27T12:00:00",
-      "url": "/media/segment_1920p1080_035.ts"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0.1 Safari/605.1.15"
     },
     "shadow_table": null,
-    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresponse_time_to_first_byte * 1000.0 as response_time_to_first_byte_ms,\nresponse_time_to_last_byte * 1000.0 as response_time_to_last_byte_ms,\npositionCaseInsensitive (result_type, 'hit') > 0 AS cache_was_cached,\nsplitByChar('?', assumeNotNull(original_url))[2] AS request_query_string,\nsplitByChar('?', assumeNotNull(original_url))[1] AS request_path,\nmultiIf(positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other')\nAS resource_category,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) AS hdx_source_latency_sec,\nresponse_time_to_first_byte * 1000.0 as response_time_to_first_byte_ms,\nresponse_time_to_last_byte * 1000.0 as response_time_to_last_byte_ms,\npositionCaseInsensitive (result_type, 'hit') > 0 AS cache_was_cached,\nsplitByChar('?', assumeNotNull(original_url))[2] AS request_query_string,\nsplitByChar('?', assumeNotNull(original_url))[1] AS request_path,\ndictGet('commons_ua_cat_dict', 'ua_category', assumeNotNull(user_agent)) AS user_agent_category,\nmultiIf(\n    positionCaseInsensitive(assumeNotNull(request_path), 'robots.txt') > 0, 'robots.txt',\n    positionCaseInsensitive(assumeNotNull(request_path), 'llms.txt') > 0, 'llms.txt',\n    'other'\n) AS resource_category,\ndictGet('commons_ua_cat_dict', 'ai_category', assumeNotNull(user_agent)) AS ai_category,\ndictGet('commons_ua_cat_dict', 'is_bot', assumeNotNull(user_agent)) AS is_bot_traffic,\n * \nFROM {STREAM}",
     "wurfl": null
   },
   "type": "json"

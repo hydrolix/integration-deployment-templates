@@ -69,7 +69,7 @@
           "script": null,
           "source": null,
           "suppress": false,
-          "type": "string"
+          "type": "int32"
         },
         "name": "response_status_code"
       },
