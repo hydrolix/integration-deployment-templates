@@ -515,8 +515,9 @@ async fn verify_rows_ingested_if_present(
         async move { hdx::table::query_sql(&bearer, &sql).await }
     };
 
-    // Matches the hardcoded age in hdx::table::create.
-    let table_settings = serde_json::json!({ "age": { "max_age_days": 1 } });
+    let table_settings = serde_json::json!({
+        "age": { "max_age_days": hdx::table::TEST_TABLE_MAX_AGE_DAYS }
+    });
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()

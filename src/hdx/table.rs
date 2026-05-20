@@ -4,6 +4,13 @@ use tokio::time::sleep;
 use tokio::time::Duration;
 use uuid::Uuid;
 
+/// `max_age_days` for the ephemeral table created during bundle validation.
+/// Set far in the future so committed `sample_data.json` fixtures with frozen
+/// primary-timestamp epochs don't age out on ingest. The zero-rows post-ingest
+/// check still catches genuine ingest failures; this only neutralizes fixture
+/// drift, which has no business being a validator gate.
+pub const TEST_TABLE_MAX_AGE_DAYS: u64 = 3650;
+
 pub async fn exists(bearer_token: &str, table_name: &str) -> Result<(), String> {
     let url = format!(
         "https://{}/config/v1/orgs/{}/projects/{}/tables",
@@ -84,7 +91,7 @@ pub async fn create_in_project(
         "name": table_name,
         "description": "testing",
         "settings": {
-            "age": { "max_age_days": 1 },
+            "age": { "max_age_days": TEST_TABLE_MAX_AGE_DAYS },
             "merge": { "enabled": false }
         }
     });
@@ -166,7 +173,7 @@ pub async fn create(bearer_token: &str, table_name: &str) -> Result<String, Stri
                 "description": "testing",
                 "settings": {
                     "age": {
-                        "max_age_days": 1
+                        "max_age_days": TEST_TABLE_MAX_AGE_DAYS
                     },
                     "merge": {
                         "enabled": false
@@ -184,7 +191,7 @@ pub async fn create(bearer_token: &str, table_name: &str) -> Result<String, Stri
                 "description": "testing",
                 "settings": {
                     "age": {
-                        "max_age_days": 1
+                        "max_age_days": TEST_TABLE_MAX_AGE_DAYS
                     },
                     "merge": {
                         "enabled": false
