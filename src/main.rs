@@ -82,6 +82,28 @@ lazy_static! {
 
 pub const GRAFANA_LOCATION: &str = "localhost:3000";
 
+/// Decide whether a bundle's name matches the user's positional filter.
+///
+/// An empty filter matches everything (unchanged from prior behavior).
+/// Otherwise: when at least one bundle in the repo has a name exactly equal
+/// to the filter, we restrict the run to exact-name matches; otherwise we
+/// fall back to substring match.
+///
+/// This resolves the collision where one bundle's name is a substring of
+/// another's (e.g. `bot_insights` is a substring of
+/// `trafficpeak_bot_insights_ds2`), which previously made it impossible to
+/// target the shorter-named bundle in isolation.
+fn bundle_matches_filter(name: &str, filter: &str, exact_match_present: bool) -> bool {
+    if filter.is_empty() {
+        return true;
+    }
+    if exact_match_present {
+        name == filter
+    } else {
+        name.contains(filter)
+    }
+}
+
 #[tokio::main]
 async fn main() {
     // Parse flags for --guid and --cleanup
@@ -176,6 +198,29 @@ async fn main() {
     let mut final_bundle_list: Vec<Bundle> = vec![];
     let mut all_bundle_list: Vec<Bundle> = vec![];
 
+    // Pre-scan: does any bundle's name match MATCH_ONLY exactly? If so, run
+    // only that bundle and skip substring fallback (resolves filter collisions
+    // where one bundle's name is a substring of another's). See LOTC-1719.
+    let exact_match_in_filter = if MATCH_ONLY.is_empty() {
+        false
+    } else {
+        let mut found = false;
+        for b in &bundle_list {
+            let path = b
+                .clone()
+                .into_os_string()
+                .into_string()
+                .unwrap_or_else(|os_str| os_str.to_string_lossy().into_owned());
+            if let Ok(bundle) = file_to_bundle(&path).await {
+                if bundle.name == *MATCH_ONLY {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        found
+    };
+
     // --remote requires the positional filter to match exactly one bundle.
     // Pre-flight the match count so we can fail-fast with a useful message
     // before spending time on validation.
@@ -188,7 +233,7 @@ async fn main() {
                 .into_string()
                 .unwrap_or_else(|os_str| os_str.to_string_lossy().into_owned());
             if let Ok(bundle) = file_to_bundle(&path).await {
-                if MATCH_ONLY.is_empty() || bundle.name.contains(&*MATCH_ONLY) {
+                if bundle_matches_filter(&bundle.name, &MATCH_ONLY, exact_match_in_filter) {
                     matched_names.push(bundle.name);
                 }
             }
@@ -225,7 +270,7 @@ async fn main() {
         // We need this to check for global duplicates at the end.
         all_bundle_list.push(bundle.clone());
 
-        if !MATCH_ONLY.is_empty() && !bundle.name.contains(&*MATCH_ONLY) {
+        if !bundle_matches_filter(&bundle.name, &MATCH_ONLY, exact_match_in_filter) {
             println!("Ignoring {} {}", bundle.name, *MATCH_ONLY);
             continue;
         }
@@ -514,5 +559,61 @@ async fn file_to_bundle(file_path: &str) -> Result<Bundle, String> {
             file!(),
             line!()
         )),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::bundle_matches_filter;
+
+    #[test]
+    fn empty_filter_matches_every_bundle() {
+        assert!(bundle_matches_filter("bot_insights", "", false));
+        assert!(bundle_matches_filter("trafficpeak_bot_insights_ds2", "", false));
+        assert!(bundle_matches_filter("anything", "", true));
+    }
+
+    #[test]
+    fn exact_match_wins_when_exact_match_exists() {
+        // Filter "bot_insights" is the exact name of one bundle in the repo,
+        // so trafficpeak_bot_insights_ds2 must NOT match despite containing
+        // the substring.
+        assert!(bundle_matches_filter(
+            "bot_insights",
+            "bot_insights",
+            true
+        ));
+        assert!(!bundle_matches_filter(
+            "trafficpeak_bot_insights_ds2",
+            "bot_insights",
+            true
+        ));
+    }
+
+    #[test]
+    fn substring_fallback_when_no_exact_match() {
+        // Partial filter "bot" matches no bundle exactly; both bot bundles
+        // should run via substring fallback (current/backward-compatible).
+        assert!(bundle_matches_filter("bot_insights", "bot", false));
+        assert!(bundle_matches_filter(
+            "trafficpeak_bot_insights_ds2",
+            "bot",
+            false
+        ));
+        assert!(!bundle_matches_filter("cdn_insights", "bot", false));
+    }
+
+    #[test]
+    fn full_trafficpeak_filter_targets_only_that_bundle() {
+        assert!(bundle_matches_filter(
+            "trafficpeak_bot_insights_ds2",
+            "trafficpeak_bot_insights_ds2",
+            true
+        ));
+        assert!(!bundle_matches_filter(
+            "bot_insights",
+            "trafficpeak_bot_insights_ds2",
+            true
+        ));
     }
 }
