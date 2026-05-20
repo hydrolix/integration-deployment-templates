@@ -1,5 +1,4 @@
 use tokio::fs;
-use uuid::Uuid;
 
 use crate::grafana;
 use crate::models::bundle::Bundle;
@@ -39,8 +38,6 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
         }
     };
 
-    dashboard_data = dashboard_data.replace("__PROJECT_NAME__", "JUST GRAFANA");
-
     // Apply sibling UID substitutions so headless-rendered dashboards reflect
     // the post-deploy state (same substitution as the full deploy path).
     let sibling_uid_map = match grafana::dashboard::build_sibling_uid_map(base, bundle).await {
@@ -55,7 +52,12 @@ pub async fn run(base: &str, bundle: &Bundle, output: &mut Output) -> Result<Vec
     };
     grafana::dashboard::apply_sibling_uid_subs(&mut dashboard_data, &sibling_uid_map);
 
-    dashboard_data = dashboard_data.replace("__DASHBOARD_UUID__", &format!("{}", Uuid::new_v4()));
+    // Resolve __DASHBOARD_UUID__ before __PROJECT_NAME__ so the __PROJECT_NAME__
+    // inside the UID value (e.g. __PROJECT_NAME___default) gets resolved.
+    let own_uid = grafana::dashboard::own_uid_from_map(&dashboard_data, &sibling_uid_map);
+    dashboard_data = dashboard_data.replace("__DASHBOARD_UUID__", &own_uid);
+
+    dashboard_data = dashboard_data.replace("__PROJECT_NAME__", "JUST GRAFANA");
 
     let grafana_dashboard_id = match grafana::dashboard::create(&dashboard_data).await {
         Ok(v) => v.to_string(),

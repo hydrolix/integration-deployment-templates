@@ -73,7 +73,8 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
     }
 
     // Pattern to find template variables in JSON: __VARIABLE_NAME__
-    let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
+    // Non-greedy so __PROJECT_NAME___suffix parses as __PROJECT_NAME__ not __PROJECT_NAME___
+    let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*?)__").unwrap();
 
     // Pattern to find hardcoded <uuid>/<slug> strings — used for the missed-rewrite check.
     let uid_slug_pattern = Regex::new(
@@ -175,7 +176,7 @@ mod tests {
 
     #[test]
     fn test_variable_pattern_matching() {
-        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
+        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*?)__").unwrap();
 
         let json = r#"{"query": "SELECT * FROM __PROJECT_NAME__.table WHERE time > __from"}"#;
         let vars: Vec<_> = variable_pattern
@@ -189,7 +190,7 @@ mod tests {
 
     #[test]
     fn test_detects_typo_in_variable() {
-        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
+        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*?)__").unwrap();
 
         // Common typo: missing underscore
         let json = r#"{"query": "SELECT * FROM __PROJECTNAME__.table"}"#;
@@ -233,10 +234,39 @@ mod tests {
     }
 
     #[test]
+    fn test_project_name_with_uid_suffix() {
+        // __PROJECT_NAME___raw and __PROJECT_NAME___default use triple-underscore to separate
+        // the token from the uid suffix. The non-greedy regex must extract __PROJECT_NAME__,
+        // not __PROJECT_NAME___.
+        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*?)__").unwrap();
+
+        for input in &[
+            r#"{"uid": "__PROJECT_NAME___raw"}"#,
+            r#"{"uid": "__PROJECT_NAME___default"}"#,
+            r#"{"query": "__PROJECT_NAME___raw/raw-logs"}"#,
+        ] {
+            let vars: Vec<_> = variable_pattern
+                .captures_iter(input)
+                .filter_map(|cap| cap.get(0))
+                .map(|m| m.as_str().to_string())
+                .collect();
+
+            assert!(
+                vars.contains(&"__PROJECT_NAME__".to_string()),
+                "Expected __PROJECT_NAME__ in: {input}, got: {vars:?}"
+            );
+            assert!(
+                !vars.iter().any(|v| v.contains("___")),
+                "Unexpected triple-underscore token in: {input}, got: {vars:?}"
+            );
+        }
+    }
+
+    #[test]
     fn test_sibling_macro_in_expected_set() {
         // Demonstrate that __DASHBOARD_UID_RAW_LOGS__ is recognised as
         // a legitimate template variable (it passes the expected-variable check).
-        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*)__").unwrap();
+        let variable_pattern = Regex::new(r"__([A-Z_][A-Z0-9_]*?)__").unwrap();
         let content = r#"{"query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"}"#;
 
         let vars: Vec<_> = variable_pattern
