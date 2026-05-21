@@ -3926,19 +3926,19 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "__PROJECT_NAME___raw/raw-logs",
+          "query": "__PROJECT_NAME__-raw/raw-logs",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME___raw/raw-logs",
-            "value": "__PROJECT_NAME___raw/raw-logs"
+            "text": "__PROJECT_NAME__-raw/raw-logs",
+            "value": "__PROJECT_NAME__-raw/raw-logs"
           },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME___raw/raw-logs",
-              "value": "__PROJECT_NAME___raw/raw-logs"
+              "text": "__PROJECT_NAME__-raw/raw-logs",
+              "value": "__PROJECT_NAME__-raw/raw-logs"
             }
           ]
         }
