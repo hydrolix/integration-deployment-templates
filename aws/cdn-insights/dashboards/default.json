@@ -3935,7 +3935,7 @@
             {
               "selected": false,
               "text": "raw_logs/raw-logs",
-              "value": "_raw_logs/raw-logs"
+              "value": "raw_logs/raw-logs"
             }
           ],
           "query": "raw_logs/raw-logs",
