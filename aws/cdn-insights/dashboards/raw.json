@@ -210,7 +210,7 @@
     },
     "timezone": "utc",
     "title": "Raw Logs",
-    "uid": "__DASHBOARD_UUID__",
+    "uid": "cdn-insights-raw",
     "version": 2,
     "weekStart": ""
   }

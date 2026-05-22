@@ -27,7 +27,6 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         };
 
         let mut must_have: Vec<String> = vec![];
-        must_have.push("__DASHBOARD_UUID__".to_string());
         must_have.push("__DATASOURCE__".to_string());
         must_have.push("__PROJECT_NAME__".to_string());
 

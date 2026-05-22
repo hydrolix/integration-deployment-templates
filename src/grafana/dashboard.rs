@@ -76,24 +76,40 @@ async fn add_dashboard_to_map(path: &str, map: &mut HashMap<String, String>) -> 
     let slug = slugify_grafana_title(title);
 
     if !slug.is_empty() {
-        map.insert(slug, uuid::Uuid::new_v4().to_string());
+        // Derive a stable, project-scoped UID from the dashboard filename stem.
+        // "raw.json" → "__PROJECT_NAME___raw", "Raw Logs.json" → "__PROJECT_NAME___raw_logs"
+        // __PROJECT_NAME__ is resolved later by the standard substitution pass.
+        let stem = std::path::Path::new(path)
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or(&slug)
+            .to_lowercase()
+            .replace(' ', "_");
+        map.insert(slug, format!("__PROJECT_NAME___{}", stem));
     }
 
     Ok(())
 }
 
 /// Replace every `__DASHBOARD_UID_<SLUG>__` occurrence in `contents` with the
-/// corresponding UUID from `sibling_uid_map`.
+/// corresponding project-scoped UID from `sibling_uid_map`.
+///
+/// UID values are of the form `__PROJECT_NAME___<stem>` and still contain the
+/// `__PROJECT_NAME__` placeholder, which the caller resolves in a subsequent
+/// substitution pass.  Patterns already using `__PROJECT_NAME___<stem>/<slug>`
+/// are left untouched — they are resolved naturally when `__PROJECT_NAME__` is
+/// replaced.
 pub fn apply_sibling_uid_subs(contents: &mut String, sibling_uid_map: &HashMap<String, String>) {
-    for (slug, uuid) in sibling_uid_map {
+    for (slug, uid) in sibling_uid_map {
         let macro_name = slug_to_macro(slug);
-        *contents = contents.replace(&macro_name, uuid);
+        *contents = contents.replace(&macro_name, uid);
     }
 }
 
-/// Look up this dashboard's own UUID from the sibling map using its title slug,
-/// falling back to a fresh UUID if the title is missing or not in the map.
-fn own_uuid_from_map(content: &str, sibling_uid_map: &HashMap<String, String>) -> String {
+/// Look up this dashboard's own UID from the sibling map using its title slug.
+/// Falls back to a `__PROJECT_NAME___<slug>` pattern if the title is missing or
+/// not in the map, keeping the UID in the same project-scoped form.
+pub(crate) fn own_uid_from_map(content: &str, sibling_uid_map: &HashMap<String, String>) -> String {
     let json: Value = serde_json::from_str(content).unwrap_or(Value::Null);
     let dashboard = json.get("dashboard").unwrap_or(&json);
     let title = dashboard["title"].as_str().unwrap_or("");
@@ -101,7 +117,7 @@ fn own_uuid_from_map(content: &str, sibling_uid_map: &HashMap<String, String>) -
     sibling_uid_map
         .get(&slug)
         .cloned()
-        .unwrap_or_else(|| uuid::Uuid::new_v4().to_string())
+        .unwrap_or_else(|| format!("__PROJECT_NAME___{}", slug.replace('-', "_")))
 }
 
 pub async fn create(dashboard_data: &str) -> Result<String, String> {
@@ -170,15 +186,17 @@ pub async fn create_others(
             }
         };
 
-        // Resolve this dashboard's own UUID from the pre-built map
-        let own_uuid = own_uuid_from_map(&contents, sibling_uid_map);
+        // Resolve this dashboard's own UID from the pre-built map
+        let own_uid = own_uid_from_map(&contents, sibling_uid_map);
 
-        // Apply sibling UID substitutions before __DASHBOARD_UUID__ replacement
+        // Apply sibling UID substitutions before __DASHBOARD_UUID__ replacement.
+        // __DASHBOARD_UUID__ must be replaced before __PROJECT_NAME__ so that
+        // __PROJECT_NAME__ inside the UID value (e.g. __PROJECT_NAME___raw) gets resolved.
         apply_sibling_uid_subs(&mut contents, sibling_uid_map);
+        contents = contents.replace("__DASHBOARD_UUID__", &own_uid);
 
         contents = contents.replace("__PROJECT_NAME__", project_name);
         contents = contents.replace("__DATASOURCE__", datalink);
-        contents = contents.replace("__DASHBOARD_UUID__", &own_uuid);
         contents = contents.replace("__SHARED_PROJECT__", &shared_project_name);
 
         // Replace summary table variables if present
@@ -241,15 +259,17 @@ pub async fn load_template(
         }
     };
 
-    // Resolve own UUID from the pre-built map
-    let own_uuid = own_uuid_from_map(&dashboard, sibling_uid_map);
+    // Resolve own UID from the pre-built map
+    let own_uid = own_uid_from_map(&dashboard, sibling_uid_map);
 
-    // Apply sibling UID substitutions before __DASHBOARD_UUID__ replacement
+    // Apply sibling UID substitutions before __DASHBOARD_UUID__ replacement.
+    // __DASHBOARD_UUID__ must be replaced before __PROJECT_NAME__ so that
+    // __PROJECT_NAME__ inside the UID value (e.g. __PROJECT_NAME___raw) gets resolved.
     apply_sibling_uid_subs(&mut dashboard, sibling_uid_map);
+    dashboard = dashboard.replace("__DASHBOARD_UUID__", &own_uid);
 
     dashboard = dashboard.replace("__PROJECT_NAME__", project_name);
     dashboard = dashboard.replace("__DATASOURCE__", datalink);
-    dashboard = dashboard.replace("__DASHBOARD_UUID__", &own_uuid);
 
     Ok(dashboard)
 }
@@ -300,11 +320,47 @@ mod tests {
             "uid: __DASHBOARD_UID_RAW_LOGS__ and __DASHBOARD_UID_CDN_DASHBOARD_DEFAULT__"
                 .to_string();
         let mut map = HashMap::new();
-        map.insert("raw-logs".to_string(), "uuid-raw".to_string());
-        map.insert("cdn-dashboard-default".to_string(), "uuid-cdn".to_string());
+        map.insert(
+            "raw-logs".to_string(),
+            "__PROJECT_NAME___raw".to_string(),
+        );
+        map.insert(
+            "cdn-dashboard-default".to_string(),
+            "__PROJECT_NAME___default".to_string(),
+        );
 
         apply_sibling_uid_subs(&mut content, &map);
 
-        assert_eq!(content, "uid: uuid-raw and uuid-cdn");
+        assert_eq!(
+            content,
+            "uid: __PROJECT_NAME___raw and __PROJECT_NAME___default"
+        );
+    }
+
+    #[test]
+    fn test_apply_sibling_uid_subs_leaves_project_name_urls_intact() {
+        // __PROJECT_NAME___raw/raw-logs must NOT be rewritten — the caller's
+        // subsequent __PROJECT_NAME__ → project_name substitution handles it.
+        let mut map = HashMap::new();
+        map.insert(
+            "raw-logs".to_string(),
+            "__PROJECT_NAME___raw".to_string(),
+        );
+        map.insert(
+            "cdn-dashboard-default".to_string(),
+            "__PROJECT_NAME___default".to_string(),
+        );
+
+        let mut content = "\"query\": \"__PROJECT_NAME___raw/raw-logs\"".to_string();
+        apply_sibling_uid_subs(&mut content, &map);
+        assert_eq!(content, "\"query\": \"__PROJECT_NAME___raw/raw-logs\"");
+
+        let mut content2 =
+            "/d/__PROJECT_NAME___default/cdn-dashboard-default?foo=bar".to_string();
+        apply_sibling_uid_subs(&mut content2, &map);
+        assert_eq!(
+            content2,
+            "/d/__PROJECT_NAME___default/cdn-dashboard-default?foo=bar"
+        );
     }
 }
