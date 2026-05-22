@@ -1644,7 +1644,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/__PROJECT_NAME__-raw/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                      "url": "/d/__PROJECT_NAME___raw/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
                     }
                   ]
                 }
@@ -2129,38 +2129,38 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "__PROJECT_NAME__-raw/raw-logs",
+          "query": "__PROJECT_NAME___raw/raw-logs",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__-raw/raw-logs",
-            "value": "__PROJECT_NAME__-raw/raw-logs"
+            "text": "__PROJECT_NAME___raw/raw-logs",
+            "value": "__PROJECT_NAME___raw/raw-logs"
           },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__-raw/raw-logs",
-              "value": "__PROJECT_NAME__-raw/raw-logs"
+              "text": "__PROJECT_NAME___raw/raw-logs",
+              "value": "__PROJECT_NAME___raw/raw-logs"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn_panel",
-          "query": "__PROJECT_NAME__-default/cdn-dashboard-default",
+          "query": "__PROJECT_NAME___default/cdn-dashboard-default",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME__-default/cdn-dashboard-default",
-            "value": "__PROJECT_NAME__-default/cdn-dashboard-default"
+            "text": "__PROJECT_NAME___default/cdn-dashboard-default",
+            "value": "__PROJECT_NAME___default/cdn-dashboard-default"
           },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME__-default/cdn-dashboard-default",
-              "value": "__PROJECT_NAME__-default/cdn-dashboard-default"
+              "text": "__PROJECT_NAME___default/cdn-dashboard-default",
+              "value": "__PROJECT_NAME___default/cdn-dashboard-default"
             }
           ]
         }
