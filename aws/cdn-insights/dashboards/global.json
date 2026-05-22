@@ -2129,38 +2129,38 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "__PROJECT_NAME___raw/raw-logs",
+          "query": "raw/raw-logs",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME___raw/raw-logs",
-            "value": "__PROJECT_NAME___raw/raw-logs"
+            "text": "raw/raw-logs",
+            "value": "raw/raw-logs"
           },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME___raw/raw-logs",
-              "value": "__PROJECT_NAME___raw/raw-logs"
+              "text": "raw/raw-logs",
+              "value": "raw/raw-logs"
             }
           ]
         },
         {
           "hide": 2,
           "name": "cdn_panel",
-          "query": "__PROJECT_NAME___default/cdn-dashboard-default",
+          "query": "default/cdn-dashboard-default",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME___default/cdn-dashboard-default",
-            "value": "__PROJECT_NAME___default/cdn-dashboard-default"
+            "text": "default/cdn-dashboard-default",
+            "value": "default/cdn-dashboard-default"
           },
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME___default/cdn-dashboard-default",
-              "value": "__PROJECT_NAME___default/cdn-dashboard-default"
+              "text": "default/cdn-dashboard-default",
+              "value": "default/cdn-dashboard-default"
             }
           ]
         }
