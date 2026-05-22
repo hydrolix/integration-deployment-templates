@@ -3926,19 +3926,19 @@
         {
           "hide": 2,
           "name": "raw_logs",
-          "query": "raw/raw-logs",
+          "query": "cdn-insights-raw/raw-logs",
           "skipUrlSync": true,
           "type": "constant",
           "current": {
             "selected": false,
-            "text": "raw/raw-logs",
-            "value": "raw/raw-logs"
+            "text": "cdn-insights-raw/raw-logs",
+            "value": "cdn-insights-raw/raw-logs"
           },
           "options": [
             {
               "selected": false,
-              "text": "raw/raw-logs",
-              "value": "raw/raw-logs"
+              "text": "cdn-insights-raw/raw-logs",
+              "value": "cdn-insights-raw/raw-logs"
             }
           ]
         }
@@ -3961,7 +3961,7 @@
     },
     "timezone": "utc",
     "title": "CDN Dashboard Default",
-    "uid": "__DASHBOARD_UUID__",
+    "uid": "cdn-insights-default",
     "version": 1,
     "weekStart": ""
   }

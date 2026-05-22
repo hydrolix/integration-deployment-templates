@@ -3,7 +3,7 @@
   "beta": false,
   "dashboard": {
     "path": "dashboards/default.json",
-    "project_var": "__PROJECT_NAME__"
+    "project_var": "default"
   },
   "dependencies": {
     "hydrolix": {
@@ -34,11 +34,11 @@
   "other_dashboards": [
     {
       "path": "dashboards/global.json",
-      "project_var": "__PROJECT_NAME__"
+      "project_var": "global"
     },
     {
       "path": "dashboards/raw.json",
-      "project_var": "__PROJECT_NAME__"
+      "project_var": "raw"
     }
   ],
   "solution": true,
