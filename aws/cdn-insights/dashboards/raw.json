@@ -210,7 +210,7 @@
     },
     "timezone": "utc",
     "title": "Raw Logs",
-    "uid": "__PROJECT_NAME___raw_logs",
+    "uid": "raw_logs",
     "version": 2,
     "weekStart": ""
   }

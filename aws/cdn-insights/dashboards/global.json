@@ -1644,7 +1644,7 @@
                     {
                       "targetBlank": true,
                       "title": "Filter to RAW logs",
-                      "url": "/d/__PROJECT_NAME___raw/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
+                      "url": "/d/raw_logs/raw-logs?${__all_variables}&var-filter=client_country_iso_code|=|${__value.text}"
                     }
                   ]
                 }
@@ -2129,38 +2129,38 @@
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME___raw/raw-logs",
-            "value": "__PROJECT_NAME___raw/raw-logs"
+            "text": "raw_logs/raw-logs",
+            "value": "raw_logs/raw-logs"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME___raw/raw-logs",
-              "value": "__PROJECT_NAME___raw/raw-logs"
+              "text": "raw_logs/raw-logs",
+              "value": "raw_logs/raw-logs"
             }
           ],
-          "query": "__PROJECT_NAME___raw/raw-logs",
+          "query": "raw_logs/raw-logs",
           "skipUrlSync": true,
           "type": "constant"
         },
         {
           "current": {
             "selected": false,
-            "text": "__PROJECT_NAME___default/cdn-dashboard-default",
-            "value": "__PROJECT_NAME___default/cdn-dashboard-default"
+            "text": "default/cdn-dashboard-default",
+            "value": "default/cdn-dashboard-default"
           },
           "hide": 2,
           "name": "cdn_panel",
           "options": [
             {
               "selected": false,
-              "text": "__PROJECT_NAME___default/cdn-dashboard-default",
-              "value": "__PROJECT_NAME___default/cdn-dashboard-default"
+              "text": "default/cdn-dashboard-default",
+              "value": "default/cdn-dashboard-default"
             }
           ],
-          "query": "__PROJECT_NAME___default/cdn-dashboard-default",
+          "query": "default/cdn-dashboard-default",
           "skipUrlSync": true,
           "type": "constant"
         }
@@ -2183,7 +2183,7 @@
     },
     "timezone": "utc",
     "title": "CDN Global View",
-    "uid": "__PROJECT_NAME___global",
+    "uid": "global",
     "version": 3,
     "weekStart": ""
   }
