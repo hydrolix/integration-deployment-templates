@@ -27,7 +27,6 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
         };
 
         let mut must_have: Vec<String> = vec![];
-        must_have.push("__DASHBOARD_UUID__".to_string());
         must_have.push("__DATASOURCE__".to_string());
         must_have.push("__PROJECT_NAME__".to_string());
 
@@ -65,6 +64,15 @@ pub async fn run(base: &str, bundle: &Bundle) -> Result<(), String> {
                 line!()
             ));
             }
+        }
+
+        let uid = dashboard_json["dashboard"]["uid"].as_str().unwrap_or("");
+        if uid.is_empty() {
+            return Err(format!(
+                "ERROR: {}.{} Dashboard must have a non-empty uid. full_path={full_path}",
+                file!(),
+                line!()
+            ));
         }
 
         if dashboard_json["id"].as_str().is_some() {
