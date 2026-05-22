@@ -246,6 +246,29 @@ def _fix_template_variables(dashboard, dinfo, inputs_map, config, state):
             new_var_list.append(var)
             continue
 
+        # Re-apply primary/other logic to already-processed summary constants.
+        # A previous pipeline run (or manual edit) may have written
+        # __SUMMARY_TABLE_NAME_N__ or __PROJECT_NAME__.__SUMMARY_TABLE_NAME_N__
+        # as the query value. Those don't match ${VAR_*} above, so without this
+        # check they fall through and keep the wrong format for the current
+        # primary/other role.
+        if var_type == "constant":
+            for sinfo in state.summaries:
+                if query in (sinfo.dashboard_var, f"__PROJECT_NAME__.{sinfo.dashboard_var}"):
+                    correct_value = _get_summary_value(sinfo.dashboard_var, dinfo.is_primary)
+                    var["query"] = correct_value
+                    var["current"] = {
+                        "selected": False,
+                        "text": correct_value,
+                        "value": correct_value,
+                    }
+                    var["options"] = [{
+                        "selected": False,
+                        "text": correct_value,
+                        "value": correct_value,
+                    }]
+                    break
+
         # Keep other variables as-is
         new_var_list.append(var)
 
