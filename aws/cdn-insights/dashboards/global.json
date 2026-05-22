@@ -10,51 +10,51 @@
     },
     "__requires": [
       {
-        "type": "grafana",
         "id": "grafana",
         "name": "Grafana",
+        "type": "grafana",
         "version": "12.0.2"
       },
       {
-        "type": "datasource",
         "id": "hydrolix-hydrolix-datasource",
         "name": "Hydrolix",
+        "type": "datasource",
         "version": "0.10.2"
       },
       {
-        "type": "panel",
         "id": "marcusolsson-treemap-panel",
         "name": "Treemap",
+        "type": "panel",
         "version": "2.0.1"
       },
       {
-        "type": "panel",
         "id": "piechart",
         "name": "Pie chart",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "stat",
         "name": "Stat",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "table",
         "name": "Table",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "text",
         "name": "Text",
+        "type": "panel",
         "version": ""
       },
       {
-        "type": "panel",
         "id": "timeseries",
         "name": "Time series",
+        "type": "panel",
         "version": ""
       }
     ],
@@ -1815,23 +1815,23 @@
     "templating": {
       "list": [
         {
-          "hide": 2,
-          "name": "raw_table",
-          "query": "__PROJECT_NAME__.__TABLE_NAME__",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__TABLE_NAME__",
             "value": "__PROJECT_NAME__.__TABLE_NAME__"
           },
+          "hide": 2,
+          "name": "raw_table",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME__.__TABLE_NAME__",
               "value": "__PROJECT_NAME__.__TABLE_NAME__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {},
@@ -1864,61 +1864,61 @@
           "type": "query"
         },
         {
-          "hide": 2,
-          "name": "summary_min",
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
             "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
           },
+          "hide": 2,
+          "name": "summary_min",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
               "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "summary_hour",
-          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
             "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
+          "hide": 2,
+          "name": "summary_hour",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
               "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "cdn1",
-          "query": "${VAR_CDN1}",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "${VAR_CDN1}",
             "value": "${VAR_CDN1}"
           },
+          "hide": 2,
+          "name": "cdn1",
           "options": [
             {
               "selected": false,
               "text": "${VAR_CDN1}",
               "value": "${VAR_CDN1}"
             }
-          ]
+          ],
+          "query": "${VAR_CDN1}",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
           "current": {},
@@ -2127,42 +2127,42 @@
           "type": "query"
         },
         {
-          "hide": 2,
-          "name": "raw_logs",
-          "query": "__PROJECT_NAME___raw/raw-logs",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME___raw/raw-logs",
             "value": "__PROJECT_NAME___raw/raw-logs"
           },
+          "hide": 2,
+          "name": "raw_logs",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME___raw/raw-logs",
               "value": "__PROJECT_NAME___raw/raw-logs"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME___raw/raw-logs",
+          "skipUrlSync": true,
+          "type": "constant"
         },
         {
-          "hide": 2,
-          "name": "cdn_panel",
-          "query": "__PROJECT_NAME___default/cdn-dashboard-default",
-          "skipUrlSync": true,
-          "type": "constant",
           "current": {
             "selected": false,
             "text": "__PROJECT_NAME___default/cdn-dashboard-default",
             "value": "__PROJECT_NAME___default/cdn-dashboard-default"
           },
+          "hide": 2,
+          "name": "cdn_panel",
           "options": [
             {
               "selected": false,
               "text": "__PROJECT_NAME___default/cdn-dashboard-default",
               "value": "__PROJECT_NAME___default/cdn-dashboard-default"
             }
-          ]
+          ],
+          "query": "__PROJECT_NAME___default/cdn-dashboard-default",
+          "skipUrlSync": true,
+          "type": "constant"
         }
       ]
     },
@@ -2183,7 +2183,7 @@
     },
     "timezone": "utc",
     "title": "CDN Global View",
-    "uid": "__DASHBOARD_UUID__",
+    "uid": "__PROJECT_NAME___global",
     "version": 3,
     "weekStart": ""
   }

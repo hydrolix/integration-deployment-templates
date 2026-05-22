@@ -3926,19 +3926,19 @@
         {
           "current": {
             "selected": false,
-            "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
-            "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+            "text": "__PROJECT_NAME___raw_logs/raw-logs",
+            "value": "__PROJECT_NAME___raw_logs/raw-logs"
           },
           "hide": 2,
           "name": "raw_logs",
           "options": [
             {
               "selected": false,
-              "text": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
-              "value": "__DASHBOARD_UID_RAW_LOGS__/raw-logs"
+              "text": "__PROJECT_NAME___raw_logs/raw-logs",
+              "value": "__PROJECT_NAME___raw_logs/raw-logs"
             }
           ],
-          "query": "__DASHBOARD_UID_RAW_LOGS__/raw-logs",
+          "query": "__PROJECT_NAME___raw_logs/raw-logs",
           "skipUrlSync": true,
           "type": "constant"
         }
@@ -3961,7 +3961,7 @@
     },
     "timezone": "utc",
     "title": "CDN Dashboard Default",
-    "uid": "__DASHBOARD_UUID__",
+    "uid": "__PROJECT_NAME___default",
     "version": 1,
     "weekStart": ""
   }
