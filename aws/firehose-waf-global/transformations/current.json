@@ -1,6 +1,6 @@
 {
   "description": "",
-  "name": "waf_to_firehose_transform",
+  "name": "waf_to_firehose_global",
   "settings": {
     "compression": "",
     "format_details": {
