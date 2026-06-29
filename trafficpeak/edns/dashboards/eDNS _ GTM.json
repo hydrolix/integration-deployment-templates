@@ -2069,8 +2069,8 @@
         {
           "current": {
             "selected": false,
-            "text": "__SUMMARY_TABLE_NAME_1__",
-            "value": "__SUMMARY_TABLE_NAME_1__"
+            "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+            "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
           },
           "description": "The name of the table which will be used for querying the dns data",
           "hide": 2,
@@ -2078,11 +2078,11 @@
           "options": [
             {
               "selected": false,
-              "text": "__SUMMARY_TABLE_NAME_1__",
-              "value": "__SUMMARY_TABLE_NAME_1__"
+              "text": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
+              "value": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__"
             }
           ],
-          "query": "__SUMMARY_TABLE_NAME_1__",
+          "query": "__PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__",
           "skipUrlSync": true,
           "type": "constant"
         },
