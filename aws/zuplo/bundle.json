@@ -32,7 +32,7 @@
       "full_title": "Http-Streaming",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
     },
-    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "primary_url": "https://docs.hydrolix.io/latest/managed/data-sources/ingest-integrations/zuplo-integration/",
     "source": {
       "full_title": "Zuplo",
       "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/zuplo.png"
