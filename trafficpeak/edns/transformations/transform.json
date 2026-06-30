@@ -155,7 +155,7 @@
           "index": true,
           "script": null,
           "source": null,
-          "suppress": true,
+          "suppress": false,
           "type": "string"
         },
         "name": "answers"
