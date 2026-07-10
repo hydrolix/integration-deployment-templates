@@ -22,17 +22,22 @@ jobs:
       - name: Resolve PR context
         id: pr-context
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PR_NUMBER="${{ github.event.inputs.pr_number }}"
-            HEAD_SHA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json headRefOid --jq '.headRefOid')
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            PR_NUMBER="$INPUT_PR_NUMBER"
+            HEAD_SHA=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefOid --jq '.headRefOid')
           else
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            PR_NUMBER="$EVENT_PR_NUMBER"
+            HEAD_SHA="$EVENT_HEAD_SHA"
           fi
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
 
       - uses: actions/create-github-app-token@v2
         id: app-token
@@ -90,9 +95,9 @@ jobs:
 
       - name: Export portables to CAC
         if: steps.detect-bundles.outputs.has_changes == 'true'
+        env:
+          PORTABLE_BUNDLES: ${{ steps.detect-bundles.outputs.portable_bundles }}
         run: |
-          PORTABLE_BUNDLES="${{ steps.detect-bundles.outputs.portable_bundles }}"
-
           echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
             if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
               echo "Copying portables/$bundle_name → cac-tools-test/data/bundles/$bundle_name/"
@@ -121,12 +126,7 @@ jobs:
             exit 0
           fi
 
-          PR_NUMBER="${{ steps.pr-context.outputs.pr_number }}"
-          COMMIT_SHA="${{ steps.pr-context.outputs.head_sha }}"
-          TRIGGERED_BY="${{ github.actor }}"
           TEST_PREFIX="[TEST] "
-
-          BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
 
           BRANCH_NAME="push-to-cac-tools-test-${PR_NUMBER}"
 
@@ -179,3 +179,7 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ steps.pr-context.outputs.pr_number }}
+          COMMIT_SHA: ${{ steps.pr-context.outputs.head_sha }}
+          TRIGGERED_BY: ${{ github.actor }}
+          BUNDLE_LIST: ${{ steps.detect-bundles.outputs.bundle_list }}

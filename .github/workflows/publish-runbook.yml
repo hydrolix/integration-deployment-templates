@@ -34,10 +34,11 @@ jobs:
 
       - name: Detect changed bundle directories
         id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BUNDLE_PATH: ${{ inputs.bundle_path }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            BUNDLE_PATH="${{ inputs.bundle_path }}"
-
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             if [ ! -f "$BUNDLE_PATH/bundle.json" ]; then
               echo "Error: bundle.json not found at $BUNDLE_PATH/bundle.json" >&2
               exit 1
@@ -99,9 +100,11 @@ jobs:
           aws-region: us-west-2
 
       - name: Load secrets from AWS Secrets Manager
+        env:
+          AWS_SECRET_ARN: ${{ vars.AWS_SECRET_ARN }}
         run: |
           secrets=$(aws secretsmanager get-secret-value \
-            --secret-id "${{ vars.AWS_SECRET_ARN }}" \
+            --secret-id "$AWS_SECRET_ARN" \
             --query SecretString \
             --output text)
 
@@ -119,9 +122,11 @@ jobs:
 
       - name: Generate runbook
         id: generate
+        env:
+          BUNDLE_DIR: ${{ matrix.bundle_dir }}
         run: |
           python scripts/generate_runbook.py \
-            --bundle-dir "${{ matrix.bundle_dir }}" \
+            --bundle-dir "$BUNDLE_DIR" \
             --output runbook.json
 
           BUNDLE_NAME=$(python -c "import json; d=json.load(open('runbook.json')); print(d['bundle_name'])")
@@ -138,7 +143,9 @@ jobs:
           echo "Published runbook to: $CONFLUENCE_URL"
 
       - name: Notify bundle team
+        env:
+          CONFLUENCE_URL: ${{ steps.publish.outputs.confluence_url }}
         run: |
           python scripts/notify_bundle_team.py \
             --runbook runbook.json \
-            --confluence-url "${{ steps.publish.outputs.confluence_url }}"
+            --confluence-url "$CONFLUENCE_URL"
