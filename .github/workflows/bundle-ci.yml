@@ -189,9 +189,9 @@ jobs:
         run: pip install pyyaml
 
       - name: Format and configure bundles (Track 1)
+        env:
+          BUNDLE_DIRS: ${{ needs.detect-changes.outputs.full_pipeline_dirs }}
         run: |
-          BUNDLE_DIRS='${{ needs.detect-changes.outputs.full_pipeline_dirs }}'
-
           echo "$BUNDLE_DIRS" | jq -r '.[]' | while IFS= read -r bundle_dir; do
             echo ""
             echo "========================================="
@@ -349,13 +349,13 @@ jobs:
           GRAFANA_USER: ${{ secrets.GRAFANA_USER }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
           DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}
+          BUNDLE_NAME: ${{ github.event.inputs.bundle_name }}
+          PROJECT_NAME: ${{ github.event.inputs.project_name }}
+          N_ROWS: ${{ github.event.inputs.n_rows }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          BUNDLE_NAME="${{ github.event.inputs.bundle_name }}"
-          PROJECT_NAME="${{ github.event.inputs.project_name }}"
-          N_ROWS="${{ github.event.inputs.n_rows }}"
-
           if [ -z "$PROJECT_NAME" ]; then
-            PROJECT_NAME="ci_${BUNDLE_NAME}_${{ github.run_id }}"
+            PROJECT_NAME="ci_${BUNDLE_NAME}_${RUN_ID}"
           fi
           if [ -z "$N_ROWS" ]; then
             N_ROWS="10"

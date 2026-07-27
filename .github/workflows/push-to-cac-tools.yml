@@ -71,9 +71,9 @@ jobs:
 
       - name: Export portables to CAC
         if: steps.detect-bundles.outputs.has_changes == 'true'
+        env:
+          PORTABLE_BUNDLES: ${{ steps.detect-bundles.outputs.portable_bundles }}
         run: |
-          PORTABLE_BUNDLES="${{ steps.detect-bundles.outputs.portable_bundles }}"
-
           echo "$PORTABLE_BUNDLES" | while IFS= read -r bundle_name; do
             if [ -n "$bundle_name" ] && [ -d "integrations-deployment-templates/portables/$bundle_name" ]; then
               echo "Copying portables/$bundle_name → cac-tools/data/bundles/$bundle_name/"
@@ -102,19 +102,15 @@ jobs:
             exit 0
           fi
 
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.event.pull_request.user.login }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_NUMBER="$EVENT_PR_NUMBER"
+            TRIGGERED_BY="$PR_AUTHOR"
             TEST_PREFIX=""
           else
-            PR_NUMBER="run-${{ github.run_id }}"
-            COMMIT_SHA="${{ github.sha }}"
-            TRIGGERED_BY="${{ github.actor }}"
+            PR_NUMBER="run-${RUN_ID}"
+            TRIGGERED_BY="$ACTOR"
             TEST_PREFIX="[TEST] "
           fi
-
-          BUNDLE_LIST="${{ steps.detect-bundles.outputs.bundle_list }}"
 
           BRANCH_NAME="push-to-cac-tools-${PR_NUMBER}-$(date +%s)"
           git checkout -b "$BRANCH_NAME"
@@ -140,7 +136,7 @@ jobs:
           **Source PR:** #${PR_NUMBER}
           **Source commit:** \`${COMMIT_SHA}\`
           **Triggered by:** @${TRIGGERED_BY}
-          **Trigger type:** ${{ github.event_name }}
+          **Trigger type:** ${EVENT_NAME}
 
           This PR was automatically generated to sync portable bundle changes from the integration-deployment-templates repository." \
             --base main \
@@ -149,3 +145,10 @@ jobs:
           echo "Successfully created PR in CAC repository"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_SHA: ${{ github.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          ACTOR: ${{ github.actor }}
+          RUN_ID: ${{ github.run_id }}
+          BUNDLE_LIST: ${{ steps.detect-bundles.outputs.bundle_list }}

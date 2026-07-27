@@ -26,16 +26,18 @@ jobs:
           aws-region: us-west-2
 
       - name: Load secrets from AWS Secrets Manager
+        env:
+          AWS_SECRET_ARN: ${{ vars.AWS_SECRET_ARN }}
         run: |
           secrets=$(aws secretsmanager get-secret-value \
-            --secret-id "${{ vars.AWS_SECRET_ARN }}" \
+            --secret-id "$AWS_SECRET_ARN" \
             --query SecretString \
             --output text)
 
           webhook_url=$(echo "$secrets" | python3 -c "import json,sys; print(json.load(sys.stdin).get('SLACK_WEBHOOK_URL', ''))")
 
           if [ -z "$webhook_url" ] || [ "$webhook_url" = "null" ]; then
-            echo "Error: SLACK_WEBHOOK_URL key not found in secret ${{ vars.AWS_SECRET_ARN }}" >&2
+            echo "Error: SLACK_WEBHOOK_URL key not found in secret $AWS_SECRET_ARN" >&2
             exit 1
           fi
 
