@@ -52,7 +52,7 @@
       "full_title": "Amazon Data Firehose",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/firehose.png"
     },
-    "primary_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/docs/ElementalMediaPackage.html",
+    "primary_url": "https://docs.hydrolix.io/latest/managed/data-sources/aws/aws-elemental-mediapackage/",
     "source": {
       "full_title": "AWS Elemental MediaPackage",
       "icon_url": "https://cascade-marketplace.s3.us-east-1.amazonaws.com/public/assets/icons/mediapackage.jpeg"
