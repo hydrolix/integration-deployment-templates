@@ -1,0 +1,13 @@
+{
+  "service": "fbm",
+  "severity": "60",
+  "accountId": "F-AC-1710443",
+  "eventType": "alert",
+  "isOngoing": "false",
+  "timestamp": 1776124628571,
+  "eventTitle": "Customer sqa_cust5, router with IP 198.18.31.133 has not checked in since Mon Jan 19 11:47:30 UTC 2026 (1289 minutes)",
+  "eventEndTime": "1768900590000",
+  "eventStartTime": "1768900590000",
+  "preMitigationBps": 271025839,
+  "preMitigationPps": 63482
+}

@@ -1,0 +1,21 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-prolexic-events-attacks:
+    dashboard:
+      __extend__: dashboards/prolexic_events_attacks.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: akamai.prolexic
+  hdx-prolexic-security-events-dashboard:
+    dashboard:
+      __extend__: dashboards/prolexic_security_events_dashboard.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_TABLE: akamai.prolexic

@@ -1,0 +1,58 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/prolexic",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/Prolexic Events & Attacks.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Prolexic Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_prolexic",
+  "other_dashboards": [
+    {
+      "path": "dashboards/Prolexic Security Events Dashboard.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "prolexic",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/prolexic-integration",
+    "source": {
+      "full_title": "Trafficpeak Prolexic",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}
