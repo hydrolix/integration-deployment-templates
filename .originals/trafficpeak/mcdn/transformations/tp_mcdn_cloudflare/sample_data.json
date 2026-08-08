@@ -1,32 +1,30 @@
-[
-  {
-    "CacheCacheStatus": "hit",
-    "ClientASN": 7922,
-    "ClientCity": "West Hartford",
-    "ClientCountry": "US",
-    "ClientIP": "50.205.69.23",
-    "ClientRequestHost": [
-      "https:",
-      "",
-      "hydrolix.io"
-    ],
-    "ClientRequestMethod": "GET",
-    "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
-    "ClientRequestQuery": "",
-    "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
-    "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
-    "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-    "ClientState": "US",
-    "EdgeColoCode": "SJC",
-    "EdgeResponseBytes": 840923,
-    "EdgeResponseContentType": "video/mp4",
-    "EdgeResponseStatus": 200,
-    "EdgeServerIP": null,
-    "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
-    "EdgeTimeToFirstByteMs": 72,
-    "OriginIP": "52.75.0.2",
-    "OriginResponseDurationMs": 334,
-    "OriginResponseHeaderReceiveDurationMs": 0,
-    "OriginResponseTime": 0
-  }
-]
+{
+  "CacheCacheStatus": "hit",
+  "ClientASN": 7922,
+  "ClientCity": "West Hartford",
+  "ClientCountry": "US",
+  "ClientIP": "50.205.69.23",
+  "ClientRequestHost": [
+    "https:",
+    "",
+    "hydrolix.io"
+  ],
+  "ClientRequestMethod": "GET",
+  "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+  "ClientRequestQuery": "",
+  "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+  "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+  "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+  "ClientState": "US",
+  "EdgeColoCode": "SJC",
+  "EdgeResponseBytes": 840923,
+  "EdgeResponseContentType": "video/mp4",
+  "EdgeResponseStatus": 200,
+  "EdgeServerIP": null,
+  "EdgeStartTimestamp": "2026-05-01T00:00:00Z",
+  "EdgeTimeToFirstByteMs": 72,
+  "OriginIP": "52.75.0.2",
+  "OriginResponseDurationMs": 334,
+  "OriginResponseHeaderReceiveDurationMs": 0,
+  "OriginResponseTime": 0
+}

@@ -1,12 +1,489 @@
 {
+  "name": "mcdn_cloudfront_firehose_v3",
   "description": "Version v1.0",
-  "name": "mcdn_cloudfront_fireshose_v3",
   "settings": {
+    "is_default": false,
+    "rate_limit": null,
+    "null_values": [],
+    "shadow_table": null,
+    "output_columns": [
+      {
+        "name": "reqTimeSec",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "index_options": {
+            "fulltext": false
+          },
+          "primary": true,
+          "ignore": false,
+          "format": "s",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "data.timestamp"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "result_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-result-type"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "cacheStatus",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "totalBytes",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-bytes"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "statusCode",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-status"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "timeToFirstByte",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-to-first-byte"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_time_to_last_byte",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "time-taken"
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "transferTimeMSec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "response_content_type",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sc-content-type"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "reqMethod",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-method"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "reqHost",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-host-header"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "queryStr",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-query"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "referer",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(Referer)"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "reqPath",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs-uri-stem"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "UA",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "cs(User-Agent)"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "user_agent_category",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cliIP",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Edge_IP",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "s-ip"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Origin_IP",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "Origin_TurnAroundTime",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-fbl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Origin_RequestEndTime",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "origin-lbl"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "country",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "c-country"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "city",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "Edge_GeoInfo",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "edge_pop",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "x-edge-location"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "origin_time_to_last_byte_ms",
+        "datatype": {
+          "type": "uint64",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency_sec",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_cdn",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "CloudFront",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_transform",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": "CloudFront FH multi cdn",
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "breadcrumbs",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "source": null,
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "resolution": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": false
+        }
+      }
+    ],
     "compression": "",
+    "wurfl": null,
     "format_details": {
       "flattening": {
         "active": false,
-        "depth": null,
         "map_flattening_strategy": {
           "left": "",
           "right": ""
@@ -14,487 +491,10 @@
         "slice_flattening_strategy": {
           "left": "",
           "right": ""
-        }
+        },
+        "depth": null
       }
-    },
-    "is_default": false,
-    "null_values": [],
-    "output_columns": [
-      {
-        "datatype": {
-          "default": null,
-          "format": "s",
-          "ignore": false,
-          "index": false,
-          "index_options": {
-            "fulltext": false
-          },
-          "primary": true,
-          "resolution": "ms",
-          "script": null,
-          "source": {
-            "from_input_field": "data.timestamp"
-          },
-          "suppress": false,
-          "type": "epoch"
-        },
-        "name": "reqTimeSec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "x-edge-result-type"
-          },
-          "suppress": true,
-          "type": "string"
-        },
-        "name": "result_type"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "boolean"
-        },
-        "name": "cacheStatus"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sc-bytes"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "totalBytes"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sc-status"
-          },
-          "suppress": false,
-          "type": "uint32"
-        },
-        "name": "statusCode"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time-to-first-byte"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "timeToFirstByte"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": false,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "time-taken"
-          },
-          "suppress": true,
-          "type": "double"
-        },
-        "name": "response_time_to_last_byte"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "transferTimeMSec"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sc-content-type"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "response_content_type"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs-method"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "reqMethod"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "x-host-header"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "reqHost"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs-uri-query"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "queryStr"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs(Referer)"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "referer"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs-uri-stem"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "reqPath"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "cs(User-Agent)"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "UA"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "user_agent_category"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "c-ip"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "cliIP"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "s-ip"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "Edge_IP"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "Origin_IP"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "origin-fbl"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "Origin_TurnAroundTime"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "origin-lbl"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "Origin_RequestEndTime"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "c-country"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "country"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "city"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "Edge_GeoInfo"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "x-edge-location"
-          },
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "edge_pop"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "uint64"
-        },
-        "name": "origin_time_to_last_byte_ms"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": {
-            "from_input_field": "sql_transform"
-          },
-          "suppress": false,
-          "type": "uint32"
-        },
-        "name": "hdx_source_latency_sec"
-      },
-      {
-        "datatype": {
-          "default": "CloudFront",
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "hdx_cdn"
-      },
-      {
-        "datatype": {
-          "default": "CloudFront FH multi cdn",
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "hdx_transform"
-      },
-      {
-        "datatype": {
-          "default": null,
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "string"
-        },
-        "name": "breadcrumbs"
-      },
-      {
-        "datatype": {
-          "catch_all": true,
-          "default": null,
-          "elements": [
-            {
-              "index": true,
-              "type": "string"
-            },
-            {
-              "index": true,
-              "type": "string"
-            }
-          ],
-          "format": null,
-          "index": true,
-          "resolution": null,
-          "script": null,
-          "source": null,
-          "suppress": false,
-          "type": "map"
-        },
-        "name": "unknown"
-      }
-    ],
-    "rate_limit": null,
-    "shadow_table": null,
-    "wurfl": null
+    }
   },
   "type": "json"
 }

@@ -1,152 +1,159 @@
 {
-  "__elements": {},
   "__inputs": [
     {
-      "description": "",
-      "label": "Hydrolix",
       "name": "DS_HYDROLIX-HYDROLIX-DATASOURCE",
+      "label": "Hydrolix",
+      "description": "",
+      "type": "datasource",
       "pluginId": "hydrolix-hydrolix-datasource",
-      "pluginName": "Hydrolix",
-      "type": "datasource"
+      "pluginName": "Hydrolix"
     },
     {
-      "description": "",
-      "label": "summary_min",
       "name": "VAR_SUMMARY_MIN",
       "type": "constant",
-      "value": "__SUMMARY_TABLE_NAME_2__"
+      "label": "summary_min",
+      "value": "akamai.tp_multi_summary_min",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "summary_hour",
       "name": "VAR_SUMMARY_HOUR",
       "type": "constant",
-      "value": "__SUMMARY_TABLE_NAME_1__"
+      "label": "summary_hour",
+      "value": "akamai.tp_multi_summary_hour",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_response_ttfb_50",
       "name": "VAR_QUANTILES_RESPONSE_TTFB_50",
       "type": "constant",
-      "value": "quantiles_response_ttfb_ms[2]"
+      "label": "quantiles_response_ttfb_50",
+      "value": "quantiles_response_ttfb_ms[2]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_response_ttfb_95",
       "name": "VAR_QUANTILES_RESPONSE_TTFB_95",
       "type": "constant",
-      "value": "quantiles_response_ttfb_ms[5]"
+      "label": "quantiles_response_ttfb_95",
+      "value": "quantiles_response_ttfb_ms[5]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_response_ttlb_50",
       "name": "VAR_QUANTILES_RESPONSE_TTLB_50",
       "type": "constant",
-      "value": "quantiles_response_ttlb_ms[2]"
+      "label": "quantiles_response_ttlb_50",
+      "value": "quantiles_response_ttlb_ms[2]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_response_ttlb_95",
       "name": "VAR_QUANTILES_RESPONSE_TTLB_95",
       "type": "constant",
-      "value": "quantiles_response_ttlb_ms[5]"
+      "label": "quantiles_response_ttlb_95",
+      "value": "quantiles_response_ttlb_ms[5]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_origin_ttfb_50",
       "name": "VAR_QUANTILES_ORIGIN_TTFB_50",
       "type": "constant",
-      "value": "quantiles_origin_ttfb_ms[2]"
+      "label": "quantiles_origin_ttfb_50",
+      "value": "quantiles_origin_ttfb_ms[2]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_origin_ttfb_95",
       "name": "VAR_QUANTILES_ORIGIN_TTFB_95",
       "type": "constant",
-      "value": "quantiles_origin_ttfb_ms[5]"
+      "label": "quantiles_origin_ttfb_95",
+      "value": "quantiles_origin_ttfb_ms[5]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_origin_ttlb_50",
       "name": "VAR_QUANTILES_ORIGIN_TTLB_50",
       "type": "constant",
-      "value": "quantiles_origin_ttlb_ms[2]"
+      "label": "quantiles_origin_ttlb_50",
+      "value": "quantiles_origin_ttlb_ms[2]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "quantiles_origin_ttlb_95",
       "name": "VAR_QUANTILES_ORIGIN_TTLB_95",
       "type": "constant",
-      "value": "quantiles_origin_ttlb_ms[5]"
+      "label": "quantiles_origin_ttlb_95",
+      "value": "quantiles_origin_ttlb_ms[5]",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "raw_logs",
       "name": "VAR_RAW_LOGS",
       "type": "constant",
-      "value": "UUID_HERE/NAME"
+      "label": "raw_logs",
+      "value": "UUID_HERE/NAME",
+      "description": ""
     },
     {
-      "description": "",
-      "label": "cdn_panel",
       "name": "VAR_CDN_PANEL",
       "type": "constant",
-      "value": "UUID_HERE/NAME"
+      "label": "cdn_panel",
+      "value": "UUID_HERE/NAME",
+      "description": ""
+    },
+    {
+      "name": "VAR_RAW_TABLE",
+      "type": "constant",
+      "label": "raw_table",
+      "value": "akamai.logs",
+      "description": ""
     }
   ],
+  "__elements": {},
   "__requires": [
     {
+      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "panel",
       "id": "geomap",
       "name": "Geomap",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "type": "grafana",
-      "version": "12.0.0"
+      "version": "12.2.3"
     },
     {
+      "type": "datasource",
       "id": "hydrolix-hydrolix-datasource",
       "name": "Hydrolix",
-      "type": "datasource",
-      "version": "0.6.0"
+      "version": "0.10.2"
     },
     {
+      "type": "panel",
       "id": "piechart",
       "name": "Pie chart",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "panel",
       "id": "stat",
       "name": "Stat",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "panel",
       "id": "table",
       "name": "Table",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "panel",
       "id": "text",
       "name": "Text",
-      "type": "panel",
       "version": ""
     },
     {
+      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
-      "type": "panel",
       "version": ""
     }
   ],
@@ -155,8 +162,8 @@
       {
         "builtIn": 1,
         "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "${DS_HYDROLIX-HYDROLIX-DATASOURCE}"
         },
         "enable": true,
         "hide": true,
@@ -173,10 +180,6 @@
   "links": [],
   "panels": [
     {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 4,
         "w": 8,
@@ -193,8 +196,7 @@
         "content": "<div style=\"display:flex; justify-content: center; align-items:center;gap:12px;margin-bottom:8px;margin-top:16px;\"><img src=\"data:image/png;base64,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\" style=\"height:60px\"/>",
         "mode": "html"
       },
-      "pluginVersion": "12.0.0",
-      "title": "",
+      "pluginVersion": "12.2.3",
       "transparent": true,
       "type": "text"
     },
@@ -213,7 +215,8 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -249,7 +252,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -293,7 +296,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": 0
               },
               {
                 "color": "#EAB839",
@@ -333,7 +337,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -377,7 +381,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": 0
               },
               {
                 "color": "#EAB839",
@@ -417,7 +422,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -461,7 +466,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": 0
               }
             ]
           },
@@ -493,7 +499,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -537,7 +543,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": 0
               }
             ]
           },
@@ -569,7 +576,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -613,7 +620,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": 0
               }
             ]
           },
@@ -645,7 +653,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -689,7 +697,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": 0
               }
             ]
           },
@@ -721,7 +730,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -765,7 +774,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "purple"
+                "color": "purple",
+                "value": 0
               }
             ]
           },
@@ -797,7 +807,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -841,7 +851,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "purple"
+                "color": "purple",
+                "value": 0
               }
             ]
           },
@@ -873,7 +884,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -917,7 +928,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "purple"
+                "color": "purple",
+                "value": 0
               }
             ]
           },
@@ -949,7 +961,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -1014,6 +1026,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1028,7 +1041,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               }
             ]
           },
@@ -1060,7 +1074,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -1123,7 +1137,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               }
             ]
           },
@@ -1176,7 +1191,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -1230,7 +1245,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "red",
@@ -1286,7 +1302,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -1340,7 +1356,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": 0
               },
               {
                 "color": "#EAB839",
@@ -1387,7 +1404,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -1465,7 +1482,7 @@
                 "id": "custom.hideFrom",
                 "value": {
                   "legend": false,
-                  "tooltip": false,
+                  "tooltip": true,
                   "viz": true
                 }
               }
@@ -1498,13 +1515,14 @@
           "fields": "",
           "values": true
         },
+        "sort": "desc",
         "tooltip": {
           "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.2.3",
       "targets": [
         {
           "datasource": {
@@ -3756,7 +3774,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "mcdn"
   ],
@@ -3796,44 +3814,44 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_SUMMARY_MIN}",
-          "value": "${VAR_SUMMARY_MIN}"
-        },
         "description": "",
         "hide": 2,
         "name": "summary_min",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_SUMMARY_MIN}",
-            "value": "${VAR_SUMMARY_MIN}"
-          }
-        ],
         "query": "${VAR_SUMMARY_MIN}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_SUMMARY_MIN}",
+          "text": "${VAR_SUMMARY_MIN}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_SUMMARY_MIN}",
+            "text": "${VAR_SUMMARY_MIN}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_SUMMARY_HOUR}",
-          "value": "${VAR_SUMMARY_HOUR}"
-        },
         "description": "",
         "hide": 2,
         "name": "summary_hour",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_SUMMARY_HOUR}",
-            "value": "${VAR_SUMMARY_HOUR}"
-          }
-        ],
         "query": "${VAR_SUMMARY_HOUR}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_SUMMARY_HOUR}",
+          "text": "${VAR_SUMMARY_HOUR}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_SUMMARY_HOUR}",
+            "text": "${VAR_SUMMARY_HOUR}",
+            "selected": false
+          }
+        ]
       },
       {
         "baseFilters": [],
@@ -3917,194 +3935,213 @@
         "type": "custom"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
-          "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}"
-        },
         "hide": 2,
         "name": "quantiles_response_ttfb_50",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}"
-          }
-        ],
         "query": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
+          "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
+            "text": "${VAR_QUANTILES_RESPONSE_TTFB_50}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
-          "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}"
-        },
         "hide": 2,
         "name": "quantiles_response_ttfb_95",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}"
-          }
-        ],
         "query": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
+          "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
+            "text": "${VAR_QUANTILES_RESPONSE_TTFB_95}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
-          "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}"
-        },
         "hide": 2,
         "name": "quantiles_response_ttlb_50",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}"
-          }
-        ],
         "query": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
+          "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
+            "text": "${VAR_QUANTILES_RESPONSE_TTLB_50}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
-          "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}"
-        },
         "hide": 2,
         "name": "quantiles_response_ttlb_95",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
-            "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}"
-          }
-        ],
         "query": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
+          "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
+            "text": "${VAR_QUANTILES_RESPONSE_TTLB_95}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
-          "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}"
-        },
         "hide": 2,
         "name": "quantiles_origin_ttfb_50",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}"
-          }
-        ],
         "query": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
+          "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
+            "text": "${VAR_QUANTILES_ORIGIN_TTFB_50}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
-          "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}"
-        },
         "hide": 2,
         "name": "quantiles_origin_ttfb_95",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}"
-          }
-        ],
         "query": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
+          "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
+            "text": "${VAR_QUANTILES_ORIGIN_TTFB_95}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
-          "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}"
-        },
         "hide": 2,
         "name": "quantiles_origin_ttlb_50",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}"
-          }
-        ],
         "query": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
+          "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
+            "text": "${VAR_QUANTILES_ORIGIN_TTLB_50}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
-          "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}"
-        },
         "hide": 2,
         "name": "quantiles_origin_ttlb_95",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
-            "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}"
-          }
-        ],
         "query": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
+          "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
+            "text": "${VAR_QUANTILES_ORIGIN_TTLB_95}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "${VAR_RAW_LOGS}",
-          "value": "${VAR_RAW_LOGS}"
-        },
         "hide": 2,
         "name": "raw_logs",
-        "options": [
-          {
-            "selected": false,
-            "text": "${VAR_RAW_LOGS}",
-            "value": "${VAR_RAW_LOGS}"
-          }
-        ],
         "query": "${VAR_RAW_LOGS}",
         "skipUrlSync": true,
-        "type": "constant"
-      },
-      {
+        "type": "constant",
         "current": {
-          "selected": false,
-          "text": "${VAR_CDN_PANEL}",
-          "value": "${VAR_CDN_PANEL}"
+          "value": "${VAR_RAW_LOGS}",
+          "text": "${VAR_RAW_LOGS}",
+          "selected": false
         },
-        "hide": 2,
-        "name": "cdn_panel",
         "options": [
           {
-            "selected": false,
-            "text": "${VAR_CDN_PANEL}",
-            "value": "${VAR_CDN_PANEL}"
+            "value": "${VAR_RAW_LOGS}",
+            "text": "${VAR_RAW_LOGS}",
+            "selected": false
           }
-        ],
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "cdn_panel",
         "query": "${VAR_CDN_PANEL}",
         "skipUrlSync": true,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_CDN_PANEL}",
+          "text": "${VAR_CDN_PANEL}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_CDN_PANEL}",
+            "text": "${VAR_CDN_PANEL}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "name": "raw_table",
+        "query": "${VAR_RAW_TABLE}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_RAW_TABLE}",
+          "text": "${VAR_RAW_TABLE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_RAW_TABLE}",
+            "text": "${VAR_RAW_TABLE}",
+            "selected": false
+          }
+        ]
       }
     ]
   },
@@ -4125,6 +4162,6 @@
   },
   "timezone": "utc",
   "title": "CDN Dashboard Default",
-  "version": 58,
+  "version": 1,
   "weekStart": ""
 }
