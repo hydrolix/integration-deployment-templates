@@ -1,0 +1,74 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/zuplo",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/zuplo-geo-distribution.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Zuplo Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_zuplo",
+  "other_dashboards": [
+    {
+      "path": "dashboards/zuplo-high-level.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/zuplo-main-dashboard.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/zuplo-request-summaries.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/zuplo-standard-metrics.json",
+      "project_var": "__PROJECT_NAME__"
+    },
+    {
+      "path": "dashboards/zuplo-status-codes-error-rates.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "logs",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/zuplo-integration",
+    "source": {
+      "full_title": "Trafficpeak Zuplo",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}

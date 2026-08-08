@@ -1,0 +1,996 @@
+{
+  "dashboard": {
+    "__elements": {
+      "fecux6v9b56o0b": {
+        "name": "Zuplo - Requests Per Second",
+        "uid": "fecux6v9b56o0b",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "dashed"
+                }
+              },
+              "fieldMinMax": true,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#6ED0E0",
+                    "value": 100
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 200
+                  },
+                  {
+                    "color": "red",
+                    "value": 300
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    $__timeInterval(timestamp) AS time,\n    count() / greatest(dateDiff('second', min(timestamp), max(timestamp)) + 1, 1) AS rps\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time ASC",
+              "refId": "A"
+            }
+          ],
+          "title": "Requests Per Second",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "becxpxy81f3eod": {
+        "name": "Zuplo: Request Response Time",
+        "uid": "becxpxy81f3eod",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "Request response times as Median, Average and P95",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "columns": [],
+                  "database": "",
+                  "limit": 1000,
+                  "mode": "list",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    $__timeInterval(timestamp) AS time,\n    quantile(0.5)(durationMs) AS median_duration,\n    avg(durationMs) AS average_duration,\n    quantile(0.95)(durationMs) AS p95_duration\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time ASC",
+              "refId": "Request Times"
+            }
+          ],
+          "title": "Request Response Time",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "cecxpyk5wt7nkf": {
+        "name": "Zuplo: Top 10 Routes by Request Count",
+        "uid": "cecxpyk5wt7nkf",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "The top 10 routes that demand the most trafic.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "mode": "lcd",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#ff00bd",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "enablePagination": true,
+              "fields": [],
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [],
+                "columns": [],
+                "database": "",
+                "filters": [],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "list",
+                "orderBy": [],
+                "queryType": "table",
+                "table": ""
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [],
+                  "columns": [],
+                  "database": "",
+                  "filters": [],
+                  "groupBy": [],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "list",
+                  "orderBy": [],
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    routePath,\n    count(*) AS request_count\nFROM ${table}\nWHERE $__timeFilter(timestamp)  -- Grafana time filter (essential)\nGROUP BY routePath\nORDER BY request_count DESC\nLIMIT 10",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Routes by Request Count",
+          "transparent": true,
+          "type": "table"
+        }
+      },
+      "decxpz3jy0g74d": {
+        "name": "Zuplo: Total Request Distribution by Method",
+        "uid": "decxpz3jy0g74d",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "Overall view of the proportion of different HTTP methods in use.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "mappings": []
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayLabels": [
+              "name",
+              "percent"
+            ],
+            "legend": {
+              "displayMode": "list",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "percent"
+              ]
+            },
+            "pieType": "pie",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "method_requests",
+                    "column": "method"
+                  }
+                ],
+                "columns": [
+                  {
+                    "name": "method"
+                  }
+                ],
+                "database": "",
+                "groupBy": [
+                  "method"
+                ],
+                "limit": 1000,
+                "meta": {},
+                "mode": "aggregate",
+                "queryType": "table",
+                "table": ""
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "method_requests",
+                      "column": "method"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "name": "method"
+                    }
+                  ],
+                  "database": "",
+                  "groupBy": [
+                    "method"
+                  ],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    method,\n    count() AS method_requests\nFROM ${table}\nWHERE $__timeFilter(timestamp) AND method != ''\nGROUP BY method\nORDER BY method_requests DESC",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Request Distribution by Method",
+          "transparent": true,
+          "type": "piechart"
+        }
+      },
+      "becxpzp3ghkw0f": {
+        "name": "Zuplo: Average API Request Duration",
+        "uid": "becxpzp3ghkw0f",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "Overview of the average request durations",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "bars",
+                "fillOpacity": 0,
+                "gradientMode": "hue",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "avg",
+                    "alias": "Request_Duration",
+                    "column": "durationMs"
+                  }
+                ],
+                "columns": [
+                  {
+                    "hint": "time",
+                    "name": "timestamp",
+                    "type": "DateTime64(3)"
+                  }
+                ],
+                "database": "",
+                "filters": [
+                  {
+                    "condition": "AND",
+                    "filterType": "custom",
+                    "hint": "time",
+                    "key": "",
+                    "operator": "WITH IN DASHBOARD TIME RANGE",
+                    "type": "datetime"
+                  }
+                ],
+                "groupBy": [],
+                "limit": 1000,
+                "meta": {},
+                "mode": "trend",
+                "orderBy": [
+                  {
+                    "default": true,
+                    "dir": "ASC",
+                    "hint": "time",
+                    "name": ""
+                  }
+                ],
+                "queryType": "timeseries",
+                "table": ""
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 0,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "avg",
+                      "alias": "Request_Duration",
+                      "column": "durationMs"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "hint": "time",
+                      "name": "timestamp",
+                      "type": "DateTime64(3)"
+                    }
+                  ],
+                  "database": "",
+                  "filters": [
+                    {
+                      "condition": "AND",
+                      "filterType": "custom",
+                      "hint": "time",
+                      "key": "",
+                      "operator": "WITH IN DASHBOARD TIME RANGE",
+                      "type": "datetime"
+                    }
+                  ],
+                  "groupBy": [],
+                  "limit": 1000,
+                  "meta": {},
+                  "mode": "trend",
+                  "orderBy": [
+                    {
+                      "default": true,
+                      "dir": "ASC",
+                      "hint": "time",
+                      "name": ""
+                    }
+                  ],
+                  "queryType": "timeseries",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "timeseries",
+              "rawSql": "SELECT\n    $__timeInterval(timestamp) AS time,\n    avg(durationMs) AS Request_Duration\nFROM ${table}\nWHERE $__timeFilter(timestamp)\nGROUP BY time\nORDER BY time ASC",
+              "refId": "A"
+            }
+          ],
+          "title": "Average API Request Duration",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      },
+      "cecxq0dtk8ao0c": {
+        "name": "Zuplo: Top Requesting IP Addresses",
+        "uid": "cecxq0dtk8ao0c",
+        "kind": 1,
+        "model": {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "description": "The IP Addresses that are making the most requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 80,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "barRadius": 0.5,
+            "barWidth": 0.62,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "horizontal",
+            "showValue": "never",
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "xField": "clientIP",
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "pluginVersion": "10.4.1",
+          "targets": [
+            {
+              "builderOptions": {
+                "aggregates": [
+                  {
+                    "aggregateType": "count",
+                    "alias": "request_count",
+                    "column": "requestId"
+                  }
+                ],
+                "columns": [
+                  {
+                    "custom": false,
+                    "name": "clientIP",
+                    "type": "Nullable(String)"
+                  },
+                  {
+                    "custom": false,
+                    "name": "requestId",
+                    "type": "Nullable(String)"
+                  }
+                ],
+                "database": "",
+                "filters": [],
+                "groupBy": [
+                  "clientIP",
+                  "requestId"
+                ],
+                "limit": 10,
+                "meta": {},
+                "mode": "aggregate",
+                "orderBy": [
+                  {
+                    "dir": "DESC",
+                    "name": "request_count"
+                  }
+                ],
+                "queryType": "table",
+                "table": ""
+              },
+              "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "__DATASOURCE__"
+              },
+              "editorType": "sql",
+              "format": 1,
+              "meta": {
+                "builderOptions": {
+                  "aggregates": [
+                    {
+                      "aggregateType": "count",
+                      "alias": "request_count",
+                      "column": "requestId"
+                    }
+                  ],
+                  "columns": [
+                    {
+                      "custom": false,
+                      "name": "clientIP",
+                      "type": "Nullable(String)"
+                    },
+                    {
+                      "custom": false,
+                      "name": "requestId",
+                      "type": "Nullable(String)"
+                    }
+                  ],
+                  "database": "",
+                  "filters": [],
+                  "groupBy": [
+                    "clientIP",
+                    "requestId"
+                  ],
+                  "limit": 10,
+                  "meta": {},
+                  "mode": "aggregate",
+                  "orderBy": [
+                    {
+                      "dir": "DESC",
+                      "name": "request_count"
+                    }
+                  ],
+                  "queryType": "table",
+                  "table": ""
+                }
+              },
+              "pluginVersion": "4.0.6",
+              "queryType": "table",
+              "rawSql": "SELECT\n    clientIP,\n    any(requestId) AS requestId,\n    count() AS request_count\nFROM ${table}\nWHERE $__timeFilter(timestamp) AND clientIP != ''\nGROUP BY clientIP\nORDER BY request_count DESC\nLIMIT 10",
+              "refId": "A"
+            }
+          ],
+          "title": "Top 10 Requesting IP Addresses",
+          "transparent": true,
+          "type": "barchart"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "10.4.1"
+      },
+      {
+        "type": "datasource",
+        "id": "grafana-clickhouse-datasource",
+        "name": "ClickHouse",
+        "version": "4.0.6"
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Summaries and overviews of request related metrics from Zuplo",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "libraryPanel": {
+          "uid": "fecux6v9b56o0b",
+          "name": "Zuplo - Requests Per Second"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 4,
+        "libraryPanel": {
+          "uid": "becxpxy81f3eod",
+          "name": "Zuplo: Request Response Time"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 6,
+        "libraryPanel": {
+          "uid": "cecxpyk5wt7nkf",
+          "name": "Zuplo: Top 10 Routes by Request Count"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 8,
+        "libraryPanel": {
+          "uid": "decxpz3jy0g74d",
+          "name": "Zuplo: Total Request Distribution by Method"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 10,
+        "libraryPanel": {
+          "uid": "becxpzp3ghkw0f",
+          "name": "Zuplo: Average API Request Duration"
+        }
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "id": 12,
+        "libraryPanel": {
+          "uid": "cecxq0dtk8ao0c",
+          "name": "Zuplo: Top Requesting IP Addresses"
+        }
+      }
+    ],
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "Hydrolix",
+            "value": "__DATASOURCE__"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "name": "selected_data_source",
+          "options": [],
+          "query": "grafana-clickhouse-datasource",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "description": "",
+          "hide": 2,
+          "label": "Table",
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": false,
+          "type": "constant",
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Zuplo Request Summaries",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 1,
+    "weekStart": ""
+  }
+}
