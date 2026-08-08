@@ -1,0 +1,37 @@
+SELECT
+  toStartOfMinute (timestamp) AS timestamp,
+  host as reqHost,
+  asn,
+  userAgentCategory,
+  isBotTraffic,
+  aiCategory,
+  resourceCategory,
+  method as reqMethod,
+  status as statusCode,
+  country,
+  aiSource,
+  policyId,
+  actionClass,
+  botType,
+  count() AS cnt_all,
+  countIf (actionClass = 'deny') AS cnt_blocked,
+  countIf (authOutcome = 'fail') AS cnt_authFail,
+  avgIf (botScore, botScore > 0) AS avg_botScore,
+  uniq (clientIP) AS uniq_clientIp
+FROM
+  {STREAM}
+GROUP BY
+  timestamp,
+  reqHost,
+  asn,
+  userAgentCategory,
+  isBotTraffic,
+  aiCategory,
+  resourceCategory,
+  reqMethod,
+  statusCode,
+  country,
+  aiSource,
+  policyId,
+  actionClass,
+  botType SETTINGS hdx_primary_key = 'timestamp'

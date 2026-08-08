@@ -1,0 +1,35 @@
+tables:
+  logs:
+    __extend__: tables/table_logs.yaml
+  siem:
+    __extend__: tables/table_logs.yaml
+transforms:
+  logs:
+    akamai_default_datastream:
+      __extend__: transforms/akamai_default_datastream.json
+      settings:
+        sql_transform:
+          __extend__: transforms/akamai_default_datastream_select.sql
+        sample_data:
+          __extend__: transforms/akamai_default_datastream_sample_data.json
+  siem:
+    siem:
+      __extend__: transforms/siem.json
+      settings:
+        sql_transform:
+          __extend__: transforms/siem_select.sql
+        sample_data:
+          __extend__: transforms/siem_sample_data.json
+summary_tables:
+  bi_siem_policy_summary_day:
+    __extend__: tables/bi_siem_policy_summary_day.yaml
+  bi_siem_policy_summary_hour:
+    __extend__: tables/bi_siem_policy_summary_hour.yaml
+  bi_siem_policy_summary_minute:
+    __extend__: tables/bi_siem_policy_summary_minute.yaml
+  bi_summary_day:
+    __extend__: tables/bi_summary_day.yaml
+  bi_summary_hour:
+    __extend__: tables/bi_summary_hour.yaml
+  bi_summary_minute:
+    __extend__: tables/bi_summary_minute.yaml
