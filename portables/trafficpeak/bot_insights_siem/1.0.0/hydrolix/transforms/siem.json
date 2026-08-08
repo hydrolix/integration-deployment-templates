@@ -1,0 +1,1539 @@
+{
+  "description": "Default SIEM integration for Akamai",
+  "name": "siem",
+  "settings": {
+    "compression": "",
+    "format_details": {
+      "flattening": {
+        "active": false,
+        "depth": null,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "is_default": true,
+    "null_values": [
+      "-1"
+    ],
+    "output_columns": [
+      {
+        "datatype": {
+          "default": null,
+          "format": "s",
+          "index": false,
+          "primary": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/start"
+            ]
+          },
+          "suppress": false,
+          "type": "epoch"
+        },
+        "name": "timestamp"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "referer"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "format"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "version"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/clientIP"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "clientIP"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/configId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "configId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/policyId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "policyId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "attackData"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/botData"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "botData"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/clientData"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "clientData"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "geo"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "httpMessage"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "userRiskData"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleActions"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleActionsStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleData"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleDataStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/rules"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "rulesStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleVersions"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleVersionsStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleMessages"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleMessagesStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleTags"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleTagsStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/attackData/ruleSelectors"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "ruleSelectorsStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo/continent"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "continent"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo/country"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "country"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo/city"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "city"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo/regionCode"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "regionCode"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/geo/asn"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "asn"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/requestId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "requestId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/protocol"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "protocol"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/tls"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "tls"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/method"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "method"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/host"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "host"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/port"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "port"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/path"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "path"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/requestHeaders"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "requestHeadersStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/status"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "status"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/bytes"
+            ]
+          },
+          "suppress": false,
+          "type": "uint64"
+        },
+        "name": "bytes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/query"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "query"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/httpMessage/responseHeaders"
+            ]
+          },
+          "suppress": true,
+          "type": "string"
+        },
+        "name": "responseHeadersStr"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/allow"
+            ]
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "userRiskData_allow"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/general"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_general"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/originUserId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_originUserId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/risk"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_risk"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/score"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "userRiskData_score"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/status"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "userRiskData_status"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/trust"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_trust"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/username"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_username"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/userRiskData/uuid"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "userRiskData_uuid"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/clientData/appBundleId"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "clientData_appBundleId"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/clientData/appVersion"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "clientData_appVersion"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/clientData/sdkVersion"
+            ]
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "clientData_sdkVersion"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/clientData/telemetryType"
+            ]
+          },
+          "suppress": false,
+          "type": "uint8"
+        },
+        "name": "clientData_telemetryType"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/botData/botScore"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "botScore"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/botData/responseSegment"
+            ]
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "botData_responseSegment"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": "2006-01-02T15:04:05Z",
+          "index": true,
+          "resolution": "seconds",
+          "script": null,
+          "source": {
+            "from_automatic_value": "current_time"
+          },
+          "suppress": false,
+          "type": "datetime"
+        },
+        "name": "tor"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "requestHeaders"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "responseHeaders"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "rules"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleData"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleTags"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleActions"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleMessages"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleVersions"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleSelectors"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_bot"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_waf"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_reputation"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_risk"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_firewall"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_dos"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "attackTypes"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "ruleMessage"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleTagsBot"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleTagsWAF"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": false,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "array"
+        },
+        "name": "ruleTagsDOS"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "CH_UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "has_CH_UA"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "uint32"
+        },
+        "name": "hdx_source_latency"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "responseSegment"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "responseSegmentDetails"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "telemetryType"
+      },
+      {
+        "datatype": {
+          "catch_all": true,
+          "default": null,
+          "elements": [
+            {
+              "index": true,
+              "type": "string"
+            },
+            {
+              "index": true,
+              "type": "string"
+            }
+          ],
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": null,
+          "suppress": false,
+          "type": "map"
+        },
+        "name": "unknown"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "boolean"
+        },
+        "name": "attack_custom"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "bot_type"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botnet_id"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "bot_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "resource_category"
+      },
+      {
+        "datatype": {
+          "default": null,
+          "format": null,
+          "index": true,
+          "resolution": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false,
+          "type": "string"
+        },
+        "name": "botScoreRange"
+      }
+    ],
+    "rate_limit": null,
+    "shadow_table": null,
+    "wurfl": null
+  },
+  "type": "json"
+}
