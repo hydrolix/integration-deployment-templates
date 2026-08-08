@@ -1,32 +1,32 @@
 {
-  "name": "akamai_bot_ip_dict",
+  "name": "asn_type_dict",
   "description": null,
   "settings": {
     "dictionary_load_level": [
       "ALL"
     ],
-    "filename": "akamai_bot_ip_dict",
+    "filename": "asn_type_dict",
     "format": "CSVWithNames",
-    "layout": "ip_trie",
+    "layout": "hashed",
     "lifetime_seconds": 5,
     "output_columns": [
       {
         "datatype": {
           "denullify": true,
-          "type": "string"
+          "type": "uint32"
         },
-        "name": "cidr"
+        "name": "asn"
       },
       {
         "datatype": {
           "denullify": true,
           "type": "string"
         },
-        "name": "bot_owner"
+        "name": "asn_type"
       }
     ],
     "primary_key": [
-      "cidr"
+      "asn"
     ]
   }
 }

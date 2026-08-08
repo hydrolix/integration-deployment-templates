@@ -1,0 +1,7 @@
+{
+  "data_category": "security",
+  "description": "DS2-only TrafficPeak Bot Insights bundle for Akamai logs.",
+  "table_name": "logs",
+  "version": "1.1.0",
+  "primary_dashboard": "bot-insights-edge-ops.json"
+}
