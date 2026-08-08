@@ -1,0 +1,67 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/trafficpeak/apicontext",
+  "beta": true,
+  "dashboard": {
+    "path": "dashboards/api-observability.json",
+    "project_var": "__PROJECT_NAME__"
+  },
+  "dependencies": {
+    "hydrolix": {
+      "required_dictionaries": [],
+      "required_functions": [],
+      "shared_dictionaries": [],
+      "shared_functions": []
+    }
+  },
+  "metadata": {
+    "channel_type": "3rdParty",
+    "description": "Trafficpeak Apicontext Integration",
+    "maintainer": "Hydrolix Team <team@hydrolix.io>",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "trafficpeak_apicontext",
+  "other_dashboards": [
+    {
+      "path": "dashboards/network-monitoring-dashboard-synthetics.json",
+      "project_var": "__PROJECT_NAME__"
+    }
+  ],
+  "solution": true,
+  "source": "trafficpeak",
+  "summary_tables": [
+    {
+      "dashboard_var": "__SUMMARY_TABLE_NAME_1__",
+      "name": "apicontext_sampled_day",
+      "parent_table_name": "apicontext",
+      "sql": {
+        "path": "summaries/apicontext_sampled_day.sql"
+      }
+    }
+  ],
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "apicontext",
+      "transforms": [
+        {
+          "path": "transformations/transform.json",
+          "sample": "transformations/sample_data.json",
+          "method": "http_streaming"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "security",
+    "method": {
+      "full_title": "Http Streaming",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/apicontext-integration",
+    "source": {
+      "full_title": "Trafficpeak Apicontext",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/trafficpeak.png"
+    }
+  }
+}

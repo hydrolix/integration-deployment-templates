@@ -1,0 +1,73 @@
+{
+  "call_id": "agxkZXZ-dmlhdGVzdHNyFwsSClRlc3RTZXR1cDIYgICAgICA0AkM",
+  "call_meta": {
+    "description": "Auto-generated API Call",
+    "domain": "api.sampledata.co.uk",
+    "name": "Example HTTP POST Call",
+    "tags": [
+      "api_type:update",
+      "sector:telecommunications"
+    ]
+  },
+  "call_url": "https://client.apimetrics.io/tests/test/agxkZXZ-dmlhdGVzdHNyFwsSClRlc3RTZXR1cDIYgICAgICA0AkM/",
+  "context": {
+    "_notification": {
+      "category": "WARNING",
+      "created": "2020-11-27T10:44:19.284152Z",
+      "description": "\n<p>\nAPI Call <a href=\"https://client.apimetrics.io/tests/test/agxkZXZ-dmlhdGVzdHNyFwsSClRlc3RTZXR1cDIYgICAgICA0AkM/\">\"Example HTTP POST Call\"</a> has failed :\n<ul>\n<li><b>Server returned a 4XX status. There may be a problem with the test.</b></li>\n\n<li>Calling POST http://google.apimetrics.xyz/status/418</li>\n<li>Got response HTTP 418 I&#39;M A TEAPOT</li>\n\n</ul>\n</p>\n\n<p>Timing breakdown:\n<ul>\n\n<li>The total latency was 56 ms.</li>\n<li>DNS Lookup: 4 ms</li>\n<li>Connect: 24 ms</li>\n\n<li>Upload: 0 ms</li>\n<li>Processing: 0 ms</li>\n<li>Download: 28 ms</li>\n\n</ul>\n</p>\n\n\n</p>\n\n<p>\nView details here:\n<a href=\"https://client.apimetrics.io/tests/result/agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA/\">https://client.apimetrics.io/tests/result/agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA/</a>\n</p>\n\n<p>Sincerely,<br>\nAPImetrics Team\n</p>\n",
+      "description_text": "\nAPI Call \"Example HTTP POST Call\" (http://localhost:8080/tests/test/agxkZXZ-dmlhdGVzdHNyFwsSClRlc3RTZXR1cDIYgICAgICA0AkM/) has failed :\n\nServer returned a 4XX status. There may be a problem with the test.\nCalling POST http://google.apimetrics.xyz/status/418\nGot response HTTP 418 I&#39;M A TEAPOT\nTiming breakdown:\n  The total latency was 56 ms.\n  DNS Lookup: 4 ms\n  Connect: 24 ms\n\n  Upload: 0 ms\n  Processing: 0 ms\n  Download: 28 ms\n\n\nView details here: \nhttp://localhost:8080/tests/result/agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA/\n\n\nAPImetrics Team\n",
+      "last_update": "2025-11-28T10:44:19.427550Z",
+      "owners": [
+        "agxkZXZ-dmlhdGVzdHNyEQsSBFVzZXIYgICAgICA0AoM",
+        "public_settings"
+      ],
+      "references": [
+        "agxkZXZ-dmlhdGVzdHNyFwsSClRlc3RTZXR1cDIYgICAgICA0AkM",
+        "agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA"
+      ],
+      "title": "[WARNING]: APImetrics: All Failures: Example HTTP POST Call",
+      "viewed_by": [
+        "Martin"
+      ]
+    },
+    "_result_category": "WARNING",
+    "_result_streak": 1
+  },
+  "dns_lookup_ms": 111,
+  "download_ms": 555,
+  "http_code": 418,
+  "http_reason": "I'M A TEAPOT",
+  "location_data": {
+    "city": "london",
+    "cloud": "Akamai",
+    "continent": "EU",
+    "country": "GB",
+    "ip_addr": "169.254.169.126",
+    "latitude": null,
+    "longitude": null,
+    "region": "eng"
+  },
+  "location_id": "development",
+  "processing_ms": 4479,
+  "response_size": 135,
+  "response_time": 56,
+  "result": "HTTP_CLIENT_ERROR",
+  "result_class": "WARNING",
+  "result_id": "agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA",
+  "result_url": " https://client.apimetrics.io/tests/result/agxkZXZ-dmlhdGVzdHNyGAsSC1Rlc3RSZXN1bHQzGICAgICAgPgJDA/",
+  "ssl_handshake_ms": 222,
+  "start_time": "2026-04-01T00:00:00.000000Z",
+  "timing_data": {
+    "connect": 1,
+    "dns": 2,
+    "download": 13522,
+    "processing": 118,
+    "tls_handshake": 234,
+    "upload": 0
+  },
+  "upload_ms": 333,
+  "workflow_id": null,
+  "workflow_result_id": null,
+  "workflow_result_url": null,
+  "workflow_url": null
+}
