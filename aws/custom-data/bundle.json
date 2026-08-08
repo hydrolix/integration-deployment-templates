@@ -1,0 +1,36 @@
+{
+  "base_url": "https://github.com/hydrolix/integration-deployment-templates/blob/main/aws/custom-data",
+  "beta": false,
+  "metadata": {
+    "channel_type": "AWS",
+    "description": "Bring your own data — AI-powered schema analysis with Semantix",
+    "maintainer": "semantix@hydrolix.io",
+    "version": "1.0.0"
+  },
+  "method": "http_streaming",
+  "name": "custom-data",
+  "source": "custom_data",
+  "tables": [
+    {
+      "dashboard_var": "__TABLE_NAME__",
+      "name": "custom_data",
+      "transforms": [
+        {
+          "path": "transformations/current.json"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "data_category": "custom",
+    "method": {
+      "full_title": "HTTP Push",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/http.png"
+    },
+    "primary_url": "https://docs.hydrolix.io/docs/http-push-ingest",
+    "source": {
+      "full_title": "Custom Data",
+      "icon_url": "https://hydrolix-public.s3.us-east-2.amazonaws.com/partner_logos/custom.png"
+    }
+  }
+}
