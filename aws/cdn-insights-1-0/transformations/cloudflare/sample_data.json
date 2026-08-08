@@ -1,0 +1,32 @@
+{
+  "ClientIP": "50.205.69.23",
+  "OriginIP": "52.75.0.2",
+  "ClientASN": 7922,
+  "ClientCity": "West Hartford",
+  "ClientState": "US",
+  "EdgeColoCode": "SJC",
+  "EdgeColoID": "962",
+  "EdgeServerIP": null,
+  "ClientCountry": "US",
+  "CacheCacheStatus": "hit",
+  "ClientRequestURI": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+  "ClientRequestHost": [
+    "https:",
+    "",
+    "hydrolix.io"
+  ],
+  "ClientRequestPath": "/hls/Midnight Archive S01E01 — Ghost Signal/1200k/segment000000.m4s",
+  "EdgeResponseBytes": 840923,
+  "ClientRequestQuery": "",
+  "EdgeResponseStatus": 200,
+  "EdgeStartTimestamp": "2025-10-08T16:19:00Z",
+  "EdgeEndTimestamp": "2025-10-08T16:19:02.100Z",
+  "OriginResponseTime": 0,
+  "ClientRequestMethod": "GET",
+  "ClientRequestReferer": "https://cloudflare-media.hydrolix.io",
+  "EdgeTimeToFirstByteMs": 72,
+  "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+  "EdgeResponseContentType": "video/mp4",
+  "OriginResponseDurationMs": 334,
+  "OriginResponseHeaderReceiveDurationMs": 0
+}
