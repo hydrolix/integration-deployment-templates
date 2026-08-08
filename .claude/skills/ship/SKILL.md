@@ -1,29 +1,34 @@
 ---
 name: ship
-description: Commit, push, and open a PR for the current branch. If the PR targets hydrolix/integration-deployment-templates, also sends a Slack notification to #solutions-bundles-alerts.
+description: "Commit, push, and open a pull request for the current branch. If the PR targets hydrolix/integration-deployment-templates, also sends a Slack notification to #solutions-bundles-alerts. Use when the user says 'ship it', 'open a PR', 'submit changes', 'push and create pull request', 'send for review', or 'ship this branch'."
 ---
 
 # Ship
 
-Commits staged/unstaged changes, pushes the branch, opens a PR, and optionally notifies Slack.
+Commit staged/unstaged changes, push the branch, open a PR, and optionally notify Slack.
 
 ## Configuration
 
-- **GitHub Org:** `hydrolix`
-- **Integrations Repo:** `hydrolix/integration-deployment-templates`
-- **Slack Channel:** `#solutions-bundles-alerts` (`C0APNU3FH6U`)
-- **Slack URL:** `https://hydrolix.slack.com`
+| Key | Value |
+|-----|-------|
+| GitHub Org | `hydrolix` |
+| Integrations Repo | `hydrolix/integration-deployment-templates` |
+| Slack Channel | `#solutions-bundles-alerts` (`C0APNU3FH6U`) |
+| Slack URL | `https://hydrolix.slack.com` |
 
 ## Instructions
 
 ### Step 1: Determine context
 
-Run these in parallel:
-- `git status` — see what's staged/unstaged
-- `git log --oneline -5` — understand recent commit style
-- `git remote -v` — confirm the remote and repo name
-- `git branch --show-current` — get the current branch name
-- `git rev-parse --abbrev-ref HEAD@{upstream} 2>/dev/null || echo "no-upstream"` — check if branch is already pushed
+Run in parallel:
+
+```bash
+git status
+git log --oneline -5
+git remote -v
+git branch --show-current
+git rev-parse --abbrev-ref HEAD@{upstream} 2>/dev/null || echo "no-upstream"
+```
 
 ### Step 2: Commit
 
@@ -42,7 +47,7 @@ Push the current branch to origin:
 - If the branch has no upstream: `git push -u origin HEAD`
 - Otherwise: `git push`
 
-### Step 3.5: Code Review
+### Step 4: Code Review
 
 Use the Agent tool with `subagent_type: "code-reviewer"` to review the branch changes. Pass it:
 - The current branch name
@@ -53,7 +58,7 @@ Display the review results to the user. Then ask: "Proceed with opening the PR?"
 
 If the user chooses "Abort", stop here and do not open a PR.
 
-### Step 4: Create PR
+### Step 5: Create PR
 
 Check if a PR already exists for this branch:
 - `gh pr view --json url,title 2>/dev/null`
@@ -67,7 +72,7 @@ If no PR exists:
 
 If a PR already exists, use its URL and title for the next step.
 
-### Step 5: Notify Slack (integrations repo only)
+### Step 6: Notify Slack (integrations repo only)
 
 Detect the repo by running `git remote get-url origin` and checking if it contains `integration-deployment-templates`.
 
@@ -79,7 +84,7 @@ If it does:
 
 If it does not match the integrations repo, skip this step silently.
 
-### Step 6: Confirm
+### Step 7: Confirm
 
 Print a brief summary:
 - Commit hash (if a new commit was made)
