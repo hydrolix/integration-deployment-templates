@@ -1,0 +1,73 @@
+folders:
+  hdx-main-folder:
+    name: TrafficPeak Certified Reference Dashboards
+    children:
+      hdx-security-folder:
+        name: Security
+dashboards:
+  hdx-bot_insights_edge_ops:
+    dashboard:
+      __extend__: dashboards/bot_insights_edge_ops.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-bot_insights_what_changed_investigation:
+    dashboard:
+      __extend__: dashboards/bot_insights_what_changed_investigation.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-bot_insights_overview_alignment:
+    dashboard:
+      __extend__: dashboards/bot_insights_overview_alignment.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-bot_insights_seo_governance:
+    dashboard:
+      __extend__: dashboards/bot_insights_seo_governance.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-bot_insights_multi_domain_triage:
+    dashboard:
+      __extend__: dashboards/bot_insights_multi_domain_triage.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
+  hdx-bot_insights_soc_what_changed:
+    dashboard:
+      __extend__: dashboards/bot_insights_soc_what_changed.json
+    folderUid: hdx-security-folder
+    inputs:
+      DS_HYDROLIX-HYDROLIX-DATASOURCE: hdx-hydrolix-datasource
+      VAR_SUMMARY_MINUTE: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_3__
+      VAR_SUMMARY_HOUR: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_2__
+      VAR_SUMMARY_DAY: __PROJECT_NAME__.__SUMMARY_TABLE_NAME_1__
+      VAR_LOGS: __PROJECT_NAME__.__TABLE_NAME__
+      VAR_SIEM: __PROJECT_NAME__.__SIEM_TABLE_NAME__
