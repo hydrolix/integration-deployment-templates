@@ -1,0 +1,10 @@
+name: trafficpeak_mpulse
+version: 1.0.0
+description: TRAFFICPEAK Mpulse integration bundle
+maintainer: Hydrolix Team <team@hydrolix.io>
+hydrolix:
+  resources: hydrolix/resources.hdp.yaml
+grafana:
+  resources: grafana/resources.gfo.yaml
+
+# additional properties, metadata of a bundle

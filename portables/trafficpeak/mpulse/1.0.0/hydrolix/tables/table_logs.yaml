@@ -1,0 +1,3 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
+description: TRAFFICPEAK Mpulse integration bundle
+type: turbine
