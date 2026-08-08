@@ -1,0 +1,1177 @@
+{
+  "name": "eaa_devinv",
+  "description": "ULS EAA Device Posture Inventory (DEVINV) - https://github.com/akamai/uls/blob/main/docs/LOG_OVERVIEW.md#device-posture-inventory-devinv",
+  "settings": {
+    "is_default": true,
+    "null_values": [],
+    "output_columns": [
+      {
+        "name": "deviceId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/device_id"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "deviceName",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/device_name"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiers",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/risk_posture_tiers"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "riskPostureTags",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/risk_posture_tags"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "riskPostureTagsName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTagsTier",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTagsPassed",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTagsId",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "uint32",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTagsRemediations",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "clientVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/client_version"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "idpUsername",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/idp_username"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "userId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/user_id"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "browsers",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/browsers"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "browsersName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "browsersVersion",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiersName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiersTier",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiersPassed",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiersId",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "uint32",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "riskPostureTiersRemediations",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "osName",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/os_name"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "osVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/os_version"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "signalTimestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": false,
+          "primary": true,
+          "format": "2006-01-02T15:04:05.999999+00:00",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/signal_timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "osUpdateTimestamp",
+        "datatype": {
+          "type": "datetime",
+          "index": true,
+          "primary": false,
+          "format": "2006-01-02T15:04:05Z",
+          "resolution": "s",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/os_update_timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "osAutoUpdate",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/os_auto_update"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "antiMalwareRunning",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true,
+              "primary": false
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/anti_malware_running"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "antiMalwareStatus",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/anti_malware_status"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "antiMalwareStatusName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "antiMalwareStatusPassed",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "antiMalwareInfo",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/anti_malware_info"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "antiMalwareInfoName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "antiMalwareInfoPassed",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "firewallStatus",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/firewall_status"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "systemDiskEncryption",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/system_disk_encryption"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "etpClientStatus",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/etp_client_status"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mobileDevice",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/mobile_device"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "certificateProfile",
+        "datatype": {
+          "type": "array",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "map",
+              "index": true,
+              "elements": [
+                {
+                  "type": "string",
+                  "index": true
+                },
+                {
+                  "type": "string",
+                  "index": true
+                }
+              ]
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/certificate_profile"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "certificateProfileName",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "certificateProfilePassed",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "etpSignalsThreadDetected",
+        "datatype": {
+          "type": "boolean",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/etp_signals/threat_detected"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "carbonBlackPolicyId",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black/policy_id"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "carbonBlackPolicyName",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black/policy_name"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "carbonBlackSensorVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black/sensor_version"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "carbonBlackStatus",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black/status"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "carbonBlackLastContact",
+        "datatype": {
+          "type": "datetime",
+          "index": true,
+          "format": "2006-01-02T15:04:05.999999+00:00",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black/last_contact"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeLastContact",
+        "datatype": {
+          "type": "datetime",
+          "index": true,
+          "format": "2006-01-02T15:04:05.999999+00:00",
+          "resolution": "ms",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/last_contact"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeAgentStatus",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/agent_status"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeAid",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/aid"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeCid",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/cid"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeSensorVersion",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/sensor_version"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrikeValidity",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike/validity"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "crowdstrike",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/crowdstrike"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "carbonBlack",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/carbon_black"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "etp_signals",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/etp_signals"
+            ]
+          },
+          "suppress": true
+        }
+      },
+      {
+        "name": "idpHostname",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/idp_hostname"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "joinedDomains",
+        "datatype": {
+          "type": "array",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": {
+            "from_json_pointers": [
+              "/joined_domains"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": true
+        }
+      },
+      {
+        "name": "hdx_source_latency",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    }
+  },
+  "type": "json"
+}

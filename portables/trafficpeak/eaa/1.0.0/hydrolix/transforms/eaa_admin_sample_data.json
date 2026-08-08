@@ -1,0 +1,8 @@
+{
+  "event": "login",
+  "datetime": "2026-04-01T00:00:00+00:00",
+  "resource": "user1@akamai.com",
+  "username": "user1@akamai.com",
+  "event_type": "login",
+  "resource_type": "users"
+}

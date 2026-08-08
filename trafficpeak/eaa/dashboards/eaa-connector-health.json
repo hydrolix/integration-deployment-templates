@@ -1,0 +1,1201 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "panel",
+        "id": "bargauge",
+        "name": "Bar gauge",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "canvas",
+        "name": "Canvas",
+        "version": ""
+      },
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.4"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "testing",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Health metrics (CPU, memory, disk, and dialout activity)",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 23,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1765306679987",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n\nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "EAA Connector Health",
+        "transparent": true,
+        "type": "canvas"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto",
+                "wrapText": false
+              },
+              "filterable": true,
+              "inspect": true
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "name"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "Show details",
+                      "url": "/d/${connhealth_det}/?var-filter=${__field.name}%7C%3D%7C${__value.raw}&${__url_time_range}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 15,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": true,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "count"
+            ],
+            "show": true
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT\n    t.1 AS name,\n    t.2 AS version,\n    t.3 AS osVersion,\n    t.4 AS privateip,\n    t.5 AS publicip,\n    t.6 AS reachable,\n    t.7 AS last_update\nFROM (\n    SELECT argMax(tuple(name, version, osVersion, privateip, publicip, reachable, lastUpdate), lastUpdate) AS t\n    FROM ${table}\n    WHERE $__timeFilter(datetime)\n      AND ${generalescaping}\n      AND $__adHocFilter()\n    GROUP BY name\n) sub\nORDER BY name ASC\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Connectors; du=${__user.login}'\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Connectors",
+        "type": "table"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 11,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 13
+            },
+            "id": 14,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "/^last_cpu$/",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(cpu) AS last_cpu,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_cpu DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by CPU; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Top 25 connectors by CPU",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 24
+            },
+            "id": 9,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(mem) AS last_mem,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_mem DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by memory; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Top 25 connectors by memory",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 35
+            },
+            "id": 16,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(disk) AS last_disk,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_disk DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by disk; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Top 25 connectors by disk",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 46
+            },
+            "id": 17,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(dialoutActive) AS last_dialouts,\n        name,\n        concat('', ' (avg:', toString(round(avg(dialoutActive), 0)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_dialouts DESC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Top 25 connectors by active dialouts; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Top 25 connectors by active dialouts",
+            "type": "bargauge"
+          }
+        ],
+        "title": "Tops for connectors",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 13
+        },
+        "id": 18,
+        "panels": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 14
+            },
+            "id": 19,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "/^last_cpu$/",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(cpu) AS last_cpu,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_cpu ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by CPU; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Bottom 25 connectors by CPU",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 25
+            },
+            "id": 20,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(mem) AS last_mem,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\n     FROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_mem ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by memory; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Bottom 25 connectors by memory",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 36
+            },
+            "id": 21,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(disk) AS last_disk,\n        name,\n        concat('', ' (avg:', toString(round(avg(cpu), 2)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nORDER BY last_disk ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by disk; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Bottom 25 connectors by disk",
+            "type": "bargauge"
+          },
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "displayName": "${__field.labels}",
+                "links": [
+                  {
+                    "targetBlank": true,
+                    "title": "Show details",
+                    "url": "/d/${connhealth_det}/?${__all_variables}&var-filter=name%7C%3D%7C${__data.fields.name}&${__url_time_range}"
+                  }
+                ],
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Total"
+                  },
+                  "properties": [
+                    {
+                      "id": "unit",
+                      "value": "short"
+                    }
+                  ]
+                }
+              ]
+            },
+            "gridPos": {
+              "h": 11,
+              "w": 24,
+              "x": 0,
+              "y": 47
+            },
+            "id": 22,
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.4",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "hydrolix-hydrolix-datasource",
+                  "uid": "__DATASOURCE__"
+                },
+                "format": 1,
+                "rawSql": "SELECT       \n        anyLast(dialoutActive) AS last_dialouts,\n        name,\n        concat('', ' (avg:', toString(round(avg(dialoutActive), 0)), ')') AS avg\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \nGROUP BY name\nHAVING last_dialouts IS NOT NULL\nORDER BY last_dialouts ASC\nLIMIT 25\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Bottom 25 connectors by active dialouts; du=${__user.login}'",
+                "refId": "A"
+              }
+            ],
+            "title": "Bottom 25 connectors by active dialouts",
+            "type": "bargauge"
+          }
+        ],
+        "title": "Bottom for connectors",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "hide": 2,
+          "name": "timestamp",
+          "query": "datetime",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "datetime",
+            "value": "datetime"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "datetime",
+              "value": "datetime"
+            }
+          ]
+        },
+        {
+          "description": "1=1",
+          "hide": 2,
+          "name": "generalescaping",
+          "query": "${VAR_GENERALESCAPING}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_GENERALESCAPING}",
+            "text": "${VAR_GENERALESCAPING}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_GENERALESCAPING}",
+              "text": "${VAR_GENERALESCAPING}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "querieslimit",
+          "query": "${VAR_QUERIESLIMIT}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_QUERIESLIMIT}",
+            "text": "${VAR_QUERIESLIMIT}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_QUERIESLIMIT}",
+              "text": "${VAR_QUERIESLIMIT}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "name": "commonlibraries",
+          "query": "${VAR_COMMONLIBRARIES}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_COMMONLIBRARIES}",
+            "text": "${VAR_COMMONLIBRARIES}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_COMMONLIBRARIES}",
+              "text": "${VAR_COMMONLIBRARIES}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "hide": 2,
+          "label": "connhealth_det",
+          "name": "connhealth_det",
+          "query": "${VAR_CONNHEALTH_DET}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_CONNHEALTH_DET}",
+            "text": "${VAR_CONNHEALTH_DET}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_CONNHEALTH_DET}",
+              "text": "${VAR_CONNHEALTH_DET}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "Europe/Rome",
+    "title": "EAA Connector Health",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 2,
+    "weekStart": ""
+  },
+  "__inputs": [
+    {
+      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+      "label": "GruppoFerroVie-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "value": "__DATASOURCE__"
+    },
+    {
+      "name": "VAR_TABLE",
+      "type": "constant",
+      "label": "table",
+      "value": "akamai.eaa_connectorhealth",
+      "description": ""
+    },
+    {
+      "name": "VAR_TIMESTAMP",
+      "type": "constant",
+      "label": "timestamp",
+      "value": "datetime",
+      "description": ""
+    },
+    {
+      "name": "VAR_GENERALESCAPING",
+      "type": "constant",
+      "label": "generalescaping",
+      "value": "1=1",
+      "description": ""
+    },
+    {
+      "name": "VAR_QUERIESLIMIT",
+      "type": "constant",
+      "label": "querieslimit",
+      "value": "250",
+      "description": ""
+    },
+    {
+      "name": "VAR_COMMONLIBRARIES",
+      "type": "constant",
+      "label": "commonlibraries",
+      "value": "eaa-common-libraries-v5",
+      "description": ""
+    },
+    {
+      "name": "VAR_CONNHEALTH_DET",
+      "type": "constant",
+      "label": "connhealth_det",
+      "value": "eaa-connector-health-details-v5",
+      "description": ""
+    }
+  ]
+}

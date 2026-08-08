@@ -1,0 +1,10 @@
+name: trafficpeak_eaa
+version: 1.0.0
+description: TRAFFICPEAK Eaa integration bundle
+maintainer: Hydrolix Team <team@hydrolix.io>
+hydrolix:
+  resources: hydrolix/resources.hdp.yaml
+grafana:
+  resources: grafana/resources.gfo.yaml
+
+# additional properties, metadata of a bundle

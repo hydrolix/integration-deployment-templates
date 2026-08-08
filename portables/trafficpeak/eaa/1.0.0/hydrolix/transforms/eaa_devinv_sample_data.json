@@ -1,0 +1,101 @@
+{
+  "os_name": "macOS",
+  "user_id": "androcho",
+  "browsers": [
+    {
+      "name": "Edge",
+      "version": "101.0.1210.47"
+    },
+    {
+      "name": "Chrome",
+      "version": "101.0.4951.64"
+    },
+    {
+      "name": "Safari",
+      "version": "15.4"
+    },
+    {
+      "name": "Firefox",
+      "version": "100.0"
+    }
+  ],
+  "device_id": "5c98021e78e9c393b07145e388c20ace7733ca88ed63ba0790c09e7ed5c58cf7",
+  "os_version": "Monterey 12.3.1 (21E258)",
+  "device_name": "sfo-mpw9c",
+  "etp_signals": {
+    "threat_detected": false
+  },
+  "idp_username": "N/A",
+  "mobile_device": false,
+  "client_version": "2.7.1",
+  "os_auto_update": true,
+  "firewall_status": "good",
+  "signal_timestamp": "2022-05-16T20:21:33.321539+00:00",
+  "anti_malware_info": [
+    {
+      "name": "Sentinel Agent",
+      "passed": true
+    }
+  ],
+  "etp_client_status": "installed",
+  "risk_posture_tags": [
+    {
+      "id": 597,
+      "name": "Healthy iOS",
+      "tier": false,
+      "passed": true
+    },
+    {
+      "id": 2380,
+      "name": "Demo Tag - CB",
+      "tier": false,
+      "passed": false,
+      "remediations": [
+        "Unsupported operating system."
+      ]
+    },
+    {
+      "id": 2381,
+      "name": "Demo - Tag - Anti malware",
+      "tier": false,
+      "passed": false,
+      "remediations": [
+        "Unsupported operating system."
+      ]
+    }
+  ],
+  "risk_posture_tiers": [
+    {
+      "id": 430,
+      "name": "Low",
+      "tier": true,
+      "passed": false,
+      "remediations": [
+        "Operating system version is out of date. Update your operating system to version 10.14.5."
+      ]
+    },
+    {
+      "id": 429,
+      "name": "Medium",
+      "tier": true,
+      "passed": true
+    }
+  ],
+  "anti_malware_status": [
+    {
+      "name": "Any Vendor",
+      "passed": true
+    }
+  ],
+  "certificate_profile": [
+    {
+      "name": "cert",
+      "passed": false
+    }
+  ],
+  "os_update_timestamp": "2022-04-15T20:18:43Z",
+  "anti_malware_running": [
+    "Sentinel Agent"
+  ],
+  "system_disk_encryption": true
+}

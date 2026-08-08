@@ -1,0 +1,1197 @@
+{
+  "dashboard": {
+    "__elements": {
+      "model": {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        }
+      }
+    },
+    "__requires": [
+      {
+        "type": "panel",
+        "id": "canvas",
+        "name": "Canvas",
+        "version": ""
+      },
+      {
+        "type": "grafana",
+        "id": "grafana",
+        "name": "Grafana",
+        "version": "12.0.4"
+      },
+      {
+        "type": "datasource",
+        "id": "hydrolix-hydrolix-datasource",
+        "name": "Hydrolix",
+        "version": "0.6.0"
+      },
+      {
+        "type": "panel",
+        "id": "table",
+        "name": "Table",
+        "version": ""
+      },
+      {
+        "type": "panel",
+        "id": "timeseries",
+        "name": "Time series",
+        "version": ""
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "This is an internal library dashboard that enables the other dashboards. It should not be deleted.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1014,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1764884400438",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT\n  $__timeInterval(datetime) AS d,\n  uniq(username) as \"Total_Username\",\n  uniq(origin) as \"Total_Origin\",\n  uniq(apphost) as \"Total_EAA_APPS\",\n  uniq(cloudZone) as \"Total_cloudZone\",\n  SUM(bytesIn) \"Incoming\",\n  SUM(bytesOut) \"Outgoing\",\n  uniq(conUuid) as \"Total_Connectors\"\n  FROM ${table}\n  WHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter() \n  AND origin != '-'\n  AND username != '-'\n  AND apphost != '-'\n  and conUuid != '-'\nGROUP BY  d\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "_EAA-common-libraries (Internal)",
+        "transparent": true,
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 1013,
+        "panels": [],
+        "title": "Charts",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 2
+        },
+        "id": 1012,
+        "interval": "1m",
+        "maxDataPoints": 100,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT\n    $__timeInterval(datetime) AS time,\n    ${eselect},\n    count(*) AS \"Total\"\nFROM ${table}\nWHERE $__timeFilter(datetime)\n  AND ${generalescaping}\n  AND $__adHocFilter()\n  AND username != '-'\nGROUP BY time, ${eselect}\nORDER BY time ASC, ${eselect}\nSETTINGS hdx_query_max_execution_time=60,\n         hdx_query_admin_comment='db=${__dashboard}; dp=Users per APP; du=${__user.login}';\n",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle}",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 10
+        },
+        "id": 995,
+        "panels": [],
+        "title": "full list plain",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last_Login"
+              },
+              "properties": [
+                {
+                  "id": "links"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 11
+        },
+        "id": 994,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1747656291941",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT ${eselect}, maxOrNull(datetime) as Last_Access \nFROM ${table} \nWHERE $__timeFilter(datetime)  \nAND ${generalescaping}\nAND $__adHocFilter() \n\n-- ### PPP WARNING COPY (AND KEEP ALIGNED!) THIS BLOCK IN ALL CUSTOMLIBRARIES QUERIES!\nAND (\n    CASE\n        -- Apply one of the following filters if customquery has its value\n        WHEN '${customquery}' = 'CQnoapphostdash' THEN apphost != '-'\n        WHEN '${customquery}' = 'CQnoapphostconuuiddash' THEN apphost != '-' AND conUuid != '-'\n        WHEN '${customquery}' = 'CQnoapphostorigindash' THEN apphost != '-' AND origin != '-'\n        WHEN '${customquery}' = 'CQnoapphostoriginusernamedash' THEN apphost != '-' AND origin != '-' AND username != '-'\n        WHEN '${customquery}' = 'CQnoapphostusernamedash' THEN apphost != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoconuuiddash' THEN conUuid != '-' AND conUuid IS NOT NULL\n        WHEN '${customquery}' = 'CQnoconuuidorigindash' THEN conUuid != '-' AND conUuid IS NOT NULL AND origin != '-'\n        WHEN '${customquery}' = 'CQnoconuuidusernamedash' THEN conUuid != '-' AND conUuid IS NOT NULL AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoorigindash' THEN origin != '-' \n        WHEN '${customquery}' = 'CQnooriginusernamedash' THEN origin != '-' AND username != '-'\n        \n        WHEN '${customquery}' = 'CQnousernamedash' THEN username != '-'\n\n        WHEN '${customquery}' = 'CQlastuserlogin' THEN username != '-' AND ( urlPath = '/saml/sp/response' AND idpinfo = 'UNSPEC|D' AND username != '-')\n        WHEN '${customquery}' = 'CQuserfailedlogin' THEN username != '-' AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n        WHEN '${customquery}' = 'CQclientversion' THEN clientVersion IS NOT NULL AND clientVersion != '-' AND username != '-'\n\n        -- don't filter by default\n        ELSE 1=1\n    END\n)\n\n-- PPP don't copy this block into the panel: full list external timerange (inactive things)\nAND (\n    CASE\n        -- if CTlast30 get only last 30minutes of results\n        WHEN '${customtime}' = 'CTlast30' THEN datetime >= now() - INTERVAL 30 MINUTE\n\n        ELSE 1=1\n\n    END\n)\n-- ### \n\ngroup by ${eselect}\n\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last accessing users; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle} details",
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "id": 1010,
+        "panels": [],
+        "title": "full list with count Total",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last_Login"
+              },
+              "properties": [
+                {
+                  "id": "links"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 20
+        },
+        "id": 1011,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1747656291941",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT ${eselect}, count(*) as Total\nFROM ${table} \nWHERE $__timeFilter(datetime)  \nAND ${generalescaping}\nAND $__adHocFilter() \n\n-- ### PPP WARNING COPY (AND KEEP ALIGNED!) THIS BLOCK IN ALL CUSTOMLIBRARIES QUERIES!\nAND (\n    CASE\n        -- Apply one of the following filters if customquery has its value\n        WHEN '${customquery}' = 'CQnoapphostdash' THEN apphost != '-'\n        WHEN '${customquery}' = 'CQnoapphostconuuiddash' THEN apphost != '-' AND conUuid != '-'\n        WHEN '${customquery}' = 'CQnoapphostorigindash' THEN apphost != '-' AND origin != '-'\n        WHEN '${customquery}' = 'CQnoapphostoriginusernamedash' THEN apphost != '-' AND origin != '-' AND username != '-'\n        WHEN '${customquery}' = 'CQnoapphostusernamedash' THEN apphost != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoconuuiddash' THEN conUuid != '-' AND conUuid IS NOT NULL\n        WHEN '${customquery}' = 'CQnoconuuidorigindash' THEN conUuid != '-' AND conUuid IS NOT NULL AND origin != '-'\n        WHEN '${customquery}' = 'CQnoconuuidusernamedash' THEN conUuid != '-' AND conUuid IS NOT NULL AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoorigindash' THEN origin != '-' \n        WHEN '${customquery}' = 'CQnooriginusernamedash' THEN origin != '-' AND username != '-'\n        \n        WHEN '${customquery}' = 'CQnousernamedash' THEN username != '-'\n\n        WHEN '${customquery}' = 'CQlastuserlogin' THEN username != '-' AND ( urlPath = '/saml/sp/response' AND idpinfo = 'UNSPEC|D' AND username != '-')\n        WHEN '${customquery}' = 'CQuserfailedlogin' THEN username != '-' AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n        WHEN '${customquery}' = 'CQclientversion' THEN clientVersion IS NOT NULL AND clientVersion != '-' AND username != '-'\n\n        -- don't filter by default\n        ELSE 1=1\n    END\n)\n\n-- PPP don't copy this block into the panel: full list external timerange (inactive things)\nAND (\n    CASE\n        -- if CTlast30 get only last 30minutes of results\n        WHEN '${customtime}' = 'CTlast30' THEN datetime >= now() - INTERVAL 30 MINUTE\n\n        ELSE 1=1\n\n    END\n)\n-- ### \n\ngroup by ${eselect}\n\norder by Total desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last accessing users; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle} details",
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 28
+        },
+        "id": 1006,
+        "panels": [],
+        "title": "full list with no maxdate event",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last_Login"
+              },
+              "properties": [
+                {
+                  "id": "links"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 29
+        },
+        "id": 1004,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1747656291941",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT ${eselect}, maxOrNull(datetime) as Last_Access \nFROM ${table} \n\nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\n-- ### PPP WARNING COPY (AND KEEP ALIGNED!) THIS BLOCK IN ALL CUSTOMLIBRARIES QUERIES!\nAND (\n    CASE\n        -- Apply one of the following filters if customquery has its value\n        WHEN '${customquery}' = 'CQnoapphostdash' THEN apphost != '-'\n        WHEN '${customquery}' = 'CQnoapphostconuuiddash' THEN apphost != '-' AND conUuid != '-'\n        WHEN '${customquery}' = 'CQnoapphostorigindash' THEN apphost != '-' AND origin != '-'\n        WHEN '${customquery}' = 'CQnoapphostoriginusernamedash' THEN apphost != '-' AND origin != '-' AND username != '-'\n        WHEN '${customquery}' = 'CQnoapphostusernamedash' THEN apphost != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoconuuiddash' THEN conUuid != '-' AND conUuid IS NOT NULL\n        WHEN '${customquery}' = 'CQnoconuuidorigindash' THEN conUuid != '-' AND conUuid IS NOT NULL AND origin != '-'\n        WHEN '${customquery}' = 'CQnoconuuidusernamedash' THEN conUuid != '-' AND conUuid IS NOT NULL AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoorigindash' THEN origin != '-'\n        WHEN '${customquery}' = 'CQnooriginusernamedash' THEN origin != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnousernamedash' THEN username != '-'\n\n        WHEN '${customquery}' = 'CQlastuserlogin' THEN username != '-' AND ( urlPath = '/saml/sp/response' AND idpinfo = 'UNSPEC|D' AND username != '-')\n        WHEN '${customquery}' = 'CQuserfailedlogin' THEN username != '-' AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n        WHEN '${customquery}' = 'CQclientversion' THEN clientVersion IS NOT NULL AND clientVersion != '-' AND username != '-'\n\n        -- don't filter by default\n        ELSE 1=1\n    END\n)\n\n-- PPP don't copy this block into the panel: full list external timerange (inactive things)\nAND (\n    CASE\n        -- if CTlast30 get only last 30minutes of results\n        WHEN '${customtime}' = 'CTlast30' THEN datetime >= now() - INTERVAL 30 MINUTE\n\n        ELSE 1=1\n\n    END\n)\n-- ###\n\ngroup by ${eselect}\n\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last accessing users; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle} details",
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 37
+        },
+        "id": 1008,
+        "panels": [],
+        "title": "full list external timerange (inactive things)",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last_Login"
+              },
+              "properties": [
+                {
+                  "id": "links"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 38
+        },
+        "id": 1009,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1747656291941",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT ${eselect}, maxOrNull(datetime) as Last_Access \nFROM ${table} \nWHERE datetime >= toDateTime(${__from} / 1000) AND datetime <= toDateTime(${__to} / 1000)\nAND ${generalescaping}\nAND $__adHocFilter() \n\n-- ### PPP WARNING COPY (AND KEEP ALIGNED!) THIS BLOCK IN ALL CUSTOMLIBRARIES QUERIES!\nAND (\n    CASE\n        -- Apply one of the following filters if customquery has its value\n        WHEN '${customquery}' = 'CQnoapphostdash' THEN apphost != '-'\n        WHEN '${customquery}' = 'CQnoapphostconuuiddash' THEN apphost != '-' AND conUuid != '-'\n        WHEN '${customquery}' = 'CQnoapphostorigindash' THEN apphost != '-' AND origin != '-'\n        WHEN '${customquery}' = 'CQnoapphostoriginusernamedash' THEN apphost != '-' AND origin != '-' AND username != '-'\n        WHEN '${customquery}' = 'CQnoapphostusernamedash' THEN apphost != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoconuuiddash' THEN conUuid != '-' AND conUuid IS NOT NULL\n        WHEN '${customquery}' = 'CQnoconuuidorigindash' THEN conUuid != '-' AND conUuid IS NOT NULL AND origin != '-'\n        WHEN '${customquery}' = 'CQnoconuuidusernamedash' THEN conUuid != '-' AND conUuid IS NOT NULL AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoorigindash' THEN origin != '-' \n        WHEN '${customquery}' = 'CQnooriginusernamedash' THEN origin != '-' AND username != '-'\n        \n        WHEN '${customquery}' = 'CQnousernamedash' THEN username != '-'\n\n        WHEN '${customquery}' = 'CQlastuserlogin' THEN username != '-' AND ( urlPath = '/saml/sp/response' AND idpinfo = 'UNSPEC|D' AND username != '-')\n        WHEN '${customquery}' = 'CQuserfailedlogin' THEN username != '-' AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n        WHEN '${customquery}' = 'CQclientversion' THEN clientVersion IS NOT NULL AND clientVersion != '-' AND username != '-'\n\n        -- don't filter by default\n        ELSE 1=1\n    END\n)\n-- ### \n\ngroup by ${eselect}\nHAVING maxOrNull(datetime) < toDateTime(${__from} / 1000) OR maxOrNull(datetime) > toDateTime(${__to} / 1000)\norder by Last_Access desc\nlimit ${querieslimit}\nSETTINGS hdx_query_max_execution_time=60, hdx_query_admin_comment='db=${__dashboard}; dp=Last accessing users; du=${__user.login}'",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle} details",
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 46
+        },
+        "id": 12,
+        "panels": [],
+        "title": "traffic specific",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "description": "Traffic that is delivered by both Clientless and Tunnel Apps.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Incoming"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "bytes"
+                },
+                {
+                  "id": "links"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Outgoing"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "bytes"
+                },
+                {
+                  "id": "links"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Date"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": []
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 19,
+          "x": 0,
+          "y": 47
+        },
+        "id": 999,
+        "options": {
+          "infinitePan": false,
+          "inlineEditing": true,
+          "panZoom": false,
+          "root": {
+            "background": {
+              "color": {
+                "fixed": "transparent"
+              }
+            },
+            "border": {
+              "color": {
+                "fixed": "dark-green"
+              }
+            },
+            "constraint": {
+              "horizontal": "left",
+              "vertical": "top"
+            },
+            "elements": [],
+            "name": "Element 1747674662866",
+            "placement": {
+              "height": 100,
+              "left": 0,
+              "rotation": 0,
+              "top": 0,
+              "width": 100
+            },
+            "type": "frame"
+          },
+          "showAdvancedTypes": true
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSql": "SELECT sum(bytesIn) Incoming, sum(bytesOut) Outgoing, toDate(datetime) as Date, ${eselect}  \nFROM ${table} \nWHERE $__timeFilter(datetime)\nAND ${generalescaping}\nAND $__adHocFilter() \n\n-- ### PPP WARNING COPY (AND KEEP ALIGNED!) THIS BLOCK IN ALL CUSTOMLIBRARIES QUERIES!\nAND (\n    CASE\n        -- Apply one of the following filters if customquery has its value\n        WHEN '${customquery}' = 'CQnoapphostdash' THEN apphost != '-'\n        WHEN '${customquery}' = 'CQnoapphostconuuiddash' THEN apphost != '-' AND conUuid != '-'\n        WHEN '${customquery}' = 'CQnoapphostorigindash' THEN apphost != '-' AND origin != '-'\n        WHEN '${customquery}' = 'CQnoapphostoriginusernamedash' THEN apphost != '-' AND origin != '-' AND username != '-'\n        WHEN '${customquery}' = 'CQnoapphostusernamedash' THEN apphost != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoconuuiddash' THEN conUuid != '-' AND conUuid IS NOT NULL\n        WHEN '${customquery}' = 'CQnoconuuidorigindash' THEN conUuid != '-' AND conUuid IS NOT NULL AND origin != '-'\n        WHEN '${customquery}' = 'CQnoconuuidusernamedash' THEN conUuid != '-' AND conUuid IS NOT NULL AND username != '-'\n\n        WHEN '${customquery}' = 'CQnoorigindash' THEN origin != '-'\n        WHEN '${customquery}' = 'CQnooriginusernamedash' THEN origin != '-' AND username != '-'\n\n        WHEN '${customquery}' = 'CQnousernamedash' THEN username != '-'\n\n        WHEN '${customquery}' = 'CQlastuserlogin' THEN username != '-' AND idpinfo = 'LOGIN|S'\n        WHEN '${customquery}' = 'CQuserfailedlogin' THEN username != '-' AND idpinfo IN ('LOGIN|F', 'MFA|MF')\n        WHEN '${customquery}' = 'CQclientversion' THEN clientVersion IS NOT NULL AND clientVersion != '-' AND username != '-'\n\n        -- don't filter by default\n        ELSE 1=1\n    END\n)\n\n-- PPP don't copy this block into the panel: full list external timerange (inactive things)\nAND (\n    CASE\n        -- if CTlast30 get only last 30minutes of results\n        WHEN '${customtime}' = 'CTlast30' THEN datetime >= now() - INTERVAL 30 MINUTE\n\n        ELSE 1=1\n\n    END\n)\n-- ###\n\nGROUP BY Date, ${eselect}  \norder by Date desc\nlimit ${querieslimit}\n",
+            "refId": "A"
+          }
+        ],
+        "title": "${etitle} details",
+        "type": "canvas"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 54
+        },
+        "id": 1007,
+        "panels": [],
+        "title": "test impossible travel",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "hydrolix-hydrolix-datasource",
+          "uid": "__DATASOURCE__"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "filterable": true,
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 19,
+          "x": 0,
+          "y": 55
+        },
+        "id": 1000,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": true
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "window_end"
+            }
+          ]
+        },
+        "pluginVersion": "12.0.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "hydrolix-hydrolix-datasource",
+              "uid": "__DATASOURCE__"
+            },
+            "format": 1,
+            "rawSql": "SELECT\n  username,\n  min(datetime) AS window_start,\n  max(datetime) AS window_end,\n  count(DISTINCT geoCountry) AS distinct_countries,\n  groupArray(DISTINCT geoCountry) AS countries_seen\nFROM ${table}\nWHERE $__timeFilter(datetime)\nGROUP BY\n  username,\n  intDiv(toUnixTimestamp(datetime), 100000) -- to be sure we are totally inside window start window end\nHAVING distinct_countries > 1",
+            "refId": "A"
+          }
+        ],
+        "timeFrom": "15m",
+        "title": "impossible travel",
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "hide": 2,
+          "name": "table",
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "__PROJECT_NAME__.__TABLE_NAME__",
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "__PROJECT_NAME__.__TABLE_NAME__",
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "baseFilters": [],
+          "datasource": {
+            "type": "hydrolix-hydrolix-datasource",
+            "uid": "__DATASOURCE__"
+          },
+          "filters": [],
+          "name": "filter",
+          "type": "adhoc"
+        },
+        {
+          "hide": 2,
+          "name": "timestamp",
+          "query": "datetime",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "selected": false,
+            "text": "datetime",
+            "value": "datetime"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "datetime",
+              "value": "datetime"
+            }
+          ]
+        },
+        {
+          "description": "username != 'anon-user' \nAND NOT startsWith(apphost, 'dns-')\nAND NOT startsWith(apphost, 'masterdns-')\nAND NOT startsWith(apphost, 'dir-')\nAND urlPath != '/apa/sessioninfo'",
+          "hide": 2,
+          "name": "generalescaping",
+          "query": "${VAR_GENERALESCAPING}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_GENERALESCAPING}",
+            "text": "${VAR_GENERALESCAPING}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_GENERALESCAPING}",
+              "text": "${VAR_GENERALESCAPING}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "text": "username",
+            "value": "username"
+          },
+          "hide": 2,
+          "name": "eselect",
+          "options": [
+            {
+              "selected": true,
+              "text": "username",
+              "value": "username"
+            }
+          ],
+          "query": "",
+          "type": "textbox"
+        },
+        {
+          "hide": 2,
+          "name": "querieslimit",
+          "query": "${VAR_QUERIESLIMIT}",
+          "skipUrlSync": true,
+          "type": "constant",
+          "current": {
+            "value": "${VAR_QUERIESLIMIT}",
+            "text": "${VAR_QUERIESLIMIT}",
+            "selected": false
+          },
+          "options": [
+            {
+              "value": "${VAR_QUERIESLIMIT}",
+              "text": "${VAR_QUERIESLIMIT}",
+              "selected": false
+            }
+          ]
+        },
+        {
+          "current": {
+            "text": "Details",
+            "value": "Details"
+          },
+          "hide": 2,
+          "name": "etitle",
+          "options": [
+            {
+              "selected": true,
+              "text": "Details",
+              "value": "Details"
+            }
+          ],
+          "query": "",
+          "type": "textbox"
+        },
+        {
+          "current": {
+            "text": "CQnousernamedash",
+            "value": "CQnousernamedash"
+          },
+          "description": "queryname passed by datalink",
+          "hide": 2,
+          "name": "customquery",
+          "options": [
+            {
+              "selected": true,
+              "text": "CQnousernamedash",
+              "value": "CQnousernamedash"
+            }
+          ],
+          "query": "",
+          "type": "textbox"
+        },
+        {
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "description": "queryname passed by datalink",
+          "hide": 2,
+          "name": "customtime",
+          "options": [
+            {
+              "selected": true,
+              "text": "",
+              "value": ""
+            }
+          ],
+          "query": "",
+          "type": "textbox"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "__PROJECT_NAME__.__TABLE_NAME__",
+            "value": "__PROJECT_NAME__.__TABLE_NAME__"
+          },
+          "hide": 2,
+          "name": "raw_table",
+          "options": [
+            {
+              "selected": false,
+              "text": "__PROJECT_NAME__.__TABLE_NAME__",
+              "value": "__PROJECT_NAME__.__TABLE_NAME__"
+            }
+          ],
+          "query": "__PROJECT_NAME__.__TABLE_NAME__",
+          "skipUrlSync": true,
+          "type": "constant"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "Europe/Rome",
+    "title": "_EAA-common-libraries",
+    "uid": "__DASHBOARD_UUID__",
+    "version": 1,
+    "weekStart": "",
+    "__inputs": [
+      {
+        "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+        "label": "GruppoFerroVie-hydrolix-datasource",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "hydrolix-hydrolix-datasource",
+        "pluginName": "Hydrolix",
+        "value": "__DATASOURCE__"
+      },
+      {
+        "name": "VAR_TABLE",
+        "type": "constant",
+        "label": "table",
+        "value": "akamai.eaa_useraccess",
+        "description": ""
+      },
+      {
+        "name": "VAR_TIMESTAMP",
+        "type": "constant",
+        "label": "timestamp",
+        "value": "datetime",
+        "description": ""
+      },
+      {
+        "name": "VAR_GENERALESCAPING",
+        "type": "constant",
+        "label": "generalescaping",
+        "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+        "description": ""
+      },
+      {
+        "name": "VAR_QUERIESLIMIT",
+        "type": "constant",
+        "label": "querieslimit",
+        "value": "250",
+        "description": ""
+      }
+    ]
+  },
+  "__inputs": [
+    {
+      "name": "DS_GRUPPOFERROVIE-HYDROLIX-DATASOURCE",
+      "label": "GruppoFerroVie-hydrolix-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "hydrolix-hydrolix-datasource",
+      "pluginName": "Hydrolix",
+      "value": "__DATASOURCE__"
+    },
+    {
+      "name": "VAR_TABLE",
+      "type": "constant",
+      "label": "table",
+      "value": "akamai.eaa_useraccess",
+      "description": ""
+    },
+    {
+      "name": "VAR_TIMESTAMP",
+      "type": "constant",
+      "label": "timestamp",
+      "value": "datetime",
+      "description": ""
+    },
+    {
+      "name": "VAR_GENERALESCAPING",
+      "type": "constant",
+      "label": "generalescaping",
+      "value": "username != 'anon-user'  AND NOT startsWith(apphost, 'dns-') AND NOT startsWith(apphost, 'masterdns-') AND NOT startsWith(apphost, 'dir-') AND urlPath != '/apa/sessioninfo'",
+      "description": ""
+    },
+    {
+      "name": "VAR_QUERIESLIMIT",
+      "type": "constant",
+      "label": "querieslimit",
+      "value": "250",
+      "description": ""
+    }
+  ]
+}

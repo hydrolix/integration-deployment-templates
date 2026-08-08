@@ -1,0 +1,3 @@
+__extend__: ../../../../../../hydrolix/_defaults/table_defaults.yaml
+description: TRAFFICPEAK Eaa integration bundle
+type: turbine

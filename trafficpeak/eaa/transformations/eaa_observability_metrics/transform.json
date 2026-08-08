@@ -1,0 +1,432 @@
+{
+  "name": "eaa_observability_metrics",
+  "description": "",
+  "settings": {
+    "is_default": true,
+    "rate_limit": null,
+    "null_values": [],
+    "output_columns": [
+      {
+        "name": "timestamp",
+        "datatype": {
+          "type": "epoch",
+          "index": false,
+          "primary": true,
+          "format": "s",
+          "resolution": "s",
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/timestamp"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "name",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/name"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cpu_usage_active",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/usage_active"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cpu_usage_idle",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/usage_idle"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "agent_id",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/tags/agent_id"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "cpu",
+        "datatype": {
+          "type": "string",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/tags/cpu"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_available",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/available"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_dirty",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/dirty"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_mapped",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/mapped"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_total",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/total"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_used",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/total"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_used_percent",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/used_percent"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "mem_available_percent",
+        "datatype": {
+          "type": "double",
+          "index": false,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/available_percent"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_bytes_recv",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/bytes_recv"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_bytes_sent",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/bytes_sent"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_drop_in",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/drop_in"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_drop_out",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/drop_out"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_err_in",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/err_in"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_err_out",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/err_out"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_packets_recv",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/packets_recv"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_packets_sent",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/packets_sent"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "net_speed",
+        "datatype": {
+          "type": "int64",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_json_pointers": [
+              "/fields/speed"
+            ]
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "hdx_source_latency",
+        "datatype": {
+          "type": "uint32",
+          "index": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "source": {
+            "from_input_field": "sql_transform"
+          },
+          "suppress": false
+        }
+      },
+      {
+        "name": "unknown",
+        "datatype": {
+          "type": "map",
+          "index": true,
+          "catch_all": true,
+          "format": null,
+          "default": null,
+          "script": null,
+          "elements": [
+            {
+              "type": "string",
+              "index": true
+            },
+            {
+              "type": "string",
+              "index": true
+            }
+          ],
+          "source": null,
+          "suppress": true
+        }
+      }
+    ],
+    "compression": "",
+    "wurfl": null,
+    "format_details": {
+      "flattening": {
+        "depth": null,
+        "active": false,
+        "map_flattening_strategy": {
+          "left": "",
+          "right": ""
+        },
+        "slice_flattening_strategy": {
+          "left": "",
+          "right": ""
+        }
+      }
+    },
+    "sql_transform": "SELECT datediff('s', timestamp, now64(3)) as hdx_source_latency,\n*\nFROM {STREAM}\n",
+    "sample_data": {
+      "name": "cpu",
+      "tags": {
+        "cpu": "cpu-total",
+        "agent_id": "2eac0600-b51d-11ee-8f04-0242c0a201"
+      },
+      "fields": {
+        "usage_idle": 90.26,
+        "usage_active": 9.74
+      },
+      "timestamp": 1775001600
+    }
+  },
+  "type": "json"
+}
