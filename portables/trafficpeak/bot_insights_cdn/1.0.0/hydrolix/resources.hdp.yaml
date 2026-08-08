@@ -1,0 +1,19 @@
+tables:
+  logs:
+    __extend__: tables/table_logs.yaml
+transforms:
+  logs:
+    akamai:
+      __extend__: transforms/akamai.json
+      settings:
+        sql_transform:
+          __extend__: transforms/akamai_select.sql
+        sample_data:
+          __extend__: transforms/akamai_sample_data.json
+summary_tables:
+  bot_summary_day:
+    __extend__: tables/bot_summary_day.yaml
+  bot_summary_hour:
+    __extend__: tables/bot_summary_hour.yaml
+  bot_summary_month:
+    __extend__: tables/bot_summary_month.yaml

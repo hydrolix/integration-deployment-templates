@@ -1,0 +1,4 @@
+{
+  "name": "edgeworker_edgeserverflow",
+  "sql": "(edgeworker_edgeserverflow) -> multiIf (edgeworker_edgeserverflow = 'a','subWorkers disabled', edgeworker_edgeserverflow = 'n', 'Normal flow', edgeworker_edgeserverflow = 's', 'Akamai JavaScript execution engine not available', edgeworker_edgeserverflow = 'r', 'Termination request', edgeworker_edgeserverflow = 'T', 'Akamai edge server write timeout', edgeworker_edgeserverflow = 't', 'Akamai edge server read timeout', edgeworker_edgeserverflow = 'e', 'EdgeWorkers returned error', edgeworker_edgeserverflow = 'E', 'Bad input from EdgeWorkers', edgeworker_edgeserverflow = 'u', 'Unexpected Termination Request for non-METHOD_GET method', edgeworker_edgeserverflow = 'm', 'Error in applying EdgeWorkers commands', edgeworker_edgeserverflow = 'c', 'EdgeWorkers result applied from cached results', edgeworker_edgeserverflow = 'o', 'Other', edgeworker_edgeserverflow)"
+}

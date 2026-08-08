@@ -1,0 +1,6 @@
+{
+  "data_category": "security",
+  "description": "Bot insights and analytics for Akamai CDN traffic with bot detection, traffic analysis, and resource categorization",
+  "table_name": "logs",
+  "version": "1.0.0"
+}
